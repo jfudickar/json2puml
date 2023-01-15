@@ -1,0 +1,93 @@
+@startuml
+
+start
+
+:open record (
+    parentObject : Object
+    propertyName : string);
+
+if (propertyName in "objectProperties") then (yes)
+:use propertyName as objectType
+rename objectType based 
+  on "propertyRenames";
+
+:identify objectIdentifier 
+  based on any record property 
+  in "objectIdentifierProperties";
+
+:define newObject;
+
+elseif (propertyName in "relationshipProperties") then (yes)
+:identify objectType based 
+  on any record property 
+  in "relationshipObjectProperties"
+rename objectType based
+  on "propertyRenames";
+:identify objectIdentifier based
+  on any record property 
+  in "objectIdentifierProperties";
+:identify relationsshiptype based
+  on any record property 
+  in "relationshipTypeProperties";
+
+:define newObject;
+elseif (propertyName in "objectDetailProperties") then(yes)
+:use propertyName as objectType
+rename objectType base
+  on "propertyRenames";
+
+:identify objectIdentifier based
+  on record property 
+  in "objectIdentifierProperties";
+:if no objectIdentifier found generate 
+  a new one based on the 
+  objectIdentifer of parentObject;
+:define newObject;
+
+elseif (propertyName in "characteristicProperties") then(yes)
+:read all properties of 
+  the record and add them 
+  as characteristics 
+  to the parentObject;
+stop
+
+endif
+
+if (\n(newObject has been found) and (objectIdentifer is nil) and
+(objectType not in "objectDetailProperties") and ("objectProperties.generateWithoutIdentifier" <> true)\n) then  (yes)
+   :ignore newObject;
+else (no)
+endif
+
+
+if (newObject has been found) then (yes)
+  :Relationship between parentObject and newObject;
+else (no)
+endif
+
+:Identify object title based on titleProperties;
+
+while (Loop over all properties of the object)
+if (property not in "hiddenProperties") then (use it)
+if (property is object) then (yes)
+  :recursive call
+open record (current object, current property);
+else (no, normal attribute)
+  if (newobject is defined) then (yes)
+    if (property in "relationshipObjectProperties") then (yes)
+      :use the current value as objectIdentifer;
+      :define childObject and relate it to the newObject; 
+    elseif ((property in "attributeProperties") then (yes)
+      :Add property as attribute to the newObject;
+    else (no, ignore it)
+    endif
+  else (ignore)
+  endif
+endif
+else (ignore it)
+endif
+endwhile 
+
+stop
+
+@enduml

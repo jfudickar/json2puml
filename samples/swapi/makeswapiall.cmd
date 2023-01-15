@@ -1,0 +1,4 @@
+json2puml /definitionfile:swapidefinition.json /inputfile:"data\*.json" /option:full /generatedetails:false /generatesummary:true /titlefilter:"Han Solo" /generateoutputdefinition /debug /detail:hansolo /openoutput:svg
+json2puml /definitionfile:swapidefinition.json /inputfile:"data\*.json" /option:full /generatedetails:false /generatesummary:true /titlefilter:"Death Star" /generateoutputdefinition /debug /detail:deathstar /openoutput:svg
+json2puml /definitionfile:swapidefinition.json /inputfile:"data\*.json" /option:full /generatedetails:true /generatesummary:true /generateoutputdefinition /debug
+	

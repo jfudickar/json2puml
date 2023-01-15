@@ -1,0 +1,19 @@
+{JSON} Placeholder
+Free fake API for testing and prototyping.
+
+Powered by JSON Server + LowDB. Tested with XV. 
+
+Further details: https://jsonplaceholder.typicode.com/
+
+
+This sample contains two directories:
+- datafull
+  This will contain a full set of all available records of the api's
+- datareduced
+  This will contain a reduced set of records which are building a logical combination
+
+In both directories there is a commandfile "getDataFiles" to download the corresponding data using the curl command.
+
+The commandfile "makeplaceholderall.cmd" can be used as an example to generate the files.
+
+"placeholderdefinition.json" is the definition file which is used for converting the data.

@@ -1,0 +1,153 @@
+@startuml
+
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam Padding 3
+
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class Configuration  <<Pivot>> {
+  options : Array Of NamedOption  
+  defaultOption : String
+  baseOption : SingleOption
+  global : GlobalDefinition
+}
+
+class NamedOption {
+    option : String
+    definition : SingleOption
+}
+
+
+
+together {
+class CharacteristicPropertyType
+class CharacteristicProperty
+}
+
+class CharacteristicPropertyType <<Enumeration>> {
+    list
+    record
+}
+
+class CharacteristicProperty {
+    parentProperty : String
+    type : CharacteristicPropertyType
+    nameProperty : String
+    valueProperty : String
+    infoProperty : String
+    includeIndex : Boolean
+}
+
+
+class OutputFormat <<Enumeration>> {
+    pdf
+    png
+    svg
+}
+together {
+class SingleOption
+class OutputFormat
+}
+
+together {
+class CharacteristicProperty
+class CharacteristicPropertyType
+}
+
+class SingleFormat {
+    objectFilter : Array of String
+    iconColor : String
+    skinParams : Array of String
+    captionShowIdent : Boolean
+    captionShowTitle : Boolean
+    captionShowType : Boolean
+    captionSplitCharacter:String
+    captionSplitLength:Integer
+    showAttributes : Boolean
+    showCharacteristics : Boolean
+    showFromRelations : Boolean
+    showIfEmpty : Boolean
+    showToRelations : Boolean
+}
+
+class ObjectFormat {
+    baseFormat : SingleFormat
+    formats : Array of NamedFormat
+}
+
+class NamedFormat {
+    format : String
+    definition: SingleFormat
+}
+
+class PropertyValue {
+    propertyName : String
+    childPropertyName : String
+    nextValueSeparator : String
+}
+
+class SingleOption {
+    continueAfterUnhandledObjects : Boolean
+    identifyObjectsByTypeAndIdent : Boolean
+    groupDetailObjectsTogether : Boolean
+    hideDuplicateRelations : Boolean
+	hideEmptyObjects : Boolean
+    ---
+    pumlHeaderLines : Array of String
+    legendShowFileInfos : Boolean
+    legendShowInfo : Boolean
+    legendShowObjectFormats : Boolean
+    ---
+	outputFormats : Array of OutputFormat
+	outputPath : String
+	outputSuffix : String
+    ---
+	allowedProperties : Array of String
+    groupProperties : Array of string
+    objectProperties : Array of ObjectProperty
+    objectIdentifierProperties : Array of PropertyValue
+	objectTitleProperties : Array of PropertyValue
+	objectTypeProperties : Array of PropertyValue
+    objectDetailProperties : Array of String
+    propertyRenames : Array of String
+    objectIdentifierProperties : Array of String
+    relationshipProperties : Array of String
+    relationshipTypeProperties : Array of PropertyValue
+    characteristicProperties : Array of CharacteristicProperty
+    hiddenProperties : Array of String
+    ---
+    objectFormats : FormatDefinition
+}
+class GlobalDefinition {
+  plantumlJarFile : String
+  javaRuntimeParameter : String
+}
+
+class ObjectProperty {
+    objectName : String
+    generateWithoutIdentifier : Boolean
+}
+Configuration::global -right-> "0..1" GlobalDefinition: "        "
+Configuration::definitions -down-> "0..*" NamedOption: "        "
+Configuration::baseOption --> "0..1" SingleOption
+NamedOption::definition --> "0..1" SingleOption
+SingleOption::outputFormats -left[hidden]-  OutputFormat 
+SingleOption::characteristicProperties --> "0..*" CharacteristicProperty
+SingleOption::objectFormats --> "0..1" ObjectFormat
+SingleOption::objectProperties -left-> "0..*" ObjectProperty: "        "
+SingleOption::objectIdentifierProperties --> "0..*" PropertyValue
+SingleOption::objectTitleProperties --> "0..*" PropertyValue
+SingleOption::objectTypeProperties --> "0..*" PropertyValue
+SingleOption::relationshipTypeProperties -right-> "0..*" PropertyValue
+ObjectFormat::baseFormat -down-> "[0..1]" SingleFormat
+ObjectFormat::formats --> "[0..*]" NamedFormat
+NamedFormat::definition --> "[0..1]" SingleFormat
+@enduml

@@ -1,0 +1,43 @@
+{
+	"option": "product-detail",
+	"definition": {
+		"attributeProperties": {
+			"operation": "replace",
+			"list": [
+				"*"
+			]
+		},
+		"objectProperties": {
+			"operation": "replace",
+			"list": [
+				"product",
+				"productPrice",
+				"customer"
+			]
+		},
+		"objectFormats": {
+			"baseFormat": {
+				"captionShowIdent": "true",
+				"captionShowTitle": "true",
+				"captionShowType": "true",
+				"captionSplitCharacter": "_",
+				"captionSplitLength": "20",
+				"showAttributes": "false",
+				"showCharacteristics": "true",
+				"showFromRelations": "false",
+				"showIfEmpty": "false",
+				"showToRelations": "true"
+			},
+			"formats": [
+				{
+					"formatName": "appliedTax",
+					"definition": {
+						"objectFilter":["appliedTax"],
+						"iconColor": "IndianRed",
+						"skinParams":["BackgroundColor=DarkSalmon"]
+					}
+				}
+			]
+		}
+	}
+}

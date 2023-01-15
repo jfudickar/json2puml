@@ -1,0 +1,72 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{B944C8F6-C318-44C1-AD3C-F804CD3B6664}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="json2pumlui.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="json2puml.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="json2pumlservice.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="json2pumlwindowsservice.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="json2pumlui">
+        <MSBuild Projects="json2pumlui.dproj"/>
+    </Target>
+    <Target Name="json2pumlui:Clean">
+        <MSBuild Projects="json2pumlui.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="json2pumlui:Make">
+        <MSBuild Projects="json2pumlui.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="json2puml">
+        <MSBuild Projects="json2puml.dproj"/>
+    </Target>
+    <Target Name="json2puml:Clean">
+        <MSBuild Projects="json2puml.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="json2puml:Make">
+        <MSBuild Projects="json2puml.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="json2pumlservice">
+        <MSBuild Projects="json2pumlservice.dproj"/>
+    </Target>
+    <Target Name="json2pumlservice:Clean">
+        <MSBuild Projects="json2pumlservice.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="json2pumlservice:Make">
+        <MSBuild Projects="json2pumlservice.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="json2pumlwindowsservice">
+        <MSBuild Projects="json2pumlwindowsservice.dproj"/>
+    </Target>
+    <Target Name="json2pumlwindowsservice:Clean">
+        <MSBuild Projects="json2pumlwindowsservice.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="json2pumlwindowsservice:Make">
+        <MSBuild Projects="json2pumlwindowsservice.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="json2pumlui;json2puml;json2pumlservice;json2pumlwindowsservice"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="json2pumlui:Clean;json2puml:Clean;json2pumlservice:Clean;json2pumlwindowsservice:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="json2pumlui:Make;json2puml:Make;json2pumlservice:Make;json2pumlwindowsservice:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

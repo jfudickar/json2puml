@@ -1,0 +1,997 @@
+{
+  "description": {
+    "displayName": "TMF Converter Definition",
+    "description": "Converter definition file to generate plantuml files for TMF based data files.\nYou can find further informations here:\nhttps://www.tmforum.org/oda/about-open-apis/"
+  },
+  "defaultOption": "default",
+  "options": [
+    {
+      "option": "compact",
+      "definition": {
+        "continueAfterUnhandledObjects": null,
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": {
+          "operation": "replace",
+          "list": [
+            "id",
+            "*name",
+            "status"
+          ]
+        },
+        "objectProperties": [],
+        "objectTypeRenames": [],
+        "objectDetailProperties": [],
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [
+          "contact*"
+        ],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": null,
+            "showFromRelations": null,
+            "showIfEmpty": null,
+            "showToRelations": null
+          }
+        }
+      }
+    },
+    {
+      "option": "core",
+      "definition": {
+        "continueAfterUnhandledObjects": null,
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": {
+          "operation": "replace",
+          "list": [
+            "*"
+          ]
+        },
+        "objectProperties": {
+          "operation": "replace",
+          "list": [
+            "geographicAddress",
+            "product",
+            "individual",
+            "*Party",
+            "paymentMethod",
+            "account",
+            "customer"
+          ]
+        },
+        "objectTypeRenames": [],
+        "objectDetailProperties": [],
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": null,
+            "showFromRelations": null,
+            "showIfEmpty": null,
+            "showToRelations": null
+          }
+        }
+      }
+    },
+    {
+      "option": "default",
+      "definition": {
+        "continueAfterUnhandledObjects": null,
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": [],
+        "objectProperties": [],
+        "objectTypeRenames": [],
+        "objectDetailProperties": [],
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": null,
+            "showFromRelations": null,
+            "showIfEmpty": null,
+            "showToRelations": null
+          }
+        }
+      }
+    },
+    {
+      "option": "detailed",
+      "definition": {
+        "continueAfterUnhandledObjects": null,
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": [
+          "*"
+        ],
+        "objectProperties": [],
+        "objectTypeRenames": [],
+        "objectDetailProperties": [],
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": "true",
+            "showFromRelations": "true",
+            "showIfEmpty": null,
+            "showToRelations": "true"
+          }
+        }
+      }
+    },
+    {
+      "option": "full",
+      "definition": {
+        "continueAfterUnhandledObjects": "true",
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": [
+          "*"
+        ],
+        "objectProperties": {
+          "operation": "replace",
+          "list": [
+            {
+              "objectName": "*",
+              "generateWithoutIdentifier": "true"
+            }
+          ]
+        },
+        "objectTypeRenames": [],
+        "objectDetailProperties": [],
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": "true",
+            "showFromRelations": "true",
+            "showIfEmpty": "true",
+            "showToRelations": "true"
+          }
+        }
+      }
+    },
+    {
+      "option": "product",
+      "definition": {
+        "continueAfterUnhandledObjects": null,
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": {
+          "operation": "replace",
+          "list": [
+            "id",
+            "*name",
+            "status"
+          ]
+        },
+        "objectProperties": {
+          "operation": "replace",
+          "list": [
+            "product",
+            "customer"
+          ]
+        },
+        "objectTypeRenames": [],
+        "objectDetailProperties": {
+          "operation": "replace",
+          "list": []
+        },
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": "false",
+            "showFromRelations": "false",
+            "showIfEmpty": null,
+            "showToRelations": "false"
+          }
+        }
+      }
+    },
+    {
+      "option": "product-detail",
+      "definition": {
+        "continueAfterUnhandledObjects": null,
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": {
+          "operation": "replace",
+          "list": [
+            "*"
+          ]
+        },
+        "objectProperties": {
+          "operation": "replace",
+          "list": [
+            "product",
+            "productPrice",
+            "customer"
+          ]
+        },
+        "objectTypeRenames": [],
+        "objectDetailProperties": {
+          "operation": "replace",
+          "list": []
+        },
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": null,
+            "showFromRelations": null,
+            "showIfEmpty": null,
+            "showToRelations": null
+          }
+        }
+      }
+    },
+    {
+      "option": "relations",
+      "definition": {
+        "continueAfterUnhandledObjects": "true",
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": {
+          "operation": "replace",
+          "list": [
+            "id",
+            "*name",
+            "status"
+          ]
+        },
+        "objectProperties": {
+          "operation": "replace",
+          "list": [
+            {
+              "objectName": "*",
+              "generateWithoutIdentifier": "true"
+            }
+          ]
+        },
+        "objectTypeRenames": [],
+        "objectDetailProperties": [],
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [
+          "appliedTax"
+        ],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": "false",
+            "showFromRelations": "true",
+            "showIfEmpty": "true",
+            "showToRelations": "true"
+          }
+        }
+      }
+    },
+    {
+      "option": "short",
+      "definition": {
+        "continueAfterUnhandledObjects": null,
+        "groupDetailObjectsTogether": null,
+        "hideDuplicateRelations": null,
+        "identifyObjectsByTypeAndIdent": null,
+        "legendShowInfo": null,
+        "legendShowObjectFormats": null,
+        "legendShowFileInfos": null,
+        "outputPath": null,
+        "outputSuffix": null,
+        "outputFormats": [],
+        "attributeProperties": {
+          "operation": "replace",
+          "list": [
+            "id",
+            "*name",
+            "status"
+          ]
+        },
+        "objectProperties": [],
+        "objectTypeRenames": [],
+        "objectDetailProperties": [],
+        "groupProperties": [],
+        "objectIdentifierProperties": [],
+        "relationshipProperties": [],
+        "relationshipTypeProperties": [],
+        "objectTitleProperties": [],
+        "objectTypeProperties": [],
+        "relationshipTypeArrowFormats": [],
+        "hiddenProperties": [
+          "contactMedium.characteristic"
+        ],
+        "pumlHeaderLines": [],
+        "characteristicProperties": [],
+        "objectFormats": {
+          "baseFormat": {
+            "objectFilter": [],
+            "iconColor": null,
+            "skinParams": [],
+            "captionShowIdent": null,
+            "captionShowTitle": null,
+            "captionShowType": null,
+            "captionSplitCharacter": null,
+            "captionSplitLength": null,
+            "showAttributes": null,
+            "showCharacteristics": "false",
+            "showFromRelations": "false",
+            "showIfEmpty": null,
+            "showToRelations": "false"
+          }
+        }
+      }
+    }
+  ],
+  "baseOption": {
+    "continueAfterUnhandledObjects": "false",
+    "groupDetailObjectsTogether": "false",
+    "hideDuplicateRelations": "true",
+    "identifyObjectsByTypeAndIdent": "false",
+    "legendShowInfo": "true",
+    "legendShowObjectFormats": "true",
+    "legendShowFileInfos": "true",
+    "outputPath": "output\\<group>\\<file>\\<option>",
+    "outputSuffix": ".<group>.<option>.<detail>",
+    "outputFormats": [
+      "png",
+      "svg"
+    ],
+    "attributeProperties": [
+      "characteristic.*",
+      "id",
+      "*name",
+      "status",
+      "state",
+      "role",
+      "type",
+      "birthDate",
+      "ratingType",
+      "preferred",
+      "*Type",
+      "*SubType",
+      "value",
+      "mediumType",
+      "@referredType"
+    ],
+    "objectProperties": [
+      "appointment",
+      "troubleTicket",
+      "partyInteraction",
+      "interactionItem",
+      "attachment",
+      "UrbanPropertyAddress",
+      "financialAccount",
+      "billingAccount",
+      "product",
+      "quote",
+      "quoteItem",
+      "productOrder",
+      "productOrderItem",
+      "orderItem",
+      "orderTotalPrice",
+      "productOffering",
+      "agreement",
+      "agreementItem",
+      "paymentMethod",
+      "individual",
+      "organization",
+      "customer",
+      "engagedParty",
+      "relatedParty",
+      "contact",
+      "appliedCustomerBillingRate",
+      "geographicAddress",
+      "account",
+      "party",
+      "customerEntity"
+    ],
+    "objectTypeRenames": [
+      "compositeProduct=product",
+      "defaultPaymentMethod=paymentMethod",
+      "UrbanPropertyAddress=geographicAddress",
+      "place=geographicAddress",
+      "email=contactMedium",
+      "telephone=contactMedium",
+      "postalAddress=contactMedium",
+      "originalaccount=account",
+      "com.amdocs.billing.ms.customerbill.appliedcustomerbillingrate.couchbase.dto.ACBRBillingAccountBillingCycleDTO=appliedCustomerBillingRate",
+      "com.amdocs.digital.ms.geographicaddress.geographicaddressentity.couchbase.dto.GeographicAddressEntityDTO=geographicAddress",
+      "com.amdocs.digital.ms.paymentmethod.paymentmethod.couchbase.dto.PaymentMethodDTO=paymentMethod",
+      "com.amdocs.digital.ms.pi.product.couchbase.dto.ProductDTO=product",
+      "com.amdocs.digital.ms.party.individual.couchbase.dto.OrganisationDTO=organisation",
+      "com.amdocs.digital.ms.party.individual.couchbase.dto.IndividualDTO=individual",
+      "com.amdocs.digital.ms.account.billingaccount.couchbase.dto.BillingAccountDTO=billingAccount",
+      "com.amdocs.digital.ms.customer.customerentity.couchbase.dto.CustomerDTO=customer",
+      "customerEntity=customer"
+    ],
+    "objectDetailProperties": [
+      "contactMedium.characteristic",
+      "contactMedium",
+      "note",
+      "totalBalance",
+      "product.productTerm",
+      "productPrice.*Price",
+      "productPrice.price",
+      "orderItem.itemTerm",
+      "order*Price.*Price",
+      "order*Price.price",
+      "item*Price.*Price",
+      "item*Price.price",
+      "*Price.appliedTax",
+      "billStructure"
+    ],
+    "groupProperties": [],
+    "objectIdentifierProperties": [
+      "id",
+      "referenceId",
+      "com.amdocs.digital.ms.inventoryDomain.productId"
+    ],
+    "relationshipProperties": [
+      "relatedParty",
+      "engagedParty",
+      "productRelationship"
+    ],
+    "relationshipTypeProperties": [
+      "role",
+      "type",
+      "relationshipType",
+      "characteristic.contactType",
+      "contactMedium.mediumType"
+    ],
+    "objectTitleProperties": [
+      "fullName",
+      "name",
+      "characteristic.contactType",
+      "contactMedium.mediumType"
+    ],
+    "objectTypeProperties": [
+      "refType",
+      "externalIdentifierType",
+      "@referredType",
+      "@type",
+      "deserializationType"
+    ],
+    "relationshipTypeArrowFormats": [
+      "relatedparty=[dotted]",
+      "relatedparty.customer=[#blue,dotted]",
+      "relatedparty.individual=[#lightgrey,dotted]",
+      "relatedparty.organisation=[#grey,dotted]",
+      "engagedparty=[dotted]",
+      "engagedparty.individual=[#lightgrey,dotted]",
+      "engagedparty.organisation=[#grey,dotted]",
+      "productrelationship=[dashed]",
+      "productrelationship.dependson=[#blue,dashed]",
+      "productrelationship.commercialrelation=[#gold,dashed]",
+      "productrelationship.subscriptionrelation=[#green,dashed]",
+      "productrelationship.orderitem=[#orange,dashed]"
+    ],
+    "hiddenProperties": [
+      "characteristicMetadata",
+      "href",
+      "@referredType",
+      "engagedParty.type",
+      "relatedParty.role",
+      "relatedParty.validFor",
+      "relatedParty.@referredType",
+      "originalResource"
+    ],
+    "pumlHeaderLines": [
+      "hide stereotype",
+      "'left to right direction",
+      "'skinparam linetype polyline",
+      "'skinparam linetype ortho",
+      "skinparam HeaderFontSize 18",
+      "skinparam FooterFontSize 18"
+    ],
+    "characteristicProperties": [
+      {
+        "parentProperty": "characteristic",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "value"
+      },
+      {
+        "parentProperty": "productCharacteristic",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "value"
+      },
+      {
+        "parentProperty": "metadata",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "value",
+        "infoProperty": "metadataType"
+      },
+      {
+        "parentProperty": "modifyReason",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "action"
+      },
+      {
+        "parentProperty": "stateDate",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "effectiveDate"
+      },
+      {
+        "parentProperty": "businessActivity",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "effectiveDate"
+      },
+      {
+        "parentProperty": "details",
+        "type": "record"
+      },
+      {
+        "parentProperty": "extensions",
+        "type": "record"
+      },
+      {
+        "parentProperty": "size",
+        "type": "record"
+      },
+      {
+        "parentProperty": "interactionDate",
+        "type": "record"
+      },
+      {
+        "parentProperty": "itemDate",
+        "type": "record"
+      },
+      {
+        "parentProperty": "validFor",
+        "type": "record"
+      },
+      {
+        "parentProperty": "channel",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "id"
+      },
+      {
+        "parentProperty": "productOfferingCharacteristic",
+        "type": "list",
+        "nameProperty": "name",
+        "valueProperty": "value"
+      },
+      {
+        "parentProperty": "tax*Amount",
+        "type": "record"
+      },
+      {
+        "parentProperty": "exemptAmount",
+        "type": "record"
+      },
+      {
+        "parentProperty": "dutyFreeAmount",
+        "type": "record"
+      },
+      {
+        "parentProperty": "duration",
+        "type": "record"
+      },
+      {
+        "parentProperty": "quantity",
+        "type": "record"
+      },
+      {
+        "parentProperty": "amount",
+        "type": "record"
+      },
+      {
+        "parentProperty": "presentationMedia",
+        "type": "record"
+      },
+      {
+        "parentProperty": "format",
+        "type": "record"
+      },
+      {
+        "parentProperty": "cycleSpecification",
+        "type": "record"
+      },
+      {
+        "parentProperty": "billStructure",
+        "type": "record"
+      },
+      {
+        "parentProperty": "externalIdentifier",
+        "type": "list",
+        "nameProperty": "externalIdentifierType",
+        "valueProperty": "id",
+        "infoProperty": "owner"
+      },
+      {
+        "parentProperty": "product.externalIdentifier",
+        "type": "list",
+        "nameProperty": "type",
+        "valueProperty": "id"
+      }
+    ],
+    "objectFormats": {
+      "baseFormat": {
+        "objectFilter": [],
+        "iconColor": null,
+        "skinParams": [
+          "BackgroundColor=STRATEGY"
+        ],
+        "captionShowIdent": "true",
+        "captionShowTitle": "true",
+        "captionShowType": "true",
+        "captionSplitCharacter": "_",
+        "captionSplitLength": "20",
+        "showAttributes": "true",
+        "showCharacteristics": "true",
+        "showFromRelations": "false",
+        "showIfEmpty": "false",
+        "showToRelations": "false"
+      },
+      "formats": [
+        {
+          "formatName": "partyInteraction",
+          "definition": {
+            "objectFilter": [
+              "partyInteraction",
+              "interactionItem",
+              "attachment"
+            ],
+            "iconColor": "blue",
+            "skinParams": [
+              "BackgroundColor=dodgerBlue"
+            ]
+          }
+        },
+        {
+          "formatName": "troubleTicket",
+          "definition": {
+            "objectFilter": [
+              "troubleTicket",
+              "appointment",
+              "calenderEvent",
+              "workorder"
+            ],
+            "iconColor": "Cornflowerblue",
+            "skinParams": [
+              "BackgroundColor=deepskyBlue"
+            ]
+          }
+        },
+        {
+          "formatName": "productOffering",
+          "definition": {
+            "objectFilter": [
+              "productOffering"
+            ],
+            "iconColor": "IndianRed",
+            "skinParams": [
+              "BackgroundColor=DarkSalmon"
+            ]
+          }
+        },
+        {
+          "formatName": "productOrder",
+          "definition": {
+            "objectFilter": [
+              "productOrder",
+              "orderItem",
+              "item*Price",
+              "itemTerm",
+              "quote",
+              "quoteItem",
+              "orderTotalPrice"
+            ],
+            "iconColor": "DarkGreen",
+            "skinParams": [
+              "BackgroundColor=Lime"
+            ]
+          }
+        },
+        {
+          "formatName": "product",
+          "definition": {
+            "objectFilter": [
+              "product*",
+              "Price",
+              "appliedCustomerBillingRate"
+            ],
+            "iconColor": "Green",
+            "skinParams": [
+              "BackgroundColor=LightGreen"
+            ]
+          }
+        },
+        {
+          "formatName": "customer",
+          "definition": {
+            "objectFilter": [
+              "customer"
+            ],
+            "iconColor": "red",
+            "skinParams": [
+              "BackgroundColor=orangered"
+            ]
+          }
+        },
+        {
+          "formatName": "agreement",
+          "definition": {
+            "objectFilter": [
+              "agreement",
+              "agreementItem",
+              "commitment"
+            ],
+            "iconColor": "Crimson",
+            "skinParams": [
+              "BackgroundColor=red"
+            ]
+          }
+        },
+        {
+          "formatName": "contact",
+          "definition": {
+            "objectFilter": [
+              "contact*"
+            ],
+            "iconColor": "DeepSkyBlue",
+            "skinParams": [
+              "BackgroundColor=LightSkyBlue"
+            ]
+          }
+        },
+        {
+          "formatName": "geographicAddress",
+          "definition": {
+            "objectFilter": [
+              "geographicAddress",
+              "geographicSubAddress",
+              "UrbanPropertyAddress",
+              "place"
+            ],
+            "iconColor": "darkcyan",
+            "skinParams": [
+              "BackgroundColor=cyan"
+            ]
+          }
+        },
+        {
+          "formatName": "account",
+          "definition": {
+            "objectFilter": [
+              "financialAccount",
+              "billingAccount",
+              "billStructure",
+              "account"
+            ],
+            "iconColor": "purple",
+            "skinParams": [
+              "BackgroundColor=plum"
+            ]
+          }
+        },
+        {
+          "formatName": "paymentMethod",
+          "definition": {
+            "objectFilter": [
+              "paymentMethod"
+            ],
+            "iconColor": "orange",
+            "skinParams": [
+              "BackgroundColor=orange"
+            ]
+          }
+        },
+        {
+          "formatName": "party",
+          "definition": {
+            "objectFilter": [
+              "party",
+              "relatedParty",
+              "engagedParty",
+              "organization",
+              "individual"
+            ],
+            "iconColor": "grey",
+            "skinParams": [
+              "BackgroundColor=lightgrey"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+	"definitionFile": "",
+	"inputListFile": "placeholderinputlistreduced.json",
+	"generateSummary": "true",
+	"generateDetails": "false",
+	"outputFormats": "svg,log,json,puml",
+	"option": "default",
+	"curlParameter": [
+			{
+				"${id}": "1"
+			}
+	]
+}

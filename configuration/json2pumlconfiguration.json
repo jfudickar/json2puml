@@ -1,0 +1,19 @@
+{
+	"baseOutputPath": "e:\\Delphi\\Projects\\json2puml\\output\\",
+	"outputPath": "<job>\\<group>\\<file>",
+	"curlAuthenticationFileName": "e:\\Delphi\\Projects\\json2puml\\configuration\\",
+	"defaultDefinitionFileName": null,
+	"defaultDefinitionFileFolder": [
+		"e:\\Delphi\\Projects\\json2puml\\definition\\",
+		"e:\\Delphi\\Projects\\json2puml\\samples\\tmf\\*definition*.json",
+		"e:\\Delphi\\Projects\\json2puml\\samples\\jsonplaceholder\\*definition*.json"
+	],
+	"defaultInputListFileFolder": [
+		"e:\\Delphi\\Projects\\json2puml\\samples\\curl\\*inputlist*.json",
+		"e:\\Delphi\\Projects\\json2puml\\samples\\jsonplaceholder\\*inputlist*.json"
+	],
+	"javaRuntimeParameter": null,
+	"logFileOutputPath": "e:\\Delphi\\Projects\\json2puml\\logs\\",
+	"plantUmlJarFileName": null,
+	"servicePort": "9090"
+}

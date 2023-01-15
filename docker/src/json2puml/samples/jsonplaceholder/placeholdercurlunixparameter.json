@@ -1,0 +1,13 @@
+{
+	"definitionFile": "placeholderdefinition.json",
+	"inputListFile": "placeholderinputlistcurlunix.json",
+	"generateSummary": "true",
+	"generateDetails": "false",
+	"outputFormats": "svg,log,json,puml,zip",
+	"option": "default",
+	"curlParameter": [
+			{
+				"${id}": "1"
+			}
+	]
+}

@@ -1,0 +1,55 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class OutputFormat <<Enumeration>> {
+    pdf
+    png
+    svg
+}
+
+class InfolistFile  <<Pivot>> {
+  generateDetails : Boolean 
+  generateSummary : Boolean
+  --
+  group : String
+  detail : String
+  option : String
+  --
+  outputFormats : Array of OutputFormat 
+  outputPath : String
+  outputSuffix : String
+  summaryFileName : String
+  --
+  curlBaseUrl : String
+  curlUrlAddon : String 
+  curlOptions : String
+  --
+  input : Array of SingleListFile
+}
+
+
+class SingleListFile {
+    inputFile : String
+    leadingObject : String
+    curlBaseUrl : String
+    curlUrl : String
+	curlCache : Integer
+    curlOptions: String
+	curlOutputParameter : <AnyRecord>
+	generateOutput : Boolean
+    splitIdentifier : String
+    splitInputFile : String
+}
+
+InfolistFile::input --> SingleListFile
+
+@enduml

@@ -1,0 +1,243 @@
+openapi: '3.0.2'
+info:
+  title: json2puml API
+  description: |-
+    This is the api interface to an json2puml curl execcution server. 
+
+    It could be used to execute a json2puml list definition file. 
+    The results will be returned as a list of files.
+
+  contact:
+    email: jens.fudickar@oratool.de
+  version: '1.0'
+servers:
+  - url: https://api.server.test/v1
+paths:
+  /definitionfile:
+    get:
+      description: 'Returns a list of all available definition files'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DefinitionFileResponse'
+  /inputlistfile:
+    get:
+      description: 'Returns a list of all available input list files'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InputListFileResponse'          
+    
+  /json2pumlRequest:
+    post:
+      description: 'Execute a json2puml curl and generation call'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Json2PumlRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Json2PumlResponse'          
+  /json2pumlRequestSimple:
+    post:
+      description: 'Execute a json2puml curl and generation call'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Json2PumlRequest'
+      responses:
+        '200':
+          description: Successful operation, returns the generated SVG file
+          content:
+            image/*:
+              schema: 
+                type: string
+                format: binary
+components:
+  schemas:
+    InputListFileResponse:
+      type: object
+      description: Definition of a file which will be returned by get /inputlistfile or get /definitionfile
+      properties:
+        name:
+          type: string
+          example: simplelistfile
+          description: Name of the listfile which can be used in the POST /json2pumlRequest parameters
+        displayName:
+          type: string
+          example: Json Placeholder Input List File using Curl
+          description: Optional display value which can be shown in a UI to make it better readable
+        description:
+          type: string
+          example: This file contains a set of filedefinitions which are using curl to fetch the data from https://jsonplaceholder.typicode.com/
+          description: Optional description of the of the input list file
+        definitionFile:
+          $ref: '#/components/schemas/DefinitionFileResponse'  
+          description: Details of the definition file which is defined in the input list file. When the definition file is not defined in the input list file it must be implicitly defined in the POST /json2pumlRequest parameters
+        curlParameter:
+          type: array
+          items:
+            $ref: '#/components/schemas/InputListFileParameter' 
+          description: List of parameters which can be defined when calling a curl based list file generation
+    InputListFileParameter:
+      type: object
+      description: Parameter definition of the optional curl parameters which can be defined when handling the InputListFile
+      properties:
+        name:
+          type: string
+          description: Name of the curl parameter
+          example: customer_number
+        displayName: 
+          type: string
+          description: Optional display value which can be shown in a UI to make it better readable
+          example: Customer Number
+        description:
+          type: string
+          description: Optional description of the parameter
+          example: The curstomer number to search for
+        mandatory:
+          type: boolean
+          description: Flag to describe if the curl parameter is optional or mandatory
+        regularExpression:
+          type: string
+          description: Optional regular expression which could be used by a UI to validate the curl parameters
+          example: 10[0-9]{10}
+      required:
+        - name
+    DefinitionFileResponse:
+      type: object
+      description: Definition of a converter definition file 
+      properties:
+        name:
+          type: string
+          example: jsonplaceholderdefinition.json
+        displayName:
+          type: string
+          example: JsonPlaceHolder Definition File
+        description:
+          type: string
+          example: Definition file to handle and convert JsonPlaceHolder based data files.
+        options:
+          type: array
+          description: List of options defined by the definition file
+          items:
+            type : string
+            example: 
+            - full
+            - default
+            - core
+    Json2PumlRequest:
+      type: object
+      properties:
+        definitionFile:
+          type: string
+          example: placeholderdefinition.json
+        inputFiles:
+          type: array
+          items:       
+            type: object
+            properties:
+              fileName:
+                type: string
+                example: users.json
+              leadingObject:
+                type: string
+                example: user
+              content:
+                type: object
+                description: Json structure to be interpreted
+            required:
+              - fileName
+              - leadingObject
+              - content
+        inputlistFile:
+          type: string
+          example: placeholderinputlistreduced.json
+        curlParameter:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: ID
+              value:
+                type: string
+                example: 1
+        option: 
+          type: string
+          example: full, default, core
+        generateDetails: 
+          type: boolean
+        generateSummary: 
+          type: boolean
+        outputFormats:
+          type: array
+          description: List of file formats to be calculated
+          items:
+            type: string
+            enum:
+              - svg
+              - png
+              - pdf
+              - json
+              - puml
+            example:
+            - svg
+            - png
+      required:
+        - definitionFile
+    Json2PumlResponse:
+      type: object
+      properties:
+        summaryfile:
+          $ref: '#/components/schemas/GeneratedOutputFile'
+        detailfiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeneratedOutputFile'
+          
+    OutputFile:
+      type: object
+      properties:
+        filename:
+          type: string
+        content:  
+          type: string
+    GeneratedOutputFile:
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/OutputFile'
+        curlcommand:
+          type: string    
+        pdfFile:
+          $ref: '#/components/schemas/OutputFile'
+        pngFile:
+          $ref: '#/components/schemas/OutputFile'
+        svgFile:
+          $ref: '#/components/schemas/OutputFile'
+        pumlfFile:
+          $ref: '#/components/schemas/OutputFile'
+
+        
+
+  

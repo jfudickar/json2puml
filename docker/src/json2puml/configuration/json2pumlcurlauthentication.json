@@ -1,0 +1,15 @@
+[
+		{
+			"baseUrl": "https://apigee-xtest03.hub.citt.connect-vf.de",
+			"parameter": [
+					{
+						"${authentication}": "jens"
+					}
+			]
+		},
+		{
+			"baseUrl": "https://jsonplaceholder.typicode.com",
+			"parameter": [
+			]
+		}
+]

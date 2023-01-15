@@ -1,0 +1,15 @@
+[
+		{
+			"baseUrl": "${Json2PumlTMFServer}",
+			"parameter": [
+					{
+						"${authentication}": "${Json2PumlTMFAuthentication}"
+					}
+			]
+		},
+		{
+			"baseUrl": "https://jsonplaceholder.typicode.com",
+			"parameter": [
+			]
+		}
+]

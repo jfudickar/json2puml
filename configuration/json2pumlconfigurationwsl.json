@@ -1,0 +1,17 @@
+{
+ "baseOutputPath": "~/json2puml/output",
+ "outputPath": "<job>/<group>/<file>",
+ "curlAuthenticationFileName": "~/json2puml/configuration/json2pumlcurlauthentication.json",
+ "defaultDefinitionFileName": null,
+ "defaultDefinitionFileFolder": [
+  "~/json2puml/definition"
+ ],
+ "defaultInputListFileFolder": [
+  "~/json2puml/inputlist",
+  "~/json2puml/samples/jsonplaceholder/*inputlist*.json"
+ ],
+ "javaRuntimeParameter": null,
+ "logFileOutputPath": "~/json2puml/logs",
+ "plantUmlJarFileName": "~/json2puml/plantuml/plantuml-1.2022.12.jar",
+ "servicePort": "9090"
+}
