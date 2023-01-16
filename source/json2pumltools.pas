@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumltools;
 
@@ -40,9 +40,9 @@ procedure ClearLastLineComma (oJsonOutPut: TStrings);
 
 function ClearPropertyValue (iValue: string): string;
 
-function ExecuteCurl(const iBaseUrl, iUrl, iOptions, iOutputFile: string; iCurlAuthenticationList:
-    tJson2PumlCurlAuthenticationList; iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList;
-    iCurlCache: Integer): Boolean;
+function ExecuteCurl (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
+  iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
 
 function FileCount (iFileFilter: string): Integer;
 
@@ -430,15 +430,17 @@ var
 begin
 
   Result := '';
-  if iUrl.Trim.isEmpty then
+  if (iBaseUrl + iUrl).Trim.isEmpty then
     Exit;
 
   if iBaseUrl.Trim.isEmpty then
     url := iUrl.Trim.TrimLeft (['/'])
+  else if iUrl.Trim.isEmpty then
+    url := iBaseUrl.Trim
   else
     url := Format ('%s/%s', [iBaseUrl.Trim.TrimRight(['/']), iUrl.Trim.TrimLeft(['/'])]);
 
-  Command := Format ('%s --url "%s" --output "%s" ', [iOptions.Trim, url, iOutputFile]);
+  Command := Format ('%s --url "%s" --output "%s"', [iOptions.Trim, url, iOutputFile]);
 
   if Assigned (iCurlDetailParameterList) then
     Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
@@ -446,6 +448,57 @@ begin
     Command := iCurlParameterList.ReplaceParameterValues (Command);
 
   Result := Command;
+end;
+
+function GetCurlResultFromOutputFile (iOutputFileName, iResultFileName: string; var oErrorMessage: string): Boolean;
+var
+  sl: tStringList;
+  i: Integer;
+  vResponseCode, vExitCode, vErrorMessage: string;
+begin
+  Result := False;
+  vResponseCode := '';
+  vExitCode := '';
+  vErrorMessage := '';
+  oErrorMessage := '';
+  if not iResultFileName.isEmpty then
+  begin
+    if not FileExists (iResultFileName) then
+    begin
+      oErrorMessage := Format ('Resultfile "%s" not generated.', [iOutputFileName]);
+      Exit;
+    end;
+
+    sl := tStringList.Create;
+    try
+      sl.LoadFromFile (iResultFileName);
+      if sl.Count >= 3 then
+      begin
+        vResponseCode := sl[sl.Count - 3].Trim;
+        vExitCode := sl[sl.Count - 2].Trim;
+        vErrorMessage := sl[sl.Count - 1].Trim;
+      end
+      else
+      begin
+        oErrorMessage := Format ('Invalid curl resultfile "%s" (too less number of lines).', [iResultFileName]);
+        Exit;
+      end;
+    finally
+      sl.Free;
+    end;
+    if vExitCode <> '0' then
+      oErrorMessage := Format ('curl command failed : (%s) : %s', [vExitCode, vErrorMessage])
+    else if vResponseCode <> '200' then
+      if vErrorMessage.isEmpty then
+        oErrorMessage := Format ('Invalid HTTP Response : %s', [vResponseCode])
+      else
+        oErrorMessage := Format ('Invalid HTTP Response : %s - %s', [vResponseCode, vErrorMessage]);
+  end;
+
+  if not FileExists (iOutputFileName) and oErrorMessage.isEmpty then
+    oErrorMessage := Format ('Outputfile "%s" not generated.', [iOutputFileName]);
+
+  Result := oErrorMessage.isEmpty;
 end;
 
 procedure ClearLastLineComma (oJsonOutPut: TStrings);
@@ -506,7 +559,7 @@ var
   Command: string;
   DestinationFile: string;
 begin
-  Result := false;
+  Result := False;
   if not FileExists (iPlantUmlFile) then
     Exit;
   if not iFormat.IsPumlOutput then
@@ -586,9 +639,9 @@ begin
       Result[i] := iReplaceWith;
 end;
 
-function ExecuteCurl(const iBaseUrl, iUrl, iOptions, iOutputFile: string; iCurlAuthenticationList:
-    tJson2PumlCurlAuthenticationList; iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList;
-    iCurlCache: Integer): Boolean;
+function ExecuteCurl (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
+  iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
 var
   url: string;
   ProtocolCommand: string;
@@ -597,10 +650,12 @@ var
   Authentication: tJson2PumlCurlAuthenticationDefinition;
   FileLastWriteDate: tDateTime;
   StartTime: tDateTime;
+  vErrorMessage: string;
+  CurlResultFile: string;
 begin
 
-  Result := false;
-  if iUrl.Trim.isEmpty then
+  Result := False;
+  if (iBaseUrl + iUrl).Trim.isEmpty then
     Exit;
   if iOutputFile.Trim.isEmpty then
     Exit;
@@ -609,6 +664,13 @@ begin
     iCurlDetailParameterList);
   if ProtocolCommand.isEmpty then
     Exit;
+
+//  CurlResultFile := tPath.ChangeExtension (iOutputFile, cCurlOutputExtension);
+//  ProtocolCommand := Format ('%s --write-out "%s" >"%s"',
+//    [ProtocolCommand, '%{response_code}\n%{exitcode}\n%{errormsg}', CurlResultFile]);
+  ProtocolCommand := Format ('%s --write-out "%s" ',
+    [ProtocolCommand, '%{response_code}\n%{exitcode}\n%{errormsg}']);
+
   url := iUrl;
   if Assigned (iCurlDetailParameterList) then
     url := iCurlDetailParameterList.ReplaceParameterValues (url);
@@ -640,45 +702,25 @@ begin
     end;
   end;
 
-
+  if FileExists (iOutputFile) then
+    tFile.Delete (iOutputFile);
+  if FileExists (CurlResultFile) then
+    tFile.Delete (CurlResultFile);
   StartTime := Now;
-  Result := ExecuteCommandWithOutput ('curl ' + Command, ProtocolCommand);
-  // Result := ExecuteCommand ('curl', Command);
+  ExecuteCommandWithOutput ('curl ' + Command, ProtocolCommand);
+  Result := GetCurlResultFromOutputFile (iOutputFile, CurlResultFile, vErrorMessage);
   if Result then
-  begin
-    Result := FileExists (iOutputFile);
-    if Result then
-      GlobalLoghandler.Info ('  curl "%s/%s" fetched to "%s" (%d ms)',
-        [iBaseUrl.Trim.TrimRight(['/']), url.Trim.TrimLeft(['/']), iOutputFile, MillisecondsBetween(Now, StartTime)])
-    else
-      GlobalLoghandler.Warn ('WARNING: Fetching from %s/%s for "%s" FAILED - File not generated (%d ms)',
-        [iBaseUrl.Trim.TrimRight(['/']), url.Trim.TrimLeft(['/']), iOutputFile, MillisecondsBetween(Now, StartTime)]);
-  end
+    GlobalLoghandler.Info ('  curl "%s/%s" fetched to "%s" (%d ms)',
+      [iBaseUrl.Trim.TrimRight(['/']), url.Trim.TrimLeft(['/']), iOutputFile, MillisecondsBetween(Now, StartTime)])
   else
   begin
-    GlobalLoghandler.Warn ('WARNING: Fetching from %s/%s for "%s" FAILED (%d ms)',
-      [iBaseUrl.Trim.TrimRight(['/']), url.Trim.TrimLeft(['/']), iOutputFile, MillisecondsBetween(Now, StartTime)]);
+    GlobalLoghandler.Warn ('Fetching from %s/%s for "%s" FAILED - File not generated (%d ms) [%s]',
+      [iBaseUrl.Trim.TrimRight(['/']), url.Trim.TrimLeft(['/']), iOutputFile, MillisecondsBetween(Now, StartTime),
+      vErrorMessage]);
   end;
+  if FileExists (CurlResultFile) then
+    tFile.Delete (CurlResultFile);
 end;
-
-// function CalculateOutputFilename (iFileName, iOutputPath, iOutputSuffix, iOption, iGroup, iDetail,
-// iNewExtension: string): string;
-// var
-// FilePath: string;
-// begin
-// FilePath := CalculateOutputDirectory (iFileName, iOutputPath, iOption, iGroup, iDetail);
-// if iNewExtension.isEmpty then
-// iNewExtension := tPath.GetExtension (iFileName).TrimLeft (['.']);
-// iFileName := tPath.GetFileNameWithoutExtension (iFileName);
-// if not iOutputSuffix.isEmpty then
-// iFileName := iFileName + ReplaceFileNameVariables (iOutputSuffix, iFileName, iOption, iGroup, iDetail);
-// if iNewExtension.isEmpty then
-// iFileName := iFileName
-// else
-// iFileName := iFileName + '.' + iNewExtension;
-// iFileName := ReplaceInvalidFileNameChars (iFileName);
-// Result := PathCombine (FilePath, iFileName);
-// end;
 
 procedure GenerateDirectory (const iDirectory: string);
 begin
@@ -762,7 +804,7 @@ end;
 function IsRelativePath (iPath: string): Boolean;
 begin
   if IsLinuxHomeBasedPath (iPath) then
-    Result := false
+    Result := False
   else
     Result := tPath.IsRelativePath (iPath);
 end;
@@ -772,7 +814,7 @@ begin
 {$IFDEF LINUX}
   Result := iPath.StartsWith (cLinuxHome);
 {$ELSE}
-  Result := false;
+  Result := False;
 {$ENDIF}
 end;
 
@@ -786,7 +828,7 @@ var
   M: TMarshaller;
 
 begin
-  Result := false;
+  Result := False;
   if not Assigned (ResultList) then
     ResultList := tStringList.Create;
   try
@@ -813,7 +855,7 @@ var
   M: TMarshaller;
 
 begin
-  Result := false;
+  Result := False;
   try
     Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
     try
@@ -834,7 +876,7 @@ class function TLinuxUtils.findParameter (AParameter: string): Boolean;
 var
   i: Integer;
 begin
-  Result := false;
+  Result := False;
   for i := 0 to Pred(ParamCount) do
   begin
     Result := AParameter.ToUpper = ParamStr (i).ToUpper;
@@ -870,9 +912,9 @@ begin
         if ConfigFile.IsValid then
         begin
           if iInputList then
-            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, false)
+            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False)
           else
-            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, false);
+            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False);
           Inc (Result);
         end;
       finally

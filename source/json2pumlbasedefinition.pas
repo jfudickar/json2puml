@@ -88,7 +88,7 @@ type
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; overload; virtual;
     function ReadFromJsonFile (iFileName: string): boolean; virtual;
     function ReplaceValueFromEnvironment (iValue: string): string;
-    function SaveToFile (iJsonLines: TStrings; iFileName: string): boolean;
+    function SaveToFile(iJsonLines: TStrings; iFileName: string; iWriteEmpty: boolean = false): boolean;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); virtual;
     procedure WriteToJsonFile (iFileName: string; iWriteEmpty: boolean = false); virtual;
@@ -138,7 +138,6 @@ type
     function IndexOf (S: string): Integer;
     function IndexOfName (S: string): Integer;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; overload; override;
-    function SaveToFile (iJsonLines: TStrings; iFileName: string): boolean;
     procedure Sort;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
@@ -458,13 +457,14 @@ begin
   Result := Value;
 end;
 
-function tJson2PumlBaseObject.SaveToFile (iJsonLines: TStrings; iFileName: string): boolean;
+function tJson2PumlBaseObject.SaveToFile(iJsonLines: TStrings; iFileName: string; iWriteEmpty: boolean = false):
+    boolean;
 begin
   Result := ReadFromJson (iJsonLines.Text, SourceFileName);
   if Result then
   begin
     TFile.copy (iFileName, iFileName + '.bak', true);
-    WriteToJsonFile (iFileName);
+    WriteToJsonFile (iFileName, iWriteEmpty);
     iJsonLines.LoadFromFile (iFileName);
     SourceFileName := iFileName;
   end;
@@ -720,18 +720,6 @@ begin
       exit;
     ItemList.Add (Value);
   end
-end;
-
-function tJson2PumlBaseList.SaveToFile (iJsonLines: TStrings; iFileName: string): boolean;
-begin
-  Result := ReadFromJson (iJsonLines.Text, SourceFileName);
-  if Result then
-  begin
-    TFile.copy (iFileName, iFileName + '.bak', true);
-    WriteToJsonFile (iFileName);
-    iJsonLines.LoadFromFile (iFileName);
-    SourceFileName := iFileName;
-  end;
 end;
 
 procedure tJson2PumlBaseList.SetDuplicates (const Value: TDuplicates);

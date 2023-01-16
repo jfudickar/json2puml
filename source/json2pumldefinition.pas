@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumldefinition;
 
@@ -265,6 +265,7 @@ type
     procedure GetCurlParameterFromFile (iCurlOutputParameter, iCurlParameterList: tJson2PumlCurlParameterList);
     procedure HandleCurl (const iBaseUrl: string; iUrlAddon: string; const iOptions: string;
       iExecuteCurlParameterList, ioResultCurlParameterList: tJson2PumlCurlParameterList);
+    function HasValidCurl: boolean;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
     procedure WriteToJsonOutputFile (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -665,6 +666,7 @@ type
     procedure GetParameterNameList (ioNameList: tStringList; const iValueString: string);
     function ParameterValueCount (iParameterName: string): Integer;
     function ReplaceParameterValues (iValueString: string): string;
+    function ReplaceParameterValuesFileName (iFileName: string): string;
     property Parameter[index: Integer]: tJson2PumlCurlParameterDefinition read GetParameter; default;
   published
     property MulitpleValues: boolean read FMulitpleValues write FMulitpleValues default false;
@@ -833,7 +835,7 @@ procedure tJson2PumlInputFileDefinition.ExpandFileNameWithCurlParameter (iCurlPa
   : tJson2PumlCurlParameterList);
 begin
   if Assigned (iCurlParameterList) then
-    OutputFileName := iCurlParameterList.ReplaceParameterValues (OutputFileName);
+    OutputFileName := iCurlParameterList.ReplaceParameterValuesFileName (OutputFileName);
 end;
 
 function tJson2PumlInputFileDefinition.GetCurlBaseUrlDecoded: string;
@@ -930,7 +932,7 @@ procedure tJson2PumlInputFileDefinition.HandleCurl (const iBaseUrl: string; iUrl
 var
   BaseUrl: string;
 begin
-  if CurlUrl.Trim.IsEmpty then
+  if not HasValidCurl then
     exit;
   if CurlBaseUrl.Trim.IsEmpty then
     BaseUrl := iBaseUrl
@@ -944,8 +946,15 @@ begin
   begin
     if CurlFormatOutput then
       FormatJsonFile (OutputFileName);
-  end;
-  GetCurlParameterFromFile (CurlOutputParameter, ioResultCurlParameterList);
+    GetCurlParameterFromFile (CurlOutputParameter, ioResultCurlParameterList);
+  end
+  else
+    GenerateOutput := False;
+end;
+
+function tJson2PumlInputFileDefinition.HasValidCurl: boolean;
+begin
+  Result := not (CurlBaseUrl + CurlUrl).Trim.IsEmpty;
 end;
 
 procedure tJson2PumlInputFileDefinition.SetCurlFormatOutputStr (const Value: string);
@@ -1209,7 +1218,7 @@ begin
           [InputFile.OutputFileName, ExpandFileName(InputFile.OutputFileName)]);
       Continue;
     end;
-    FileName := CurlParameterList.ReplaceParameterValues (InputFile.InputFileNameExpanded);
+    FileName := CurlParameterList.ReplaceParameterValuesFileName (InputFile.InputFileNameExpanded);
     NewPath := ExtractFilePath (FileName);
     if findfirst (FileName, faAnyFile, searchResult) = 0 then
     begin
@@ -1247,7 +1256,7 @@ var
   i: Integer;
 begin
   Result := false;
-  if iCurrentInputFile.CurlUrl.IsEmpty then
+  if not iCurrentInputFile.HasValidCurl then
     exit;
   Result := true;
   CurlParameterMatrix := tJson2PumlCurlFileParameterListMatrix.Create;
@@ -1386,7 +1395,7 @@ begin
       InputFile.AddFilesToZipFile (ZipFile, ExtractFilePath(iZipfileName));
     end;
     ZipFile.Close;
-    GlobalLogHandler.Info('Summary Zip File %s generated.', [iZipfileName]);
+    GlobalLoghandler.Info ('Summary Zip File %s generated.', [iZipfileName]);
   finally
     ZipFile.Free;
   end;
@@ -1904,8 +1913,8 @@ begin
   for i := 1 to ParamCount do
     S := S + ParamStr (i) + ' ';
   GlobalLoghandler.Info ('Current command line parameters: (%s)', [S]);
-//  for i := 1 to ParamCount do
-//    GlobalLoghandler.Debug ('  [%d]: %s', [i, ParamStr(i)]);
+  // for i := 1 to ParamCount do
+  // GlobalLoghandler.Debug ('  [%d]: %s', [i, ParamStr(i)]);
   ConfigurationFileName := ReadSingleInputParameterFile ('configurationfile');
   ConfigurationFileNameEnvironment := ReadSingleInputParameterEnvironment (cConfigurationFileRegistry);
   ParameterFileName := ReadSingleInputParameterFile ('parameterfile');
@@ -2666,6 +2675,15 @@ begin
     Result := StringReplace (Result, CurlParameter.name, CurlParameter.ValueDecoded, [rfReplaceAll, rfIgnoreCase]);
 end;
 
+function tJson2PumlCurlParameterList.ReplaceParameterValuesFileName (iFileName: string): string;
+var
+  CurlParameter: tJson2PumlCurlParameterDefinition;
+begin
+  Result := iFileName;
+  for CurlParameter in self do
+    Result := StringReplace (Result, CurlParameter.name, ReplaceInvalidFileNameChars (CurlParameter.ValueDecoded), [rfReplaceAll, rfIgnoreCase]);
+end;
+
 constructor tJson2PumlCurlFileParameterListMatrix.Create;
 begin
   inherited Create;
@@ -2736,8 +2754,6 @@ begin
       iCurrentRow.AddParameter (TempList.Parameter[i]);
       FillRows (iCurrentRow, iDepth + 1);
       iCurrentRow.Delete (iCurrentRow.Count - 1);
-      if i > 2 then
-        break;
     end;
   end
   else
@@ -3214,7 +3230,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'displayName', DisplayName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'description', Description, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'mandatory', Mandatory, iLevel + 1);
-  WriteToJsonValue (oJsonOutPut, 'regularExpression', RegularExpression, iLevel + 1);
+  WriteToJsonValue (oJsonOutPut, 'regularExpression', RegularExpression, iLevel + 1, iWriteEmpty);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 

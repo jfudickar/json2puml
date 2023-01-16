@@ -708,7 +708,9 @@ end;
 function tPumlObject.GetShowObject: boolean;
 var
   r: tPumlObjectRelationship;
+  Cnt : Integer;
 begin
+  Cnt := 0;
   Result := Filtered;
   // If not filtered then the filled status can be ignored
   if Result then
@@ -717,9 +719,13 @@ begin
     if not Result then
       for r in Relations do
       begin
-        Result := r.RelatedObjectFilled or FormatDefinition.ShowIfEmpty;
-        if Result then
+        if r.RelatedObjectFilled then
+          Cnt := Cnt + 1;
+        if Cnt > 1 then
+        begin
+          Result := true;
           Exit;
+        end;
       end;
   end;
 end;

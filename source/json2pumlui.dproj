@@ -77,28 +77,30 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.0.52;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.1.53;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <VerInfo_Build>52</VerInfo_Build>
+        <VerInfo_Build>53</VerInfo_Build>
         <UWP_DelphiLogo44>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo150>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;dxPSPrVwRibbonRS25;dxRibbonCustomizationFormRS25;vclactnband;dxChartControlRS25;vclFireDAC;cxExportRS25;dxHttpIndyRequestRS25;tethering;dxPScxCommonRS25;cxGridEMFRS25;FireDACADSDriver;cxPivotGridOLAPRS25;cxSchedulerGridRS25;vcltouch;vcldb;Intraweb;dxGaugeControlRS25;cxLibraryRS25;vclib;dxFlowChartAdvancedCustomizeFormRS25;vclx;dxSpreadSheetConditionalFormattingDialogsRS25;dxTileControlRS25;dxMapControlRS25;dxPDFViewerRS25;dxDockingRS25;VCLRESTComponents;dxPSLnksRS25;dxWizardControlRS25;dxRichEditControlRS25;vclie;bindengine;dxFireDACServerModeRS25;FireDACMySQLDriver;dxPSdxPDFViewerLnkRS25;bindcompdbx;dxPSdxLCLnkRS25;IndyIPServer;dxGanttControlRS25;IndySystem;dsnapcon;dxPSRichEditControlLnkRS25;FireDACMSAccDriver;fmxFireDAC;vclimg;dxdbtrRS25;dxPScxTLLnkRS25;dxSpreadSheetRS25;dxPScxSchedulerLnkRS25;FMXTee;cxGridRS25;dxSpreadSheetCoreConditionalFormattingDialogsRS25;DbxCommonDriver;dxorgcRS25;dxCloudServiceLibraryRS25;xmlrtl;fmxobj;dxPScxGridLnkRS25;rtl;DbxClientDriver;dxPSCoreRS25;dxmdsRS25;appanalytics;IndyIPClient;bindcompvcl;dxADOEMFRS25;TeeUI;VclSmp;cxVerticalGridRS25;dxtrmdRS25;dxADOServerModeRS25;dxCoreRS25;cxSchedulerTreeBrowserRS25;DBXInterBaseDriver;dxRichEditControlCoreRS25;dxPSTeeChartRS25;dxPSdxFCLnkRS25;dxRichEditCoreRS25;cxPageControldxBarPopupMenuRS25;bindcompfmx;inetdb;FmxTeeUI;fmx;fmxdae;dxPScxPivotGridLnkRS25;dxBarDBNavRS25;dxTabbedMDIRS25;dbexpress;IndyCore;dxFlowChartRS25;dxRichEditDocumentModelRS25;dsnap;dxBarRS25;dxPSDBTeeChartRS25;dxdborRS25;dxPScxExtCommonRS25;cxPivotGridRS25;dxSpreadSheetReportDesignerRS25;dxNavBarRS25;dxPSdxSpreadSheetLnkRS25;cxSchedulerRibbonStyleEventEditorRS25;DBXMySQLDriver;FireDACCommonODBC;cxTreeListRS25;IndyIPCommon;vcl;dxPScxVGridLnkRS25;dxBarExtItemsRS25;dxComnRS25;dxPSdxDBTVLnkRS25;TeeDB;dxSpreadSheetCoreRS25;dxServerModeRS25;dxPScxPCProdRS25;dxFlowChartLayoutsRS25;FireDACPgDriver;ibmonitor;dxEMFRS25;ibxpress;Tee;ibxbindings;dxPsPrVwAdvRS25;vclwinx;cxTreeListdxBarPopupMenuRS25;CustomIPTransport;vcldsnap;cxSchedulerWebServiceStorageRS25;dxPSdxOCLnkRS25;bindcomp;cxPivotGridChartRS25;cxSchedulerRS25;dxBarExtDBItemsRS25;dxOrgChartAdvancedCustomizeFormRS25;dxDBXServerModeRS25;dxFireDACEMFRS25;dxGDIPlusRS25;dxPSdxGaugeControlLnkRS25;dbxcds;adortl;dxPSdxDBOCLnkRS25;dxRibbonRS25;dsnapxml;dxSpellCheckerRS25;dbrtl;inetdbxpress;IndyProtocols;dxFlowChartDesignerRS25;dxPSdxMapControlLnkRS25;fmxase;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.0.52;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.1.53;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <VerInfo_Build>52</VerInfo_Build>
+        <VerInfo_Build>53</VerInfo_Build>
         <UWP_DelphiLogo44>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo150>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -110,28 +112,30 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.0.52;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4;LastCompiledTime=2022-06-26 23:48:42</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.1.53;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4;LastCompiledTime=2022-06-26 23:48:42</VerInfo_Keys>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Build>52</VerInfo_Build>
+        <VerInfo_Build>53</VerInfo_Build>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <UWP_DelphiLogo44>..\documentation\icons\json2puml-icon.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml-icon.png</UWP_DelphiLogo150>
         <Debugger_CWD>e:\Delphi\Projects\json2puml\</Debugger_CWD>
         <Debugger_RunParams> /parameterfile:samples\acrmcurlparameter.json /debug  </Debugger_RunParams>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Build>52</VerInfo_Build>
+        <VerInfo_Build>53</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Debugger_RunParams>/definitionfile:samples\tmf\tmfdefinition.json /inputfile:samples\curl\datacdh\100000009858\individual_100000009858.json /option:core /leadingobject:individual</Debugger_RunParams>
+        <Debugger_RunParams>/parameterfile:samples\swapi\swapi_parameter_film_vehicles.json /curlparameter:id=2</Debugger_RunParams>
         <Debugger_CWD>e:\Delphi\Projects\json2puml\</Debugger_CWD>
-        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.0.52;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.1.53;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
         <UWP_DelphiLogo44>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo44>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo150>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -142,16 +146,18 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitor</AppDPIAwarenessMode>
-        <VerInfo_Build>52</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.0.52;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
+        <VerInfo_Build>53</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.1.53;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Build>52</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.0.52;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
+        <VerInfo_Build>53</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.1.53;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.4</VerInfo_Keys>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Release>1</VerInfo_Release>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">

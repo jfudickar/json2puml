@@ -63,9 +63,11 @@ const
 
   cDefaultJsonFileFilter = '*.json';
 
+  cCurlOutputExtension = 'curl.output';
+
   cLinuxHome = '~';
 
-  cCurrentVersion = '1.4.15.51';
+  cCurrentVersion = '2.0.1.53';
 
   JSON2PUML_EVENTTYPENAMES : TEventTypeNames = ['','INFO    ','SUCCESS ','WARNING ','ERROR   ','CRITICAL','EXCEPT  ','DEBUG   ','TRACE   ','DONE    ','CUSTOM1 ','CUSTOM2 '];
 

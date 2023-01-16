@@ -1034,7 +1034,7 @@ end;
 
 procedure Tjson2pumlMainForm.SaveDefinitionFile;
 begin
-  if not InputHandler.ConverterDefinitionGroup.SaveToFile (DefinitionLines, InputHandler.CurrentDefinitionFileName) then
+  if not InputHandler.ConverterDefinitionGroup.SaveToFile (DefinitionLines, InputHandler.CurrentDefinitionFileName, true) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
@@ -1045,13 +1045,13 @@ end;
 
 procedure Tjson2pumlMainForm.SaveInputListFile;
 begin
-  if not InputHandler.ConverterInputList.SaveToFile (InputListLines, InputHandler.CurrentInputListFileName) then
+  if not InputHandler.ConverterInputList.SaveToFile (InputListLines, InputHandler.CurrentInputListFileName , true) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
 procedure Tjson2pumlMainForm.SaveOptionFile;
 begin
-  if not InputHandler.OptionFileDefinition.SaveToFile (OptionFileLines, InputHandler.CmdLineParameter.OptionFileName)
+  if not InputHandler.OptionFileDefinition.SaveToFile (OptionFileLines, InputHandler.CmdLineParameter.OptionFileName, true)
   then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
@@ -1059,21 +1059,21 @@ end;
 procedure Tjson2pumlMainForm.SaveAuthenticationFile;
 begin
   if not InputHandler.CurlAuthenticationList.SaveToFile (CurlAuthenticationFileLines,
-    InputHandler.CmdLineParameter.CurlAuthenticationFileName) then
+    InputHandler.CmdLineParameter.CurlAuthenticationFileName, true) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
 procedure Tjson2pumlMainForm.SaveCurlParameterActionExecute (Sender: TObject);
 begin
   if not InputHandler.CurlParameterList.SaveToFile (CurlParameterFileLines,
-    InputHandler.CmdLineParameter.CurlParameterFileName) then
+    InputHandler.CmdLineParameter.CurlParameterFileName, true) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
 procedure Tjson2pumlMainForm.SaveParameterFile;
 begin
   if not InputHandler.ParameterDefinition.SaveToFile (ParameterFileLines,
-    InputHandler.CmdLineParameter.ParameterFileName) then
+    InputHandler.CmdLineParameter.ParameterFileName, true) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 

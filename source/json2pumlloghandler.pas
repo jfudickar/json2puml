@@ -116,7 +116,7 @@ begin
   GlobalLogConsoleProvider.Enabled := iAllowsConsole;
 
 
-  if not TDirectory.Exists(iLogFilePath) then
+  if not TDirectory.Exists(iLogFilePath) and not (iLogFilePath.IsEmpty) then
     TDirectory.CreateDirectory(iLogFilePath);
 
   // Configure file provider options
