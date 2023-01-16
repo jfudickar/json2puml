@@ -60,10 +60,9 @@ Source: "..\documentation\json2puml.yaml"; DestDir: "{app}\documentation"; Flags
 Source: "{tmp}\{#plantumljarfile}"; DestDir: "{app}\plantuml"; Flags: external; Tasks: downloadPlantUml
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: "..\samples\swapi\*.txt"; DestDir: "{app}\samples\swapi"; Components: Samples
 Source: "..\samples\swapi\*.json"; DestDir: "{app}\samples\swapi"; Components: Samples
 Source: "..\samples\swapi\*.cmd"; DestDir: "{app}\samples\swapi"; Components: Samples
-Source: "..\samples\swapi\data\*.cmd"; DestDir: "{app}\samples\swapi\data"; Components: Samples
+Source: "..\samples\swapi\*.md"; DestDir: "{app}\samples\swapi"; Components: Samples
 Source: "..\samples\jsonplaceholder\*.txt"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
 Source: "..\samples\jsonplaceholder\*.json"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
 Source: "..\samples\jsonplaceholder\*.cmd"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples

@@ -1,5 +1,7 @@
-#**installation** folder
+# **installation** folder
+
 This folder contains all scripts needed to build installation pacakages.
+
 The installer for windows is based on InnoSetup (https://jrsoftware.org/isinfo.php)
 
 - compile_all.cmd : Calls delphi commandline interface to compile the project group

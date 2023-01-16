@@ -1,2 +1,2 @@
 call compile_all.cmd
-call build_stup.cmd
+call build_setup.cmd
