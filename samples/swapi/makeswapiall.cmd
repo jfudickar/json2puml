@@ -1,4 +1,4 @@
-json2puml /definitionfile:swapidefinition.json /inputfile:"data\*.json" /option:full /generatedetails:false /generatesummary:true /titlefilter:"Han Solo" /generateoutputdefinition /debug /detail:hansolo /openoutput:svg
-json2puml /definitionfile:swapidefinition.json /inputfile:"data\*.json" /option:full /generatedetails:false /generatesummary:true /titlefilter:"Death Star" /generateoutputdefinition /debug /detail:deathstar /openoutput:svg
-json2puml /definitionfile:swapidefinition.json /inputfile:"data\*.json" /option:full /generatedetails:true /generatesummary:true /generateoutputdefinition /debug
-	
+json2puml /parameterfile:swapi_parameter_film_characters.json /curlparameter:id=1
+json2puml /parameterfile:swapi_parameter_film_characters.json /curlparameter:id=2
+json2puml /parameterfile:swapi_parameter_film_vehicles.json /curlparameter:id=1
+json2puml /parameterfile:swapi_parameter_film_vehicles.json /curlparameter:id=2

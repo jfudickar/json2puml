@@ -1,0 +1,9 @@
+{
+  "inputListFile": "swapi_inputlist_film_vehicles.json",
+  "generateSummary": "true",
+  "generateDetails": "false",
+  "outputFormats": "svg,log,json,puml,zip",
+  "option": "default",
+  "curlParameter": [
+  ]
+}

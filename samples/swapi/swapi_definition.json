@@ -1,0 +1,462 @@
+{
+	"description": {
+		"displayName": null,
+		"description": null
+	},
+	"defaultOption": "default",
+	"options":  [
+			{
+				"option": "compact",
+				"definition": {
+					"continueAfterUnhandledObjects": null,
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties": {
+						"operation": "replace",
+						"list":  [
+								"id",
+								"*name",
+								"status"
+						]
+					},
+					"objectProperties":  [
+					],
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": null,
+							"showToRelations": null
+						}
+					}
+				}
+			},
+			{
+				"option": "detailed",
+				"definition": {
+					"continueAfterUnhandledObjects": null,
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties":  [
+							"*"
+					],
+					"objectProperties":  [
+					],
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": null,
+							"showToRelations": null
+						}
+					}
+				}
+			},
+			{
+				"option": "full",
+				"definition": {
+					"continueAfterUnhandledObjects": "true",
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties":  [
+							"*"
+					],
+					"objectProperties": {
+						"operation": "replace",
+						"list":  [
+								{"objectName": "*","generateWithoutIdentifier": "true"}
+						]
+					},
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": "true",
+							"showToRelations": null
+						}
+					}
+				}
+			},
+			{
+				"option": "relations",
+				"definition": {
+					"continueAfterUnhandledObjects": "true",
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties": {
+						"operation": "replace",
+						"list":  [
+								"id",
+								"*name",
+								"status"
+						]
+					},
+					"objectProperties": {
+						"operation": "replace",
+						"list":  [
+								{"objectName": "*","generateWithoutIdentifier": "true"}
+						]
+					},
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": null,
+							"showToRelations": null
+						}
+					}
+				}
+			},
+			{
+				"option": "short",
+				"definition": {
+					"continueAfterUnhandledObjects": null,
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties": {
+						"operation": "replace",
+						"list":  [
+								"id",
+								"*name",
+								"status"
+						]
+					},
+					"objectProperties":  [
+					],
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": null,
+							"showToRelations": null
+						}
+					}
+				}
+			}
+	],
+	"baseOption": {
+		"continueAfterUnhandledObjects": "false",
+		"groupDetailObjectsTogether": null,
+		"hideDuplicateRelations": null,
+		"identifyObjectsByTypeAndIdent": "false",
+		"legendShowInfo": null,
+		"legendShowObjectFormats": null,
+		"legendShowFileInfos": null,
+		"outputFormats":["png","svg"],
+		"attributeProperties":  [
+				"*"
+		],
+		"objectProperties":  [
+				"*"
+		],
+		"objectTypeRenames":  [
+				"characters=people",
+				"pilots=people",
+				"residents=people",
+				"*/people/*=people",
+				"*/films/*=films",
+				"*/species/*=species",
+				"*/planets/*=planets",
+				"*/vehicles/*=vehicles",
+				"*/starships/*=starships"
+		],
+		"objectDetailProperties":  [
+		],
+		"groupProperties":  [
+		],
+		"objectIdentifierProperties":  [
+				"url"
+		],
+		"relationshipProperties":  [
+				"films",
+				"pilots",
+				"vehicles",
+				"characters",
+				"planets",
+				"starships",
+				"species",
+				"residents"
+		],
+		"relationshipTypeProperties":  [
+		],
+		"objectTitleProperties":  [
+				"title",
+				"name"
+		],
+		"objectTypeProperties":  [
+				"url"
+		],
+		"relationshipTypeArrowFormats":  [
+		],
+		"hiddenProperties":  [
+				"opening_crawl"
+		],
+		"pumlHeaderLines":  [
+				"hide stereotype"
+		],
+		"characteristicProperties":  [
+		],
+		"objectFormats": {
+			"baseFormat": {
+				"objectFilter": [],
+				"iconColor": null,
+				"skinParams": ["BackgroundColor=STRATEGY"],
+				"captionShowIdent": "false",
+				"captionShowTitle": "true",
+				"captionShowType": "true",
+				"captionSplitCharacter": "_",
+				"captionSplitLength": "0",
+				"showAttributes": "true",
+				"showCharacteristics": "true",
+				"showFromRelations": "true",
+				"showIfEmpty": "false",
+				"showToRelations": "true"
+			},
+			"formats":  [
+					{
+						"formatName": "films",
+						"definition": {
+							"objectFilter": ["films"],
+							"iconColor": "IndianRed",
+							"skinParams": ["BackgroundColor=DarkSalmon"]
+						}
+					},
+					{
+						"formatName": "vehicles",
+						"definition": {
+							"objectFilter": ["vehicles"],
+							"iconColor": "red",
+							"skinParams": ["BackgroundColor=orangered"]
+						}
+					},
+					{
+						"formatName": "species",
+						"definition": {
+							"objectFilter": ["species"],
+							"iconColor": "Crimson",
+							"skinParams": ["BackgroundColor=red"]
+						}
+					},
+					{
+						"formatName": "planets",
+						"definition": {
+							"objectFilter": ["planets"],
+							"iconColor": "DeepSkyBlue",
+							"skinParams": ["BackgroundColor=LightSkyBlue"]
+						}
+					},
+					{
+						"formatName": "people",
+						"definition": {
+							"objectFilter": [
+								"characters",
+								"residents",
+								"pilots",
+								"people"
+							],
+							"iconColor": "purple",
+							"skinParams": ["BackgroundColor=plum"]
+						}
+					},
+					{
+						"formatName": "starships",
+						"definition": {
+							"objectFilter": ["starships"],
+							"iconColor": "orange",
+							"skinParams": ["BackgroundColor=orange"]
+						}
+					}
+			]
+		}
+	}
+}

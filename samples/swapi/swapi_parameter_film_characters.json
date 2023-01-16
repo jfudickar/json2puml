@@ -1,0 +1,9 @@
+{
+  "inputListFile": "swapi_inputlist_film_characters.json",
+  "generateSummary": "true",
+  "generateDetails": "true",
+  "outputFormats": "svg,log,json,puml,zip",
+  "option": "default",
+  "curlParameter": [
+  ]
+}

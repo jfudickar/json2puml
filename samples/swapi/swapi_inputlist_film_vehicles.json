@@ -1,0 +1,82 @@
+{
+	"description": {
+		"displayName": "SWAPI Film Character List",
+		"description": "This example is based on the SWAPI API (\"https://swapi.dev\").\nIt delivers a defined film with the starships and vehicles of the film.",
+		"curlParameter":  [
+				{
+					"name": "${id}",
+					"displayName": "Film ID",
+					"description": "Primary id of the film",
+					"mandatory": "true",
+					"regularExpression": null
+				}
+		]
+	},
+	"definitionFile": "swapi_definition.json",
+	"generateDetails": null,
+	"generateSummary": null,
+	"group": null,
+	"detail": null,
+	"option": null,
+	"job": null,
+	"outputFormats":["svg"],
+	"outputPath": null,
+	"outputSuffix": null,
+	"curlBaseUrl": null,
+	"curlUrlAddon": null,
+	"curlOptions": null,
+	"summaryFile": "${title}",
+	"input":  [
+			{
+				"inputFile": "films.json",
+				"leadingObject": "films",
+				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
+				"curlFormatOutput": "true",
+				"curlUrl": null,
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+						{
+							"${starships}": "starships"
+						},
+						{
+							"${title}": "title"
+						},
+						{
+							"${vehicles}": "vehicles"
+						}
+				]
+			},
+			{
+				"inputFile": "vehicles_${vehicles}.json",
+				"leadingObject": "vehicles",
+				"curlBaseUrl": "${vehicles}",
+				"curlFormatOutput": "true",
+				"curlUrl": null,
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			},
+			{
+				"inputFile": "starships_${starships}.json",
+				"leadingObject": "starships",
+				"curlBaseUrl": "${starships}",
+				"curlFormatOutput": "true",
+				"curlUrl": null,
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			}
+	]
+}

@@ -1,0 +1,82 @@
+{
+	"description": {
+		"displayName": "SWAPI Film Character List",
+		"description": "This example is based on the SWAPI API (\"https://swapi.dev\").\nIt delivers a defined film with the characters of the film and the homeworld details of the characters.",
+		"curlParameter":  [
+				{
+					"name": "${id}",
+					"displayName": "Film ID",
+					"description": "Primary id of the film",
+					"mandatory": "true",
+					"regularExpression": null
+				}
+		]
+	},
+	"definitionFile": "swapi_definition.json",
+	"generateDetails": null,
+	"generateSummary": null,
+	"group": null,
+	"detail": null,
+	"option": null,
+	"job": null,
+	"outputFormats":["svg"],
+	"outputPath": null,
+	"outputSuffix": null,
+	"curlBaseUrl": null,
+	"curlUrlAddon": null,
+	"curlOptions": null,
+	"summaryFile": "${title}",
+	"input":  [
+			{
+				"inputFile": "films.json",
+				"leadingObject": "films",
+				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
+				"curlFormatOutput": "true",
+				"curlUrl": null,
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+						{
+							"${characters}": "characters"
+						},
+						{
+							"${title}": "title"
+						}
+				]
+			},
+			{
+				"inputFile": "characters_${characters}.json",
+				"leadingObject": "characters",
+				"curlBaseUrl": "${characters}",
+				"curlFormatOutput": "true",
+				"curlUrl": null,
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+						{
+							"${planets}": "homeworld"
+						}
+				]
+			},
+			{
+				"inputFile": "planets_${planets}.json",
+				"leadingObject": "planets",
+				"curlBaseUrl": "${planets}",
+				"curlFormatOutput": "true",
+				"curlUrl": null,
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			}
+	]
+}
