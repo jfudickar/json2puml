@@ -1,4 +1,5 @@
-#**Documentation** folder
+# **Documentation** folder
+
 This folder contains different to document the solution
 
 - icons\ : Folder with images and icons used for various pruposes
