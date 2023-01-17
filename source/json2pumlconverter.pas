@@ -100,7 +100,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Convert;
+    function Convert: Boolean;
     procedure GeneratePumlLegend (iUsedFormats: TStrings);
     property LeadingObject: string read FLeadingObject write FLeadingObject;
   published
@@ -682,16 +682,19 @@ begin
   inherited Destroy;
 end;
 
-procedure TJson2PumlConverter.Convert;
+function TJson2PumlConverter.Convert: Boolean;
 var
   jValue: TJSONValue;
   InfoRec: tJson2PumlRecursionRecord;
 begin
+  Result := False;
   Puml.Clear;
   PumlRelationShips.Clear;
   PumlObjects.Clear;
   PumlObjects.ConverterDefinition := Definition;
   PumlObjects.InputFilter := InputFilter;
+  if FileExists(PumlFile) then
+    tFile.Delete(PumlFile);
 
   jValue := TJsonObject.ParseJSONValue (JsonInput.Text);
   if not Assigned (jValue) then
@@ -712,6 +715,7 @@ begin
     InfoRec.ObjectLevel := 0;
     ConvertValue (jValue, InfoRec, trpStart);
     GeneratePuml;
+    Result:= True;
   end;
 end;
 

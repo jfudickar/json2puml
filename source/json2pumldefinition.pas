@@ -232,6 +232,7 @@ type
     FCurlUrl: string;
     FGenerateOutput: boolean;
     FInputFileName: string;
+    FIsConverted: Boolean;
     FIsGenerated: boolean;
     FLeadingObject: string;
     FOriginal: boolean;
@@ -280,6 +281,7 @@ type
     property Exists: boolean read GetExists;
     property ExtractedOutputFileName: string read GetExtractedOutputFileName;
     property InputFileNameExpanded: string read GetInputFileNameExpanded;
+    property IsConverted: Boolean read FIsConverted write FIsConverted;
     property IsGenerated: boolean read FIsGenerated write FIsGenerated;
     property IsSplitFile: boolean read GetIsSplitFile write SetIsSplitFile;
     property IsSummaryFile: boolean read GetIsSummaryFile write SetIsSummaryFile;
@@ -786,6 +788,7 @@ begin
   FCurlOutputParameter := tJson2PumlCurlParameterList.Create ();
   FOutput := tJson2PumlFileOutputDefinition.Create ();
   FIsGenerated := false;
+  FIsConverted := False;
 end;
 
 destructor tJson2PumlInputFileDefinition.Destroy;
@@ -940,6 +943,7 @@ begin
   else
     BaseUrl := CurlBaseUrlDecoded;
   ExpandFileNameWithCurlParameter (iExecuteCurlParameterList);
+  ExpandFileNameWithCurlParameter (ioResultCurlParameterList);
   CurlCommand := tCurlUtils.CalculateCommand (tCurlUtils.FullUrl(BaseUrl, CurlUrl.Trim + iUrlAddon.Trim,
     iExecuteCurlParameterList, ioResultCurlParameterList), iOptions.Trim + ' ' + CurlOptions.Trim, OutputFileName,
     iExecuteCurlParameterList, ioResultCurlParameterList);

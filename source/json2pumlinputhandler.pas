@@ -148,7 +148,7 @@ type
   protected
     procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
-    function CalculateOutputFileName (iSourceFileName: string; iOutputFormat: tJson2PumlOutputFormat): string;
+    function CalculateOutputFileName(iSourceFileName: string; iOutputFormat: tJson2PumlOutputFormat): string;
     function CalculateOutputFileNamePath (iSourceFileName: string; iOutputFormat: tJson2PumlOutputFormat): string;
     function CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
     function CalculateZipFileName: string;
@@ -480,8 +480,8 @@ begin
   Result := ReplaceInvalidPathChars (Result);
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileName (iSourceFileName: string;
-  iOutputFormat: tJson2PumlOutputFormat): string;
+function TJson2PumlInputHandler.CalculateOutputFileName(iSourceFileName: string; iOutputFormat:
+    tJson2PumlOutputFormat): string;
 var
   Filename: string;
   Option: string;
@@ -495,8 +495,8 @@ begin
   Suffix := ReplaceFileNameVariables (CurrentOutputSuffix, iSourceFileName, Option);
   if (not Suffix.IsEmpty) and (Suffix <> tpath.ExtensionSeparatorChar) then
     Filename := Filename + Suffix;
+  Filename := ReplaceFileNameVariables (FileName, '', Option);
   Filename := CurlParameterList.ReplaceParameterValues (Filename);
-  Filename := ReplaceFileNameVariables (Filename, iSourceFileName, Option);
   Filename := Filename + iOutputFormat.FileExtension (true);
   Filename := ReplaceInvalidFileNameChars (Filename);
   Result := Filename;
@@ -513,13 +513,11 @@ begin
   else
     Option := CurrentOption;
   Filename := CalculateOutputFileName (iSourceFileName, iOutputFormat);
-
   Result := CurrentFullOutputPath;
-  Result := CurlParameterList.ReplaceParameterValues (Result);
   Result := ReplaceFileNameVariables (Result, Filename, Option);
+  Result := CurlParameterList.ReplaceParameterValues (Result);
   Result := ReplaceInvalidPathChars (Result);
   Result := PathCombine (Result, Filename);
-
 end;
 
 function TJson2PumlInputHandler.CalculateRuntimeJarFile: string;
@@ -575,8 +573,8 @@ begin
   i := Result.IndexOf (jfnrFile.ToString);
   if i >= 0 then
     Result := Result.SubString (0, i - 1);
-  Result := CurlParameterList.ReplaceParameterValues (Result);
   Result := ReplaceFileNameVariables (Result, Filename, Option);
+  Result := CurlParameterList.ReplaceParameterValues (Result);
   Result := ReplaceInvalidPathChars (Result);
   Result := PathCombine (Result, Filename);
 end;
@@ -624,16 +622,20 @@ begin
         if i <> iIndex then
           Continue;
       SingleRecord := self[i];
+
       SingleRecord.ConverterLog.Clear;
       OutputFormats := GetCurrentOutputFormats (CurrentConverterDefinition);
-      // if not SingleRecord.InputFile.Original then // to prevent double adding of output suffix
-      // OutputFile := tpath.ChangeExtension (SingleRecord.InputFile.OutputFileName, jofPUML.FileExtension)
-      // OutputFile := CalculateOutputFileNamePath (SingleRecord.InputFile.InputFileName, jofPUML)
-      // else
+      SingleRecord.InputFile.IsConverted := False;
+      if not SingleRecord.InputFile.GenerateOutput then
+        Continue;
+
+      SingleRecord.InputFile.OutputFileName := CurlParameterList.ReplaceParameterValuesFileName(SingleRecord.InputFile.OutputFileName);
       OutputFile := CalculateOutputFileNamePath (SingleRecord.InputFile.OutputFileName, jofPUML);
       GenerateFileDirectory (OutputFile);
+
       if SingleRecord.InputFile.IsSummaryFile then
         BuildSummaryFile (SingleRecord);
+
       GlobalLoghandler.Info ('[%3d/%3d] Convert %s', [i + 1, HandlerRecordList.Count,
         SingleRecord.InputFile.OutputFileName]);
       GlobalLoghandler.Info ('               to %s', [OutputFile]);
@@ -643,8 +645,10 @@ begin
       Converter.InputHandlerRecord := SingleRecord;
       Converter.Definition := CurrentConverterDefinition;
       Converter.PumlFile := OutputFile;
-      Converter.Convert;
+      if not Converter.Convert then
+        Continue;
       GlobalLoghandler.Info ('               %-4s generated', ['puml']);
+
       if CmdLineParameter.GenerateOutputDefinition then
         CurrentConverterDefinition.WriteToJsonFile (ChangeFileExt(OutputFile, '.definition.json'), true);
       if CmdLineParameter.Debug then
@@ -654,6 +658,7 @@ begin
       end;
       if SingleRecord.PUmlOutput.Text <> '' then
       begin
+        SingleRecord.InputFile.IsConverted := False;
         SingleRecord.InputFile.Output.PUmlFileName := OutputFile;
         SingleRecord.PUmlOutput.SaveToFile (SingleRecord.InputFile.Output.PUmlFileName);
         if GenerateOutputsFromPuml (SingleRecord.InputFile.Output.PUmlFileName, JarFile, CurrentJavaRuntimeParameter,
