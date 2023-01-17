@@ -263,8 +263,8 @@ type
     procedure DeleteGeneratedFiles;
     procedure ExpandFileNameWithCurlParameter (iCurlParameterList: tJson2PumlCurlParameterList);
     procedure GetCurlParameterFromFile (iCurlOutputParameter, iCurlParameterList: tJson2PumlCurlParameterList);
-    procedure HandleCurl (const iBaseUrl: string; iUrlAddon: string; const iOptions: string;
-      iExecuteCurlParameterList, ioResultCurlParameterList: tJson2PumlCurlParameterList);
+    function HandleCurl (const iBaseUrl: string; iUrlAddon: string; const iOptions: string;
+      iExecuteCurlParameterList, ioResultCurlParameterList: tJson2PumlCurlParameterList): boolean;
     function HasValidCurl: boolean;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
@@ -445,7 +445,7 @@ type
     destructor Destroy; override;
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     function AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr, iSplitIdentifier,
-      iCurlCommand: string; iIsSplitFile, iIsSummaryFile, iIsGenerated: boolean)
+      iCurlCommand: string; iIsSplitFile, iIsSummaryFile, iIsGenerated, iGenerateOutput: boolean)
       : tJson2PumlInputFileDefinition; overload;
     function AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr, iSplitIdentifier,
       iCurlBaseUrl, iCurlUrl, iCurlOptions: string; iCurlCache: Integer; iCurlFormatOutputStr: string;
@@ -927,11 +927,12 @@ begin
   Result := StringToBoolean (SplitInputFileStr, false);
 end;
 
-procedure tJson2PumlInputFileDefinition.HandleCurl (const iBaseUrl: string; iUrlAddon: string; const iOptions: string;
-  iExecuteCurlParameterList, ioResultCurlParameterList: tJson2PumlCurlParameterList);
+function tJson2PumlInputFileDefinition.HandleCurl (const iBaseUrl: string; iUrlAddon: string; const iOptions: string;
+  iExecuteCurlParameterList, ioResultCurlParameterList: tJson2PumlCurlParameterList): boolean;
 var
   BaseUrl: string;
 begin
+  Result := false;
   if not HasValidCurl then
     exit;
   if CurlBaseUrl.Trim.IsEmpty then
@@ -939,17 +940,17 @@ begin
   else
     BaseUrl := CurlBaseUrlDecoded;
   ExpandFileNameWithCurlParameter (iExecuteCurlParameterList);
-  CurlCommand := CalculateCurlCommand (BaseUrl, CurlUrl.Trim + iUrlAddon.Trim, iOptions.Trim + ' ' + CurlOptions.Trim,
-    OutputFileName, iExecuteCurlParameterList, ioResultCurlParameterList);
-  if ExecuteCurl (BaseUrl, CurlUrl.Trim + iUrlAddon.Trim, iOptions.Trim + ' ' + CurlOptions.Trim, OutputFileName,
+  CurlCommand := tCurlUtils.CalculateCommand (tCurlUtils.FullUrl(BaseUrl, CurlUrl.Trim + iUrlAddon.Trim,
+    iExecuteCurlParameterList, ioResultCurlParameterList), iOptions.Trim + ' ' + CurlOptions.Trim, OutputFileName,
+    iExecuteCurlParameterList, ioResultCurlParameterList);
+  if tCurlUtils.Execute (BaseUrl, CurlUrl.Trim + iUrlAddon.Trim, iOptions.Trim + ' ' + CurlOptions.Trim, OutputFileName,
     CurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache) then
   begin
+    Result := true;
     if CurlFormatOutput then
       FormatJsonFile (OutputFileName);
     GetCurlParameterFromFile (CurlOutputParameter, ioResultCurlParameterList);
-  end
-  else
-    GenerateOutput := False;
+  end;
 end;
 
 function tJson2PumlInputFileDefinition.HasValidCurl: boolean;
@@ -1072,7 +1073,7 @@ begin
 end;
 
 function tJson2PumlInputList.AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
-  iSplitIdentifier, iCurlCommand: string; iIsSplitFile, iIsSummaryFile, iIsGenerated: boolean)
+  iSplitIdentifier, iCurlCommand: string; iIsSplitFile, iIsSummaryFile, iIsGenerated, iGenerateOutput: boolean)
   : tJson2PumlInputFileDefinition;
 var
   NewInputFile: tJson2PumlInputFileDefinition;
@@ -1093,7 +1094,7 @@ begin
   NewInputFile.CurlCache := 0;
   NewInputFile.Original := false;
   NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
-  NewInputFile.GenerateOutput := true;
+  NewInputFile.GenerateOutput := iGenerateOutput;
   NewInputFile.CurlCommand := iCurlCommand;
   NewInputFile.IsGenerated := iIsGenerated;
   NewInputFile.IsSplitFile := iIsSplitFile;
@@ -1137,7 +1138,7 @@ var
   InputFile: tJson2PumlInputFileDefinition;
   FileDefinition: tJson2PumlInputFileDefinition;
 begin
-  FileDefinition := AddInputFile (iFileName, iFileName, '', '', '', '', false, true, true);
+  FileDefinition := AddInputFile (iFileName, iFileName, '', '', '', '', false, true, true, true);
   for InputFile in self do
   begin
     if not InputFile.GenerateOutput then
@@ -1229,7 +1230,7 @@ begin
         else
           FileName := ChangeFilePath (searchResult.name, NewPath);
         AddInputFile (FileName, FileName, InputFile.LeadingObject, InputFile.SplitInputFileStr,
-          InputFile.SplitIdentifier, '', false, false, false);
+          InputFile.SplitIdentifier, '', false, false, false, true);
         GlobalLoghandler.Debug ('File "%s" (%s) found.', [FileName, ExpandFileName(FileName)]);
       until FindNext (searchResult) <> 0;
       System.SysUtils.FindClose (searchResult);
@@ -1254,6 +1255,7 @@ var
   CurlParameterMatrix: tJson2PumlCurlFileParameterListMatrix;
   SaveFileName: string;
   i: Integer;
+  Generated: boolean;
 begin
   Result := false;
   if not iCurrentInputFile.HasValidCurl then
@@ -1268,11 +1270,11 @@ begin
       for i := 0 to CurlParameterMatrix.RowList.Count - 1 do
       begin
         SaveFileName := iCurrentInputFile.OutputFileName;
-        iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon, CurlOptions,
+        Generated := iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon, CurlOptions,
           CurlParameterMatrix.RowParameterList[i], CurlParameterList);
         AddInputFile (iCurrentInputFile.InputFileName, iCurrentInputFile.OutputFileName,
           iCurrentInputFile.LeadingObject, iCurrentInputFile.SplitInputFileStr, iCurrentInputFile.SplitIdentifier,
-          iCurrentInputFile.CurlCommand, false, false, true);
+          iCurrentInputFile.CurlCommand, false, false, true, Generated);
         iCurrentInputFile.OutputFileName := SaveFileName;
       end
     end
@@ -1366,7 +1368,8 @@ begin
       NewFileName := TPath.ChangeExtension (NewFileName, FindSuffix(Ident).Substring(0, 80) + '.' + jofJSON.ToString);
       OutputFile.Text := JsonArray.Items[i].ToJSON;
       OutputFile.SaveToFile (NewFileName);
-      AddInputFile (iInputFile.InputFileName, NewFileName, iInputFile.LeadingObject, '', '', '', true, false, true);
+      AddInputFile (iInputFile.InputFileName, NewFileName, iInputFile.LeadingObject, '', '', '', true, false,
+        true, true);
       GlobalLoghandler.Info ('  Detail file %s created', [NewFileName]);
     end;
   finally
@@ -2681,7 +2684,8 @@ var
 begin
   Result := iFileName;
   for CurlParameter in self do
-    Result := StringReplace (Result, CurlParameter.name, ReplaceInvalidFileNameChars (CurlParameter.ValueDecoded), [rfReplaceAll, rfIgnoreCase]);
+    Result := StringReplace (Result, CurlParameter.name, ReplaceInvalidFileNameChars(CurlParameter.ValueDecoded),
+      [rfReplaceAll, rfIgnoreCase]);
 end;
 
 constructor tJson2PumlCurlFileParameterListMatrix.Create;

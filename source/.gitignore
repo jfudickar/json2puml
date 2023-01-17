@@ -5,6 +5,7 @@
 __history
 __recovery
 *.stat
+*.tvsconfig
 
 # Delphi Compiler output files
 *.drc

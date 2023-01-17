@@ -1,8 +1,0 @@
-{
-	"definitionFile": "tmfdefinition.json",
-	"inputListFile": "tmfinputlist.json",
-	"generateSummary": "true",
-	"generateDetails": "false",
-	"outputFormats": "svg,log,png,json,puml,vdx",
-	"option": "default"
-}

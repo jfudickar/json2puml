@@ -63,8 +63,6 @@ const
 
   cDefaultJsonFileFilter = '*.json';
 
-  cCurlOutputExtension = 'curl.output';
-
   cLinuxHome = '~';
 
   cCurrentVersion = '2.0.1.53';

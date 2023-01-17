@@ -33,16 +33,23 @@ uses System.Classes, System.SysUtils, json2pumldefinition,
 {$ENDIF}
   json2pumlloghandler, json2pumlconst;
 
-function CalculateCurlCommand (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
-  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
-
 procedure ClearLastLineComma (oJsonOutPut: TStrings);
 
 function ClearPropertyValue (iValue: string): string;
 
-function ExecuteCurl (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
-  iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
+type
+  TCurlUtils = class
+  public
+    class function FullUrl (const iBaseUrl, iUrl: string;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+    class function CalculateCommand (const iUrl, iOptions, iOutputFile: string;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+    class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
+      var oErrorMessage: string): Boolean;
+    class function Execute (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
+      iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
+  end;
 
 function FileCount (iFileFilter: string): Integer;
 
@@ -74,7 +81,9 @@ function ValidateOutputSuffix (iOutputSuffix: string): string;
 
 function PathCombine (const Path1, Path2: string): string;
 
-function ExecuteCommandWithOutput (const Command: WideString; const CommandInfo: string): Boolean;
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
+  oCommandOutPut, oCommandErrors: TStringList): Boolean; overload;
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean; overload;
 
 procedure GenerateDirectory (const iDirectory: string);
 
@@ -84,7 +93,7 @@ function IsLinuxHomeBasedPath (iPath: string): Boolean;
 function IsRelativePath (iPath: string): Boolean;
 function PathCombineIfRelative (iBasePath, iPath: string): string;
 
-function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: tStringList; iInputList: Boolean): Integer;
+function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
 
 {$IFDEF LINUX}
 
@@ -93,7 +102,7 @@ type
 
   TLinuxUtils = class
   public
-    class function RunCommandLine (ACommand: string; var ResultList: tStringList): Boolean; overload;
+    class function RunCommandLine (ACommand: string; var ResultList: TStringList): Boolean; overload;
     class function RunCommandLine (ACommand: string; Return: TProc<string>): Boolean; overload;
     class function findParameter (AParameter: string): Boolean;
   end;
@@ -113,51 +122,8 @@ uses
   json2pumlconverterdefinition;
 
 {$IFDEF MSWINDOWS}
-// function ExecuteCommand (iExecutable, iParameter: string; iProtocolInfo: string = ''): Boolean;
-// var
-// SEInfo: TShellExecuteInfo;
-// ExitCode: DWORD;
-// ExecuteFile: string;
-// begin
-// ExecuteFile := iExecutable;
-//
-// FillChar (SEInfo, SizeOf(SEInfo), 0);
-// SEInfo.cbSize := SizeOf (TShellExecuteInfo);
-// SEInfo.fMask := SEE_MASK_NOCLOSEPROCESS;
-// SEInfo.Wnd := Application.Handle;
-// SEInfo.lpFile := PChar (ExecuteFile);
-// {
-// ParamString can contain the
-// application parameters.
-// }
-// SEInfo.lpParameters := PChar (iParameter);
-// {
-// StartInString specifies the
-// name of the working directory.
-// If ommited, the current directory is used.
-// }
-// // SEInfo.lpDirectory := PChar(StartInString) ;
-// SEInfo.nShow := SW_HIDE;
-// if iProtocolInfo.isEmpty then
-// GlobalLoghandler.Info ('Execute %s %s', [iExecutable, iParameter])
-// else
-// GlobalLoghandler.Info (iProtocolInfo);
-// Application.ProcessMessages;
-// if ShellExecuteEx (@SEInfo) then
-// begin
-// repeat
-// Application.ProcessMessages;
-// GetExitCodeProcess (SEInfo.hProcess, ExitCode);
-// until (ExitCode <> STILL_ACTIVE) or Application.Terminated;
-// Result := true;
-// end
-// else
-// begin
-// Result := false;
-// end;
-// end;
 
-function ExecuteCommandWithOutput (const Command: WideString; const CommandInfo: string): Boolean;
+function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
 var
   buffer: array [0 .. 2400] of AnsiChar;
   BufferStrOutput: string;
@@ -172,10 +138,8 @@ var
   SecurityAttr: TSecurityAttributes;
   StartupInfo: TStartupInfo;
   tmpWaitR: DWORD;
-  Output, Errors: tStringList;
-  s: string;
 
-  procedure AddLine (var AString: string; ALines: tStringList);
+  procedure AddLine (var AString: string; ALines: TStringList);
   var
     i: Integer;
     j: Integer;
@@ -210,114 +174,92 @@ var
   end;
 
 begin
-  Output := tStringList.Create;
-  Errors := tStringList.Create;
+  // Initialisierung ProcessInfo
+  FillChar (ProcessInfo, SizeOf(TProcessInformation), 0);
 
-  GlobalLoghandler.Info ('Execute %s', [CommandInfo]);
+  // Initialisierung SecurityAttr
+  FillChar (SecurityAttr, SizeOf(TSecurityAttributes), 0);
+  SecurityAttr.nLength := SizeOf (TSecurityAttributes);
+  SecurityAttr.bInheritHandle := true;
+  SecurityAttr.lpSecurityDescriptor := nil;
 
-  try
-    // Initialisierung ProcessInfo
-    FillChar (ProcessInfo, SizeOf(TProcessInformation), 0);
+  // Pipes erzeugen
+  CreatePipe (PipeOutputRead, PipeOutputWrite, @SecurityAttr, 0);
+  CreatePipe (PipeErrorsRead, PipeErrorsWrite, @SecurityAttr, 0);
 
-    // Initialisierung SecurityAttr
-    FillChar (SecurityAttr, SizeOf(TSecurityAttributes), 0);
-    SecurityAttr.nLength := SizeOf (TSecurityAttributes);
-    SecurityAttr.bInheritHandle := true;
-    SecurityAttr.lpSecurityDescriptor := nil;
+  // Initialisierung StartupInfo
+  FillChar (StartupInfo, SizeOf(TStartupInfo), 0);
+  StartupInfo.cb := SizeOf (TStartupInfo);
+  StartupInfo.hStdInput := 0;
+  StartupInfo.hStdOutput := PipeOutputWrite;
+  StartupInfo.hStdError := PipeErrorsWrite;
+  StartupInfo.wShowWindow := SW_HIDE;
+  StartupInfo.dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
 
-    // Pipes erzeugen
-    CreatePipe (PipeOutputRead, PipeOutputWrite, @SecurityAttr, 0);
-    CreatePipe (PipeErrorsRead, PipeErrorsWrite, @SecurityAttr, 0);
+  CreationFlags := CREATE_DEFAULT_ERROR_MODE or CREATE_NEW_CONSOLE or NORMAL_PRIORITY_CLASS;
 
-    // Initialisierung StartupInfo
-    FillChar (StartupInfo, SizeOf(TStartupInfo), 0);
-    StartupInfo.cb := SizeOf (TStartupInfo);
-    StartupInfo.hStdInput := 0;
-    StartupInfo.hStdOutput := PipeOutputWrite;
-    StartupInfo.hStdError := PipeErrorsWrite;
-    StartupInfo.wShowWindow := SW_HIDE;
-    StartupInfo.dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
+  Result := CreateProcessW (nil, (PWideChar(iCommand)), nil, nil, true, CreationFlags, nil, nil, StartupInfo,
+    ProcessInfo);
+  if Result then
+  begin
+    // Write-Pipes schließen
+    CloseHandle (PipeOutputWrite);
+    CloseHandle (PipeErrorsWrite);
 
-    CreationFlags := CREATE_DEFAULT_ERROR_MODE or CREATE_NEW_CONSOLE or NORMAL_PRIORITY_CLASS;
+    BufferStrOutput := '';
+    BufferStrErrors := '';
 
-    Result := CreateProcessW (nil, (PWideChar(Command)), nil, nil, true, CreationFlags, nil, nil, StartupInfo,
-      ProcessInfo);
-    if Result then
-    begin
-      // Write-Pipes schließen
-      CloseHandle (PipeOutputWrite);
-      CloseHandle (PipeErrorsWrite);
+    repeat
+      tmpWaitR := WaitForSingleObject (ProcessInfo.hProcess, 100);
 
-      BufferStrOutput := '';
-      BufferStrErrors := '';
-
-      repeat
-        tmpWaitR := WaitForSingleObject (ProcessInfo.hProcess, 100);
-
-        NumberOfBytesRead := 0;
-        // Ausgabe Read-Pipe auslesen
-        if PeekNamedPipe (PipeOutputRead, nil, 0, nil, @NumberOfBytesRead, nil) and (NumberOfBytesRead > 0) then
+      NumberOfBytesRead := 0;
+      // Ausgabe Read-Pipe auslesen
+      if PeekNamedPipe (PipeOutputRead, nil, 0, nil, @NumberOfBytesRead, nil) and (NumberOfBytesRead > 0) then
+      begin
+        while ReadFile (PipeOutputRead, buffer, Length(buffer) - 1, NumberOfBytesRead, nil) do
         begin
-          while ReadFile (PipeOutputRead, buffer, Length(buffer) - 1, NumberOfBytesRead, nil) do
-          begin
-            buffer[NumberOfBytesRead] := #0;
-            OemToAnsi (buffer, buffer);
-            BufferStrOutput := BufferStrOutput + string(buffer);
-            AddLine (BufferStrOutput, Output);
-            Application.ProcessMessages ();
-          end;
+          buffer[NumberOfBytesRead] := #0;
+          OemToAnsi (buffer, buffer);
+          BufferStrOutput := BufferStrOutput + string(buffer);
+          AddLine (BufferStrOutput, oCommandOutPut);
+          Application.ProcessMessages ();
         end;
+      end;
 
-        NumberOfBytesRead := 0;
-        if PeekNamedPipe (PipeErrorsRead, nil, 0, nil, @NumberOfBytesRead, nil) and (NumberOfBytesRead > 0) then
+      NumberOfBytesRead := 0;
+      if PeekNamedPipe (PipeErrorsRead, nil, 0, nil, @NumberOfBytesRead, nil) and (NumberOfBytesRead > 0) then
+      begin
+        while ReadFile (PipeErrorsRead, buffer, Length(buffer) - 1, NumberOfBytesRead, nil) do
         begin
-          while ReadFile (PipeErrorsRead, buffer, Length(buffer) - 1, NumberOfBytesRead, nil) do
-          begin
-            buffer[NumberOfBytesRead] := #0;
-            OemToAnsi (buffer, buffer);
-            BufferStrErrors := BufferStrErrors + string(buffer);
-            AddLine (BufferStrErrors, Errors);
-            Application.ProcessMessages ();
-          end;
+          buffer[NumberOfBytesRead] := #0;
+          OemToAnsi (buffer, buffer);
+          BufferStrErrors := BufferStrErrors + string(buffer);
+          AddLine (BufferStrErrors, oCommandErrors);
+          Application.ProcessMessages ();
         end;
+      end;
 
-        Application.ProcessMessages ();
-      until (tmpWaitR <> WAIT_TIMEOUT);
+      Application.ProcessMessages ();
+    until (tmpWaitR <> WAIT_TIMEOUT);
 
-      if BufferStrOutput <> '' then
-        Output.Add (BufferStrOutput);
-      if BufferStrErrors <> '' then
-        Errors.Add (BufferStrErrors);
+    if BufferStrOutput <> '' then
+      oCommandOutPut.Add (BufferStrOutput);
+    if BufferStrErrors <> '' then
+      oCommandErrors.Add (BufferStrErrors);
 
-      CloseHandle (ProcessInfo.hProcess);
-      CloseHandle (ProcessInfo.hThread);
+    CloseHandle (ProcessInfo.hProcess);
+    CloseHandle (ProcessInfo.hThread);
 
-      CloseHandle (PipeOutputRead);
-      CloseHandle (PipeErrorsRead);
-    end
-    else
-    begin
-      // Pipes schließen
-      CloseHandle (PipeOutputRead);
-      CloseHandle (PipeOutputWrite);
-      CloseHandle (PipeErrorsRead);
-      CloseHandle (PipeErrorsWrite);
-    end;
-  finally
-    if Output.Count > 0 then
-    begin
-      GlobalLoghandler.Info ('  OutPut');
-      for s in Output do
-        GlobalLoghandler.Info ('    %s', [s]);
-    end;
-    if Errors.Count > 0 then
-    begin
-      GlobalLoghandler.Info ('  Errors');
-      for s in Errors do
-        GlobalLoghandler.Info ('    %s', [s]);
-    end;
-    Output.Free;
-    Errors.Free;
+    CloseHandle (PipeOutputRead);
+    CloseHandle (PipeErrorsRead);
+  end
+  else
+  begin
+    // Pipes schließen
+    CloseHandle (PipeOutputRead);
+    CloseHandle (PipeOutputWrite);
+    CloseHandle (PipeErrorsRead);
+    CloseHandle (PipeErrorsWrite);
   end;
 end;
 
@@ -387,28 +329,74 @@ end;
 
 {$ELSE}
 
-// function ExecuteCommand (iExecutable, iParameter: string; iProtocolInfo: string = ''): Boolean;
-// begin
-// end;
-//
-function ExecuteCommandWithOutput (const Command: WideString; const CommandInfo: string): Boolean;
+class function TLinuxUtils.RunCommandLine (ACommand: string; var ResultList: TStringList): Boolean;
+
 var
-  ResultList: tStringList;
-  s: string;
+  Handle: TStreamHandle;
+  Data: array [0 .. 511] of uint8;
+  M: TMarshaller;
+
 begin
-  ResultList := tStringList.Create;
+  Result := False;
+  if not Assigned (ResultList) then
+    ResultList := TStringList.Create;
   try
-    GlobalLoghandler.Info ('Execute %s', [CommandInfo]);
-    Result := TLinuxUtils.RunCommandLine (Command, ResultList);
-    if ResultList.Count > 0 then
-    begin
-      GlobalLoghandler.Info ('  OutPut');
-      for s in ResultList do
-        GlobalLoghandler.Info ('    %s', [s]);
+    Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
+    try
+      while fgets (@Data[0], SizeOf(Data), Handle) <> nil do
+      begin
+        ResultList.Add (copy(UTF8ToString(@Data[0]), 1, UTF8ToString(@Data[0]).Length - 1)); // ,sizeof(Data)));
+      end;
+    finally
+      pclose (Handle);
     end;
-  finally
-    ResultList.Free;
+    Result := true;
+  except
+    on e: exception do
+      ResultList.Add (e.ClassName + ': ' + e.Message);
   end;
+end;
+
+class function TLinuxUtils.RunCommandLine (ACommand: string; Return: TProc<string>): Boolean;
+var
+  Handle: TStreamHandle;
+  Data: array [0 .. 511] of uint8;
+  M: TMarshaller;
+
+begin
+  Result := False;
+  try
+    Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
+    try
+      while fgets (@Data[0], SizeOf(Data), Handle) <> nil do
+      begin
+        Return (copy(UTF8ToString(@Data[0]), 1, UTF8ToString(@Data[0]).Length - 1)); // ,sizeof(Data)));
+      end;
+    finally
+      pclose (Handle);
+    end;
+  except
+    on e: exception do
+      Return (e.ClassName + ': ' + e.Message);
+  end;
+end;
+
+class function TLinuxUtils.findParameter (AParameter: string): Boolean;
+var
+  i: Integer;
+begin
+  Result := False;
+  for i := 0 to Pred(ParamCount) do
+  begin
+    Result := AParameter.ToUpper = ParamStr (i).ToUpper;
+    if Result then
+      Break;
+  end;
+end;
+
+function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
+begin
+  Result := TLinuxUtils.RunCommandLine (iCommand, oCommandOutPut);
 end;
 
 function GetVersionInfo (AIdent: string): string;
@@ -422,83 +410,41 @@ end;
 
 {$ENDIF}
 
-function CalculateCurlCommand (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
-  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
+  oCommandOutPut, oCommandErrors: TStringList): Boolean;
 var
-  url: string;
-  Command: string;
+  s: string;
 begin
-
-  Result := '';
-  if (iBaseUrl + iUrl).Trim.isEmpty then
-    Exit;
-
-  if iBaseUrl.Trim.isEmpty then
-    url := iUrl.Trim.TrimLeft (['/'])
-  else if iUrl.Trim.isEmpty then
-    url := iBaseUrl.Trim
-  else
-    url := Format ('%s/%s', [iBaseUrl.Trim.TrimRight(['/']), iUrl.Trim.TrimLeft(['/'])]);
-
-  Command := Format ('%s --url "%s" --output "%s"', [iOptions.Trim, url, iOutputFile]);
-
-  if Assigned (iCurlDetailParameterList) then
-    Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
-  if Assigned (iCurlParameterList) then
-    Command := iCurlParameterList.ReplaceParameterValues (Command);
-
-  Result := Command;
+  oCommandOutPut.clear;
+  oCommandErrors.clear;
+  GlobalLoghandler.Info ('Execute %s', [iCommandInfo]);
+  Result := ExecuteCommandInternal (iCommand, oCommandOutPut, oCommandErrors);
+  if oCommandOutPut.Count > 0 then
+  begin
+    GlobalLoghandler.Info ('  StdOut');
+    for s in oCommandOutPut do
+      GlobalLoghandler.Info ('    %s', [s]);
+  end;
+  if oCommandErrors.Count > 0 then
+  begin
+    GlobalLoghandler.Info ('  ErrOut');
+    for s in oCommandErrors do
+      GlobalLoghandler.Info ('    %s', [s]);
+  end;
 end;
 
-function GetCurlResultFromOutputFile (iOutputFileName, iResultFileName: string; var oErrorMessage: string): Boolean;
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean;
 var
-  sl: tStringList;
-  i: Integer;
-  vResponseCode, vExitCode, vErrorMessage: string;
+  vCommandOutPut, vCommandErrors: TStringList;
 begin
-  Result := False;
-  vResponseCode := '';
-  vExitCode := '';
-  vErrorMessage := '';
-  oErrorMessage := '';
-  if not iResultFileName.isEmpty then
-  begin
-    if not FileExists (iResultFileName) then
-    begin
-      oErrorMessage := Format ('Resultfile "%s" not generated.', [iOutputFileName]);
-      Exit;
-    end;
-
-    sl := tStringList.Create;
-    try
-      sl.LoadFromFile (iResultFileName);
-      if sl.Count >= 3 then
-      begin
-        vResponseCode := sl[sl.Count - 3].Trim;
-        vExitCode := sl[sl.Count - 2].Trim;
-        vErrorMessage := sl[sl.Count - 1].Trim;
-      end
-      else
-      begin
-        oErrorMessage := Format ('Invalid curl resultfile "%s" (too less number of lines).', [iResultFileName]);
-        Exit;
-      end;
-    finally
-      sl.Free;
-    end;
-    if vExitCode <> '0' then
-      oErrorMessage := Format ('curl command failed : (%s) : %s', [vExitCode, vErrorMessage])
-    else if vResponseCode <> '200' then
-      if vErrorMessage.isEmpty then
-        oErrorMessage := Format ('Invalid HTTP Response : %s', [vResponseCode])
-      else
-        oErrorMessage := Format ('Invalid HTTP Response : %s - %s', [vResponseCode, vErrorMessage]);
+  vCommandOutPut := TStringList.Create;
+  vCommandErrors := TStringList.Create;
+  try
+    Result := ExecuteCommand (iCommand, iCommandInfo, vCommandOutPut, vCommandErrors);
+  finally
+    vCommandOutPut.Free;
+    vCommandErrors.Free;
   end;
-
-  if not FileExists (iOutputFileName) and oErrorMessage.isEmpty then
-    oErrorMessage := Format ('Outputfile "%s" not generated.', [iOutputFileName]);
-
-  Result := oErrorMessage.isEmpty;
 end;
 
 procedure ClearLastLineComma (oJsonOutPut: TStrings);
@@ -580,8 +526,7 @@ begin
   Command := Format ('java %s -jar "%s" "%s" %s', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile, iPlantUmlFile,
     iFormat.PumlGenerateFlag]);
 
-  Result := ExecuteCommandWithOutput (Command, Command);
-  // Result := ExecuteCommand ('java.exe', Command, nil);
+  Result := ExecuteCommand (Command, Command);
   if Result then
   begin
     GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
@@ -639,7 +584,90 @@ begin
       Result[i] := iReplaceWith;
 end;
 
-function ExecuteCurl (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
+class function TCurlUtils.FullUrl (const iBaseUrl, iUrl: string;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+begin
+  if iBaseUrl.Trim.isEmpty then
+    Result := iUrl.Trim.TrimLeft (['/'])
+  else if iUrl.Trim.isEmpty then
+    Result := iBaseUrl.Trim
+  else
+    Result := Format ('%s/%s', [iBaseUrl.Trim.TrimRight(['/']), iUrl.Trim.TrimLeft(['/'])]);
+  if Assigned (iCurlDetailParameterList) then
+    Result := iCurlDetailParameterList.ReplaceParameterValues (Result);
+  if Assigned (iCurlParameterList) then
+    Result := iCurlParameterList.ReplaceParameterValues (Result);
+end;
+
+class function TCurlUtils.CalculateCommand (const iUrl, iOptions, iOutputFile: string;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+var
+  Command: string;
+begin
+
+  Result := '';
+
+  if iUrl.isEmpty then
+    Exit;
+
+  Command := Format ('%s --url "%s" --output "%s"', [iOptions.Trim, iUrl, iOutputFile]);
+
+  if Assigned (iCurlDetailParameterList) then
+    Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
+  if Assigned (iCurlParameterList) then
+    Command := iCurlParameterList.ReplaceParameterValues (Command);
+
+  Result := Command;
+end;
+
+class function TCurlUtils.GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
+  var oErrorMessage: string): Boolean;
+var
+  vResponseCode, vExitCode, vErrorMessage: string;
+
+  function CleanName (iValue: string): string;
+  begin
+    if iValue.IndexOf (':') >= 0 then
+      Result := iValue.Substring (iValue.IndexOf(':') + 1).Trim
+    else
+      Result := iValue.Trim;
+  end;
+
+begin
+  Result := False;
+  vResponseCode := '';
+  vExitCode := '';
+  vErrorMessage := '';
+  oErrorMessage := '';
+  if iCommandOutput.Count > 0 then
+  begin
+    if iCommandOutput.Count >= 3 then
+    begin
+      vResponseCode := CleanName (iCommandOutput[iCommandOutput.Count - 3]);
+      vExitCode := CleanName (iCommandOutput[iCommandOutput.Count - 2]);
+      vErrorMessage := CleanName (iCommandOutput[iCommandOutput.Count - 1]);
+    end
+    else
+    begin
+      oErrorMessage := 'Invalid curl output (too less number of lines).';
+      Exit;
+    end;
+    if vExitCode <> '0' then
+      oErrorMessage := Format ('curl command failed : (%s) : %s', [vExitCode, vErrorMessage])
+    else if vResponseCode <> '200' then
+      if vErrorMessage.isEmpty then
+        oErrorMessage := Format ('Invalid HTTP Response : %s', [vResponseCode])
+      else
+        oErrorMessage := Format ('Invalid HTTP Response : %s - %s', [vResponseCode, vErrorMessage]);
+  end;
+
+  if not FileExists (iOutputFileName) and oErrorMessage.isEmpty then
+    oErrorMessage := Format ('Outputfile "%s" not generated.', [iOutputFileName]);
+
+  Result := oErrorMessage.isEmpty;
+end;
+
+class function TCurlUtils.Execute (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
   iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
   iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
 var
@@ -651,7 +679,8 @@ var
   FileLastWriteDate: tDateTime;
   StartTime: tDateTime;
   vErrorMessage: string;
-  CurlResultFile: string;
+  vCommandOutPut, vCommandErrors: TStringList;
+
 begin
 
   Result := False;
@@ -660,22 +689,14 @@ begin
   if iOutputFile.Trim.isEmpty then
     Exit;
 
-  ProtocolCommand := CalculateCurlCommand (iBaseUrl, iUrl, iOptions, iOutputFile, iCurlParameterList,
-    iCurlDetailParameterList);
+  url := FullUrl (iBaseUrl, iUrl, iCurlParameterList, iCurlDetailParameterList);
+
+  ProtocolCommand := CalculateCommand (url, iOptions, iOutputFile, iCurlParameterList, iCurlDetailParameterList);
   if ProtocolCommand.isEmpty then
     Exit;
 
-//  CurlResultFile := tPath.ChangeExtension (iOutputFile, cCurlOutputExtension);
-//  ProtocolCommand := Format ('%s --write-out "%s" >"%s"',
-//    [ProtocolCommand, '%{response_code}\n%{exitcode}\n%{errormsg}', CurlResultFile]);
   ProtocolCommand := Format ('%s --write-out "%s" ',
-    [ProtocolCommand, '%{response_code}\n%{exitcode}\n%{errormsg}']);
-
-  url := iUrl;
-  if Assigned (iCurlDetailParameterList) then
-    url := iCurlDetailParameterList.ReplaceParameterValues (url);
-  if Assigned (iCurlParameterList) then
-    url := iCurlParameterList.ReplaceParameterValues (url);
+    [ProtocolCommand, '\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}']);
 
   Command := ProtocolCommand;
   ProtocolCommand := Format ('%s %s', ['curl', ProtocolCommand]);
@@ -704,22 +725,24 @@ begin
 
   if FileExists (iOutputFile) then
     tFile.Delete (iOutputFile);
-  if FileExists (CurlResultFile) then
-    tFile.Delete (CurlResultFile);
   StartTime := Now;
-  ExecuteCommandWithOutput ('curl ' + Command, ProtocolCommand);
-  Result := GetCurlResultFromOutputFile (iOutputFile, CurlResultFile, vErrorMessage);
+  vCommandOutPut := TStringList.Create;
+  vCommandErrors := TStringList.Create;
+  try
+    ExecuteCommand ('curl ' + Command, ProtocolCommand, vCommandOutPut, vCommandErrors);
+    Result := GetResultFromOutput (iOutputFile, vCommandOutPut, vErrorMessage);
+  finally
+    vCommandOutPut.Free;
+    vCommandErrors.Free;
+  end;
   if Result then
-    GlobalLoghandler.Info ('  curl "%s/%s" fetched to "%s" (%d ms)',
-      [iBaseUrl.Trim.TrimRight(['/']), url.Trim.TrimLeft(['/']), iOutputFile, MillisecondsBetween(Now, StartTime)])
+    GlobalLoghandler.Info ('  curl "%s" fetched to "%s" (%d ms)',
+      [url, iOutputFile, MillisecondsBetween(Now, StartTime)])
   else
   begin
-    GlobalLoghandler.Warn ('Fetching from %s/%s for "%s" FAILED - File not generated (%d ms) [%s]',
-      [iBaseUrl.Trim.TrimRight(['/']), url.Trim.TrimLeft(['/']), iOutputFile, MillisecondsBetween(Now, StartTime),
-      vErrorMessage]);
+    GlobalLoghandler.Warn ('Fetching from "%s" for "%s" FAILED - File not generated (%d ms) [%s]',
+      [url, iOutputFile, MillisecondsBetween(Now, StartTime), vErrorMessage]);
   end;
-  if FileExists (CurlResultFile) then
-    tFile.Delete (CurlResultFile);
 end;
 
 procedure GenerateDirectory (const iDirectory: string);
@@ -755,12 +778,12 @@ end;
 
 function FileContent (iFileName: string): string;
 var
-  Lines: tStringList;
+  Lines: TStringList;
 begin
   Result := '';
   if not FileExists (iFileName) then
     Exit;
-  Lines := tStringList.Create;
+  Lines := TStringList.Create;
   try
     Lines.LoadFromFile (iFileName);
     Result := Lines.Text;
@@ -818,86 +841,18 @@ begin
 {$ENDIF}
 end;
 
-{$IFDEF LINUX}
-
-class function TLinuxUtils.RunCommandLine (ACommand: string; var ResultList: tStringList): Boolean;
-
-var
-  Handle: TStreamHandle;
-  Data: array [0 .. 511] of uint8;
-  M: TMarshaller;
-
-begin
-  Result := False;
-  if not Assigned (ResultList) then
-    ResultList := tStringList.Create;
-  try
-    Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
-    try
-      while fgets (@Data[0], SizeOf(Data), Handle) <> nil do
-      begin
-        ResultList.Add (copy(UTF8ToString(@Data[0]), 1, UTF8ToString(@Data[0]).Length - 1)); // ,sizeof(Data)));
-      end;
-    finally
-      pclose (Handle);
-    end;
-    Result := true;
-  except
-    on e: exception do
-      ResultList.Add (e.ClassName + ': ' + e.Message);
-  end;
-end;
-
-class function TLinuxUtils.RunCommandLine (ACommand: string; Return: TProc<string>): Boolean;
-var
-  Handle: TStreamHandle;
-  Data: array [0 .. 511] of uint8;
-  M: TMarshaller;
-
-begin
-  Result := False;
-  try
-    Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
-    try
-      while fgets (@Data[0], SizeOf(Data), Handle) <> nil do
-      begin
-        Return (copy(UTF8ToString(@Data[0]), 1, UTF8ToString(@Data[0]).Length - 1)); // ,sizeof(Data)));
-      end;
-    finally
-      pclose (Handle);
-    end;
-  except
-    on e: exception do
-      Return (e.ClassName + ': ' + e.Message);
-  end;
-end;
-
-class function TLinuxUtils.findParameter (AParameter: string): Boolean;
-var
-  i: Integer;
-begin
-  Result := False;
-  for i := 0 to Pred(ParamCount) do
-  begin
-    Result := AParameter.ToUpper = ParamStr (i).ToUpper;
-    if Result then
-      Break;
-  end;
-end;
-{$ENDIF}
-
 type
   tAccessJson2PumlGlobalDefinition = class(tJson2PumlGlobalDefinition);
 
-function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: tStringList; iInputList: Boolean): Integer;
+function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
 var
   s: string;
-  FileList: tStringList;
+  FileList: TStringList;
   ConfigFile: tJson2PumlBaseObject;
 begin
   Result := 0;
-  oJsonOutPut.Clear;
-  FileList := tStringList.Create;
+  oJsonOutPut.clear;
+  FileList := TStringList.Create;
   GlobalConfigurationDefinition.FindFilesInFolderList (FileList, iFolderList);
   tAccessJson2PumlGlobalDefinition (GlobalConfigurationDefinition).WriteArrayStartToJson (oJsonOutPut, 0, '');
   try
