@@ -15,7 +15,7 @@
 	"definitionFile": "swapi_definition.json",
 	"generateDetails": null,
 	"generateSummary": null,
-	"group": null,
+	"group": "${id}",
 	"detail": null,
 	"option": null,
 	"job": null,
@@ -53,7 +53,7 @@
 			{
 				"inputFile": "vehicles_${vehicles}.json",
 				"leadingObject": "vehicles",
-				"curlBaseUrl": "${vehicles}",
+				"curlBaseUrl": "${vehicles}x",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
 				"curlOptions": null,

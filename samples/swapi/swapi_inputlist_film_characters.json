@@ -15,7 +15,7 @@
 	"definitionFile": "swapi_definition.json",
 	"generateDetails": null,
 	"generateSummary": null,
-	"group": null,
+	"group": "${id}",
 	"detail": null,
 	"option": null,
 	"job": null,

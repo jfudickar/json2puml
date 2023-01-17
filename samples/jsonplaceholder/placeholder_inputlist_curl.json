@@ -3,6 +3,8 @@
 	"generateDetails": "false",
 	"generateSummary": "true",
 	"curlBaseUrl": "https://jsonplaceholder.typicode.com/",
+	"summaryFile": "placeholder_summary_${name}",
+	"group":"${ID}",
 	"input": [
 			{
 				"inputFile": "users_${ID}.json",
