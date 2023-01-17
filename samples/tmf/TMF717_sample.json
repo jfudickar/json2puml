@@ -1,0 +1,1277 @@
+{
+
+    "accumulatedBalance": [
+
+        {
+
+            "id": "55",
+
+            "href": "https://mycsp.com:8080/tmf-api/prepayBalanceManagement/v4/bucket?product.id=12345&bucketBalance[usageType==\"data\"]",
+
+            "description": "The query used to fetch the accumulated balance",
+
+            "@type": "AccumulatedBalance",
+
+            "@baseType": "Entity",
+
+            "bucket": [
+
+                {
+
+                    "id": "11",
+
+                    "href": "https://mycsp.com:8080/tmf-api/prepayBalanceManagement/v4/bucket/11"
+
+                },
+
+                {
+
+                    "id": "12",
+
+                    "href": "https://mycsp.com:8080/tmf-api/prepayBalanceManagement/v4/bucket/12"
+
+                }
+
+            ],
+
+            "partyAccount": {
+
+                "id": "acc1",
+
+                "href": "https://mycsp.com:8080/tmf-api/accountManagement/v4/account/acc1"
+
+            },
+
+            "product": [
+
+                {
+
+                    "id": "prd1",
+
+                    "href": "https://mycsp.com:8080/tmf-api/productInventory/v4/product/prd1"
+
+                }
+
+           ],
+
+            "relatedParty": [
+
+                {
+
+                    "id": "cust1",
+
+                    "href": "https://mycsp.com:8080/tmf-api/customerManagement/customer/cust1",
+
+                    "name": "jerry watts",
+
+                    "role": "customer",
+
+                    "@referredType": "Customer"
+
+                }
+
+            ],
+
+            "totalBalance": {
+
+                "amount": 200,
+
+                "units": "MB"
+
+            }
+
+        }
+
+    ],
+
+    "agreement": [{
+
+        "@type": "Agreement",
+
+        "href": "https://host:port/tmf-api/agreementManagement/v4/agreement/28",
+
+        "id": "28",
+
+        "name": "Summer Contract Agreement",
+
+        "agreementType": "commercial",
+
+        "agreementItem": [
+
+            {
+
+                "productOffering": [
+
+                    {
+
+                        "@referredType": "ProductOffering",
+
+                        "href": "https://host:port/tmf-api/productCatalogManagement/v4/productOffering/9085",
+
+                        "id": "9085",
+
+                        "name": "My Quick BB Offer"
+
+                    }
+
+                ],
+
+                "termOrCondition": [
+
+                    {
+
+                        "description": "This  agreement term or condition ...",
+
+                        "id": "5890",
+
+                        "validFor": {
+
+                            "startDateTime": "2018-04-25T00:00Z",
+
+                            "endDateTime": "2018-11-20T00:00Z"
+
+                        }
+
+                    }
+
+                ]
+
+            }
+
+        ],
+
+        "engagedParty": [
+
+            {
+
+                "@referredType": "Organization",
+
+                "href": "https://host:port/tmf-api/partyManagement/v4/organization/330",
+
+                "id": "330",
+
+                "role": "Supplier",
+
+                "name": "Magic Tools Company"
+
+            }
+
+        ]
+
+    }],
+
+    "billFormat": "Email",
+
+    "customerBill": [
+
+        {
+
+            "id": "CB-123",
+
+            "href": "https://server:port/tmf-api/Customer_Bill_Management/v4/customerBill/CB-123",
+
+            "billingAccount": {
+
+                "id": "A0815",
+
+                "href": "http://host:port/tmf-api/Account_Management/v4/billingAccount/A0815",
+
+                "name": "BA Peter Retep",
+
+                "@referredType": "billingAccount",
+
+                "@type": "billingAccountRef",
+
+                "@baseType": "billingAccountRef",
+
+                "@schemaLocation": "...some href..."
+
+            }
+
+        }
+
+    ],
+
+    "partyInteraction": [
+
+        {
+
+            "id": "123",
+
+            "href": "https://host:port/partyInteraction/v4/partyInteraction/123",
+
+           "@type": "PartyInteraction",
+
+            "interactionDate": {
+
+                "startDateTime": "2019-10-02T11:36:18.758Z",
+
+                "endDateTime": "2019-10-02T11:53:21.789Z"
+
+            },
+
+            "description": "Visit to store",
+
+            "reason": "The user wanted to buy TV and internet plan",
+
+            "status": "ongoing",
+
+            "statusChangeDate": "2019-10-02T11:53:21.789Z",
+
+            "direction": "inbounds",
+
+            "creationDate": "2019-10-02T11:37:08.013Z",
+
+            "relatedParty": [
+
+                {
+
+                    "id": "999",
+
+                    "href": "https://host:port/partyManagement/v4/individual/999",
+
+                    "@referredType": "Individual",
+
+                    "role": "user",
+
+                    "name": "John Doe"
+
+                },
+
+                {
+
+                    "id": "888",
+
+                    "href": "https://host:port/partyManagement/v4/individual/888",
+
+                    "@referredType": "Individual",
+
+                    "role": "agent",
+
+                    "name": "Rian Muray"
+
+                }
+
+            ],
+
+            "interactionItem": [
+
+                {
+
+                    "id": "5678",
+
+                    "href": "https://host:port/partyInteraction/v4/partyInteraction/123/interactionItem/5678",
+
+                    "reason": "The user signed up to new TV bundle and paid the decoder",
+
+                    "itemDate": {
+
+                        "endDateTime": "2019-10-02T11:56:01.895Z",
+
+                        "startDateTime": "2019-10-02T11:50:01.895Z"
+
+                    },
+
+                    "resolution": "Product order is created",
+
+                    "creationDate": "2019-10-02T11:50:01.895Z",
+
+                    "item": {
+
+                        "id": "30001",
+
+                        "href": "https://host:port/productOrderingManagement/v4/productOrder/30001",
+
+                        "@referredType": "ProductOrder",
+
+                        "@type": "EntityRef",
+
+                        "role": "interaction",
+
+                        "name": "Product Order illustration sample by reference"
+
+                    }
+
+                },
+
+                {
+
+                    "id": "1212",
+
+                    "href": "https://host:port/partyInteraction/v4/partyInteraction/123/interactionItem/1212",
+
+                    "reason": "The user is purchasing unlimited internet plan",
+
+                    "itemDate": {
+
+                        "endDateTime": "2019-10-02T11:56:01.895Z",
+
+                        "startDateTime": "2019-10-02T11:50:01.895Z"
+
+                    },
+
+                    "resolution": "Product order is created",
+
+                    "creationDate": "2019-10-02T11:50:01.895Z",
+
+                    "item": {
+
+                        "id": "88",
+
+                        "href": "https://host:port/productOrderingManagement/v4/productOrder/88",
+
+                        "@type": "ProductOrder",
+
+                        "@schemaLocation": "https://mycsp.com:8080/tmf-api/schema/Resource/ProductOrder.schema.json",
+
+                        "productOrderItem": [
+
+                            {
+
+                                "id": "13219",
+
+                                "action": "add",
+
+                                "productOffering": {
+
+                                    "id": "2445",
+
+                                    "name": "Unlimited Internet Plus"
+
+                                }
+
+                            }
+
+                        ]
+
+                    }
+
+                }
+
+            ],
+
+            "channel": [
+
+                {
+
+                    "id": "555",
+
+                    "name": "Madrid Gran V\u00eda Store",
+
+                    "role": "interaction creation",
+
+                    "@type": "store"
+
+                }
+
+            ],
+
+            "attachment": [
+
+                {
+
+                    "id": "111222444",
+
+                    "href": "https://host:port/partyInteraction/v4/partyInteraction/123/attachment/111222444",
+
+                    "name": "Some cool attachment",
+
+                    "description": "blahblahblah",
+
+                    "attachmentType": "receipt",
+
+                    "mimeType": "application/pdf",
+
+                    "size": {
+
+                        "amount": 321321,
+
+                        "units": "KB"
+
+                    },
+
+                    "URL": "https://whereverthpdfis.com",
+
+                    "interactionDate": {
+
+                        "startDateTime": "2019-10-02T11:36:18.758Z",
+
+                        "endDateTime": "2019-10-02T11:53:21.789Z"
+
+                    }
+
+                }
+
+            ],
+
+            "note": [
+
+                {
+
+                    "id": "121",
+
+                    "text": "loren ipsum dolor sit amet\u2026",
+
+                    "author": "John Doe",
+
+                    "date": "2019-10-02T11:36:18.758Z"
+
+                }
+
+            ],
+
+            "interactionRelationship": [
+
+                {
+
+                    "id": "1034",
+
+                    "href": "https://host:port/partyInteraction/v4/partyInteraction/1034",
+
+                    "relationshipType": "parent"
+
+                }
+
+            ]
+
+        }
+
+    ],
+
+    "product": [
+
+        {
+
+            "id": "g265-tf85",
+
+            "href": "https://host:port/productInventoryManagement/v4/product/g265-tf85",
+
+            "description": "product description",
+
+            "isBundle": false,
+
+            "isCustomerVisible": true,
+
+            "name": "Voice Over IP Basic instance for Jean",
+
+            "productSerialNumber": "N/A",
+
+            "startDate": "2017-11-01T09:37:29.961Z",
+
+            "status": "active",
+
+            "@baseType": "Product",
+
+            "@type": "Product",
+
+            "@schemaLocation": "https:://host:port/standardProduct.json",
+
+            "realizingService": [
+
+                {
+
+                    "id": "123t-78k",
+
+                    "href": "https...",
+
+                    "role": "RealizingService",
+
+                    "@referredType": "Service"
+
+                }
+
+            ],
+
+            "productOffering": {
+
+                "id": "PO-101-1",
+
+                "href": "https...",
+
+                "name": "Voice Over IP Basic",
+
+                "@referredType": "ProductOffering"
+
+            },
+
+            "productOrderItem": [
+
+                {
+
+                    "productOrderId": "1023-98gh",
+
+                    "productOrderHref": "https...",
+
+                    "orderItemId": "2",
+
+                    "orderItemAction": "add",
+
+                    "@referredType": "ProductOrder",
+
+                    "role": "Install order"
+
+                },
+
+                {
+
+                    "productOrderId": "df65-gh12",
+
+                    "productOrderHref": "https...",
+
+                    "orderItemId": "2",
+
+                    "orderItemAction": "change",
+
+                    "@referredType": "ProductOrder",
+
+                    "role": "change management order"
+
+                },
+
+                {
+
+                    "productOrderId": "5ghh-sd12",
+
+                    "productOrderHref": "https...",
+
+                    "orderItemId": "3",
+
+                    "orderItemAction": "change",
+
+                    "@referredType": "ProductOrder",
+
+                    "role": "change management order"
+
+                }
+
+            ],
+
+            "productCharacteristic": [
+
+                {
+
+                    "name": "Number",
+
+                    "valueType": "string",
+
+                    "value": "415 279 7439"
+
+                }
+
+            ],
+
+            "relatedParty": [
+
+                {
+
+                    "id": "45hj-8888",
+
+                    "href": "https...",
+
+                    "name": "Jean",
+
+                    "role": "User",
+
+                    "@referredType": "Individual"
+
+                }
+
+            ],
+
+            "productSpecification": {
+
+                "id": "PS-101",
+
+                "href": "https...",
+
+                "@referredType": "ProductSpecification",
+
+                "version": "1"
+
+            }
+
+        }
+
+    ],
+
+    "promotion": [
+
+        {
+
+            "id": "PREPAIDOFFER_5GB",
+
+            "href": "https:/host:port/tmf-api/promotion/v4/promotion/8474",
+
+            "description": "Top-up by £20 or more and get 5GB of data for only £5",
+
+            "lastUpdate": "2021-01-19T00:00:00.000Z",
+
+            "lifecycleStatus": "release",
+
+            "name": "More 5GB data when £20 top-up",
+
+            "pattern": [
+
+                {
+
+                    "id": "PATTERN_PREPAID_PRODUCT_OFFERING_5GB",
+
+                    "action": [
+
+                        {
+
+                            "id": "ACTION_PREPAID_PRODUCT_OFFERING_5GB",
+
+                            "actionEntityRef": {
+
+                                "id": "PRODUCT_OFFERING_5GB",
+
+                                "href": "https://mycsp.com:8080/tmf-api/productCatalogManagement/v4/productOffering/PRODUCT_OFFERING_5GB",
+
+                                "name": "5GB data add-on"
+
+                            },
+
+                            "actionType": "3",
+
+                            "actionValue": "5"
+
+                        }
+
+                    ],
+
+                    "criteriaGroup": [
+
+                        {
+
+                            "id": "GROUP_PREPAID_PRODUCT_OFFERING_5GB",
+
+                            "criteria": [
+
+                                {
+
+                                    "id": "CRITERIA_PREPAID_PRODUCT_OFFERING_5GB",
+
+                                    "criteriaOperator": ">=",
+
+                                    "criteriaParameter": "5.3",
+
+                                    "criteriaValue": "£20"
+
+                                }
+
+                            ]
+
+                        }
+
+                    ]
+
+                }
+
+            ],
+
+            "promotionType": "Reduction",
+
+            "validFor": {
+
+                "startDateTime": "2020-01-05T12:00:56.982Z",
+
+                "endDateTime": "9999-12-31T23:59:59.999Z"
+
+            }
+
+        }
+
+    ],
+
+    "quote": [
+
+        {
+
+            "id": "12dd-78hg",
+
+            "href": "https://host:port/quoteManagement/v4/quote/12dd-78hg",
+
+            "category": "BSBS Quote",
+
+            "description": "Quote illustration",
+
+            "expectedFulfillmentStartDate": "2019-05-21T12:45:12.028Z",
+
+            "expectedQuoteCompletionDate": "2019-05-14T12:45:12.028Z",
+
+            "externalId": "QO-tr-89",
+
+            "instantSyncQuote": false,
+
+            "quoteDate": "2019-05-06T12:45:12.028Z",
+
+            "requestedQuoteCompletionDate": "2019-05-14T12:45:12.028Z",
+
+            "version": "1",
+
+            "agreement": [
+
+                {
+
+                    "id": "7778-jj56",
+
+                    "href": "https://host:port/agreementManagement/v4/agreement/7778-jj56",
+
+                    "name": "Global Agreement",
+
+                    "@baseType": "Agreement",
+
+                    "@referredType": "MassAgreement"
+
+                }
+
+            ],
+
+            "billingAccount": [
+
+                {
+
+                    "id": "BA4569",
+
+                    "href": "https://host:port/accountManagement/v4/billingAccount/BA4569"
+
+                }
+
+            ],
+
+            "contactMedium": [
+
+                {
+
+                    "mediumType": "email",
+
+                    "preferred": true,
+
+                    "characteristic": {
+
+                        "emailAddress": "jean.pontus@PerfectCustomer.com"
+
+                    },
+
+                    "validFor": {
+
+                        "startDateTime": "2019-05-06T12:45:12.028Z"
+
+                    }
+
+                }
+
+            ],
+
+            "note": [
+
+                {
+
+                    "id": "1",
+
+                    "author": "Jean Pontus",
+
+                    "date": "2019-05-06T12:45:12.031Z",
+
+                    "text": "This is a quote request following today call"
+
+                }
+
+            ],
+
+            "productOfferingQualification": [
+
+                {
+
+                    "id": "22ds-ty55",
+
+                    "href": "https://host:port/productOfferingQualificationManagement/v4/productOfferingQualification/22ds-ty55"
+
+                }
+
+            ],
+
+            "quoteItem": [
+
+                {
+
+                    "id": "1",
+
+                    "action": "add",
+
+                    "quantity": 10,
+
+                    "state": "inProgress",
+
+                    "product": {
+
+                        "@type": "Product",
+
+                        "productCharacteristic": [
+
+                            {
+
+                                "name": "Voice Bundle",
+
+                                "valueType": "string",
+
+                                "value": "unlimited"
+
+                            },
+
+                            {
+
+                                "name": "Data Bundle",
+
+                                "valueType": "object",
+
+                                "value": {
+
+                                    "volume": 50,
+
+                                    "unit": "Gb/month"
+
+                                }
+
+                            }
+
+                        ],
+
+                        "productSpecification": {
+
+                            "id": "ssp7-ty89",
+
+                            "href": "https://host:port/productCatalogManagement/v4/productSpecification/ssp7-ty89",
+
+                            "name": "TMF Tariff Plan"
+
+                        }
+
+                    },
+
+                    "productOffering": {
+
+                        "id": "54gg-zza1",
+
+                        "href": "https://host:port/productCatalogManagement/v4/productSpecification/54gg-zza1",
+
+                        "name": "TMF Tarif Plan 25"
+
+                    }
+
+                },
+
+                {
+
+                    "id": "2",
+
+                    "action": "add",
+
+                    "quantity": 10,
+
+                    "state": "inProgress",
+
+                    "attachment": [
+
+                        {
+
+                            "attachmentType": "brochure",
+
+                            "description": "handset brochure",
+
+                            "mimeType": "pdf",
+
+                            "name": "Handset commercial brochure.pdf",
+
+                            "url": "www.tmf_hanset/contentMangement/brochure.pdf",
+
+                            "size": {
+
+                                "amount": 3.7,
+
+                                "units": "Mb"
+
+                            },
+
+                            "validFor": {
+
+                                "startDateTime": "2019-05-06T12:45:12.031Z"
+
+                            }
+
+                        }
+
+                    ],
+
+                    "product": {
+
+                        "@type": "Product",
+
+                        "productSpecification": {
+
+                            "id": "qq45-ytr7",
+
+                            "href": "https://host:port/productCatalogManagement/v4/productSpecification/qq45-ytr7",
+
+                            "name": "Handset",
+
+                            "version": "1"
+
+                        }
+
+                    },
+
+                    "productOffering": {
+
+                        "id": "z789-78ga",
+
+                        "href": "https://host:port/productCatalogManagement/v4/productOffering/z789-78ga",
+
+                        "name": "TMF handset T9+"
+
+                    }
+
+                },
+
+                {
+
+                    "id": "3",
+
+                    "action": "add",
+
+                    "quantity": 1,
+
+                    "state": "inProgress",
+
+                    "productOffering": {
+
+                        "id": "ssdd-4dfd",
+
+                        "href": "https://host:port/productCatalogManagement/v4/productOffering/ssdd-4dfd",
+
+                        "name": "Gold Support"
+
+                    }
+
+                }
+
+            ],
+
+            "relatedParty": [
+
+                {
+
+                    "name": "Jean Pontus",
+
+                    "role": "Buyer Contact",
+
+                    "id": "qsdd-9888",
+
+                    "@referredType": "Individual"
+
+                },
+
+                {
+
+                    "name": "PerfectCustomer",
+
+                    "role": "Buyer organization",
+
+                   "id": "55",
+
+                    "@referredType": "Organization"
+
+                },
+
+                {
+
+                    "name": "Joe Doe",
+
+                    "role": "Seller Contact",
+
+                    "id": "45gh-gh89",
+
+                    "@referredType": "Individual"
+
+                }
+
+            ],
+
+            "state": "inProgress",
+
+            "@type": "Quote"
+
+        }
+
+    ],
+
+    "serviceProblem": [
+
+        {
+
+            "id": "sp_001",
+
+            "href": "https://mycsp.com:8080/tmf-api/serviceProblemManagement/v4/serviceProblem/sp_001",
+
+            "category": "serviceProvider.declared",
+
+            "priority": 1,
+
+            "description": "Internet connection error",
+
+            "reason": "unknown",
+
+            "originatorParty": {
+
+                "role": "Supplier",
+
+                "id": "NP1",
+
+                "href": "https://mycsp.com:8080/tmf-api/partyManagement/v4/organization/NP1",
+
+                "@referredType": "Organization"
+
+            },
+
+            "affectedService": [
+
+                {
+
+                    "id": "SP00001_Service_001",
+
+                    "href": "https://mycsp.com:8080/tmf-api/serviceInventoryManagement/v4/service/SP00001_Service_001"
+
+                }
+
+            ]
+
+        }
+
+    ],
+
+    "usageVolumeProduct": 36,
+
+    "appointment": [{
+
+    "id": "21",
+
+    "href": "https://serverRoot/tmf-api/appointment/v4/appointment/21",
+
+    "@type": "Appointment",
+
+    "category": "intervention",
+
+    "creationDate": "2018-02-01T14:40:43.000Z",
+
+    "description": "Fix an internet connexion problem for a customer",
+
+    "status": "accepted",
+
+    "externalId": "432113",
+
+    "lastUpdate": "2018-02-04T14:40:43.000Z",
+
+    "validFor": {
+
+        "startDateTime": "2018-02-15T14:00:00.000Z",
+
+        "endDateTime": "2018-02-15T16:00:00.000Z"
+
+    },
+
+    "attachment": [
+
+        {
+
+            "id": "4444",
+
+            "href": "https://serverRoot/tmf-api/documentManagement/v4/customerContract/4444",
+
+            "@referredType": "CustomerContract"
+
+        },
+
+        {
+
+            "name": "customer agreement for intervention",
+
+            "description": "The customer authorizes the technician to modify his installation",
+
+            "agreementDate": "2018-02-03T10:28:35.000Z",
+
+            "url": "https://documentManager/85745/customerAgreement325.pdf",
+
+            "@type": "CustomerAgreement",
+
+            "@schemaLocation": "../CustomerAgreement.schema.json"
+
+        }
+
+    ],
+
+    "calendarEvent": {
+
+        "id": "33",
+
+        "href": "https://serverRoot/tmf-api/timeManagement/v4/calendarEvent/33",
+
+        "name": "Intervention calendar event"
+
+    },
+
+    "contactMedium": [
+
+        {
+
+            "mediumType": "phoneNumber",
+
+            "preferred": true,
+
+            "characteristic": {
+
+                "phoneNumber": "+33650981065",
+
+                "type": "mobile"
+
+            },
+
+            "validFor": {
+
+                "startDateTime": "2018-02-01T14:40:43.000Z",
+
+                "endDateTime": ""
+
+            }
+
+        }
+
+    ],
+
+    "note": [
+
+        {
+
+            "date": "2018-02-04T11:00:18.000Z",
+
+            "author": "Ludovic Robert",
+
+            "text": "Problem explained to the technician"
+
+        },
+
+        {
+
+            "date": "2018-02-04T14:40:43.000Z",
+
+            "author": "Ludovic Robert",
+
+            "text": "Work order generated"
+
+        }
+
+    ],
+
+    "relatedEntity": [
+
+        {
+
+            "id": "789",
+
+            "href": "https://serverRoot/tmf-api/troubleTicket/v4/troubleTicket/789",
+
+            "role": "Problem description",
+
+            "name": "Internet connexion problem to solve",
+
+            "@referredType": "TroubleTicket"
+
+        },
+
+        {
+
+            "id": "465",
+
+            "href": "https://serverRoot/tmf-api/workForceManagement/v4/workOrder/465",
+
+            "role": "work order description",
+
+            "name": "Work order generated for technician intervention",
+
+            "@referredType": "WorkOrder"
+
+        }
+
+    ],
+
+    "relatedParty": [
+
+        {
+
+            "id": "32",
+
+            "href": "https://serverRoot/tmf-api/partyManagement/v4/individual/32",
+
+            "role": "customer",
+
+            "name": "Kate Smith",
+
+            "@referredType": "Individual"
+
+        },
+
+        {
+
+            "id": "56",
+
+            "href": "https://serverRoot/tmf-api/partyManagement/v4/individual/56",
+
+            "role": "technician",
+
+            "name": "John Doe",
+
+            "@referredType": "Individual"
+
+        }
+
+    ],
+
+    "relatedPlace": {
+
+        "name": "client's address",
+
+        "role": "interventionAddress",
+
+        "streetNr": "96",
+
+        "streetType": "avenue",
+
+        "streetName": "de Versailles",
+
+        "postCode": "75016",
+
+        "city": "Paris",
+
+        "country": "France",
+
+        "@type": "GeographicAddress",
+
+        "@schemaLocation": "../geographicAddress.schema.json"
+
+    }
+
+}],
+
+    "id": "2160",
+
+    "href": "https://host:port/tmf-api/customer360/v4/customer360/2160",
+
+    "usageSpecification": 70,
+
+    "customerId": "22f93e32-6a6a-40d9-96d5-46f7ea20d2e0",
+
+    "customerRef": "https://host:port/tmf-api/customer/v4/customer/22f93e32-6a6a-40d9-96d5-46f7ea20d2e0"
+
+   
+
+}
