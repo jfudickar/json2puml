@@ -1,0 +1,8 @@
+{
+    "inputListFile": "placeholder_inputlist_curl.json",
+    "generateSummary": "true",
+    "generateDetails": "true",
+    "outputFormats": "svg,log,png,json,puml,zip",
+    "option": "default",
+    "curlParameter": []
+}

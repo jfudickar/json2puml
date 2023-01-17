@@ -1,0 +1,71 @@
+ {
+	"definitionFile": "placeholder_definition.json",
+	"generateDetails": "false",
+	"generateSummary": "true",
+	"curlBaseUrl": "https://jsonplaceholder.typicode.com/",
+	"input": [
+			{
+				"inputFile": "users_${ID}.json",
+				"leadingObject": "user",
+				"curlFormatOutput": "true",
+				"curlUrl": "/users/${ID}",
+				"curlCache": "0",
+				"generateOutput": "true",
+				"curlOutputParameter": [
+						{
+							"${name}": "name"
+						}
+				]
+			},
+			{
+				"inputFile": "albums_${ID}.json",
+				"leadingObject": "album",
+				"curlFormatOutput": "true",
+				"curlUrl": "albums?userId=${ID}",
+				"curlCache": "120",
+				"generateOutput": "true",
+				"curlOutputParameter": [
+						{
+							"name": "${albumid}",
+							"value": "id",
+							"maxValues": "2"
+						}
+				]
+			},
+			{
+				"inputFile": "photos_${ID}_${albumid}.json",
+				"leadingObject": "photo",
+				"curlUrl": "photos?albumId=${albumid}",
+				"curlCache": "120",
+				"generateOutput": "true"
+			},
+			{
+				"inputFile": "posts_${ID}.json",
+				"leadingObject": "post",
+				"curlUrl": "posts?userId=${ID}",
+				"curlCache": "120",
+				"generateOutput": "true",
+				"curlOutputParameter": [
+						{
+							"name": "${postid}",
+							"value": "id",
+							"maxValues": "2"
+						}
+				]
+			},
+			{
+				"inputFile": "comments_${ID}_${postID}.json",
+				"leadingObject": "comment",
+				"curlUrl": "comments?postId=${postId}",
+				"curlCache": "120",
+				"generateOutput": "true"
+			},
+			{
+				"inputFile": "todos_${ID}.json",
+				"leadingObject": "todo",
+				"curlUrl": "todos?userId=${ID}",
+				"curlCache": "120",
+				"generateOutput": "true"
+			}
+	]
+}

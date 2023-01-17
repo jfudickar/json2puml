@@ -1,0 +1,38 @@
+ {
+	"generateDetails": "false",
+	"generateSummary": "true",
+	"curlOptions":"",
+	"curlBaseUrl":"https://jsonplaceholder.typicode.com/",
+	"input": [
+		{
+			"inputFile": "datafull\\albums.json",
+			"leadingObject": "album",
+			"curlUrl":"albums"
+		},
+		{
+			"inputFile": "datafull\\comments.json",
+			"leadingObject": "comment",
+			"curlUrl":"comments"
+		},
+		{
+			"inputFile": "datafull\\photos.json",
+			"leadingObject": "photo",
+			"curlUrl":"photos"
+		},
+		{
+			"inputFile": "datafull\\posts.json",
+			"leadingObject": "post",
+			"curlUrl":"posts"
+		},
+		{
+			"inputFile": "datafull\\todos.json",
+			"leadingObject": "todo",
+			"curlUrl":"todos"
+		},
+		{
+			"inputFile": "datafull\\users.json",
+			"leadingObject": "user",
+			"curlUrl":"/users"
+		}
+	]
+}
