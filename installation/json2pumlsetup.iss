@@ -52,10 +52,13 @@ Source: "..\source\Win64\Release\json2pumlservice.exe"; DestDir: "{app}\bin"; Fl
 Source: "..\source\Win64\Release\json2pumlwindowsservice.exe"; DestDir: "{app}\bin"; Flags: ignoreversion; Components: Windows
 Source: "..\source\Linux64\Release\json2puml"; DestDir: "{app}\bin\linux"; Flags: ignoreversion; Components: Linux
 Source: "..\source\Linux64\Release\json2pumlservice"; DestDir: "{app}\bin\linux"; Flags: ignoreversion; Components: Linux
+Source: "..\source\Linux64\Release\json2puml"; DestDir: "{app}\docker\src\json2puml\bin\"; Flags: ignoreversion; Components: Docker
+Source: "..\source\Linux64\Release\json2pumlservice"; DestDir: "{app}\docker\src\json2puml\bin\"; Flags: ignoreversion; Components: Docker
 Source: "..\documentation\json2puml documentation.pdf"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
 Source: "..\documentation\json2puml introduction.pdf"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
 Source: "..\documentation\release-notes.txt"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
 Source: "..\documentation\json2puml.yaml"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
+Source: "..\documentation\*.md"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
 
 Source: "{tmp}\{#plantumljarfile}"; DestDir: "{app}\plantuml"; Flags: external; Tasks: downloadPlantUml
 
@@ -63,15 +66,18 @@ Source: "{tmp}\{#plantumljarfile}"; DestDir: "{app}\plantuml"; Flags: external; 
 Source: "..\samples\swapi\*.json"; DestDir: "{app}\samples\swapi"; Components: Samples
 Source: "..\samples\swapi\*.cmd"; DestDir: "{app}\samples\swapi"; Components: Samples
 Source: "..\samples\swapi\*.md"; DestDir: "{app}\samples\swapi"; Components: Samples
-Source: "..\samples\jsonplaceholder\*.txt"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
 Source: "..\samples\jsonplaceholder\*.json"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
 Source: "..\samples\jsonplaceholder\*.cmd"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
-Source: "..\samples\tmf\tmfdefinition.json"; DestDir: "{app}\samples\tmf"; Components: Samples
+Source: "..\samples\jsonplaceholder\*.md"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
+Source: "..\samples\tmf\tmf_definition.json"; DestDir: "{app}\samples\tmf"; Components: Samples
 Source: "..\samples\tmf\tmf-productdetail.json"; DestDir: "{app}\samples\tmf"; Components: Samples
+Source: "..\samples\tmf\*.md"; DestDir: "{app}\samples\tmf"; Components: Samples
+Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\service\*.json"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\service\*.cmd"; DestDir: "{app}\samples\service"; Components: Samples
+Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\configuration\json2pumlcurlauthentication.json"; DestDir: "{app}\samples"
-Source: "..\docker\*"; DestDir: "{app}\docker"; Components: Docker
+Source: "..\docker\*"; DestDir: "{app}\docker"; Flags: createallsubdirs recursesubdirs; Components: Docker; Excludes: ".gitignore,json2puml*.,*.url"
 
 [Icons]
 Name: "{group}\Release Notes"; Filename: "{app}\documentation\release-notes.txt"
@@ -88,14 +94,14 @@ Filename: "{app}\documentation\json2puml documentation.pdf"; Flags: nowait posti
 
 [Dirs]
 Name: "{app}\bin"
+Name: "{app}\bin\linux"; Components: Linux
 Name: "{app}\documentation"; Components: Documentation
 Name: "{app}\plantuml"; Tasks: downloadPlantUml
 Name: "{app}\samples"; Components: Samples
+Name: "{app}\samples\tmf"; Components: Samples
 Name: "{app}\samples\swapi"; Components: Samples
-Name: "{app}\samples\swapi\data"; Components: Samples
 Name: "{app}\samples\jsonplaceholder"; Components: Samples
 Name: "{app}\samples\service"; Components: Samples
-Name: "{app}\samples\service\result"; Components: Samples
 Name: "{app}\docker"; Components: Docker
 
 [Registry]
