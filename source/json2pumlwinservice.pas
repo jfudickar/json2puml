@@ -62,6 +62,7 @@ procedure TJ2PWinService.ServiceCreate(Sender: TObject);
 begin
   InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, true, false);
   GlobalLogHandler.Info('Service Created');
+  GlobalConfigurationDefinition.LogConfiguration;
   if WebRequestHandler <> nil then
     WebRequestHandler.WebModuleClass := Json2PumlWebModuleClass;
   WebRequestHandlerProc.MaxConnections := 1024;
