@@ -719,6 +719,7 @@ begin
     begin
       GlobalLoghandler.Info (ProtocolCommand);
       GlobalLoghandler.Info ('  curl skipped - %s is not older then %d seconds.', [iOutputFile, iCurlCache]);
+      Result := True;
       Exit;
     end;
   end;
@@ -740,7 +741,9 @@ begin
       [url, iOutputFile, MillisecondsBetween(Now, StartTime)])
   else
   begin
-    GlobalLoghandler.Warn ('Fetching from "%s" for "%s" FAILED - File not generated (%d ms) [%s]',
+    if FileExists(iOutputFile) then
+      tFile.SetLastWriteTime(iOutputFile, now-10);
+    GlobalLoghandler.Warn ('Fetching from "%s" for "%s" FAILED (%d ms) : [%s]',
       [url, iOutputFile, MillisecondsBetween(Now, StartTime), vErrorMessage]);
   end;
 end;

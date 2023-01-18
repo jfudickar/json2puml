@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumlconverter;
 
@@ -115,7 +115,6 @@ type
     property Title: string read FTitle write FTitle;
   end;
 
-
 implementation
 
 uses
@@ -123,12 +122,11 @@ uses
   System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, Masks, jsontools, json2pumlconst,
   json2pumlbasedefinition;
 
-Const
+const
   cUmlRelationDirection: array [tUmlRelationDirection] of string = ('To', 'From');
 
   cJson2PumlRecursionParentFunction: array [tJson2PumlRecursionParent] of string = ('Start', 'ConvertObject',
     'ConvertArray', 'ConvertValue');
-
 
 procedure TJson2PumlConverter.BuildObjectRelationships (iHierarchieParentObject, iPumlObject: tPumlObject;
   iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty: string; iAllways: Boolean);
@@ -687,18 +685,19 @@ var
   jValue: TJSONValue;
   InfoRec: tJson2PumlRecursionRecord;
 begin
-  Result := False;
+  Result := false;
   Puml.Clear;
   PumlRelationShips.Clear;
   PumlObjects.Clear;
   PumlObjects.ConverterDefinition := Definition;
   PumlObjects.InputFilter := InputFilter;
-  if FileExists(PumlFile) then
-    tFile.Delete(PumlFile);
+  if FileExists (PumlFile) then
+    tFile.Delete (PumlFile);
 
   jValue := TJsonObject.ParseJSONValue (JsonInput.Text);
   if not Assigned (jValue) then
-    GlobalLoghandler.Error ('Unable to parse JSON structure of file "%s"', [InputHandlerRecord.InputFile.OutputFileName])
+    GlobalLoghandler.Error ('Unable to parse JSON structure of file "%s"',
+      [InputHandlerRecord.InputFile.OutputFileName])
   else
   begin
     InfoRec.ParentObject := nil;
@@ -715,7 +714,7 @@ begin
     InfoRec.ObjectLevel := 0;
     ConvertValue (jValue, InfoRec, trpStart);
     GeneratePuml;
-    Result:= True;
+    Result := true;
   end;
 end;
 
@@ -803,8 +802,8 @@ begin
     for i := 0 to InputHandlerRecord.InputFile.Output.SourceFiles.Count - 1 do
     begin
       FileDetailRecord := TJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
-      Puml.Add (Format('| %s | %s | %s | %s |', [FileDetailRecord.Filename, DateTimeToStr(FileDetailRecord.FileDate),
-        Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12),
+      Puml.Add (Format('| %s | %s | %s | %s |', [FileDetailRecord.Filename.Replace('\t', '\\t'),
+        DateTimeToStr(FileDetailRecord.FileDate), Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12),
         FileDetailRecord.NoOfLines.ToString.PadLeft(12)]));
     end;
   end;

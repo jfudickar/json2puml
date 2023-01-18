@@ -29,12 +29,13 @@ interface
 uses System.JSON, System.Classes, json2pumlconst;
 
 type
-  TJson2PumlCalculateOutputFilenameEvent = function(iSourceFileName: string; iOutputFormat: tJson2PumlOutputFormat)
-    : string of object;
+  TJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = ''):
+      string of object;
 
   tJson2PumlOutputFormatHelper = record helper for tJson2PumlOutputFormat
     function FileExtension (iLeadingSeparator: boolean = false): string;
     procedure FromString (aValue: string);
+    procedure FromStringExtension(aValue: string);
     function IsPumlOutput: boolean;
     function PumlGenerateFlag: string;
     function ServiceResultName: string;
@@ -222,6 +223,20 @@ begin
   aValue := aValue.ToLower.Trim;
   for dbot := low(self) to high(self) do
     if aValue = dbot.ToString then
+    begin
+      self := dbot;
+      exit;
+    end;
+end;
+
+procedure tJson2PumlOutputFormatHelper.FromStringExtension(aValue: string);
+var
+  dbot: tJson2PumlOutputFormat;
+begin
+  self := low(self);
+  aValue := aValue.ToLower.Trim.TrimLeft([tPath.ExtensionSeparatorChar]);
+  for dbot := low(self) to high(self) do
+    if aValue = dbot.FileExtension then
     begin
       self := dbot;
       exit;

@@ -132,6 +132,7 @@ type
     function GetCurrentOutputPath: string;
     function GetCurrentOutputSuffix: string;
     function GetCurrentPlantUmlJarFileName: string;
+    function GetCurrentSummaryFileName: string;
     function GetDefinedDetail: string;
     function GetDefinedGroup: string;
     function GetDefinedOption: string;
@@ -148,8 +149,8 @@ type
   protected
     procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
-    function CalculateOutputFileName(iSourceFileName: string; iOutputFormat: tJson2PumlOutputFormat): string;
-    function CalculateOutputFileNamePath (iSourceFileName: string; iOutputFormat: tJson2PumlOutputFormat): string;
+    function CalculateOutputFileName(iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
+    function CalculateOutputFileNamePath(iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
     function CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
     function CalculateZipFileName: string;
     procedure ClearAllRecords;
@@ -157,6 +158,8 @@ type
     procedure CreateAllRecords;
     function CreateSingleRecord (iInputFile: tJson2PumlInputFileDefinition; iInputGroup, iInputDetail: string)
       : TJson2PumlInputHandlerRecord;
+    procedure GetFileNameExtension(iFileName, iNewFileExtension: string; var oFileNameExtension: string; var oFileFormat:
+        tJson2PumlOutputFormat);
     function IsConverting: Boolean;
     function LoadFileToStringList (iFileList: TStrings; iFileName, iFileDescription: string;
       iClass: tJson2PumlBaseObjectClass; iParseProcedure: TJson2PumlInputHandlerParseFileEvent;
@@ -228,6 +231,7 @@ type
     property CurrentOutputPath: string read GetCurrentOutputPath;
     property CurrentOutputSuffix: string read GetCurrentOutputSuffix;
     property CurrentPlantUmlJarFileName: string read GetCurrentPlantUmlJarFileName;
+    property CurrentSummaryFileName: string read GetCurrentSummaryFileName;
     property DefinedDetail: string read GetDefinedDetail;
     property DefinedGroup: string read GetDefinedGroup;
     property DefinedOption: string read GetDefinedOption;
@@ -480,41 +484,49 @@ begin
   Result := ReplaceInvalidPathChars (Result);
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileName(iSourceFileName: string; iOutputFormat:
-    tJson2PumlOutputFormat): string;
+function TJson2PumlInputHandler.CalculateOutputFileName(iFileName, iSourceFileName: string; iNewFileExtension: string =
+    ''): string;
 var
   Filename: string;
+  SourceFileName: string;
   Option: string;
   Suffix: string;
+  FileExtension: string;
+  Format : tJson2PumlOutputFormat;
 begin
-  if iOutputFormat = jofJSON then
+  GetFileNameExtension (iSourceFileName, iNewFileExtension, FileExtension, Format);
+  if Format = jofJSON then
     Option := ''
   else
     Option := CurrentOption;
-  Filename := tpath.ChangeExtension (ExtractFileName(iSourceFileName), '').TrimRight (['.']);
-  Suffix := ReplaceFileNameVariables (CurrentOutputSuffix, iSourceFileName, Option);
+  Filename := tpath.GetFileNameWithoutExtension (ExtractFileName(iFileName));
+  SourceFileName := tpath.GetFileNameWithoutExtension (ExtractFileName(iSourceFileName));
+  Filename := ReplaceFileNameVariables (Filename, SourceFileName, Option);
+  Suffix := ReplaceFileNameVariables (CurrentOutputSuffix, SourceFileName, Option);
   if (not Suffix.IsEmpty) and (Suffix <> tpath.ExtensionSeparatorChar) then
     Filename := Filename + Suffix;
-  Filename := ReplaceFileNameVariables (FileName, '', Option);
   Filename := CurlParameterList.ReplaceParameterValues (Filename);
-  Filename := Filename + iOutputFormat.FileExtension (true);
+  Filename := TPath.ChangeExtension(Filename, tpath.ExtensionSeparatorChar+FileExtension);
   Filename := ReplaceInvalidFileNameChars (Filename);
   Result := Filename;
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileNamePath (iSourceFileName: string;
-  iOutputFormat: tJson2PumlOutputFormat): string;
+function TJson2PumlInputHandler.CalculateOutputFileNamePath(iFileName, iSourceFileName: string; iNewFileExtension:
+    string = ''): string;
 var
   Filename: string;
   Option: string;
+  FileExtension: string;
+  Format : tJson2PumlOutputFormat;
 begin
-  if iOutputFormat = jofJSON then
+  GetFileNameExtension (iSourceFileName, iNewFileExtension, FileExtension, Format);
+  if Format = jofJSON then
     Option := ''
   else
     Option := CurrentOption;
-  Filename := CalculateOutputFileName (iSourceFileName, iOutputFormat);
+  Filename := CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension);
   Result := CurrentFullOutputPath;
-  Result := ReplaceFileNameVariables (Result, Filename, Option);
+  Result := ReplaceFileNameVariables (Result, iSourceFileName, Option);
   Result := CurlParameterList.ReplaceParameterValues (Result);
   Result := ReplaceInvalidPathChars (Result);
   Result := PathCombine (Result, Filename);
@@ -546,14 +558,8 @@ begin
 end;
 
 function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
-var
-  Filename: string;
 begin
-  if ConverterInputList.SummaryFileName.Trim.IsEmpty then
-    Filename := 'summary'
-  else
-    Filename := ExtractFileName (ConverterInputList.SummaryFileName);
-  Result := CalculateOutputFileNamePath (Filename, iOutputFormat);
+  Result := CalculateOutputFileNamePath (CurrentSummaryFileName, '', iOutputFormat.FileExtension(false));
 end;
 
 function TJson2PumlInputHandler.CalculateZipFileName: string;
@@ -563,11 +569,7 @@ var
   i: Integer;
 begin
   Option := CurrentOption;
-  if ConverterInputList.SummaryFileName.Trim.IsEmpty then
-    Filename := 'summary'
-  else
-    Filename := ExtractFileName (ConverterInputList.SummaryFileName);
-  Filename := CalculateOutputFileName (Filename, jofZip);
+  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', jofZip.FileExtension(false));
 
   Result := CurrentFullOutputPath;
   i := Result.IndexOf (jfnrFile.ToString);
@@ -625,12 +627,15 @@ begin
 
       SingleRecord.ConverterLog.Clear;
       OutputFormats := GetCurrentOutputFormats (CurrentConverterDefinition);
-      SingleRecord.InputFile.IsConverted := False;
+      SingleRecord.InputFile.IsConverted := false;
       if not SingleRecord.InputFile.GenerateOutput then
         Continue;
 
-      SingleRecord.InputFile.OutputFileName := CurlParameterList.ReplaceParameterValuesFileName(SingleRecord.InputFile.OutputFileName);
-      OutputFile := CalculateOutputFileNamePath (SingleRecord.InputFile.OutputFileName, jofPUML);
+      SingleRecord.InputFile.OutputFileName := CurlParameterList.ReplaceParameterValuesFileName
+        (SingleRecord.InputFile.OutputFileName);
+      // OutputFile := CalculateOutputFileNamePath (SingleRecord.InputFile.OutputFileName,
+      // SingleRecord.InputFile.InputFileName, jofPUML);
+      OutputFile := ChangeFileExt (SingleRecord.InputFile.OutputFileName, jofPUML.FileExtension(true));
       GenerateFileDirectory (OutputFile);
 
       if SingleRecord.InputFile.IsSummaryFile then
@@ -658,7 +663,7 @@ begin
       end;
       if SingleRecord.PUmlOutput.Text <> '' then
       begin
-        SingleRecord.InputFile.IsConverted := False;
+        SingleRecord.InputFile.IsConverted := false;
         SingleRecord.InputFile.Output.PUmlFileName := OutputFile;
         SingleRecord.PUmlOutput.SaveToFile (SingleRecord.InputFile.Output.PUmlFileName);
         if GenerateOutputsFromPuml (SingleRecord.InputFile.Output.PUmlFileName, JarFile, CurrentJavaRuntimeParameter,
@@ -1299,8 +1304,8 @@ begin
   ClearAllRecords;
   ParseDefintions;
   ConverterInputList.AddInputFile (CmdLineParameter.InputFileName, CmdLineParameter.InputFileName,
-    CmdLineParameter.LeadingObject, CmdLineParameter.SplitInputFileStr, CmdLineParameter.SplitIdentifier, '', '', '', 0,
-    '', true);
+    CmdLineParameter.LeadingObject, CmdLineParameter.SplitInputFileStr, CmdLineParameter.SplitIdentifier, '', '', '',
+    '', 0, '', true);
   for ParameterInputFile in ParameterDefinition.InputFiles do
   begin
     if ParameterInputFile.Filename.IsEmpty then
@@ -1310,7 +1315,7 @@ begin
       Filename := ParameterInputFile.Filename;
       if not FileExists (ParameterInputFile.Filename) then
         Filename := PathCombineIfRelative (ExtractFilePath(CmdLineParameter.ParameterFileName), Filename);
-      ConverterInputList.AddInputFile (Filename, Filename, ParameterInputFile.LeadingObject, '', '', '', '', '', 0,
+      ConverterInputList.AddInputFile (Filename, Filename, ParameterInputFile.LeadingObject, '', '', '', '', '', '', 0,
         '', true);
     end
     else
@@ -1321,13 +1326,11 @@ begin
         Lines.Text := ParameterInputFile.Content;
         if not IsRelativePath (ExtractFilePath(Filename)) then
           Filename := ExtractFileName (Filename);
-        // Filename := GenerateCalculateOutputFilename (Filename, CurrentFullOutputPath, CurrentOutputSuffix, CurrentGroup,
-        // CurrentOption, CurrentDetail, 'json', nil);
-        Filename := CalculateOutputFileNamePath (Filename, jofJSON);
+        Filename := CalculateOutputFileNamePath (Filename, Filename);
         GenerateFileDirectory (Filename);
         Lines.SaveToFile (Filename);
-        ConverterInputList.AddInputFile (Filename, Filename, ParameterInputFile.LeadingObject, '', '', '', '', '', 0,
-          '', true);
+        ConverterInputList.AddInputFile (Filename, Filename, ParameterInputFile.LeadingObject, '', '', '', '', '', '',
+          0, '', true);
       finally
         Lines.Free;
       end;
@@ -1425,6 +1428,7 @@ begin
   log ('GenerateDetails', BooleanToString(CurrentGenerateDetails));
   log ('BaseOutputPath', BaseOutputPath);
   log ('FullOutputPath', CurrentFullOutputPath);
+  log ('SummaryFile', CurrentSummaryFileName);
   GlobalLoghandler.Info ('Input Files');
   for InputFile in ConverterInputList do
     if InputFile.GenerateOutput and not InputFile.IsSummaryFile then
@@ -1438,6 +1442,27 @@ end;
 procedure TJson2PumlInputHandler.GenerateSummaryZipFile;
 begin
   ConverterInputList.GenerateSummaryZipFile (CalculateZipFileName);
+end;
+
+function TJson2PumlInputHandler.GetCurrentSummaryFileName: string;
+begin
+  if not CmdLineParameter.SummaryFileName.IsEmpty then
+    Result := CmdLineParameter.SummaryFileName
+  else
+    Result := ConverterInputList.SummaryFileName;
+  if Result.IsEmpty then
+    Result := 'summary';
+end;
+
+procedure TJson2PumlInputHandler.GetFileNameExtension(iFileName, iNewFileExtension: string; var oFileNameExtension:
+    string; var oFileFormat: tJson2PumlOutputFormat);
+begin
+  oFileNameExtension := iNewFileExtension.TrimLeft([tpath.ExtensionSeparatorChar]);
+  if oFileNameExtension.IsEmpty then
+    oFileNameExtension := tpath.GetExtension (iFileName).TrimLeft([tpath.ExtensionSeparatorChar]);
+  if oFileNameExtension.IsEmpty then
+    oFileNameExtension := jofJSON.FileExtension;
+  oFileFormat.FromString(oFileNameExtension);
 end;
 
 end.
