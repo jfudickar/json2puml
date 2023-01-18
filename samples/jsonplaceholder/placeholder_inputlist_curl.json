@@ -1,32 +1,56 @@
- {
+{
+	"description": {
+		"displayName": null,
+		"description": null,
+		"curlParameter":  [
+		]
+	},
 	"definitionFile": "placeholder_definition.json",
 	"generateDetails": "false",
 	"generateSummary": "true",
+	"group": "${ID}",
+	"detail": null,
+	"option": null,
+	"job": null,
+	"outputFormats":[],
+	"outputPath": null,
+	"outputSuffix": null,
 	"curlBaseUrl": "https://jsonplaceholder.typicode.com/",
+	"curlUrlAddon": null,
+	"curlOptions": null,
 	"summaryFile": "placeholder_summary_${name}",
-	"group":"${ID}",
-	"input": [
+	"input":  [
 			{
-				"inputFile": "users_${ID}.json",
-				"leadingObject": "user",
+				"inputFile": "users.JSON",
+				"curlFileSuffix": "_${ID}",
+				"curlBaseUrl": null,
 				"curlFormatOutput": "true",
 				"curlUrl": "/users/${ID}",
+				"curlOptions": null,
 				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "user",
 				"generateOutput": "true",
-				"curlOutputParameter": [
+				"curlOutputParameter":  [
 						{
 							"${name}": "name"
 						}
 				]
 			},
 			{
-				"inputFile": "albums_${ID}.json",
-				"leadingObject": "album",
+				"inputFile": "albums",
+				"curlFileSuffix": "_${ID}",
+				"curlBaseUrl": null,
 				"curlFormatOutput": "true",
 				"curlUrl": "albums?userId=${ID}",
+				"curlOptions": null,
 				"curlCache": "120",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "album",
 				"generateOutput": "true",
-				"curlOutputParameter": [
+				"curlOutputParameter":  [
 						{
 							"name": "${albumid}",
 							"value": "id",
@@ -35,19 +59,33 @@
 				]
 			},
 			{
-				"inputFile": "photos_${ID}_${albumid}.json",
-				"leadingObject": "photo",
+				"inputFile": "photos.json",
+				"curlFileSuffix": "_${ID}_${albumid}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": null,
 				"curlUrl": "photos?albumId=${albumid}",
+				"curlOptions": null,
 				"curlCache": "120",
-				"generateOutput": "true"
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "photo",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
 			},
 			{
-				"inputFile": "posts_${ID}.json",
-				"leadingObject": "post",
+				"inputFile": "posts.json",
+				"curlFileSuffix": "_${ID}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": null,
 				"curlUrl": "posts?userId=${ID}",
+				"curlOptions": null,
 				"curlCache": "120",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "post",
 				"generateOutput": "true",
-				"curlOutputParameter": [
+				"curlOutputParameter":  [
 						{
 							"name": "${postid}",
 							"value": "id",
@@ -56,18 +94,34 @@
 				]
 			},
 			{
-				"inputFile": "comments_${ID}_${postID}.json",
-				"leadingObject": "comment",
+				"inputFile": "comments.json",
+				"curlFileSuffix": "_${ID}_${postID}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": null,
 				"curlUrl": "comments?postId=${postId}",
+				"curlOptions": null,
 				"curlCache": "120",
-				"generateOutput": "true"
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "comment",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
 			},
 			{
-				"inputFile": "todos_${ID}.json",
-				"leadingObject": "todo",
+				"inputFile": "todos.json",
+				"curlFileSuffix": "_${ID}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": null,
 				"curlUrl": "todos?userId=${ID}",
+				"curlOptions": null,
 				"curlCache": "120",
-				"generateOutput": "true"
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "todo",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
 			}
 	]
 }

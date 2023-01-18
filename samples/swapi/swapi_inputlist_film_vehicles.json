@@ -29,7 +29,7 @@
 	"input":  [
 			{
 				"inputFile": "films.json",
-				"leadingObject": "films",
+				"curlFileSuffix": null,
 				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
@@ -37,6 +37,7 @@
 				"curlCache": "0",
 				"splitIdentifier": null,
 				"splitInputFile": null,
+				"leadingObject": "films",
 				"generateOutput": "true",
 				"curlOutputParameter":  [
 						{
@@ -51,8 +52,8 @@
 				]
 			},
 			{
-				"inputFile": "vehicles_${vehicles}.json",
-				"leadingObject": "vehicles",
+				"inputFile": "vehicles.json",
+				"curlFileSuffix": "_${vehicles}",
 				"curlBaseUrl": "${vehicles}x",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
@@ -60,13 +61,14 @@
 				"curlCache": "0",
 				"splitIdentifier": null,
 				"splitInputFile": null,
+				"leadingObject": "vehicles",
 				"generateOutput": "true",
 				"curlOutputParameter":  [
 				]
 			},
 			{
-				"inputFile": "starships_${starships}.json",
-				"leadingObject": "starships",
+				"inputFile": "starships.json",
+				"curlFileSuffix": "_${starships}",
 				"curlBaseUrl": "${starships}",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
@@ -74,6 +76,7 @@
 				"curlCache": "0",
 				"splitIdentifier": null,
 				"splitInputFile": null,
+				"leadingObject": "starships",
 				"generateOutput": "true",
 				"curlOutputParameter":  [
 				]

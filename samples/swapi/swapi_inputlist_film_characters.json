@@ -29,7 +29,7 @@
 	"input":  [
 			{
 				"inputFile": "films.json",
-				"leadingObject": "films",
+				"curlFileSuffix": null,
 				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
@@ -37,6 +37,7 @@
 				"curlCache": "0",
 				"splitIdentifier": null,
 				"splitInputFile": null,
+				"leadingObject": "films",
 				"generateOutput": "true",
 				"curlOutputParameter":  [
 						{
@@ -48,8 +49,8 @@
 				]
 			},
 			{
-				"inputFile": "characters_${characters}.json",
-				"leadingObject": "characters",
+				"inputFile": "characters.json",
+				"curlFileSuffix": "_${characters}",
 				"curlBaseUrl": "${characters}",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
@@ -57,6 +58,7 @@
 				"curlCache": "0",
 				"splitIdentifier": null,
 				"splitInputFile": null,
+				"leadingObject": "characters",
 				"generateOutput": "true",
 				"curlOutputParameter":  [
 						{
@@ -65,8 +67,8 @@
 				]
 			},
 			{
-				"inputFile": "planets_${planets}.json",
-				"leadingObject": "planets",
+				"inputFile": "planets.json",
+				"curlFileSuffix": "_${planets}",
 				"curlBaseUrl": "${planets}",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
@@ -74,6 +76,7 @@
 				"curlCache": "0",
 				"splitIdentifier": null,
 				"splitInputFile": null,
+				"leadingObject": "planets",
 				"generateOutput": "true",
 				"curlOutputParameter":  [
 				]
