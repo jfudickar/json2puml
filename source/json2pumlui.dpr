@@ -46,5 +46,4 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(Tjson2pumlMainForm, json2pumlMainForm);
   Application.Run;
-
 end.

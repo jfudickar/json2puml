@@ -136,6 +136,7 @@ type
     FCaptionShowTypeStr: string;
     FCaptionSplitCharacter: string;
     FCaptionSplitLengthStr: string;
+    FValueSplitLengthStr: string;
     FFormatName: string;
     FIconColor: string;
     FObjectFilter: TStrings;
@@ -149,6 +150,7 @@ type
     function GetCaptionShowTitle: boolean;
     function GetCaptionShowType: boolean;
     function GetCaptionSplitLength: Integer;
+    function GetValueSplitLength: Integer;
     function GetShowAttributes: boolean;
     function GetShowCharacteristics: boolean;
     function GetShowFromRelations: boolean;
@@ -170,6 +172,7 @@ type
     property CaptionShowTitleStr: string read FCaptionShowTitleStr write SetCaptionShowTitleStr;
     property CaptionShowTypeStr: string read FCaptionShowTypeStr write SetCaptionShowTypeStr;
     property CaptionSplitLengthStr: string read FCaptionSplitLengthStr write FCaptionSplitLengthStr;
+    property ValueSplitLengthStr: string read FValueSplitLengthStr write FValueSplitLengthStr;
     property ShowAttributesStr: string read FShowAttributesStr write SetShowAttributesStr;
     property ShowCharacteristicsStr: string read FShowCharacteristicsStr write SetShowCharacteristicsStr;
     property ShowFromRelationsStr: string read FShowFromRelationsStr write SetShowFromRelationsStr;
@@ -190,6 +193,7 @@ type
     property CaptionShowType: boolean read GetCaptionShowType;
     property CaptionSplitCharacter: string read FCaptionSplitCharacter write FCaptionSplitCharacter;
     property CaptionSplitLength: Integer read GetCaptionSplitLength;
+    property ValueSplitLength: Integer read GetValueSplitLength;
     property FormatName: string read FFormatName write FFormatName;
     property IconColor: string read FIconColor write FIconColor;
     property ObjectFilter: TStrings read FObjectFilter write FObjectFilter;
@@ -1321,6 +1325,7 @@ begin
     ShowIfEmptyStr := tJson2PumlSingleFormatDefinition (Source).ShowIfEmptyStr;
     ShowFromRelationsStr := tJson2PumlSingleFormatDefinition (Source).ShowFromRelationsStr;
     ShowToRelationsStr := tJson2PumlSingleFormatDefinition (Source).ShowToRelationsStr;
+    ValueSplitLengthStr := tJson2PumlSingleFormatDefinition (Source).ValueSplitLengthStr;
   end;
 end;
 
@@ -1339,6 +1344,7 @@ begin
   ShowToRelationsStr := '';
   FormatName := '';
   IconColor := '';
+  ValueSplitLengthStr := '';
   ObjectFilter.Clear;
   SkinParams.Clear;
 end;
@@ -1364,6 +1370,14 @@ begin
     Result := 0
   else
     Result := CaptionSplitLengthStr.ToInteger;
+end;
+
+function tJson2PumlSingleFormatDefinition.GetValueSplitLength: Integer;
+begin
+  if ValueSplitLengthStr.IsEmpty then
+    Result := 0
+  else
+    Result := ValueSplitLengthStr.ToInteger;
 end;
 
 function tJson2PumlSingleFormatDefinition.GetIdent: string;
@@ -1402,7 +1416,7 @@ begin
     not CaptionSplitCharacter.IsEmpty or not CaptionSplitLengthStr.IsEmpty or not IconColor.IsEmpty or
     not (ObjectFilter.Count > 0) or not ShowAttributesStr.IsEmpty or not ShowCharacteristicsStr.IsEmpty or
     not ShowIfEmptyStr.IsEmpty or not ShowFromRelationsStr.IsEmpty or not ShowToRelationsStr.IsEmpty or
-    (SkinParams.Count > 0);
+    (SkinParams.Count > 0) or not ValueSplitLengthStr.IsEmpty;
 end;
 
 procedure tJson2PumlSingleFormatDefinition.MergeWith (iMergeDefinition: tJson2PumlBaseObject);
@@ -1428,6 +1442,7 @@ begin
   ShowToRelationsStr := MergeValue (ShowToRelationsStr, Definition.ShowToRelationsStr);
   if Definition.ObjectFilter.Count > 0 then
     SkinParams.Assign (Definition.SkinParams);
+  ValueSplitLengthStr := MergeValue (ValueSplitLengthStr, Definition.ValueSplitLengthStr);
 end;
 
 function tJson2PumlSingleFormatDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
@@ -1458,6 +1473,7 @@ begin
   ShowIfEmptyStr := GetJsonStringValueBoolean (DefinitionRecord, 'showIfEmpty', '');
   ShowToRelationsStr := GetJsonStringValueBoolean (DefinitionRecord, 'showToRelations', '');
   SkinParams.Text := GetJsonStringArray (DefinitionRecord, 'skinParams');
+  ValueSplitLengthStr := GetJsonStringValue (DefinitionRecord, 'valueSplitLength', '');
 end;
 
 procedure tJson2PumlSingleFormatDefinition.SetCaptionShowIdentStr (const Value: string);
@@ -1540,6 +1556,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'showFromRelations', ShowFromRelationsStr, Level + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'showIfEmpty', ShowIfEmptyStr, Level + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'showToRelations', ShowToRelationsStr, Level + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'valueSplitLength', ValueSplitLengthStr, Level + 1, iWriteEmpty);
   ClearLastLineComma (oJsonOutPut);
   oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(Level)]));
   if not FormatName.IsEmpty then
@@ -1640,14 +1657,17 @@ var
   i: Integer;
 begin
   Result := nil;
-  Search := iParentPropertyName + '.' + iPropertyName;
   for i := 1 to 2 do
+  begin
+    if i = 1 then
+      Search := iParentPropertyName + '.' + iPropertyName
+    else
+      Search := iPropertyName;
     for Format in self do
     begin
       if (Format.ObjectFilter.Count <= 0) and not Format.FormatName.IsEmpty then
       begin
-        if ((i = 1) and MatchesMask(iPropertyName, Format.FormatName)) or
-          ((i = 2) and MatchesMask(Search, Format.FormatName)) then
+        if MatchesMask (Search, Format.FormatName) then
         begin
           Result := Format;
           exit;
@@ -1655,12 +1675,13 @@ begin
       end
       else
         for S in Format.ObjectFilter do
-          if ((i = 1) and MatchesMask(iPropertyName, S)) or ((i = 2) and MatchesMask(Search, S)) then
+          if MatchesMask (Search, S) then
           begin
             Result := Format;
             exit;
           end
     end;
+  end;
 end;
 
 function tJson2PumlFormatDefinitionList.GetEnumerator: tJson2PumlFormatDefinitionEnumerator;

@@ -111,7 +111,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Top = 48
     Width = 1355
     Height = 838
-    ActivePage = LogTabSheet
+    ActivePage = DefinitionFileTabSheet
     Align = alClient
     TabOrder = 3
     object InputListTabSheet: TTabSheet
@@ -2151,12 +2151,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
           end
           item
             Caption = '-'
-          end
-          item
-            Action = ConvertAllOpenFilesAction
-            Caption = '&Convert all open files'
-            ImageIndex = 15
-            ShortCut = 116
           end>
         ActionBar = DefinitionActionToolBar
       end

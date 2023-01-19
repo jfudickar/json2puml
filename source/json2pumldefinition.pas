@@ -117,6 +117,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    procedure Clear; override;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
@@ -260,6 +261,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    procedure Clear; override;
     procedure AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string);
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     procedure DeleteGeneratedFiles;
@@ -379,6 +381,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    procedure Clear; override;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
@@ -664,10 +667,10 @@ type
     procedure ReadListValueFromJson (iJsonValue: TJSONValue); override;
   public
     constructor Create; override;
+    destructor Destroy; override;
     function AddParameter (iName, iValue: string; iMaxValues: Integer = 0): boolean; overload;
     function AddParameter (iParameter: tJson2PumlCurlParameterDefinition): boolean; overload;
     procedure AddParameter (iParameterList: tJson2PumlCurlParameterList; iNameFilter: string = ''); overload;
-    procedure Clear; override;
     function GetEnumerator: tJson2PumlCurlParameterEnumerator;
     procedure GetParameterNameList (ioNameList: tStringList; const iValueString: string);
     function ParameterValueCount (iParameterName: string): Integer;
@@ -734,7 +737,6 @@ type
   public
     constructor Create; override;
     function AddAuthentication (iBaseUrl: string): tJson2PumlCurlAuthenticationDefinition;
-    procedure Clear; override;
     function FindAuthentication (const iBaseUrl: string): tJson2PumlCurlAuthenticationDefinition;
     function GetEnumerator: tJson2PumlCurlAuthenticationEnumerator;
     property Authentication[index: Integer]: tJson2PumlCurlAuthenticationDefinition read GetAuthentication; default;
@@ -816,6 +818,14 @@ begin
   if IsGenerated and not OutputFileName.IsEmpty then
     ioDeleteHandler.AddFile (OutputFileName);
   Output.AddGeneratedFilesToDeleteHandler (ioDeleteHandler);
+end;
+
+procedure tJson2PumlInputFileDefinition.Clear;
+begin
+  inherited clear;
+  CurlAuthenticationList.Clear;
+  CurlOutputParameter.Clear;
+  Output.Clear;
 end;
 
 procedure tJson2PumlInputFileDefinition.DeleteGeneratedFiles;
@@ -1191,6 +1201,7 @@ end;
 procedure tJson2PumlInputList.Clear;
 begin
   inherited Clear;
+  Description.Clear;
   GenerateDetailsStr := '';
   GenerateSummaryStr := '';
   SummaryZipFileName := '';
@@ -2196,8 +2207,8 @@ end;
 procedure tJson2PumlGlobalDefinition.Clear;
 begin
   PlantUmlJarFileName := '';
-  FDefaultDefinitionFileFolder.Clear;
-  FDefaultInputListFileFolder.Clear;
+  DefaultDefinitionFileFolder.Clear;
+  DefaultInputListFileFolder.Clear;
   DefaultDefinitionFileName := '';
   CurlAuthenticationFileName := '';
 end;
@@ -2479,11 +2490,6 @@ begin
   Result := nAuthentication;
 end;
 
-procedure tJson2PumlCurlAuthenticationList.Clear;
-begin
-  inherited Clear;
-end;
-
 function tJson2PumlCurlAuthenticationList.CreateListValueObject: tJson2PumlBaseObject;
 begin
   Result := tJson2PumlCurlAuthenticationDefinition.Create;
@@ -2575,6 +2581,11 @@ begin
   FMulitpleValues := true;
 end;
 
+destructor tJson2PumlCurlParameterList.Destroy;
+begin
+  inherited destroy;
+end;
+
 function tJson2PumlCurlParameterList.AddParameter (iName, iValue: string; iMaxValues: Integer = 0): boolean;
 var
   nParameter: tJson2PumlCurlParameterDefinition;
@@ -2615,11 +2626,6 @@ begin
       AddParameter (Parameter.name, Parameter.Value, Parameter.MaxValues)
     else if Parameter.name = iNameFilter then
       AddParameter (Parameter.name, Parameter.Value, Parameter.MaxValues);
-end;
-
-procedure tJson2PumlCurlParameterList.Clear;
-begin
-  inherited Clear;
 end;
 
 function tJson2PumlCurlParameterList.GetEnumerator: tJson2PumlCurlParameterEnumerator;
@@ -2956,6 +2962,14 @@ begin
   inherited Destroy;
 end;
 
+procedure tJson2PumlParameterFileDefinition.Clear;
+begin
+  inherited Clear;
+  CurlParameter.Clear;
+  InputFiles.Clear;
+
+end;
+
 function tJson2PumlParameterFileDefinition.GetDefinitionFileNameExpanded: string;
 begin
   Result := GetFileNameExpanded (DefinitionFileName);
@@ -3140,6 +3154,12 @@ destructor tJson2PumlInputListDescriptionDefinition.Destroy;
 begin
   FCurlParameterList.Free;
   inherited Destroy;
+end;
+
+procedure tJson2PumlInputListDescriptionDefinition.Clear;
+begin
+  inherited clear;
+  CurlParameterList.Clear;
 end;
 
 function tJson2PumlInputListDescriptionDefinition.GetIdent: string;

@@ -38,6 +38,8 @@ type
 
   tJson2PumlFileNameReplace = (jfnrGroup, jfnrDetail, jfnrOption, jfnrJob, jfnrFile);
 
+  tUmlRelationDirection = (urdTo, urdFrom);
+
 const
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log', 'zip');
   cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '', '', '');
@@ -45,6 +47,8 @@ const
   cJson2PumlCharacteristicType: array [tJson2PumlCharacteristicType] of string = ('record', 'list');
   cJson2PumlListHandlingMode: array [tJson2PumlListOperation] of string = ('replace', 'merge');
   cJson2PumlFileNameReplace : array [tJson2PumlFileNameReplace] of string = ('<group>', '<detail>', '<option>', '<job>', '<file>');
+  cUmlRelationDirection: array [tUmlRelationDirection] of string = ('To', 'From');
+
   cDefaultDefinitionFile = 'json2pumldefinition.json';
   cDefinitionFileRegistry = 'Json2PumlDefinitionFile';
   cConfigurationFileRegistry = 'Json2PumlConfigurationFile';
@@ -65,9 +69,13 @@ const
 
   cLinuxHome = '~';
 
-  cCurrentVersion = '2.0.2.54';
+  cNewLinePuml = '\n';
+
+  cCurrentVersion = '2.0.3.55';
 
   JSON2PUML_EVENTTYPENAMES : TEventTypeNames = ['','INFO    ','SUCCESS ','WARNING ','ERROR   ','CRITICAL','EXCEPT  ','DEBUG   ','TRACE   ','DONE    ','CUSTOM1 ','CUSTOM2 '];
+
+
 
 
 

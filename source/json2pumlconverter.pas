@@ -342,7 +342,9 @@ begin
         cinfo := GetJsonStringValue (iJsonObject, CharacteristicDefinition.InfoProperties);
         if not cname.IsEmpty then
           iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, cname, cvalue, cinfo,
-            CharacteristicDefinition);
+            CharacteristicDefinition)
+        else
+          AddFileLog ('Name property %s not filled, value will be ignored', [CharacteristicDefinition.NameProperties.Text]);
       end
       else
       begin
@@ -669,7 +671,7 @@ end;
 constructor TJson2PumlConverter.Create;
 begin
   inherited Create;
-  FPumlRelationShips := tPumlRelationshipList.Create ();
+  FPumlRelationShips := tPumlRelationshipList.Create (nil);
   FPumlObjects := tPumlObjectList.Create ();
 end;
 
