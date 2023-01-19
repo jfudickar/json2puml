@@ -1,0 +1,13 @@
+{
+	"inputListFile": "tvmaze_inputlist_show.json",
+	"inputFiles":  [
+	],
+	"definitionFile": null,
+	"generateSummary": "true",
+	"generateDetails": "true",
+	"outputFormats": "svg,log,json,puml,zip",
+	"option": "full",
+	"outputSuffix": null,
+	"curlParameter":  [
+	]
+}

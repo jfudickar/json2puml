@@ -1,0 +1,195 @@
+{
+	"description": {
+		"displayName": null,
+		"description": null
+	},
+	"defaultOption": "default",
+	"options":  [
+			{
+				"option": "full",
+				"definition": {
+					"continueAfterUnhandledObjects": "true",
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties":  [
+							"*"
+					],
+					"objectProperties": {
+						"operation": "replace",
+						"list":  [
+								{"objectName": "*","generateWithoutIdentifier": "true"}
+						]
+					},
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": "true",
+							"showToRelations": null,
+							"valueSplitLength": null
+						}
+					}
+				}
+			}
+	],
+	"baseOption": {
+		"continueAfterUnhandledObjects": "false",
+		"groupDetailObjectsTogether": null,
+		"hideDuplicateRelations": null,
+		"identifyObjectsByTypeAndIdent": "false",
+		"legendShowInfo": null,
+		"legendShowObjectFormats": null,
+		"legendShowFileInfos": null,
+		"outputFormats":["png","svg"],
+		"attributeProperties":  [
+				"*"
+		],
+		"objectProperties":  [
+				"show",
+				"person",
+				"character",
+				"country",
+				"network",
+				"cast"
+		],
+		"objectTypeRenames":  [
+		],
+		"objectDetailProperties":  [
+		],
+		"groupProperties":  [
+		],
+		"objectIdentifierProperties":  [
+				"id",
+				"country.code"
+		],
+		"relationshipProperties":  [
+		],
+		"relationshipTypeProperties":  [
+		],
+		"objectTitleProperties":  [
+				"title",
+				"name"
+		],
+		"objectTypeProperties":  [
+		],
+		"relationshipTypeArrowFormats":  [
+		],
+		"hiddenProperties":  [
+				"_links",
+				"resolutions.medium",
+				"image.medium"
+		],
+		"pumlHeaderLines":  [
+				"hide stereotype"
+		],
+		"characteristicProperties":  [
+				{"parentProperty": "image", "type": "record"},
+				{"parentProperty": "externals", "type": "record"},
+				{"parentProperty": "embedded", "type": "record"},
+				{"parentProperty": "schedule", "type": "record"},
+				{"parentProperty": "rating", "type": "record"}
+		],
+		"objectFormats": {
+			"baseFormat": {
+				"objectFilter": [],
+				"iconColor": null,
+				"skinParams": ["BackgroundColor=STRATEGY"],
+				"captionShowIdent": "false",
+				"captionShowTitle": "true",
+				"captionShowType": "true",
+				"captionSplitCharacter": "_",
+				"captionSplitLength": "0",
+				"showAttributes": "true",
+				"showCharacteristics": "true",
+				"showFromRelations": "true",
+				"showIfEmpty": "false",
+				"showToRelations": "false",
+				"valueSplitLength": "100"
+			},
+			"formats":  [
+					{
+						"formatName": "show",
+						"definition": {
+							"objectFilter": [
+								"show",
+								"cast",
+								"show._embedded"
+							],
+							"iconColor": "IndianRed",
+							"skinParams": ["BackgroundColor=DarkSalmon"]
+						}
+					},
+					{
+						"formatName": "person",
+						"definition": {
+							"objectFilter": ["person"],
+							"iconColor": "DarkGreen",
+							"skinParams": ["BackgroundColor=Lime"]
+						}
+					},
+					{
+						"formatName": "character",
+						"definition": {
+							"objectFilter": ["character"],
+							"iconColor": "DeepSkyBlue",
+							"skinParams": ["BackgroundColor=LightSkyBlue"]
+						}
+					},
+					{
+						"formatName": "network",
+						"definition": {
+							"objectFilter": ["network"],
+							"iconColor": "purple",
+							"skinParams": ["BackgroundColor=plum"]
+						}
+					},
+					{
+						"formatName": "country",
+						"definition": {
+							"objectFilter": ["country"],
+							"iconColor": "orange",
+							"skinParams": ["BackgroundColor=orange"]
+						}
+					}
+			]
+		}
+	}
+}
