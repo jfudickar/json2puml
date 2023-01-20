@@ -8,7 +8,7 @@
 					"displayName": "Show ID",
 					"description": "Primary id of the Show",
 					"mandatory": "true",
-					"regularExpression": null
+					"regularExpression": ""
 				}
 		]
 	},

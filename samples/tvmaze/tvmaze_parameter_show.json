@@ -6,7 +6,7 @@
 	"generateSummary": "true",
 	"generateDetails": "true",
 	"outputFormats": "svg,log,json,puml,zip",
-	"option": "full",
+	"option": "default",
 	"outputSuffix": null,
 	"curlParameter":  [
 	]

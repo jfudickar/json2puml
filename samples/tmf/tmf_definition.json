@@ -586,14 +586,6 @@
       "telephone=contactMedium",
       "postalAddress=contactMedium",
       "originalaccount=account",
-      "com.amdocs.billing.ms.customerbill.appliedcustomerbillingrate.couchbase.dto.ACBRBillingAccountBillingCycleDTO=appliedCustomerBillingRate",
-      "com.amdocs.digital.ms.geographicaddress.geographicaddressentity.couchbase.dto.GeographicAddressEntityDTO=geographicAddress",
-      "com.amdocs.digital.ms.paymentmethod.paymentmethod.couchbase.dto.PaymentMethodDTO=paymentMethod",
-      "com.amdocs.digital.ms.pi.product.couchbase.dto.ProductDTO=product",
-      "com.amdocs.digital.ms.party.individual.couchbase.dto.OrganisationDTO=organisation",
-      "com.amdocs.digital.ms.party.individual.couchbase.dto.IndividualDTO=individual",
-      "com.amdocs.digital.ms.account.billingaccount.couchbase.dto.BillingAccountDTO=billingAccount",
-      "com.amdocs.digital.ms.customer.customerentity.couchbase.dto.CustomerDTO=customer",
       "customerEntity=customer"
     ],
     "objectDetailProperties": [
@@ -615,8 +607,7 @@
     "groupProperties": [],
     "objectIdentifierProperties": [
       "id",
-      "referenceId",
-      "com.amdocs.digital.ms.inventoryDomain.productId"
+      "referenceId"
     ],
     "relationshipProperties": [
       "relatedParty",

@@ -61,9 +61,9 @@
 							"captionSplitLength": null,
 							"showAttributes": null,
 							"showCharacteristics": null,
-							"showFromRelations": null,
+							"showFromRelations": "true",
 							"showIfEmpty": "true",
-							"showToRelations": null,
+							"showToRelations": "true",
 							"valueSplitLength": null
 						}
 					}
@@ -71,10 +71,10 @@
 			}
 	],
 	"baseOption": {
-		"continueAfterUnhandledObjects": "false",
+		"continueAfterUnhandledObjects": "true",
 		"groupDetailObjectsTogether": null,
 		"hideDuplicateRelations": null,
-		"identifyObjectsByTypeAndIdent": "false",
+		"identifyObjectsByTypeAndIdent": "true",
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
@@ -88,7 +88,7 @@
 				"character",
 				"country",
 				"network",
-				"cast"
+				{"objectName": "cast","generateWithoutIdentifier": "true"}
 		],
 		"objectTypeRenames":  [
 		],
@@ -125,6 +125,7 @@
 				{"parentProperty": "externals", "type": "record"},
 				{"parentProperty": "embedded", "type": "record"},
 				{"parentProperty": "schedule", "type": "record"},
+				{"parentProperty": "webChannel", "type": "record"},
 				{"parentProperty": "rating", "type": "record"}
 		],
 		"objectFormats": {
