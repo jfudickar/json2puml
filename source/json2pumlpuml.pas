@@ -33,12 +33,12 @@ type
 
   tPumlHelper = class
   public
-    class function ReplaceNewLine(iValue: string): string;
-    class function ReplaceTab(iValue: string): string;
-    class function ReplaceTabNewLine(iValue: string): string;
+    class function ReplaceNewLine (iValue: string): string;
+    class function ReplaceTab (iValue: string): string;
+    class function ReplaceTabNewLine (iValue: string): string;
     class function CleanCRLF (iValue: string): string;
+    class function TableColumn (iValue: string; iHeader: boolean = False): string;
     class function TableLine (iColumns: TStringList; iHeader: boolean = False): string; overload;
-    class function TableColumn(iValue : string; iHeader :boolean = False): string;
     class function TableLine (const iColumns: array of const; iHeader: boolean = False): string; overload;
     class function CleanValue (iValue: string; iSplitLength: Integer): string;
   end;
@@ -313,7 +313,8 @@ type
   public
     constructor Create; overload;
     function GetEnumerator: tPumlObjectEnumerator;
-    function SearchCreatePumlObject (iObjectType, iObjectIdent, iParentObjectType: string): tPumlObject;
+    function SearchCreatePumlObject (iObjectType, iObjectIdent, iParentObjectType: string; var oLogMessage: string;
+      iFileLogObjectDescription: string = 'object'; iFileLogObjectAddition: string = ''): tPumlObject;
     property ConverterDefinition: tJson2PumlConverterDefinition read FConverterDefinition write FConverterDefinition;
     property InputFilter: tJson2PumlFilterList read FInputFilter write FInputFilter;
     property PumlObject[index: Integer]: tPumlObject read GetPumlObject; default;
@@ -440,11 +441,16 @@ begin
   Result := tPumlObject (Objects[index]);
 end;
 
-function tPumlObjectList.SearchCreatePumlObject (iObjectType, iObjectIdent, iParentObjectType: string): tPumlObject;
+function tPumlObjectList.SearchCreatePumlObject (iObjectType, iObjectIdent, iParentObjectType: string;
+  var oLogMessage: string; iFileLogObjectDescription: string = 'object'; iFileLogObjectAddition: string = '')
+  : tPumlObject;
 var
   pObject: tPumlObject;
   i: Integer;
-  Format: tJson2PumlSingleFormatDefinition;
+  FormatDefinition: tJson2PumlSingleFormatDefinition;
+  ObjectCreated: boolean;
+  Search: string;
+
 begin
   Result := nil;
   if iObjectIdent.IsEmpty then
@@ -459,18 +465,32 @@ begin
   i := IndexOf (pObject.ObjectIdentifier);
   if i >= 0 then
   begin
+    Search := Format (' (based on search condition "%s")', [pObject.ObjectIdentifier]);
     Result := PumlObject[i];
     pObject.Free;
+    ObjectCreated := False;
   end
   else
   begin
     Result := pObject;
     addPumlObject (pObject);
+    ObjectCreated := true;
+    Search := '';
   end;
-  Format := ConverterDefinition.ObjectFormats.GetFormatByName (iObjectType, iParentObjectType);
-//  pObject.ObjectType := pObject.ObjectType+'-'+Format.FormatName;
-  if Assigned (Format) then
-    Result.FormatDefinition := Format;
+  FormatDefinition := ConverterDefinition.ObjectFormats.GetFormatByName (iObjectType, iParentObjectType);
+  //pObject.ObjectType := pObject.ObjectType + '-' + FormatDefinition.FormatName;
+  if Assigned (FormatDefinition) then
+    Result.FormatDefinition := FormatDefinition;
+
+  if ObjectCreated then
+    oLogMessage := 'Create new'
+  else
+    oLogMessage := 'Use existing';
+  oLogMessage := Format ('%s %s "%s":"%s" %s', [oLogMessage, iFileLogObjectDescription, Result.ObjectType,
+    Result.ObjectIdent, Search, iFileLogObjectAddition.trim]).trim;
+  if Assigned (FormatDefinition) then
+    oLogMessage := Format ('%s (Format : %s)', [oLogMessage, FormatDefinition.FormatName]);
+
 end;
 
 function tPumlRelationship.GeneratePuml (ipuml, iRelationshipTypeArrowFormats: TStrings): boolean;
@@ -656,7 +676,7 @@ begin
   if (Values.Count > 0) and FormatDefinition.ShowAttributes then
   begin
     if not ObjectType.IsEmpty then
-      ipuml.add (Format('<b>%s</b>',[ObjectType]));
+      ipuml.add (Format('<b>%s</b>', [ObjectType]));
     ipuml.add (tPumlHelper.TableLine(['attribute', 'value'], true));
     idLine := Values.IndexOfName ('id');
     NameLine := Values.IndexOfName ('Ident');
@@ -930,12 +950,12 @@ begin
     if iDirection = urdTo then
     begin
       ipuml.add ('<b>relations to</b>');
-      ipuml.add (tPumlHelper.TableLine(['property', 'type',' object'], true));
+      ipuml.add (tPumlHelper.TableLine(['property', 'type', ' object'], true));
     end
     else
     begin
       ipuml.add ('<b>relations from</b>');
-      ipuml.add (tPumlHelper.TableLine(['object','property','type'], true));
+      ipuml.add (tPumlHelper.TableLine(['object', 'property', 'type'], true));
     end;
     TempList := TStringList.Create;
     try
@@ -1392,9 +1412,9 @@ begin
   Result := iValue.TrimRight ([' ', #10, #13, #9]).Replace (#13#10, #10).Replace (#13, #10).Replace (#10, cNewLinePuml);
 end;
 
-class function tPumlHelper.ReplaceTab(iValue: string): string;
+class function tPumlHelper.ReplaceTab (iValue: string): string;
 begin
-  Result := iValue.Replace('\t', '\<U+200B>t');
+  Result := iValue.Replace ('\t', '\<U+200B>t');
 end;
 
 class function tPumlHelper.CleanValue (iValue: string; iSplitLength: Integer): string;
@@ -1441,22 +1461,22 @@ begin
   Result := Result + Value;
 end;
 
-class function tPumlHelper.ReplaceNewLine(iValue: string): string;
+class function tPumlHelper.ReplaceNewLine (iValue: string): string;
 begin
-  Result := iValue.Replace('\n', '\\n');
+  Result := iValue.Replace ('\n', '\\n');
 end;
 
-class function tPumlHelper.ReplaceTabNewLine(iValue: string): string;
+class function tPumlHelper.ReplaceTabNewLine (iValue: string): string;
 begin
-  Result := ReplaceTab(ReplaceNewLine(iValue));
+  Result := ReplaceTab (ReplaceNewLine(iValue));
 end;
 
-class function tPumlHelper.TableColumn(iValue : string; iHeader :boolean = False): string;
+class function tPumlHelper.TableColumn (iValue: string; iHeader: boolean = False): string;
 begin
-    if iHeader then
-      Result := Format ('= %s |', [iValue])
-    else
-      Result := Format (' %s |', [iValue]);
+  if iHeader then
+    Result := Format ('= %s |', [iValue])
+  else
+    Result := Format (' %s |', [iValue]);
 end;
 
 class function tPumlHelper.TableLine (iColumns: TStringList; iHeader: boolean = False): string;
@@ -1468,7 +1488,7 @@ begin
     Exit;
   Result := '|';
   for s in iColumns do
-    Result := Result + TableColumn(s, iHeader);
+    Result := Result + TableColumn (s, iHeader);
   iColumns.Clear;
 end;
 
@@ -1482,8 +1502,8 @@ begin
     Exit;
   Result := '|';
   for i := 0 to high(iColumns) do
-    Result := Result + TableColumn('%s');
-  Result := Format(Result, iColumns);
+    Result := Result + TableColumn ('%s', iHeader);
+  Result := Format (Result, iColumns);
 end;
 
 end.

@@ -893,7 +893,7 @@ begin
       if CurlParameter.Value.Trim.IsEmpty then
         Continue;
       GetJsonStringValueList (ValueList, jValue, CurlParameter.Value);
-      GlobalLoghandler.Info ('    Fetched Parameter "%s" : Value "%s" (%d)', [CurlParameter.name, CurlParameter.Value,
+      GlobalLoghandler.Info ('    Fetch parameter "%s" from value "%s" (Records found : %d)', [CurlParameter.name, CurlParameter.Value,
         ValueList.Count]);
       for i := 0 to ValueList.Count - 1 do
       begin
