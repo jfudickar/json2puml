@@ -33,8 +33,12 @@ type
 
   tPumlHelper = class
   public
+    class function ReplaceNewLine(iValue: string): string;
+    class function ReplaceTab(iValue: string): string;
+    class function ReplaceTabNewLine(iValue: string): string;
     class function CleanCRLF (iValue: string): string;
     class function TableLine (iColumns: TStringList; iHeader: boolean = False): string; overload;
+    class function TableColumn(iValue : string; iHeader :boolean = False): string;
     class function TableLine (const iColumns: array of const; iHeader: boolean = False): string; overload;
     class function CleanValue (iValue: string; iSplitLength: Integer): string;
   end;
@@ -1388,6 +1392,11 @@ begin
   Result := iValue.TrimRight ([' ', #10, #13, #9]).Replace (#13#10, #10).Replace (#13, #10).Replace (#10, cNewLinePuml);
 end;
 
+class function tPumlHelper.ReplaceTab(iValue: string): string;
+begin
+  Result := iValue.Replace('\t', '\<U+200B>t');
+end;
+
 class function tPumlHelper.CleanValue (iValue: string; iSplitLength: Integer): string;
 var
   Value: string;
@@ -1432,6 +1441,24 @@ begin
   Result := Result + Value;
 end;
 
+class function tPumlHelper.ReplaceNewLine(iValue: string): string;
+begin
+  Result := iValue.Replace('\n', '\\n');
+end;
+
+class function tPumlHelper.ReplaceTabNewLine(iValue: string): string;
+begin
+  Result := ReplaceTab(ReplaceNewLine(iValue));
+end;
+
+class function tPumlHelper.TableColumn(iValue : string; iHeader :boolean = False): string;
+begin
+    if iHeader then
+      Result := Format ('= %s |', [iValue])
+    else
+      Result := Format (' %s |', [iValue]);
+end;
+
 class function tPumlHelper.TableLine (iColumns: TStringList; iHeader: boolean = False): string;
 var
   s: string;
@@ -1441,10 +1468,7 @@ begin
     Exit;
   Result := '|';
   for s in iColumns do
-    if iHeader then
-      Result := Format ('%s= %s |', [Result, s])
-    else
-      Result := Format ('%s %s |', [Result, s]);
+    Result := Result + TableColumn(s, iHeader);
   iColumns.Clear;
 end;
 
@@ -1458,12 +1482,7 @@ begin
     Exit;
   Result := '|';
   for i := 0 to high(iColumns) do
-  begin
-    if iHeader then
-      Result := Result + '= %s |'
-    else
-      Result := Result + ' %s |';
-  end;
+    Result := Result + TableColumn('%s');
   Result := Format(Result, iColumns);
 end;
 

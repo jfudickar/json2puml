@@ -120,7 +120,7 @@ implementation
 uses
   System.SysUtils,
   System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, Masks, jsontools, json2pumlconst,
-  json2pumlbasedefinition;
+  json2pumlbasedefinition, System.Math;
 
 const
   cUmlRelationDirection: array [tUmlRelationDirection] of string = ('To', 'From');
@@ -344,7 +344,8 @@ begin
           iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, cname, cvalue, cinfo,
             CharacteristicDefinition)
         else
-          AddFileLog ('Name property %s not filled, value will be ignored', [CharacteristicDefinition.NameProperties.Text]);
+          AddFileLog ('Name property %s not filled, value will be ignored',
+            [CharacteristicDefinition.NameProperties.Text]);
       end
       else
       begin
@@ -514,12 +515,12 @@ begin
       Puml.Add ('');
     end;
     Puml.Add ('header');
-    Puml.Add (Format('<b>%s', [PumlFile.Replace('\', '\<U+200B>')]));
+    Puml.Add (Format('<b>%s', [tpumlHelper.ReplaceTabNewLine(PumlFile)]));
     Puml.Add ('');
     Puml.Add ('endheader');
     Puml.Add ('footer');
     Puml.Add ('');
-    Puml.Add (Format('<b>%s', [PumlFile.Replace('\', '\<U+200B>')]));
+    Puml.Add (Format('<b>%s', [tpumlHelper.ReplaceTabNewLine(PumlFile)]));
     Puml.Add ('endfooter');
     // Generating Together
     if Definition.GroupDetailObjectsTogether then
@@ -729,6 +730,7 @@ var
   FileDetailRecord: TJson2PumlFileDetailRecord;
   Param, Value: string;
   vAdd: Boolean;
+  Line: string;
 begin
   if not Definition.ShowLegend then
     Exit;
@@ -737,29 +739,30 @@ begin
   if Definition.LegendShowInfo then
   begin
     vAdd := true;
-    Puml.Add (Format('| <b>json2puml | <b>%s\n |', [FileVersion]));
-    Puml.Add (Format('| Generated at | %s %s |', [DateTostr(Now), TimetoStr(Now)]));
-    // Puml.add (Format('| PUML File | %s |', [PumlFile]));
-    Puml.Add (Format('| Definition File | %s |', [InputHandler.CurrentDefinitionFileName.Replace('\', '\<U+200B>')]));
+    Puml.Add (tPumlHelper.TableLine(['<b>json2puml', '<b>' + FileVersion]));
+    Puml.Add (tPumlHelper.TableLine(['Generated at', Format('%s %s', [DateTostr(Now), TimetoStr(Now)])]));
+    Puml.Add (tPumlHelper.TableLine(['Definition File', tPumlHelper.ReplaceTabNewLine(InputHandler.CurrentDefinitionFileName)]));
     if not InputHandler.CmdLineParameter.InputFileName.IsEmpty then
     begin
-      Puml.Add (Format('| Input File | %s |', [InputHandlerRecord.InputFile.OutputFileName.Replace('\', '\<U+200B>')]));
+      Puml.Add (tPumlHelper.TableLine(['Input File',
+        tPumlHelper.ReplaceTabNewLine(InputHandlerRecord.InputFile.OutputFileName)]));
       if not InputHandler.CmdLineParameter.LeadingObject.IsEmpty then
-        Puml.Add (Format('| Leading Object | %s |', [InputHandler.CmdLineParameter.LeadingObject]));
+        Puml.Add (tPumlHelper.TableLine(['Leading Object', InputHandler.CmdLineParameter.LeadingObject]));
     end;
     if not InputHandler.CurrentInputListFileName.IsEmpty then
-      Puml.Add (Format('| Input List File | %s |', [InputHandler.CurrentInputListFileName.Replace('\', '\<U+200B>')]));
-    Puml.Add (Format('| Definition Option | %s |', [Definition.OptionName]));
+      Puml.Add (tPumlHelper.TableLine(['Input List File',
+        tPumlHelper.ReplaceTabNewLine(InputHandler.CurrentInputListFileName)]));
+    Puml.Add (tPumlHelper.TableLine(['Definition Option', Definition.OptionName]));
     for i := 0 to InputFilter.IdentFilter.Count - 1 do
       if i = 0 then
-        Puml.Add (Format('| Ident Filter | %s |', [InputFilter.IdentFilter[i]]))
+        Puml.Add (tPumlHelper.TableLine(['Ident Filter', InputFilter.IdentFilter[i]]))
       else
-        Puml.Add (Format('| | %s |', [InputFilter.IdentFilter[i]]));
+        Puml.Add (tPumlHelper.TableLine(['', InputFilter.IdentFilter[i]]));
     for i := 0 to InputFilter.TitleFilter.Count - 1 do
       if i = 0 then
-        Puml.Add (Format('| Title Filter | %s |', [InputFilter.TitleFilter[i]]))
+        Puml.Add (tPumlHelper.TableLine(['Title Filter', InputFilter.TitleFilter[i]]))
       else
-        Puml.Add (Format('| | %s |', [InputFilter.TitleFilter[i]]));
+        Puml.Add (tPumlHelper.TableLine(['', InputFilter.TitleFilter[i]]));
   end;
   if Definition.LegendShowObjectFormats then
   begin
@@ -780,7 +783,7 @@ begin
             Param := s.Substring (0, i);
             Value := s.Substring (i + 1);
             if Param.Trim.ToLower.Equals ('backgroundcolor') then
-              Colors.Add (Format('|<back:%s>   </back>| %s |', [Value, ObjectFormat.FormatName]));
+              Colors.AddPair (ObjectFormat.FormatName, Value);
           end;
         end;
       end;
@@ -788,8 +791,33 @@ begin
       begin
         if vAdd then
           Puml.Add ('');
-        Puml.Add ('|= |= Objectformat |');
-        Puml.AddStrings (Colors);
+
+        Line := '|';
+        for i := 1 to min(5, Colors.Count) do
+          Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('Objectformat', true);
+        Puml.Add (Line);
+        Line := '|';
+
+        i := 0;
+        while Colors.Count > 0 do
+        begin
+          inc (i);
+          if i > 5 then
+          begin
+            Puml.Add (Line);
+            Line := '|';
+            i := 0;
+          end;
+          Line := Line + tPumlHelper.TableColumn (Format('<back:%s>   </back>', [Colors.ValueFromIndex[0]]));
+          Line := Line + tPumlHelper.TableColumn(Colors.Names[0]);
+          Colors.Delete (0);
+        end;
+        if i > 0 then
+        begin
+          for i := 1 to 5 - Colors.Count do
+            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('  ', true);
+          Puml.Add (Line);
+        end;
       end;
     finally
       Colors.Clear;
@@ -800,11 +828,11 @@ begin
   begin
     if vAdd then
       Puml.Add ('');
-    Puml.Add ('|= File |= Date |= Size (kb) |= No Of Lines |');
+    Puml.Add (tPumlHelper.TableLine(['File', 'Date', 'Size (kb)', 'No Of Lines'], true));
     for i := 0 to InputHandlerRecord.InputFile.Output.SourceFiles.Count - 1 do
     begin
       FileDetailRecord := TJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
-      Puml.Add (Format('| %s | %s | %s | %s |', [FileDetailRecord.Filename.Replace('\t', '\\t'),
+      Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(FileDetailRecord.Filename),
         DateTimeToStr(FileDetailRecord.FileDate), Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12),
         FileDetailRecord.NoOfLines.ToString.PadLeft(12)]));
     end;
