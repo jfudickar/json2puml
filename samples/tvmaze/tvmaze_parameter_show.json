@@ -4,10 +4,10 @@
 	],
 	"definitionFile": null,
 	"generateSummary": "true",
-	"generateDetails": "true",
+	"generateDetails": "false",
 	"outputFormats": "svg,log,json,puml,zip",
 	"option": "default",
-	"outputSuffix": null,
+	"outputSuffix": ".<option>",
 	"curlParameter":  [
 	]
 }

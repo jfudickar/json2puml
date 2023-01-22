@@ -1,0 +1,11 @@
+cd jsonplaceholder
+call make_placeholder_all.cmd
+cd ..\spacex
+call make_spacex_all.cmd
+cd ..\swapi
+call make_swapi_all.cmd
+cd ..\tmf
+call make_tmf_all.cmd
+cd ..\tvmaze
+call make_tvmaze_all.cmd
+cd ..
