@@ -1,0 +1,172 @@
+{
+	"description": {
+		"displayName": "SPACE X Latest Launch",
+		"description": "This example is based on the Space X API (\"https://github.com/r-spacex/SpaceX-API\").\nIt delivers a the data of the last Space X launch.",
+		"curlParameter":  [
+				{
+					"name": "${launch}",
+					"displayName": "Launch",
+					"description": "Definition of the launch\nPossilbe values: \n- next/\n- latest/\n- ...",
+					"mandatory": "true",
+					"regularExpression": null
+				}
+		]
+	},
+	"definitionFile": "spacex_definition.json",
+	"generateDetails": null,
+	"generateSummary": null,
+	"group": "${launch}",
+	"detail": null,
+	"option": null,
+	"job": null,
+	"outputFormats":["svg"],
+	"outputPath": null,
+	"outputSuffix": null,
+	"curlBaseUrl": "https://api.spacexdata.com/",
+	"curlUrlAddon": null,
+	"curlOptions": null,
+	"summaryFile": "spacex_launch_${launch}",
+	"input":  [
+			{
+				"inputFile": "launches.json",
+				"curlFileSuffix": null,
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v5/launches/${launch}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "launch",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+						{
+							"${capsule}": "capsules"
+						},
+						{
+							"${core}": "cores.core"
+						},
+						{
+							"${crew}": "crew.crew"
+						},
+						{
+							"${landpad}": "cores.landpad"
+						},
+						{
+							"${launchpad}": "launchpad"
+						},
+						{
+							"${payload}": "payloads"
+						},
+						{
+							"${rocket}": "rocket"
+						}
+				]
+			},
+			{
+				"inputFile": "crew.json",
+				"curlFileSuffix": "_${crew}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v4/crew/${crew}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "crew",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			},
+			{
+				"inputFile": "capsule.json",
+				"curlFileSuffix": "_${capsule}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v4/capsules/${capsule}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "capsule",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			},
+			{
+				"inputFile": "launchpad.json",
+				"curlFileSuffix": "_${launchpad}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v4/launchpads/${launchpad}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "launchpad",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			},
+			{
+				"inputFile": "landpad.json",
+				"curlFileSuffix": "_${landpad}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v4/landpads/${landpad}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "landpad",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			},
+			{
+				"inputFile": "core.json",
+				"curlFileSuffix": "_${core}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v4/cores/${core}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "core",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			},
+			{
+				"inputFile": "payload.json",
+				"curlFileSuffix": "_${payload}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v4/payloads/${payload}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "payload",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			},
+			{
+				"inputFile": "rocket.json",
+				"curlFileSuffix": "_${rocket}",
+				"curlBaseUrl": null,
+				"curlFormatOutput": "true",
+				"curlUrl": "v4/rockets/${rocket}",
+				"curlOptions": null,
+				"curlCache": "0",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"leadingObject": "rocket",
+				"generateOutput": "true",
+				"curlOutputParameter":  [
+				]
+			}
+	]
+}

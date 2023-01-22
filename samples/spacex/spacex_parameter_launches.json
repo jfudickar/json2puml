@@ -1,0 +1,13 @@
+{
+	"inputListFile": "spacex_inputlist_launches.json",
+	"inputFiles":  [
+	],
+	"definitionFile": "spacex_definition.json",
+	"generateSummary": "true",
+	"generateDetails": "true",
+	"outputFormats": "svg,log,json,puml,zip",
+	"option": "default",
+	"outputSuffix": null,
+	"curlParameter":  [
+	]
+}
