@@ -9,5 +9,4 @@ mkdir ..\docker\src\json2puml\output
 rmdir /s /q ..\docker\src\json2puml\samples
 mkdir ..\docker\src\json2puml\samples
 xcopy ..\samples\*.json ..\docker\src\json2puml\samples /e /i /y
-rmdir /s /q  ..\docker\src\json2puml\samples\tmf\data
 rmdir /s /q  ..\docker\src\json2puml\samples\service

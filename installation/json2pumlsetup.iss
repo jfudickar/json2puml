@@ -63,6 +63,8 @@ Source: "..\documentation\*.md"; DestDir: "{app}\documentation"; Flags: ignoreve
 Source: "{tmp}\{#plantumljarfile}"; DestDir: "{app}\plantuml"; Flags: external; Tasks: downloadPlantUml
 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "..\samples\*.cmd"; DestDir: "{app}\samples"; Components: Samples
+Source: "..\samples\*.md"; DestDir: "{app}\samples"; Components: Samples
 Source: "..\samples\swapi\*.json"; DestDir: "{app}\samples\swapi"; Components: Samples
 Source: "..\samples\swapi\*.cmd"; DestDir: "{app}\samples\swapi"; Components: Samples
 Source: "..\samples\swapi\*.md"; DestDir: "{app}\samples\swapi"; Components: Samples
@@ -76,6 +78,12 @@ Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components:
 Source: "..\samples\service\*.json"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\service\*.cmd"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
+Source: "..\samples\tvmaze\*.json"; DestDir: "{app}\samples\tvmaze"; Components: Samples
+Source: "..\samples\tvmaze\*.cmd"; DestDir: "{app}\samples\tvmaze"; Components: Samples
+Source: "..\samples\tvmaze\*.md"; DestDir: "{app}\samples\tvmaze"; Components: Samples
+Source: "..\samples\spacex\*.json"; DestDir: "{app}\samples\spacex"; Components: Samples
+Source: "..\samples\spacex\*.cmd"; DestDir: "{app}\samples\spacex"; Components: Samples
+Source: "..\samples\spacex\*.md"; DestDir: "{app}\samples\spacex"; Components: Samples
 Source: "..\configuration\json2pumlcurlauthentication.json"; DestDir: "{app}\samples"
 Source: "..\docker\*"; DestDir: "{app}\docker"; Flags: createallsubdirs recursesubdirs; Components: Docker; Excludes: ".gitignore,json2puml*.,*.url"
 
@@ -102,6 +110,8 @@ Name: "{app}\samples\tmf"; Components: Samples
 Name: "{app}\samples\swapi"; Components: Samples
 Name: "{app}\samples\jsonplaceholder"; Components: Samples
 Name: "{app}\samples\service"; Components: Samples
+Name: "{app}\samples\tvmaze"; Components: Samples
+Name: "{app}\samples\spacex"; Components: Samples
 Name: "{app}\docker"; Components: Docker
 
 [Registry]
