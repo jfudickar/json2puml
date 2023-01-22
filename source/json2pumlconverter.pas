@@ -78,7 +78,7 @@ type
     procedure ConvertObject (iJsonObject: TJsonObject; iInfo: tJson2PumlRecursionRecord);
     procedure ConvertValue (iJsonValue: TJSONValue; iInfo: tJson2PumlRecursionRecord;
       iRecursionParent: tJson2PumlRecursionParent);
-    function CreateGroupObject (var ioInfo: tJson2PumlRecursionRecord): tPumlObject;
+    function CreateGroupObject(iObjectType : string;var ioInfo: tJson2PumlRecursionRecord): tPumlObject;
     procedure DecRecursionRecord (var ioCurrentRecord: tJson2PumlRecursionRecord;
       iSafeCurrentRecord: tJson2PumlRecursionRecord; iParent: tJson2PumlRecursionParent);
     procedure GeneratePuml;
@@ -231,29 +231,28 @@ begin
     IsCharacteristic := Assigned (CharacteristicDefinition);
     ObjectIdent := GetObjectIdent (iJsonObject, iInfo.PropertyName);
     if not ObjectIdent.IsEmpty then
-      AddFileLog ('Objectidentifier "%s" identified', [ObjectIdent]);
+      AddFileLog ('Objectidentifier "%s" identified - "%s"', [ObjectIdent, 'objectIdentifierProperties']);
     ObjectTitle := GetObjectTitleProperties (iJsonObject, iInfo.PropertyName);
     if not ObjectTitle.IsEmpty then
-      AddFileLog ('Objecttitle "%s" identified', [ObjectTitle]);
+      AddFileLog ('Objecttitle "%s" identified - "%s"', [ObjectTitle, 'objectTypeProperties']);
     ObjectType := GetObjectTypeProperties (iJsonObject, iInfo.PropertyName);
     if not ObjectType.IsEmpty then
-      AddFileLog ('Objecttype "%s" identified', [ObjectType])
+      AddFileLog ('Objecttype "%s" identified - "%s"', [ObjectType, 'objectTypeProperties'])
     else
     begin
       ObjectType := iInfo.PropertyName;
       if not ObjectType.IsEmpty then
         AddFileLog ('Objecttype "%s" used based on property', [ObjectType]);
     end;
-    ObjectTypeRenamed := Definition.RenameObjectType (ObjectType);
+    ObjectTypeRenamed := Definition.RenameObjectType (ObjectType, iInfo.ParentProperty);
     if ObjectTypeRenamed <> ObjectType then
-      AddFileLog ('Objecttype renamed to "%s"', [ObjectTypeRenamed]);
+      AddFileLog ('Objecttype renamed to "%s" - "%s"', [ObjectTypeRenamed, 'objectTypeRenames']);
     ObjectDefinition := Definition.ObjectProperties.GetDefinitionByName (ObjectTypeRenamed, iInfo.ParentProperty);
     IsObjectProperty := Assigned (ObjectDefinition);
-    if not IsObjectProperty then
-      AddFileLog ('Objecttype "%s" is not handled, object will be ignored', [ObjectTypeRenamed]);
 
     IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentProperty);
     IsObjectDetail := Definition.IsObjectDetailProperty (iInfo.PropertyName, iInfo.ParentProperty);
+
     if IsRelationShip then
     begin
       RelationshipObject := ObjectTypeRenamed;
@@ -274,11 +273,10 @@ begin
     end;
 
     if ObjectIdent.IsEmpty and IsObjectProperty and ObjectDefinition.GenerateWithoutIdentifier and
-      not IsObjectDetail and not IsRelationShip and not IsCharacteristic then
+      not IsObjectDetail {and not IsRelationShip }and not IsCharacteristic then
     begin
       if Assigned (iInfo.HierarchieParentObject) then
-        ObjectIdent := Format ('%s_%s_%d', [ObjectTypeRenamed, iInfo.HierarchieParentObject.ObjectIdentifier,
-          iInfo.HierarchieParentObject.Relations.ToCount])
+        ObjectIdent := iInfo.HierarchieParentObject.CalculateChildObjectDefaultIdent(ObjectTypeRenamed)
       else
         ObjectIdent := Format ('%s_%s', [ObjectTypeRenamed, 'root']);
       AddFileLog ('Default object ident "%s" generated', [ObjectIdent]);
@@ -290,7 +288,7 @@ begin
     else if IsRelationShip and Definition.IsObjectProperty (RelationshipObject) then
     begin
       PumlObject := PumlObjects.SearchCreatePumlObject (Definition.RenameObjectType(RelationshipObject), ObjectIdent,
-        iInfo.ParentProperty, LogMessage, 'relationship object');
+        iInfo.ParentProperty, LogMessage, 'relationship object', Format('- "%s"/"%s"', ['relationshipProperties', 'objectProperties']));
       AddFileLog (LogMessage);
       PumlObject.IsRelationShip := true;
     end
@@ -299,23 +297,26 @@ begin
       PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, ObjectIdent, iInfo.ParentProperty,
         LogMessage);
       AddFileLog (LogMessage);
+      CreateGroupObject (ObjectTypeRenamed, iInfo);
     end
     else
       PumlObject := nil;
-    if not Assigned (PumlObject) and IsObjectDetail and Assigned (iInfo.ParentObject) then
+    if not Assigned (PumlObject) and IsObjectDetail and Assigned (iInfo.ParentObject) and not IsCharacteristic then
     begin
       if ObjectIdent.IsEmpty then
       begin
-        ObjectIdent := Format ('%s_%s_%d', [ObjectTypeRenamed, iInfo.ParentObject.Ident,
-          iInfo.HierarchieParentObject.Relations.ToCount]);
+        ObjectIdent := iInfo.HierarchieParentObject.CalculateChildObjectDefaultIdent(ObjectTypeRenamed);
         AddFileLog ('Default object ident "%s" generated', [ObjectIdent]);
       end;
 
       PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, ObjectIdent, iInfo.ParentObject.ObjectType,
-        LogMessage, 'detail object', Format('for %s', [iInfo.ParentObject.ObjectTypeIdent]));
+        LogMessage, 'detail object', Format('for %s - "%s"', [iInfo.ParentObject.ObjectTypeIdent, 'objectDetailProperties']));
       AddFileLog (LogMessage);
       PumlObject.IsObjectDetail := true;
     end;
+
+    if not Assigned (PumlObject) then
+      AddFileLog ('Objecttype "%s" is not defined , object will be ignored - "%s/%s/%s"', [ObjectTypeRenamed, 'objectProperties', 'objectDetailProperties','relationshipProperties']);
 
     if Assigned (iInfo.HierarchieParentObject) and Assigned (PumlObject) then
     begin
@@ -333,7 +334,7 @@ begin
     if IsCharacteristic and Assigned (iInfo.ParentObject) and not IsObjectDetail then
     begin
       AlreadyHandled := true;
-      AddFileLog ('Handle as %s characteristic', [CharacteristicDefinition.CharacteristicType.ToString]);
+      AddFileLog ('Handle as %s characteristic - "%s"', [CharacteristicDefinition.CharacteristicType.ToString, 'characteristicProperties']);
       if CharacteristicDefinition.CharacteristicType = jctList then
       begin
         cname := GetJsonStringValue (iJsonObject, CharacteristicDefinition.NameProperties);
@@ -420,7 +421,7 @@ begin
       if not iInfo.StopRecursion then
         ConvertObject (iJsonValue as TJsonObject, iInfo)
     end
-    else if (iJsonValue is TJSONString) or (iJsonValue is TJSONBool) then
+    else if (iJsonValue is TJSONString) or (iJsonValue is TJSONBool) or (iJsonValue is TJSONNumber) then
     begin
       Value := iJsonValue.Value;
       IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentProperty);
@@ -429,6 +430,7 @@ begin
         ObjectTypeRenamed := Definition.RenameObjectType (iInfo.PropertyName);
         PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, Value, iInfo.ParentObject.ObjectType,
           LogMessage);
+
         AddFileLog (LogMessage);
         ReplaceObjectType (PumlObject, ObjectTypeRenamed);
         BuildObjectRelationships (iInfo.ParentObject, PumlObject, iInfo.PropertyName, '', '',
@@ -451,21 +453,21 @@ begin
   end;
 end;
 
-function TJson2PumlConverter.CreateGroupObject (var ioInfo: tJson2PumlRecursionRecord): tPumlObject;
+function TJson2PumlConverter.CreateGroupObject(iObjectType : string;var ioInfo: tJson2PumlRecursionRecord): tPumlObject;
 var
   ObjectType, ObjectIdent: string;
   PumlObject: tPumlObject;
   LogMessage: string;
 begin
   Result := nil;
-  if not Definition.IsGroupProperty (ioInfo.PropertyName, ioInfo.ParentProperty, ObjectType) then
+  if not Definition.IsGroupProperty (iObjectType, ioInfo.ParentProperty, ObjectType) then
     Exit;
-  ObjectIdent := Format ('%s_%s', [ObjectType, ioInfo.ParentObject.Ident]);
-  AddFileLog ('Group object ident "%s" generated', [ObjectIdent]);
+  ObjectIdent := Format ('%s_%s_%s', ['group', ObjectType, ioInfo.ParentObject.ObjectIdentifier]);
+  AddFileLog ('  Group object ident "%s" generated', [ObjectIdent]);
   PumlObject := PumlObjects.SearchCreatePumlObject (ObjectType, ObjectIdent, ioInfo.ParentObject.ObjectType, LogMessage,
-    'detail object', Format('for %s', [ioInfo.ParentObject.ObjectTypeIdent]));
-  AddFileLog (LogMessage);
-  PumlObject.IsGroupProperty := true;
+    'group object', Format('for %s', [ioInfo.ParentObject.ObjectTypeIdent]));
+  AddFileLog ('  '+LogMessage);
+  PumlObject.IsGroupObject := true;
   ioInfo.ParentObject.DetailObjects.AddObject (PumlObject.ObjectIdentifier, PumlObject);
   BuildObjectRelationships (ioInfo.HierarchieParentObject, PumlObject, '', '', '', false);
   ioInfo.ParentObject := PumlObject;
@@ -517,12 +519,13 @@ begin
       Puml.Add ('');
     end;
     Puml.Add ('header');
-    Puml.Add (Format('<b>%s', [tPumlHelper.ReplaceTabNewLine(PumlFile)]));
+
+    Puml.Add (Format('<b>%s', [tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(PumlFile))]));
     Puml.Add ('');
     Puml.Add ('endheader');
     Puml.Add ('footer');
     Puml.Add ('');
-    Puml.Add (Format('<b>%s', [tPumlHelper.ReplaceTabNewLine(PumlFile)]));
+    Puml.Add (Format('<b>%s', [tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(PumlFile))]));
     Puml.Add ('endfooter');
     // Generating Together
     if Definition.GroupDetailObjectsTogether then
@@ -744,17 +747,17 @@ begin
     Puml.Add (tPumlHelper.TableLine(['<b>json2puml', '<b>' + FileVersion]));
     Puml.Add (tPumlHelper.TableLine(['Generated at', Format('%s %s', [DateTostr(Now), TimetoStr(Now)])]));
     Puml.Add (tPumlHelper.TableLine(['Definition File',
-      tPumlHelper.ReplaceTabNewLine(InputHandler.CurrentDefinitionFileName)]));
+      tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(InputHandler.CurrentDefinitionFileName))]));
     if not InputHandler.CmdLineParameter.InputFileName.IsEmpty then
     begin
       Puml.Add (tPumlHelper.TableLine(['Input File',
-        tPumlHelper.ReplaceTabNewLine(InputHandlerRecord.InputFile.OutputFileName)]));
+        tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(InputHandlerRecord.InputFile.OutputFileName))]));
       if not InputHandler.CmdLineParameter.LeadingObject.IsEmpty then
         Puml.Add (tPumlHelper.TableLine(['Leading Object', InputHandler.CmdLineParameter.LeadingObject]));
     end;
     if not InputHandler.CurrentInputListFileName.IsEmpty then
       Puml.Add (tPumlHelper.TableLine(['Input List File',
-        tPumlHelper.ReplaceTabNewLine(InputHandler.CurrentInputListFileName)]));
+        tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(InputHandler.CurrentInputListFileName))]));
     Puml.Add (tPumlHelper.TableLine(['Definition Option', Definition.OptionName]));
     for i := 0 to InputFilter.IdentFilter.Count - 1 do
       if i = 0 then
@@ -835,8 +838,9 @@ begin
     for i := 0 to InputHandlerRecord.InputFile.Output.SourceFiles.Count - 1 do
     begin
       FileDetailRecord := TJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
-      Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(FileDetailRecord.Filename),
-        DateTimeToStr(FileDetailRecord.FileDate), Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12),
+      Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath
+        (FileDetailRecord.Filename)), DateTimeToStr(FileDetailRecord.FileDate),
+        Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12),
         FileDetailRecord.NoOfLines.ToString.PadLeft(12)]));
     end;
   end;

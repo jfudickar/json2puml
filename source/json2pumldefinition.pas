@@ -87,6 +87,8 @@ type
   tJson2PumlParameterInputFileDefinitionList = class(tJson2PumlBasePropertyList)
   private
     function GetInputFile (Index: Integer): tJson2PumlParameterInputFileDefinition;
+  protected
+    function CreateListValueObject: tJson2PumlBaseObject; override;
   public
     function AddInputFile (const iFileName: string; iLeadingObject: string; iContent: string = ''): boolean;
     function GetEnumerator: tJson2PumlParameterInputFileDefinitionListEnumerator;
@@ -235,9 +237,10 @@ type
     FGenerateOutput: boolean;
     FInputFileName: string;
     FIsConverted: boolean;
-    FIsGenerated: boolean;
+    FIsInternalOnly: boolean;
+    FIsInputFileUsable: boolean;
     FLeadingObject: string;
-    FOriginal: boolean;
+    FIsOriginal: boolean;
     FOutput: tJson2PumlFileOutputDefinition;
     FOutputFileName: string;
     FSplitIdentifier: string;
@@ -246,6 +249,7 @@ type
     function GetCurlFormatOutput: boolean;
     function GetExists: boolean;
     function GetExtractedOutputFileName: string;
+    function GetIncludeIntoOutput: boolean;
     function GetInputFileNameExpanded: string;
     function GetIsSplitFile: boolean;
     function GetIsSummaryFile: boolean;
@@ -283,12 +287,15 @@ type
     property CurlFormatOutputStr: string read FCurlFormatOutputStr write SetCurlFormatOutputStr;
     property Exists: boolean read GetExists;
     property ExtractedOutputFileName: string read GetExtractedOutputFileName;
+    // 1 Defines over all flags if the Output should be rendered for this file
+    property IncludeIntoOutput: boolean read GetIncludeIntoOutput;
     property InputFileNameExpanded: string read GetInputFileNameExpanded;
     property IsConverted: boolean read FIsConverted write FIsConverted;
-    property IsGenerated: boolean read FIsGenerated write FIsGenerated;
+    property IsInternalOnly: boolean read FIsInternalOnly write FIsInternalOnly;
+    property IsInputFileUsable: boolean read FIsInputFileUsable write FIsInputFileUsable;
     property IsSplitFile: boolean read GetIsSplitFile write SetIsSplitFile;
     property IsSummaryFile: boolean read GetIsSummaryFile write SetIsSummaryFile;
-    property Original: boolean read FOriginal write FOriginal;
+    property IsOriginal: boolean read FIsOriginal write FIsOriginal;
     property Output: tJson2PumlFileOutputDefinition read FOutput write FOutput;
     property OutputFileName: string read FOutputFileName write SetOutputFileName;
     property SplitInputFileStr: string read FSplitInputFileStr write SetSplitInputFileStr;
@@ -429,6 +436,7 @@ type
     FSummaryFileName: string;
     FSummaryZipFileName: string;
     function GetCurlBaseUrlDecoded: string;
+    function GetDefinitionFileNameExpanded: string;
     function GetExecuteCount: Integer;
     function GetExistsCount: Integer;
     function GetGenerateDetails: boolean;
@@ -445,18 +453,25 @@ type
     function CalculateOutputFileName (iFileName, iSourceFileName: string): string;
     function ExpandInputListCurlFile (iCurrentInputFile: tJson2PumlInputFileDefinition): boolean;
     function ExpandInputListSplitFile (iInputFile: tJson2PumlInputFileDefinition): boolean;
+    function AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr, iSplitIdentifier,
+      iCurlBaseUrl, iCurlUrl, iCurlOptions, iCurlFileNameSuffix: string; iCurlCache: Integer;
+      iCurlFormatOutputStr: string; iGenerateOutput: boolean): tJson2PumlInputFileDefinition; overload;
+    function AddInputFileCurl (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
+      iSplitIdentifier, iCurlCommand: string; iGenerateOutput, iIsInputFileUsable: boolean)
+      : tJson2PumlInputFileDefinition; overload;
+    function AddInputFileFileSearch (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
+      iSplitIdentifier: string; iGenerateOutput: boolean): tJson2PumlInputFileDefinition; overload;
+    function AddInputFileSplit (const iInputFileName, iOutputFileName, iLeadingObject, iCurlCommand: string;
+      iGenerateOutput: boolean): tJson2PumlInputFileDefinition; overload;
+    function AddInputFileSummary (const iInputFileName: string): tJson2PumlInputFileDefinition;
     function GetIsValid: boolean; override;
     property OnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent read FOnCalculateOutputFileName;
   public
     constructor Create (iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent); reintroduce;
     destructor Destroy; override;
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
-    function AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr, iSplitIdentifier,
-      iCurlCommand: string; iIsSplitFile, iIsSummaryFile, iIsGenerated, iGenerateOutput: boolean)
-      : tJson2PumlInputFileDefinition; overload;
-    function AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr, iSplitIdentifier,
-      iCurlBaseUrl, iCurlUrl, iCurlOptions, iCurlFileNameSuffix: string; iCurlCache: Integer;
-      iCurlFormatOutputStr: string; iGenerateOutput: boolean): tJson2PumlInputFileDefinition; overload;
+    function AddInputFileCommandLine (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
+      iSplitIdentifier: string): tJson2PumlInputFileDefinition; overload;
     procedure AddSummaryFile (const iFileName: string);
     procedure Clear; override;
     procedure DeleteGeneratedFiles (const iOutputDir: string);
@@ -479,6 +494,7 @@ type
     property CurlAuthenticationList: tJson2PumlCurlAuthenticationList read FCurlAuthenticationList
       write SetCurlAuthenticationList;
     property CurlParameterList: tJson2PumlCurlParameterList read FCurlParameterList write SetCurlParameterList;
+    property DefinitionFileNameExpanded: string read GetDefinitionFileNameExpanded;
     property ExecuteCount: Integer read GetExecuteCount;
     property ExistsCount: Integer read GetExistsCount;
     property FileListFileName: string read FFileListFileName write FFileListFileName;
@@ -793,8 +809,9 @@ begin
   inherited Create;
   FCurlOutputParameter := tJson2PumlCurlParameterList.Create ();
   FOutput := tJson2PumlFileOutputDefinition.Create ();
-  FIsGenerated := false;
+  FIsInputFileUsable := false;
   FIsConverted := false;
+  FIsInternalOnly := false;
 end;
 
 destructor tJson2PumlInputFileDefinition.Destroy;
@@ -806,7 +823,7 @@ end;
 
 procedure tJson2PumlInputFileDefinition.AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string);
 begin
-  if IsGenerated then
+  if IncludeIntoOutput then
   begin
     iZipFile.Add (OutputFileName, OutputFileName.Replace(iRemoveDirectory, '').TrimLeft(TPath.DirectorySeparatorChar));
     Output.AddFilesToZipFile (iZipFile, iRemoveDirectory);
@@ -815,17 +832,21 @@ end;
 
 procedure tJson2PumlInputFileDefinition.AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
 begin
-  if IsGenerated and not OutputFileName.IsEmpty then
+  if not IsOriginal and not OutputFileName.IsEmpty then
     ioDeleteHandler.AddFile (OutputFileName);
   Output.AddGeneratedFilesToDeleteHandler (ioDeleteHandler);
 end;
 
 procedure tJson2PumlInputFileDefinition.Clear;
 begin
-  inherited clear;
+  inherited Clear;
   CurlAuthenticationList.Clear;
   CurlOutputParameter.Clear;
   Output.Clear;
+  IsConverted := false;
+  IsInternalOnly := false;
+  IsInputFileUsable := false;
+  IsSplitFile := false;
 end;
 
 procedure tJson2PumlInputFileDefinition.DeleteGeneratedFiles;
@@ -843,7 +864,7 @@ procedure tJson2PumlInputFileDefinition.DeleteGeneratedFiles;
   end;
 
 begin
-  if IsGenerated then
+  if not IsOriginal then
     DeleteSingleFile (OutputFileName);
   Output.DeleteGeneratedFiles;
 end;
@@ -893,8 +914,8 @@ begin
       if CurlParameter.Value.Trim.IsEmpty then
         Continue;
       GetJsonStringValueList (ValueList, jValue, CurlParameter.Value);
-      GlobalLoghandler.Info ('    Fetch parameter "%s" from value "%s" (Records found : %d)', [CurlParameter.name, CurlParameter.Value,
-        ValueList.Count]);
+      GlobalLoghandler.Info ('    Fetch parameter "%s" from value "%s" (Records found : %d)',
+        [CurlParameter.name, CurlParameter.Value, ValueList.Count]);
       for i := 0 to ValueList.Count - 1 do
       begin
         if (CurlParameter.MaxValues > 0) and (iCurlParameterList.ParameterValueCount(CurlParameter.name) >=
@@ -925,6 +946,11 @@ begin
   Result := Format ('%s-%s', [LeadingObject.ToLower, InputFileName]);
 end;
 
+function tJson2PumlInputFileDefinition.GetIncludeIntoOutput: boolean;
+begin
+  Result := not IsInternalOnly and GenerateOutput and IsInputFileUsable;
+end;
+
 function tJson2PumlInputFileDefinition.GetInputFileNameExpanded: string;
 begin
   Result := GetFileNameExpanded (InputFileName);
@@ -932,7 +958,7 @@ end;
 
 function tJson2PumlInputFileDefinition.GetIsSplitFile: boolean;
 begin
-  Result := Output.IsSummaryFile;
+  Result := Output.IsSplitFile;
 end;
 
 function tJson2PumlInputFileDefinition.GetIsSummaryFile: boolean;
@@ -964,8 +990,9 @@ begin
   ExpandFileNameWithCurlParameter (ioResultCurlParameterList);
   CurlCommand := tCurlUtils.CalculateCommand (FullUrl, iOptions.Trim + ' ' + CurlOptions.Trim, OutputFileName,
     iExecuteCurlParameterList, ioResultCurlParameterList);
-  if tCurlUtils.Execute (BaseUrl, CurlUrl.Trim + iUrlAddon.Trim, iOptions.Trim + ' ' + CurlOptions.Trim, OutputFileName,
-    CurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache) then
+  Result := tCurlUtils.Execute (BaseUrl, CurlUrl.Trim + iUrlAddon.Trim, iOptions.Trim + ' ' + CurlOptions.Trim,
+    OutputFileName, CurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache);
+  if Result then
   begin
     Result := true;
     if CurlFormatOutput then
@@ -1012,7 +1039,7 @@ end;
 procedure tJson2PumlInputFileDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
   iWriteEmpty: boolean = false);
 begin
-  if not Original then
+  if not IsOriginal then
     exit;
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'inputFile', InputFileName, iLevel + 1, iWriteEmpty);
@@ -1095,38 +1122,6 @@ begin
 end;
 
 function tJson2PumlInputList.AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
-  iSplitIdentifier, iCurlCommand: string; iIsSplitFile, iIsSummaryFile, iIsGenerated, iGenerateOutput: boolean)
-  : tJson2PumlInputFileDefinition;
-var
-  NewInputFile: tJson2PumlInputFileDefinition;
-begin
-  Result := nil;
-  if iInputFileName.IsEmpty then
-    exit;
-  NewInputFile := tJson2PumlInputFileDefinition.Create;
-  NewInputFile.InputFileName := iInputFileName;
-  NewInputFile.OutputFileName := iOutputFileName;
-  NewInputFile.LeadingObject := iLeadingObject;
-  NewInputFile.SplitInputFileStr := iSplitInputFileStr;
-  NewInputFile.SplitIdentifier := iSplitIdentifier;
-  NewInputFile.CurlBaseUrl := '';
-  NewInputFile.CurlUrl := '';
-  NewInputFile.CurlFileNameSuffix := '';
-  NewInputFile.CurlFormatOutputStr := '';
-  NewInputFile.CurlOptions := '';
-  NewInputFile.CurlCache := 0;
-  NewInputFile.Original := false;
-  NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
-  NewInputFile.GenerateOutput := iGenerateOutput;
-  NewInputFile.CurlCommand := iCurlCommand;
-  NewInputFile.IsGenerated := iIsGenerated;
-  NewInputFile.IsSplitFile := iIsSplitFile;
-  NewInputFile.IsSummaryFile := iIsSummaryFile;
-  AddBaseObject (NewInputFile);
-  Result := NewInputFile;
-end;
-
-function tJson2PumlInputList.AddInputFile (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
   iSplitIdentifier, iCurlBaseUrl, iCurlUrl, iCurlOptions, iCurlFileNameSuffix: string; iCurlCache: Integer;
   iCurlFormatOutputStr: string; iGenerateOutput: boolean): tJson2PumlInputFileDefinition;
 var
@@ -1147,12 +1142,166 @@ begin
   NewInputFile.CurlFormatOutputStr := iCurlFormatOutputStr;
   NewInputFile.CurlOptions := iCurlOptions;
   NewInputFile.CurlCache := iCurlCache;
-  NewInputFile.Original := true;
+  NewInputFile.IsOriginal := true;
   NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
   NewInputFile.GenerateOutput := iGenerateOutput;
-  NewInputFile.IsGenerated := false;
+  NewInputFile.IsInputFileUsable := true;
   NewInputFile.IsSplitFile := false;
   NewInputFile.IsSummaryFile := false;
+  AddBaseObject (NewInputFile);
+  Result := NewInputFile;
+end;
+
+function tJson2PumlInputList.AddInputFileCommandLine (const iInputFileName, iOutputFileName, iLeadingObject,
+  iSplitInputFileStr, iSplitIdentifier: string): tJson2PumlInputFileDefinition;
+var
+  NewInputFile: tJson2PumlInputFileDefinition;
+begin
+  Result := nil;
+  if iInputFileName.IsEmpty then
+    exit;
+  NewInputFile := tJson2PumlInputFileDefinition.Create;
+  NewInputFile.InputFileName := iInputFileName;
+  NewInputFile.OutputFileName := iOutputFileName;
+  NewInputFile.LeadingObject := iLeadingObject;
+  NewInputFile.SplitInputFileStr := iSplitInputFileStr;
+  NewInputFile.SplitIdentifier := iSplitIdentifier;
+  NewInputFile.CurlBaseUrl := '';
+  NewInputFile.CurlUrl := '';
+  NewInputFile.CurlFileNameSuffix := '';
+  NewInputFile.CurlFormatOutputStr := '';
+  NewInputFile.CurlOptions := '';
+  NewInputFile.CurlCache := 0;
+  NewInputFile.IsOriginal := true;
+  NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
+  NewInputFile.GenerateOutput := true;
+  NewInputFile.IsInputFileUsable := true;
+  NewInputFile.IsSplitFile := false;
+  NewInputFile.IsSummaryFile := false;
+  AddBaseObject (NewInputFile);
+  Result := NewInputFile;
+end;
+
+function tJson2PumlInputList.AddInputFileSplit (const iInputFileName, iOutputFileName, iLeadingObject,
+  iCurlCommand: string; iGenerateOutput: boolean): tJson2PumlInputFileDefinition;
+var
+  NewInputFile: tJson2PumlInputFileDefinition;
+begin
+  Result := nil;
+  if iInputFileName.IsEmpty then
+    exit;
+  NewInputFile := tJson2PumlInputFileDefinition.Create;
+  NewInputFile.InputFileName := iInputFileName;
+  NewInputFile.OutputFileName := iOutputFileName;
+  NewInputFile.LeadingObject := iLeadingObject;
+  NewInputFile.SplitInputFileStr := '';
+  NewInputFile.SplitIdentifier := '';
+  NewInputFile.CurlBaseUrl := '';
+  NewInputFile.CurlUrl := '';
+  NewInputFile.CurlFileNameSuffix := '';
+  NewInputFile.CurlFormatOutputStr := '';
+  NewInputFile.CurlOptions := '';
+  NewInputFile.CurlCache := 0;
+  NewInputFile.IsOriginal := false;
+  NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
+  NewInputFile.GenerateOutput := iGenerateOutput;
+  NewInputFile.CurlCommand := iCurlCommand;
+  NewInputFile.IsInputFileUsable := true;
+  NewInputFile.IsSplitFile := true;
+  NewInputFile.IsSummaryFile := false;
+  AddBaseObject (NewInputFile);
+  Result := NewInputFile;
+end;
+
+function tJson2PumlInputList.AddInputFileCurl (const iInputFileName, iOutputFileName, iLeadingObject,
+  iSplitInputFileStr, iSplitIdentifier, iCurlCommand: string; iGenerateOutput, iIsInputFileUsable: boolean)
+  : tJson2PumlInputFileDefinition;
+var
+  NewInputFile: tJson2PumlInputFileDefinition;
+begin
+  Result := nil;
+  if iInputFileName.IsEmpty then
+    exit;
+  NewInputFile := tJson2PumlInputFileDefinition.Create;
+  NewInputFile.InputFileName := iInputFileName;
+  NewInputFile.OutputFileName := iOutputFileName;
+  NewInputFile.LeadingObject := iLeadingObject;
+  NewInputFile.SplitInputFileStr := iSplitInputFileStr;
+  NewInputFile.SplitIdentifier := iSplitIdentifier;
+  NewInputFile.CurlBaseUrl := '';
+  NewInputFile.CurlUrl := '';
+  NewInputFile.CurlFileNameSuffix := '';
+  NewInputFile.CurlFormatOutputStr := '';
+  NewInputFile.CurlOptions := '';
+  NewInputFile.CurlCache := 0;
+  NewInputFile.IsOriginal := false;
+  NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
+  NewInputFile.GenerateOutput := iGenerateOutput;
+  NewInputFile.CurlCommand := iCurlCommand;
+  NewInputFile.IsInputFileUsable := iIsInputFileUsable;
+  NewInputFile.IsSplitFile := false;
+  NewInputFile.IsSummaryFile := false;
+  AddBaseObject (NewInputFile);
+  Result := NewInputFile;
+end;
+
+function tJson2PumlInputList.AddInputFileFileSearch (const iInputFileName, iOutputFileName, iLeadingObject,
+  iSplitInputFileStr, iSplitIdentifier: string; iGenerateOutput: boolean): tJson2PumlInputFileDefinition;
+var
+  NewInputFile: tJson2PumlInputFileDefinition;
+begin
+  Result := nil;
+  if iInputFileName.IsEmpty then
+    exit;
+  NewInputFile := tJson2PumlInputFileDefinition.Create;
+  NewInputFile.InputFileName := iInputFileName;
+  NewInputFile.OutputFileName := iOutputFileName;
+  NewInputFile.LeadingObject := iLeadingObject;
+  NewInputFile.SplitInputFileStr := iSplitInputFileStr;
+  NewInputFile.SplitIdentifier := iSplitIdentifier;
+  NewInputFile.CurlBaseUrl := '';
+  NewInputFile.CurlUrl := '';
+  NewInputFile.CurlFileNameSuffix := '';
+  NewInputFile.CurlFormatOutputStr := '';
+  NewInputFile.CurlOptions := '';
+  NewInputFile.CurlCache := 0;
+  NewInputFile.IsOriginal := false;
+  NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
+  NewInputFile.GenerateOutput := iGenerateOutput;
+  NewInputFile.CurlCommand := '';
+  NewInputFile.IsInputFileUsable := true;
+  NewInputFile.IsSplitFile := false;
+  NewInputFile.IsSummaryFile := false;
+  AddBaseObject (NewInputFile);
+  Result := NewInputFile;
+end;
+
+function tJson2PumlInputList.AddInputFileSummary (const iInputFileName: string): tJson2PumlInputFileDefinition;
+var
+  NewInputFile: tJson2PumlInputFileDefinition;
+begin
+  Result := nil;
+  if iInputFileName.IsEmpty then
+    exit;
+  NewInputFile := tJson2PumlInputFileDefinition.Create;
+  NewInputFile.InputFileName := iInputFileName;
+  NewInputFile.OutputFileName := iInputFileName;
+  NewInputFile.LeadingObject := '';
+  NewInputFile.SplitInputFileStr := '';
+  NewInputFile.SplitIdentifier := '';
+  NewInputFile.CurlBaseUrl := '';
+  NewInputFile.CurlUrl := '';
+  NewInputFile.CurlFileNameSuffix := '';
+  NewInputFile.CurlFormatOutputStr := '';
+  NewInputFile.CurlOptions := '';
+  NewInputFile.CurlCache := 0;
+  NewInputFile.IsOriginal := false;
+  NewInputFile.CurlAuthenticationList := CurlAuthenticationList;
+  NewInputFile.GenerateOutput := true;
+  NewInputFile.CurlCommand := '';
+  NewInputFile.IsInputFileUsable := true;
+  NewInputFile.IsSplitFile := false;
+  NewInputFile.IsSummaryFile := true;
   AddBaseObject (NewInputFile);
   Result := NewInputFile;
 end;
@@ -1162,10 +1311,10 @@ var
   InputFile: tJson2PumlInputFileDefinition;
   FileDefinition: tJson2PumlInputFileDefinition;
 begin
-  FileDefinition := AddInputFile (iFileName, iFileName, '', '', '', '', false, true, true, true);
+  FileDefinition := AddInputFileSummary (iFileName);
   for InputFile in self do
   begin
-    if not InputFile.GenerateOutput then
+    if not InputFile.IncludeIntoOutput then
       Continue;
     if InputFile = FileDefinition then
       Continue;
@@ -1230,42 +1379,58 @@ var
   searchResult: TSearchRec;
   FileName: string;
   NewPath: string;
+  i: Integer;
+  NotFound: string;
+
 begin
   for InputFile in self do
   begin
-    if not InputFile.Original then
+    if not InputFile.IsOriginal then
       Continue;
     if ExpandInputListCurlFile (InputFile) then
       Continue;
     if InputFile.Exists then
     begin
-      if InputFile.Original then
+      if InputFile.IsOriginal then
         GlobalLoghandler.Debug ('File "%s" (%s) found.',
-          [InputFile.OutputFileName, ExpandFileName(InputFile.OutputFileName)]);
+          [InputFile.InputFileName, ExpandFileName(InputFile.OutputFileName)]);
       Continue;
     end;
-    FileName := CurlParameterList.ReplaceParameterValuesFileName (InputFile.InputFileNameExpanded);
-    NewPath := ExtractFilePath (FileName);
-    if findfirst (FileName, faAnyFile, searchResult) = 0 then
+    InputFile.IsInputFileUsable := false;
+    NotFound := '';
+    for i := 1 to 2 do
     begin
-      InputFile.GenerateOutput := false;
-      repeat
-        if NewPath.IsEmpty then
-          FileName := searchResult.name
-        else
-          FileName := ChangeFilePath (searchResult.name, NewPath);
-        AddInputFile (FileName, FileName, InputFile.LeadingObject, InputFile.SplitInputFileStr,
-          InputFile.SplitIdentifier, '', false, false, false, true);
-        GlobalLoghandler.Debug ('File "%s" (%s) found.', [FileName, ExpandFileName(FileName)]);
-      until FindNext (searchResult) <> 0;
-      System.SysUtils.FindClose (searchResult);
-    end
-    else
-      GlobalLoghandler.Warn ('File "%s" (%s) not found.', [FileName, ExpandFileName(FileName)]);
+      if i = 1 then
+        FileName := CurlParameterList.ReplaceParameterValuesFileName (InputFile.InputFileNameExpanded)
+      else
+        FileName := CurlParameterList.ReplaceParameterValuesFileName
+          (GetFileNameExpanded(InputFile.InputFileNameExpanded));
+      NewPath := ExtractFilePath (FileName);
+      if findfirst (FileName, faAnyFile, searchResult) = 0 then
+      begin
+        repeat
+          if NewPath.IsEmpty then
+            FileName := searchResult.name
+          else
+            FileName := ChangeFilePath (searchResult.name, NewPath);
+          AddInputFileFileSearch (FileName, FileName, InputFile.LeadingObject, InputFile.SplitInputFileStr,
+            InputFile.SplitIdentifier, InputFile.GenerateOutput);
+          GlobalLoghandler.Debug ('File "%s" found (%s).', [FileName, ExpandFileName(FileName)]);
+        until FindNext (searchResult) <> 0;
+        InputFile.GenerateOutput := false;
+        System.SysUtils.FindClose (searchResult);
+        NotFound := '';
+        break;
+      end;
+      NotFound := Format ('%s%s%s', [NotFound, ExpandFileName(FileName), TPath.PathSeparator]);
+    end;
+    NotFound := NotFound.Trim ([TPath.PathSeparator]);
+    if not NotFound.IsEmpty then
+      GlobalLoghandler.Warn ('File "%s" not found (%s).', [FileName, NotFound]);
   end;
   for InputFile in self do
   begin
-    if not InputFile.GenerateOutput then
+    if not InputFile.IncludeIntoOutput then
       Continue;
     if not InputFile.Exists then
       Continue;
@@ -1292,23 +1457,23 @@ begin
       iCurrentInputFile.CurlFileNameSuffix);
     if CurlParameterMatrix.RowList.Count > 0 then
     begin
-      iCurrentInputFile.GenerateOutput := false;
+      iCurrentInputFile.IsInternalOnly := true;
       for i := 0 to CurlParameterMatrix.RowList.Count - 1 do
       begin
         SaveFileName := iCurrentInputFile.OutputFileName;
         Generated := iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon, CurlOptions,
           CurlParameterMatrix.RowParameterList[i], CurlParameterList);
-        AddInputFile (iCurrentInputFile.InputFileName, iCurrentInputFile.OutputFileName,
+        AddInputFileCurl (iCurrentInputFile.InputFileName, iCurrentInputFile.OutputFileName,
           iCurrentInputFile.LeadingObject, iCurrentInputFile.SplitInputFileStr, iCurrentInputFile.SplitIdentifier,
-          iCurrentInputFile.CurlCommand, false, false, true, Generated);
+          iCurrentInputFile.CurlCommand, iCurrentInputFile.GenerateOutput, Generated);
         iCurrentInputFile.OutputFileName := SaveFileName;
-      end
+      end;
+      iCurrentInputFile.GenerateOutput := false;
     end
     else
     begin
-      iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon, CurlOptions, CurlParameterList,
-        CurlParameterList);
-      iCurrentInputFile.IsGenerated := true;
+      iCurrentInputFile.IsInputFileUsable := iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon,
+        CurlOptions, CurlParameterList, CurlParameterList);
     end;
   finally
     CurlParameterMatrix.Free;
@@ -1356,6 +1521,8 @@ begin
     exit;
   if not iInputFile.SplitInputFile then
     exit;
+  if not iInputFile.IsInputFileUsable then
+    exit;
   FileDetailNames := tStringList.Create;
   InputFile := tStringList.Create;
   OutputFile := tStringList.Create;
@@ -1394,8 +1561,8 @@ begin
       NewFileName := TPath.ChangeExtension (NewFileName, FindSuffix(Ident).Substring(0, 80) + '.' + jofJSON.ToString);
       OutputFile.Text := JsonArray.Items[i].ToJSON;
       OutputFile.SaveToFile (NewFileName);
-      AddInputFile (iInputFile.InputFileName, NewFileName, iInputFile.LeadingObject, '', '', '', true, false,
-        true, true);
+      AddInputFileSplit (iInputFile.InputFileName, NewFileName, iInputFile.LeadingObject, iInputFile.CurlCommand,
+        iInputFile.GenerateOutput);
       GlobalLoghandler.Info ('  Detail file %s created', [NewFileName]);
     end;
   finally
@@ -1418,11 +1585,7 @@ begin
   try
     ZipFile.Open (iZipfileName, zmWrite);
     for InputFile in self do
-    begin
-      if not InputFile.Exists then
-        Continue;
       InputFile.AddFilesToZipFile (ZipFile, ExtractFilePath(iZipfileName));
-    end;
     ZipFile.Close;
     GlobalLoghandler.Info ('Summary Zip File %s generated.', [iZipfileName]);
   finally
@@ -1433,6 +1596,11 @@ end;
 function tJson2PumlInputList.GetCurlBaseUrlDecoded: string;
 begin
   Result := ReplaceValueFromEnvironment (CurlBaseUrl);
+end;
+
+function tJson2PumlInputList.GetDefinitionFileNameExpanded: string;
+begin
+  Result := GetFileNameExpanded (DefinitionFileName);
 end;
 
 function tJson2PumlInputList.GetEnumerator: tJson2PumlInputListEnumerator;
@@ -1551,7 +1719,7 @@ begin
       if Value is TJSONObject then
       begin
         SourceFileName := GetJsonStringValue (TJSONObject(Value), 'inputFile').Trim;
-        if TPath.GetExtension (SourceFileName).TrimLeft([TPath.ExtensionSeparatorChar]).IsEmpty then
+        if TPath.GetExtension (SourceFileName).TrimLeft ([TPath.ExtensionSeparatorChar]).IsEmpty then
           SourceFileName := TPath.ChangeExtension (SourceFileName, jofJSON.FileExtension(true));
 
         FileCurlFilenameSuffix := TPath.GetFileNameWithoutExtension (GetJsonStringValue(TJSONObject(Value),
@@ -1655,13 +1823,13 @@ procedure tJson2PumlInputList.WriteToJsonOutputFiles (oJsonOutPut: TStrings; iPr
   iWriteEmpty: boolean = false);
 var
   InputFile: tJson2PumlInputFileDefinition;
-  Found: boolean;
+  found: boolean;
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'fileList', FileListFileName, iLevel + 1, iWriteEmpty);
   for InputFile in self do
   begin
-    if not InputFile.IsGenerated then
+    if not InputFile.IncludeIntoOutput then
       Continue;
     if not InputFile.Exists then
       Continue;
@@ -1669,23 +1837,23 @@ begin
       Continue;
     InputFile.WriteToJsonOutputFile (oJsonOutPut, 'summaryFile', iLevel + 1, iWriteEmpty);
   end;
-  Found := false;
+  found := false;
   for InputFile in self do
   begin
-    if not InputFile.IsGenerated then
+    if not InputFile.IncludeIntoOutput then
       Continue;
     if not InputFile.Exists then
       Continue;
     if InputFile.IsSummaryFile then
       Continue;
-    if not Found then
+    if not found then
     begin
       WriteArrayStartToJson (oJsonOutPut, iLevel + 1, 'detailFiles');
-      Found := true;
+      found := true;
     end;
     InputFile.WriteToJsonOutputFile (oJsonOutPut, '', iLevel + 2, iWriteEmpty);
   end;
-  if Found then
+  if found then
     WriteArrayEndToJson (oJsonOutPut, iLevel);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
@@ -1694,12 +1862,12 @@ procedure tJson2PumlInputList.WriteToJsonServiceResult (oJsonOutPut: TStrings; i
   iOutputFormats: tJson2PumlOutputFormats; iWriteEmpty: boolean = false);
 var
   InputFile: tJson2PumlInputFileDefinition;
-  Found: boolean;
+  found: boolean;
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   for InputFile in self do
   begin
-    if not InputFile.IsGenerated then
+    if not InputFile.IsConverted then
       Continue;
     if not InputFile.IsSummaryFile then
       Continue;
@@ -1707,23 +1875,23 @@ begin
       Continue;
     InputFile.WriteToJsonServiceResult (oJsonOutPut, 'summaryFile', iLevel + 1, iOutputFormats, iWriteEmpty);
   end;
-  Found := false;
+  found := false;
   for InputFile in self do
   begin
-    if not InputFile.IsGenerated then
+    if not InputFile.IsConverted then
       Continue;
     if not InputFile.Exists then
       Continue;
     if InputFile.IsSummaryFile then
       Continue;
-    if not Found then
+    if not found then
     begin
       WriteArrayStartToJson (oJsonOutPut, iLevel + 1, 'detailFiles');
-      Found := true;
+      found := true;
     end;
     InputFile.WriteToJsonServiceResult (oJsonOutPut, '', iLevel + 2, iOutputFormats, iWriteEmpty);
   end;
-  if Found then
+  if found then
     WriteArrayEndToJson (oJsonOutPut, iLevel);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
@@ -2583,7 +2751,7 @@ end;
 
 destructor tJson2PumlCurlParameterList.Destroy;
 begin
-  inherited destroy;
+  inherited Destroy;
 end;
 
 function tJson2PumlCurlParameterList.AddParameter (iName, iValue: string; iMaxValues: Integer = 0): boolean;
@@ -2918,8 +3086,6 @@ var
 begin
   Output := tStringList.Create;
   try
-    if IsSummaryFile then
-      WriteToJsonValue (Output, 'isSummaryFile', IsSummaryFile, iLevel + 1);
     if IsSplitFile then
       WriteToJsonValue (Output, 'isSplitFile', IsSplitFile, iLevel + 1);
     if not PUmlFileName.IsEmpty then
@@ -3091,6 +3257,11 @@ begin
     nInputFile.Free;
 end;
 
+function tJson2PumlParameterInputFileDefinitionList.CreateListValueObject: tJson2PumlBaseObject;
+begin
+  Result := tJson2PumlParameterInputFileDefinition.Create;
+end;
+
 function tJson2PumlParameterInputFileDefinitionList.GetEnumerator: tJson2PumlParameterInputFileDefinitionListEnumerator;
 begin
   Result := tJson2PumlParameterInputFileDefinitionListEnumerator.Create (self);
@@ -3120,7 +3291,7 @@ begin
   FileName := GetJsonStringValue (DefinitionRecord, 'fileName');
   LeadingObject := GetJsonStringValue (DefinitionRecord, 'leadingObject');
   Value := GetJsonValue (DefinitionRecord, 'content');
-  if Assigned (Value) then
+  if Assigned (Value) and not (Value is TJSONNull) then
     Content := Value.ToString
   else
     Content := '';
@@ -3158,7 +3329,7 @@ end;
 
 procedure tJson2PumlInputListDescriptionDefinition.Clear;
 begin
-  inherited clear;
+  inherited Clear;
   CurlParameterList.Clear;
 end;
 

@@ -1053,7 +1053,7 @@ begin
       if (iMergeList.Objects[i] is tJson2PumlBaseObject) then
         AddBaseObject (tJson2PumlBaseObject(iMergeList.Objects[i]))
       else
-        iMergeList.AddObject (iMergeList[i], iMergeList.Objects[i]);
+        AddObject (iMergeList[i], iMergeList.Objects[i]);
     end
     else if Assigned (iMergeList.Objects[i]) and (iMergeList.Objects[i] is tJson2PumlBaseObject) and
       Assigned (Objects[j]) and (Objects[j] is tJson2PumlBaseObject) then
@@ -1660,9 +1660,9 @@ begin
   for i := 1 to 2 do
   begin
     if i = 1 then
-      Search := iParentPropertyName + '.' + iPropertyName
+      Search := iPropertyName
     else
-      Search := iPropertyName;
+      Search := iParentPropertyName + '.' + iPropertyName;
     for Format in self do
     begin
       if (Format.ObjectFilter.Count <= 0) and not Format.FormatName.IsEmpty then

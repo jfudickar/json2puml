@@ -153,17 +153,16 @@ type
   protected
     procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
-    function CalculateOutputFileName(iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
-    function CalculateOutputFileNamePath(iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
+    function CalculateOutputFileName (iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
+    function CalculateOutputFileNamePath (iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
     function CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
-    function CalculateZipFileName: string;
     procedure ClearAllRecords;
     procedure ConvertAllRecordsInt (iIndex: Integer = - 1);
     procedure CreateAllRecords;
     function CreateSingleRecord (iInputFile: tJson2PumlInputFileDefinition; iInputGroup, iInputDetail: string)
       : TJson2PumlInputHandlerRecord;
-    procedure GetFileNameExtension(iFileName, iNewFileExtension: string; var oFileNameExtension: string; var oFileFormat:
-        tJson2PumlOutputFormat);
+    procedure GetFileNameExtension (iFileName, iNewFileExtension: string; var oFileNameExtension: string;
+      var oFileFormat: tJson2PumlOutputFormat);
     function IsConverting: Boolean;
     function LoadFileToStringList (iFileList: TStrings; iFileName, iFileDescription: string;
       iClass: tJson2PumlBaseObjectClass; iParseProcedure: TJson2PumlInputHandlerParseFileEvent;
@@ -188,6 +187,8 @@ type
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     procedure BeginConvert;
     function CalculateRuntimeJarFile: string;
+    function CalculateSummaryPath: string;
+    function CleanSummaryPath (iFileName: string): string;
     procedure Clear;
     procedure ConvertAllRecords (iIndex: Integer = - 1);
     procedure DeleteGeneratedFiles;
@@ -420,7 +421,7 @@ begin
     iSingleRecord.JsonInput.Add ('[');
     for InputFile in ConverterInputList do
     begin
-      if not InputFile.GenerateOutput then
+      if not InputFile.IncludeIntoOutput then
         Continue;
       if InputFile.IsSummaryFile then
         Continue;
@@ -484,15 +485,15 @@ begin
   Result := ReplaceInvalidPathChars (Result);
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileName(iFileName, iSourceFileName: string; iNewFileExtension: string =
-    ''): string;
+function TJson2PumlInputHandler.CalculateOutputFileName (iFileName, iSourceFileName: string;
+  iNewFileExtension: string = ''): string;
 var
   Filename: string;
   SourceFileName: string;
   Option: string;
   Suffix: string;
   FileExtension: string;
-  Format : tJson2PumlOutputFormat;
+  Format: tJson2PumlOutputFormat;
 begin
   GetFileNameExtension (iSourceFileName, iNewFileExtension, FileExtension, Format);
   if Format = jofJSON then
@@ -506,18 +507,18 @@ begin
   if (not Suffix.IsEmpty) and (Suffix <> tpath.ExtensionSeparatorChar) then
     Filename := Filename + Suffix;
   Filename := CurlParameterList.ReplaceParameterValues (Filename);
-  Filename := TPath.ChangeExtension(Filename, tpath.ExtensionSeparatorChar+FileExtension);
+  Filename := tpath.ChangeExtension (Filename, tpath.ExtensionSeparatorChar + FileExtension);
   Filename := ReplaceInvalidFileNameChars (Filename);
   Result := Filename;
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileNamePath(iFileName, iSourceFileName: string; iNewFileExtension:
-    string = ''): string;
+function TJson2PumlInputHandler.CalculateOutputFileNamePath (iFileName, iSourceFileName: string;
+  iNewFileExtension: string = ''): string;
 var
   Filename: string;
   Option: string;
   FileExtension: string;
-  Format : tJson2PumlOutputFormat;
+  Format: tJson2PumlOutputFormat;
 begin
   GetFileNameExtension (iSourceFileName, iNewFileExtension, FileExtension, Format);
   if Format = jofJSON then
@@ -558,27 +559,36 @@ begin
 end;
 
 function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
-begin
-  Result := CalculateOutputFileNamePath (CurrentSummaryFileName, '', iOutputFormat.FileExtension(false));
-end;
-
-function TJson2PumlInputHandler.CalculateZipFileName: string;
 var
   Filename: string;
-  Option: string;
+begin
+  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', iOutputFormat.FileExtension(false));
+  Result := CalculateSummaryPath;
+  Result := PathCombine (Result, Filename);
+end;
+
+function TJson2PumlInputHandler.CalculateSummaryPath: string;
+var
   i: Integer;
 begin
-  Option := CurrentOption;
-  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', jofZip.FileExtension(false));
-
   Result := CurrentFullOutputPath;
   i := Result.IndexOf (jfnrFile.ToString);
   if i >= 0 then
     Result := Result.SubString (0, i - 1);
-  Result := ReplaceFileNameVariables (Result, Filename, Option);
+  Result := ReplaceFileNameVariables (Result, '', CurrentOption);
   Result := CurlParameterList.ReplaceParameterValues (Result);
   Result := ReplaceInvalidPathChars (Result);
-  Result := PathCombine (Result, Filename);
+end;
+
+function TJson2PumlInputHandler.CleanSummaryPath (iFileName: string): string;
+var
+  SummaryPath: string;
+begin
+  SummaryPath := CalculateSummaryPath;
+  if iFileName.IndexOf (SummaryPath) = 0 then
+    Result := iFileName.SubString (Length(SummaryPath)).TrimLeft (tpath.DirectorySeparatorChar)
+  else
+    Result := iFileName;
 end;
 
 procedure TJson2PumlInputHandler.Clear;
@@ -627,7 +637,7 @@ begin
       SingleRecord.ConverterLog.Clear;
       OutputFormats := GetCurrentOutputFormats (CurrentConverterDefinition);
       SingleRecord.InputFile.IsConverted := false;
-      if not SingleRecord.InputFile.GenerateOutput then
+      if not SingleRecord.InputFile.IncludeIntoOutput then
         Continue;
 
       SingleRecord.InputFile.OutputFileName := CurlParameterList.ReplaceParameterValuesFileName
@@ -655,14 +665,16 @@ begin
 
       if CmdLineParameter.GenerateOutputDefinition then
         CurrentConverterDefinition.WriteToJsonFile (ChangeFileExt(OutputFile, '.definition.json'), true);
-      if CmdLineParameter.Debug then
+      if (jofLog in OutputFormats) then
       begin
         SingleRecord.ConverterLog.SaveToFile (ChangeFileExt(OutputFile, '.log'));
         SingleRecord.InputFile.Output.ConverterLogFileName := ChangeFileExt (OutputFile, '.log');
       end;
-      if SingleRecord.PUmlOutput.Text <> '' then
+      if SingleRecord.PUmlOutput.Text.IsEmpty then
+        SingleRecord.InputFile.IsConverted := false
+      else
       begin
-        SingleRecord.InputFile.IsConverted := false;
+        SingleRecord.InputFile.IsConverted := true;
         SingleRecord.InputFile.Output.PUmlFileName := OutputFile;
         SingleRecord.PUmlOutput.SaveToFile (SingleRecord.InputFile.Output.PUmlFileName);
         if GenerateOutputsFromPuml (SingleRecord.InputFile.Output.PUmlFileName, JarFile, CurrentJavaRuntimeParameter,
@@ -735,9 +747,9 @@ begin
     begin
       if (InputFile.IsSummaryFile and GenSummary) or (not InputFile.IsSummaryFile and GenDetails) then
       begin
+        if not InputFile.IncludeIntoOutput then
+          Continue;
         CreateSingleRecord (InputFile, CurrentGroup, CurrentDetail);
-        if InputFile.GenerateOutput then
-          InputFile.IsGenerated := true;
       end;
     end;
   finally
@@ -795,7 +807,7 @@ end;
 
 procedure TJson2PumlInputHandler.GenerateSummaryZipFile;
 begin
-  ConverterInputList.GenerateSummaryZipFile (CalculateZipFileName);
+  ConverterInputList.GenerateSummaryZipFile (CalculateSummaryFileName(jofZip));
 end;
 
 function TJson2PumlInputHandler.GetBaseOutputPath: string;
@@ -868,8 +880,8 @@ begin
     Result := CmdLineParameter.DefinitionFileName
   else if not ParameterDefinition.DefinitionFileNameExpanded.IsEmpty then
     Result := ParameterDefinition.DefinitionFileNameExpanded
-  else if not ConverterInputList.DefinitionFileName.IsEmpty then
-    Result := ConverterInputList.DefinitionFileName
+  else if not ConverterInputList.DefinitionFileNameExpanded.IsEmpty then
+    Result := ConverterInputList.DefinitionFileNameExpanded
   else if not GlobalConfiguration.DefaultDefinitionFileName.IsEmpty then
     Result := GlobalConfiguration.DefaultDefinitionFileName
   else
@@ -1037,15 +1049,15 @@ begin
     Result := FIntDefinitionLines;
 end;
 
-procedure TJson2PumlInputHandler.GetFileNameExtension(iFileName, iNewFileExtension: string; var oFileNameExtension:
-    string; var oFileFormat: tJson2PumlOutputFormat);
+procedure TJson2PumlInputHandler.GetFileNameExtension (iFileName, iNewFileExtension: string;
+  var oFileNameExtension: string; var oFileFormat: tJson2PumlOutputFormat);
 begin
-  oFileNameExtension := iNewFileExtension.TrimLeft([tpath.ExtensionSeparatorChar]);
+  oFileNameExtension := iNewFileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
   if oFileNameExtension.IsEmpty then
-    oFileNameExtension := tpath.GetExtension (iFileName).TrimLeft([tpath.ExtensionSeparatorChar]);
+    oFileNameExtension := tpath.GetExtension (iFileName).TrimLeft ([tpath.ExtensionSeparatorChar]);
   if oFileNameExtension.IsEmpty then
     oFileNameExtension := jofJSON.FileExtension;
-  oFileFormat.FromString(oFileNameExtension);
+  oFileFormat.FromString (oFileNameExtension);
 end;
 
 function TJson2PumlInputHandler.GetGenerateDetails: Boolean;
@@ -1328,9 +1340,8 @@ var
   Lines: TStrings;
 begin
   ParseDefintions;
-  ConverterInputList.AddInputFile (CmdLineParameter.InputFileName, CmdLineParameter.InputFileName,
-    CmdLineParameter.LeadingObject, CmdLineParameter.SplitInputFileStr, CmdLineParameter.SplitIdentifier, '', '', '',
-    '', 0, '', true);
+  ConverterInputList.AddInputFileCommandLine (CmdLineParameter.InputFileName, CmdLineParameter.InputFileName,
+    CmdLineParameter.LeadingObject, CmdLineParameter.SplitInputFileStr, CmdLineParameter.SplitIdentifier);
   for ParameterInputFile in ParameterDefinition.InputFiles do
   begin
     if ParameterInputFile.Filename.IsEmpty then
@@ -1340,8 +1351,7 @@ begin
       Filename := ParameterInputFile.Filename;
       if not FileExists (ParameterInputFile.Filename) then
         Filename := PathCombineIfRelative (ExtractFilePath(CmdLineParameter.ParameterFileName), Filename);
-      ConverterInputList.AddInputFile (Filename, Filename, ParameterInputFile.LeadingObject, '', '', '', '', '', '', 0,
-        '', true);
+      ConverterInputList.AddInputFileCommandLine (Filename, Filename, ParameterInputFile.LeadingObject, '', '');
     end
     else
     begin
@@ -1354,8 +1364,7 @@ begin
         Filename := CalculateOutputFileNamePath (Filename, Filename);
         GenerateFileDirectory (Filename);
         Lines.SaveToFile (Filename);
-        ConverterInputList.AddInputFile (Filename, Filename, ParameterInputFile.LeadingObject, '', '', '', '', '', '',
-          0, '', true);
+        ConverterInputList.AddInputFileCommandLine (Filename, Filename, ParameterInputFile.LeadingObject, '', '');
       finally
         Lines.Free;
       end;
