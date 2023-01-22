@@ -1,9 +1,9 @@
 {
 	"definitionFile": "",
-	"inputListFile": "placeholderinputlistreduced.json",
+	"inputListFile": "placeholder_inputlist_curl.json",
 	"generateSummary": "true",
 	"generateDetails": "false",
-	"outputFormats": "svg,log,json,puml",
+	"outputFormats": "svg,log,json,puml,zip",
 	"option": "default",
 	"curlParameter": [
 			{

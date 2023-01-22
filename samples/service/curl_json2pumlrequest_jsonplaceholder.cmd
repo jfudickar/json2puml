@@ -1,1 +1,1 @@
-curl -X POST http://localhost:9090/api/json2pumlRequest -d @jsonplaceholder_reducedparameter.json -v -o result\jsonplaceholder_reducedparameter_result.json
+curl -X POST http://localhost:9090/api/json2pumlRequest -d @jsonplaceholder_parameter_curl.json -v -o result\jsonplaceholder_reducedparameter_result.json
