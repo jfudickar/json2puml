@@ -21,7 +21,7 @@
 	"job": null,
 	"outputFormats":["svg"],
 	"outputPath": null,
-	"outputSuffix": null,
+	"outputSuffix": ".<option>",
 	"curlBaseUrl": "https://api.spacexdata.com/",
 	"curlUrlAddon": null,
 	"curlOptions": null,
@@ -29,7 +29,7 @@
 	"input":  [
 			{
 				"inputFile": "launches.json",
-				"curlFileSuffix": null,
+				"curlFileSuffix": "_${launch}",
 				"curlBaseUrl": null,
 				"curlFormatOutput": "true",
 				"curlUrl": "v5/launches/${launch}",

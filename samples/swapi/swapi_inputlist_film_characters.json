@@ -29,7 +29,7 @@
 	"input":  [
 			{
 				"inputFile": "films.json",
-				"curlFileSuffix": null,
+				"curlFileSuffix": "_${id}",
 				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
 				"curlFormatOutput": "true",
 				"curlUrl": null,

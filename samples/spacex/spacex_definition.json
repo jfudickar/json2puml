@@ -6,6 +6,68 @@
 	"defaultOption": "default",
 	"options":  [
 			{
+				"option": "compact",
+				"definition": {
+					"continueAfterUnhandledObjects": "false",
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties":  [
+							"*"
+					],
+					"objectProperties":  [
+					],
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+							"links",
+							"*image*"
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": "false",
+							"showFromRelations": "false",
+							"showIfEmpty": "false",
+							"showToRelations": "false",
+							"valueSplitLength": null
+						}
+					}
+				}
+			},
+			{
 				"option": "full",
 				"definition": {
 					"continueAfterUnhandledObjects": "true",
@@ -44,8 +106,6 @@
 					"relationshipTypeArrowFormats":  [
 					],
 					"hiddenProperties":  [
-							"landpad.launches",
-							"launchpad.launches"
 					],
 					"pumlHeaderLines":  [
 					],
@@ -106,7 +166,10 @@
 		],
 		"objectDetailProperties":  [
 				"links",
-				"rocket.*"
+				"rocket.*",
+				"rocket.landing_legs",
+				"dragon",
+				"composite_fairing"
 		],
 		"groupProperties":  [
 				"launchcrew",
@@ -120,7 +183,7 @@
 				"launch",
 				"rocket",
 				"crew.crew",
-				"capsule",
+				"dragon.capsule",
 				"capsules",
 				"payloads",
 				"ships",
@@ -142,6 +205,9 @@
 		"relationshipTypeArrowFormats":  [
 		],
 		"hiddenProperties":  [
+				"landpad.launches",
+				"launchpad.launches",
+				"*.launches"
 		],
 		"pumlHeaderLines":  [
 				"hide stereotype"
@@ -159,11 +225,8 @@
 				{"parentProperty": "flickr", "type": "record"},
 				{"parentProperty": "patch", "type": "record"},
 				{"parentProperty": "reddit", "type": "record"},
-				{"parentProperty": "xcustomers", "type": "record"},
 				{"parentProperty": "norad_ids", "type": "record"},
-				{"parentProperty": "xmanufacturers", "type": "record"},
-				{"parentProperty": "dragon", "type": "record"},
-				{"parentProperty": "xnationalities", "type": "record"},
+				{"parentProperty": "xdragon", "type": "record"},
 				{"parentProperty": "payload_weights", "type": "list", "nameProperty": "name", "valueProperty": "kg", "infoProperty": "lb"}
 		],
 		"objectFormats": {
@@ -235,7 +298,8 @@
 								"core",
 								"cores",
 								"capsule",
-								"payload"
+								"payload",
+								"dragon"
 							],
 							"iconColor": "orange",
 							"skinParams": ["BackgroundColor=orange"]
@@ -244,7 +308,10 @@
 					{
 						"formatName": "hardware-details",
 						"definition": {
-							"objectFilter": ["rocket.*"],
+							"objectFilter": [
+								"rocket.*",
+								"dragon.*"
+							],
 							"iconColor": "orangeRed",
 							"skinParams": ["BackgroundColor=orangeRed"]
 						}

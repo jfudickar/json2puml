@@ -29,7 +29,7 @@
 	"input":  [
 			{
 				"inputFile": "show.json",
-				"curlFileSuffix": null,
+				"curlFileSuffix": "_${id}",
 				"curlBaseUrl": null,
 				"curlFormatOutput": "true",
 				"curlUrl": "shows/${id}?embed[]=cast&embed[]=nextepisode",

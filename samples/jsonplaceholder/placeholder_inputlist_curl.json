@@ -21,7 +21,7 @@
 	"summaryFile": "placeholder_summary_${name}",
 	"input":  [
 			{
-				"inputFile": "users.JSON",
+				"inputFile": "users.json",
 				"curlFileSuffix": "_${ID}",
 				"curlBaseUrl": null,
 				"curlFormatOutput": "true",
@@ -39,7 +39,7 @@
 				]
 			},
 			{
-				"inputFile": "albums",
+				"inputFile": "albums.json",
 				"curlFileSuffix": "_${ID}",
 				"curlBaseUrl": null,
 				"curlFormatOutput": "true",
