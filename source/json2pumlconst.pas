@@ -30,7 +30,7 @@ uses
   Quick.Logger;
 
 type
-  tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip);
+  tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip, jofFileList);
   tJson2PumlApplicationType = (jatConsole, jatService, jatUI);
   tJson2PumlOutputFormats = set of tJson2PumlOutputFormat;
   tJson2PumlCharacteristicType = (jctRecord, jctList);
@@ -41,9 +41,9 @@ type
   tUmlRelationDirection = (urdTo, urdFrom);
 
 const
-  cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log', 'zip');
-  cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '', '', '');
-  cJson2PumlServiceResultName : array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile', 'pumlFile', 'jsonFile', 'logFile','');
+  cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log', 'zip', 'filelist.json');
+  cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '', '', '', '');
+  cJson2PumlServiceResultName : array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile', 'pumlFile', 'jsonFile', 'logFile','', '');
   cJson2PumlCharacteristicType: array [tJson2PumlCharacteristicType] of string = ('record', 'list');
   cJson2PumlListHandlingMode: array [tJson2PumlListOperation] of string = ('replace', 'merge');
   cJson2PumlFileNameReplace : array [tJson2PumlFileNameReplace] of string = ('<group>', '<detail>', '<option>', '<job>', '<file>');
@@ -71,7 +71,7 @@ const
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.0.4.56';
+  cCurrentVersion = '2.0.5.57';
 
   JSON2PUML_EVENTTYPENAMES : TEventTypeNames = ['','INFO    ','SUCCESS ','WARNING ','ERROR   ','CRITICAL','EXCEPT  ','DEBUG   ','TRACE   ','DONE    ','CUSTOM1 ','CUSTOM2 '];
 

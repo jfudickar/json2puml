@@ -99,6 +99,7 @@ type
   private
     FCurlParameter: tJson2PumlCurlParameterList;
     FDefinitionFileName: string;
+    FDescription: string;
     FGenerateDetailsStr: string;
     FGenerateSummaryStr: string;
     FInputFiles: tJson2PumlParameterInputFileDefinitionList;
@@ -131,6 +132,7 @@ type
     property OutputFormats: tJson2PumlOutputFormats read FOutputFormats;
   published
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
+    property Description: string read FDescription write FDescription;
     property GenerateDetails: boolean read GetGenerateDetails;
     property GenerateDetailsStr: string read FGenerateDetailsStr write FGenerateDetailsStr;
     property GenerateSummaryStr: string read FGenerateSummaryStr write FGenerateSummaryStr;
@@ -535,6 +537,7 @@ type
     FDebug: boolean;
     FDefinitionFileName: string;
     FDefinitionFileNameEnvironment: string;
+    FDescription: string;
     FDetail: string;
     FFailed: boolean;
     FFormatDefinitionFiles: boolean;
@@ -612,6 +615,7 @@ type
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
     property DefinitionFileNameEnvironment: string read FDefinitionFileNameEnvironment
       write FDefinitionFileNameEnvironment;
+    property Description: string read FDescription write FDescription;
     property Detail: string read FDetail write FDetail;
     property Failed: boolean read FFailed write FFailed;
     property FormatDefinitionFiles: boolean read FFormatDefinitionFiles write FFormatDefinitionFiles;
@@ -825,7 +829,7 @@ procedure tJson2PumlInputFileDefinition.AddFilesToZipFile (iZipFile: TZipFile; i
 begin
   if IncludeIntoOutput then
   begin
-    iZipFile.Add (OutputFileName, OutputFileName.Replace(iRemoveDirectory, '').TrimLeft(TPath.DirectorySeparatorChar));
+    AddFileToZipFile(iZipFile, OutputFileName, iRemoveDirectory);
     Output.AddFilesToZipFile (iZipFile, iRemoveDirectory);
   end;
 end;
@@ -1118,6 +1122,7 @@ var
 begin
   for InputFile in self do
     InputFile.AddGeneratedFilesToDeleteHandler (ioDeleteHandler);
+  ioDeleteHandler.AddFile (FileListFileName);
   ioDeleteHandler.AddFile (SummaryZipFileName);
 end;
 
@@ -1584,6 +1589,7 @@ begin
   ZipFile := TZipFile.Create;
   try
     ZipFile.Open (iZipfileName, zmWrite);
+    AddFileToZipFile(ZipFile, FileListFileName, ExtractFilePath(iZipfileName));
     for InputFile in self do
       InputFile.AddFilesToZipFile (ZipFile, ExtractFilePath(iZipfileName));
     ZipFile.Close;
@@ -2123,6 +2129,7 @@ begin
   ConfigurationFileNameEnvironment := ReadSingleInputParameterEnvironment (cConfigurationFileRegistry);
   ParameterFileName := ReadSingleInputParameterFile ('parameterfile');
   DefinitionFileName := ReadSingleInputParameterFile ('definitionfile');
+  Description := ReadSingleInputParameter('description');
   DefinitionFileNameEnvironment := ReadSingleInputParameterEnvironment (cDefinitionFileRegistry);
   CurlAuthenticationFileName := ReadSingleInputParameterFile ('CurlAuthenticationfile');
   CurlAuthenticationFileNameEnvironment := ReadSingleInputParameterEnvironment (cCurlAuthenticationFileRegistry);
@@ -2350,6 +2357,9 @@ begin
   WriteHelpLine ('generateoutputdefinition',
     'Flag to define if the merged generator definition should be stored in the output folder.');
   WriteHelpLine ('debug', 'Flag to define that a converter log file should be generated parallel to the puml file');
+  WriteHelpLine;
+  WriteHelpLine ('description',
+    'Description of the generated result. This information will be put into the legend of the image.');
   WriteHelpLine;
 end;
 
@@ -2987,8 +2997,7 @@ procedure tJson2PumlFileOutputDefinition.AddFilesToZipFile (iZipFile: TZipFile; 
 
   procedure AddFile (iFileName: string);
   begin
-    if FileExists (iFileName) then
-      iZipFile.Add (iFileName, iFileName.Replace(iRemoveDirectory, '').TrimLeft(TPath.DirectorySeparatorChar));
+    AddFileToZipFile(iZipFile, iFileName, iRemoveDirectory);
   end;
 
 begin
@@ -3170,6 +3179,7 @@ begin
   DefinitionRecord := GetJsonObject (iJsonValue, iPropertyName);
   if not Assigned (DefinitionRecord) then
     exit;
+  Description:= GetJsonStringValue (DefinitionRecord, 'description');
   InputListFileName := GetJsonStringValue (DefinitionRecord, 'inputListFile');
   DefinitionFileName := GetJsonStringValue (DefinitionRecord, 'definitionFile');
   GenerateSummaryStr := GetJsonStringValue (DefinitionRecord, 'generateSummary');
@@ -3204,9 +3214,10 @@ procedure tJson2PumlParameterFileDefinition.WriteToJson (oJsonOutPut: TStrings; 
   iWriteEmpty: boolean = false);
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
+  WriteToJsonValue (oJsonOutPut, 'definitionFile', DefinitionFileName, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'description', Description, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'inputListFile', InputListFileName, iLevel + 1, iWriteEmpty);
   InputFiles.WriteToJson (oJsonOutPut, 'inputFiles', iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'definitionFile', DefinitionFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'generateSummary', GenerateSummaryStr, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'generateDetails', GenerateDetailsStr, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputFormats', OutputFormatStr, iLevel + 1, iWriteEmpty);

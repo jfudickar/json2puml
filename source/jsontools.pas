@@ -97,6 +97,8 @@ procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPrope
 
 function GetJsonObject(iJsonObject: TJsonObject; iName: string): TJsonObject; overload;
 
+function IsJsonSimple(iJsonValue: TJSONValue): boolean;
+
 implementation
 
 uses
@@ -209,6 +211,8 @@ begin
     Result := TJSONString (jsonValue).value
   else if jsonValue is TJSONBool then
     Result := TJSONBool (jsonValue).toString
+  else if jsonValue is TJSONNumber then
+    Result := TJSONNumber(jsonValue).toString
   else if jsonValue is TJsonArray then
   begin
     jsonArray := TJsonArray (jsonValue);
@@ -218,12 +222,8 @@ begin
       begin
         value := '';
         jsonValue := jsonArray.Items[i];
-        if jsonValue is TJSONString then
-          value := TJSONString (jsonValue).value;
-        // if Assigned(jsonPair.JsonValue) and jsonPair.JsonValue is TJSONString then
-        // Value := TJSONString(jsonPair.JsonValue).Value
-        // else
-        // Continue;
+        if IsJsonSimple(jsonValue) then
+          value := jsonValue.value;
         if (value.IsEmpty) and (name.IsEmpty) then
           Continue
         else if (not value.IsEmpty) and (not name.IsEmpty) then
@@ -455,7 +455,9 @@ begin
     if iJsonValue is TJSONString then
       value := TJSONString (iJsonValue).value
     else if iJsonValue is TJSONBool then
-      value := TJSONBool (iJsonValue).toString;
+      value := TJSONBool (iJsonValue).toString
+    else if iJsonValue is TJSONNumber then
+      value := TJSONNumber (iJsonValue).toString;
     if not value.IsEmpty then
       iValueList.Add (value);
   end;
@@ -660,6 +662,12 @@ begin
   end
   else
     Result := iJsonObject;
+end;
+
+function IsJsonSimple(iJsonValue: TJSONValue): boolean;
+begin
+  Result := (iJsonValue is TJSONString) or (iJsonValue is TJSONBool) or (iJsonValue is TJSONNumber) or
+      (iJsonValue is TJSONNull) ;
 end;
 
 end.

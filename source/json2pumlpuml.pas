@@ -480,7 +480,7 @@ begin
     ObjectCreated := true;
     Search := '';
   end;
-  FormatDefinition := ConverterDefinition.ObjectFormats.GetFormatByName (iObjectType, iParentObjectType);
+  FormatDefinition := ConverterDefinition.ObjectFormats.GetFormatByName (Result.ObjectType, Result.ParentObjectType);
   // pObject.ObjectType := pObject.ObjectType + '-' + FormatDefinition.FormatName;
   if Assigned (FormatDefinition) then
     Result.FormatDefinition := FormatDefinition;

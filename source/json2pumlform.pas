@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumlform;
 
@@ -254,7 +254,7 @@ type
     FParameterFileLines: TStrings;
     FServiceResultLines: TStrings;
     fSynJSONSyn: TSynJSONSyn;
-    fLogMemo : TWinControl;
+    fLogMemo: TWinControl;
     FServiceinputlistfileResultLines: TStrings;
     FServicedefinitionfileResultLines: TStrings;
     procedure AfterCreateAllInputHandlerRecords (Sender: TObject);
@@ -276,10 +276,10 @@ type
     property OptionFileLines: TStrings read FOptionFileLines write FOptionFileLines;
     property ParameterFileLines: TStrings read FParameterFileLines write FParameterFileLines;
     property ServiceResultLines: TStrings read FServiceResultLines write FServiceResultLines;
-    property ServiceinputlistfileResultLines: TStrings read FServiceinputlistfileResultLines write
-        FServiceinputlistfileResultLines;
-    property ServicedefinitionfileResultLines: TStrings read FServicedefinitionfileResultLines write
-        FServicedefinitionfileResultLines;
+    property ServiceinputlistfileResultLines: TStrings read FServiceinputlistfileResultLines
+      write FServiceinputlistfileResultLines;
+    property ServicedefinitionfileResultLines: TStrings read FServicedefinitionfileResultLines
+      write FServicedefinitionfileResultLines;
     procedure InitFormDefaultLogger;
   protected
     procedure BeginConvert;
@@ -287,8 +287,8 @@ type
     procedure ConvertAllFrames;
     procedure ConvertCurrentFrame;
     procedure CreateMemoControls;
-    function CreateSingleMemoControl(iParentControl: TWinControl; iName: string; iLabel: TLabel; var oMemoLines: TStrings;
-        iUseHighlighter: Boolean): TWinControl;
+    function CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
+      var oMemoLines: TStrings; iUseHighlighter: Boolean): TWinControl;
     procedure EndConvert;
     procedure FormToCommandline;
     function GetNewFileName (iFileName: string; var oNewFileName: string): Boolean;
@@ -327,20 +327,20 @@ type
     property InputHandler: TJson2PumlInputHandler read FInputHandler;
   end;
 
-//type
-//  TStringListLogAppender = class(TLoggerProAppenderBase)
-//  private
-//    FMaxLogLines: Word;
-//    FClearOnStartup: Boolean;
-//    FLogList: TStrings;
-//    FLogControl: TWinControl;
-//  public
-//    constructor Create(iLogList: TStrings; iLogControl: TWinControl; iMaxLogLines: Word = 10000; iClearOnStartup: Boolean =
-//        false; iLogFormat: string = DEFAULT_LOG_FORMAT); reintroduce;
-//    procedure Setup; override;
-//    procedure TearDown; override;
-//    procedure WriteLog (const iLogItem: TLogItem); override;
-//  end;
+  // type
+  // TStringListLogAppender = class(TLoggerProAppenderBase)
+  // private
+  // FMaxLogLines: Word;
+  // FClearOnStartup: Boolean;
+  // FLogList: TStrings;
+  // FLogControl: TWinControl;
+  // public
+  // constructor Create(iLogList: TStrings; iLogControl: TWinControl; iMaxLogLines: Word = 10000; iClearOnStartup: Boolean =
+  // false; iLogFormat: string = DEFAULT_LOG_FORMAT); reintroduce;
+  // procedure Setup; override;
+  // procedure TearDown; override;
+  // procedure WriteLog (const iLogItem: TLogItem); override;
+  // end;
 
 var
   json2pumlMainForm: Tjson2pumlMainForm;
@@ -446,8 +446,7 @@ begin
   Sc := CalcShortCutStr (iInputHandlerRecord.Index);
   if not Sc.IsEmpty then
     Sc := Format ('(%s)', [Sc]);
-  Result := Format ('%s [%s] %s', [ExtractFileName(iInputHandlerRecord.InputFile.OutputFileName),
-    iInputHandlerRecord.InputGroup, Sc]).Trim;
+  Result := Format ('%s %s', [ExtractFileName(iInputHandlerRecord.InputFile.OutputFileName), Sc]).Trim;
 end;
 
 procedure Tjson2pumlMainForm.CommandLineToForm;
@@ -569,8 +568,10 @@ begin
   fLogMemo := CreateSingleMemoControl (ExecutionLogPanel, 'ExecutionLogMemo', nil, FLogLines, false);
   CreateSingleMemoControl (FileListPanel, 'FileListMemo', nil, FFileListLines, True);
   CreateSingleMemoControl (ServiceResultPanel, 'ServiceResultMemo', nil, FServiceResultLines, True);
-  CreateSingleMemoControl (ServiceInputListFileResultPanel, 'ServiceResultMemo', nil, FServiceinputlistfileResultLines, True);
-  CreateSingleMemoControl (ServiceDefinitionFileResultPanel, 'ServiceResultMemo', nil, FServicedefinitionfileResultLines, True);
+  CreateSingleMemoControl (ServiceInputListFileResultPanel, 'ServiceResultMemo', nil,
+    FServiceinputlistfileResultLines, True);
+  CreateSingleMemoControl (ServiceDefinitionFileResultPanel, 'ServiceResultMemo', nil,
+    FServicedefinitionfileResultLines, True);
 end;
 
 procedure Tjson2pumlMainForm.CreateSingleFileFrame (iInputHandlerRecord: TJson2PumlInputHandlerRecord);
@@ -609,8 +610,8 @@ begin
   iInputHandlerRecord.PUmlOutput := SingleFileFrame.Frame.PUmlOutput;
 end;
 
-function Tjson2pumlMainForm.CreateSingleMemoControl(iParentControl: TWinControl; iName: string; iLabel: TLabel; var
-    oMemoLines: TStrings; iUseHighlighter: Boolean): TWinControl;
+function Tjson2pumlMainForm.CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
+  var oMemoLines: TStrings; iUseHighlighter: Boolean): TWinControl;
 {$IFDEF SYNEDIT}
 var
   NewEdit: TSynEdit;
@@ -755,8 +756,10 @@ end;
 
 procedure Tjson2pumlMainForm.GenerateServiceListResults;
 begin
-  GetServiceFileListResponse(ServiceinputlistfileResultLines, inputhandler.GlobalConfiguration.DefaultInputListFileFolder, true);
-  GetServiceFileListResponse(ServicedefinitionfileResultLines, inputhandler.GlobalConfiguration.DefaultDefinitionFileFolder, false);
+  GetServiceFileListResponse (ServiceinputlistfileResultLines,
+    InputHandler.GlobalConfiguration.DefaultInputListFileFolder, True);
+  GetServiceFileListResponse (ServicedefinitionfileResultLines,
+    InputHandler.GlobalConfiguration.DefaultDefinitionFileFolder, false);
 end;
 
 function Tjson2pumlMainForm.GetCurrentInputHandlerRecord: TJson2PumlInputHandlerRecord;
@@ -844,13 +847,13 @@ end;
 
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;
 begin
-  InitDefaultLogger(GlobalConfigurationDefinition.LogFileOutputPath, false, false);
-  Logger.Providers.Add (GlobalLogStringListProvider);
-  GlobalLogStringListProvider.ShowTimeStamp := true;
-  GlobalLogStringListProvider.ShowEventTypes := true;
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, false, false);
+  Logger.Providers.add (GlobalLogStringListProvider);
+  GlobalLogStringListProvider.ShowTimeStamp := True;
+  GlobalLogStringListProvider.ShowEventTypes := True;
   GlobalLogStringListProvider.LogList := LogLines;
   GlobalLogStringListProvider.LogLevel := LOG_DEBUG;
-  SetLogProviderEventTypeNames(GlobalLogStringListProvider);
+  SetLogProviderEventTypeNames (GlobalLogStringListProvider);
   GlobalLogStringListProvider.Enabled := True;
 
 end;
@@ -1034,7 +1037,8 @@ end;
 
 procedure Tjson2pumlMainForm.SaveDefinitionFile;
 begin
-  if not InputHandler.ConverterDefinitionGroup.SaveToFile (DefinitionLines, InputHandler.CurrentDefinitionFileName, true) then
+  if not InputHandler.ConverterDefinitionGroup.SaveToFile (DefinitionLines, InputHandler.CurrentDefinitionFileName, True)
+  then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
@@ -1045,35 +1049,35 @@ end;
 
 procedure Tjson2pumlMainForm.SaveInputListFile;
 begin
-  if not InputHandler.ConverterInputList.SaveToFile (InputListLines, InputHandler.CurrentInputListFileName , true) then
+  if not InputHandler.ConverterInputList.SaveToFile (InputListLines, InputHandler.CurrentInputListFileName, True) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
 procedure Tjson2pumlMainForm.SaveOptionFile;
 begin
-  if not InputHandler.OptionFileDefinition.SaveToFile (OptionFileLines, InputHandler.CmdLineParameter.OptionFileName, true)
-  then
+  if not InputHandler.OptionFileDefinition.SaveToFile (OptionFileLines, InputHandler.CmdLineParameter.OptionFileName,
+    True) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
 procedure Tjson2pumlMainForm.SaveAuthenticationFile;
 begin
   if not InputHandler.CurlAuthenticationList.SaveToFile (CurlAuthenticationFileLines,
-    InputHandler.CmdLineParameter.CurlAuthenticationFileName, true) then
+    InputHandler.CmdLineParameter.CurlAuthenticationFileName, True) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
 procedure Tjson2pumlMainForm.SaveCurlParameterActionExecute (Sender: TObject);
 begin
   if not InputHandler.CurlParameterList.SaveToFile (CurlParameterFileLines,
-    InputHandler.CmdLineParameter.CurlParameterFileName, true) then
+    InputHandler.CmdLineParameter.CurlParameterFileName, True) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
 procedure Tjson2pumlMainForm.SaveParameterFile;
 begin
   if not InputHandler.ParameterDefinition.SaveToFile (ParameterFileLines,
-    InputHandler.CmdLineParameter.ParameterFileName, true) then
+    InputHandler.CmdLineParameter.ParameterFileName, True) then
     MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
 end;
 
@@ -1180,53 +1184,53 @@ end;
 
 { TStringListLogAppender }
 
-//constructor TStringListLogAppender.Create(iLogList: TStrings; iLogControl: TWinControl; iMaxLogLines: Word = 10000;
-//    iClearOnStartup: Boolean = false; iLogFormat: string = DEFAULT_LOG_FORMAT);
-//begin
-//  inherited Create (iLogFormat);
-//  FLogList := iLogList;
-//  FMaxLogLines := iMaxLogLines;
-//  FClearOnStartup := iClearOnStartup;
-//  FLogControl := iLogControl;
-//end;
+// constructor TStringListLogAppender.Create(iLogList: TStrings; iLogControl: TWinControl; iMaxLogLines: Word = 10000;
+// iClearOnStartup: Boolean = false; iLogFormat: string = DEFAULT_LOG_FORMAT);
+// begin
+// inherited Create (iLogFormat);
+// FLogList := iLogList;
+// FMaxLogLines := iMaxLogLines;
+// FClearOnStartup := iClearOnStartup;
+// FLogControl := iLogControl;
+// end;
 //
-//procedure TStringListLogAppender.Setup;
-//begin
-//  inherited;
-//  if FClearOnStartup then
-//  begin
-//    TThread.Synchronize (nil,
-//      procedure
-//      begin
-//        FLogList.Clear;
-//      end);
-//  end;
-//end;
+// procedure TStringListLogAppender.Setup;
+// begin
+// inherited;
+// if FClearOnStartup then
+// begin
+// TThread.Synchronize (nil,
+// procedure
+// begin
+// FLogList.Clear;
+// end);
+// end;
+// end;
 //
-//procedure TStringListLogAppender.TearDown;
-//begin
-//  // do nothing
-//end;
+// procedure TStringListLogAppender.TearDown;
+// begin
+// // do nothing
+// end;
 //
-//procedure TStringListLogAppender.WriteLog (const iLogItem: TLogItem);
-//var
-//  lText: string;
-//begin
-//  lText := FormatLog (iLogItem);
-//  TThread.Queue (nil,
-//    procedure
-//    begin
-//      FLogList.BeginUpdate;
-//      try
-//        if FLogList.Count = FMaxLogLines then
-//          FLogList.Delete(0);
-//        FLogList.add(lText)
-//      finally
-//        FLogList.EndUpdate;
-//      end;
-//      if Assigned(FLogControl) then
-//        SendMessage(FLogControl.Handle, EM_SCROLLCARET, 0, 0);
-//    end);
-//end;
+// procedure TStringListLogAppender.WriteLog (const iLogItem: TLogItem);
+// var
+// lText: string;
+// begin
+// lText := FormatLog (iLogItem);
+// TThread.Queue (nil,
+// procedure
+// begin
+// FLogList.BeginUpdate;
+// try
+// if FLogList.Count = FMaxLogLines then
+// FLogList.Delete(0);
+// FLogList.add(lText)
+// finally
+// FLogList.EndUpdate;
+// end;
+// if Assigned(FLogControl) then
+// SendMessage(FLogControl.Handle, EM_SCROLLCARET, 0, 0);
+// end);
+// end;
 
 end.

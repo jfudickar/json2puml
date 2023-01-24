@@ -31,7 +31,7 @@ uses System.Classes, System.SysUtils, json2pumldefinition,
   Posix.Base,
   Posix.Fcntl,
 {$ENDIF}
-  json2pumlloghandler, json2pumlconst;
+  json2pumlloghandler, json2pumlconst, System.Zip;
 
 procedure ClearLastLineComma (oJsonOutPut: TStrings);
 
@@ -94,6 +94,8 @@ function IsRelativePath (iPath: string): Boolean;
 function PathCombineIfRelative (iBasePath, iPath: string): string;
 
 function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
+
+procedure AddFileToZipFile(iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
 
 {$IFDEF LINUX}
 
@@ -884,5 +886,13 @@ begin
     FileList.Free;
   end;
 end;
+
+
+procedure AddFileToZipFile(iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
+begin
+  if FileExists(iFileName)  then
+    iZipFile.Add (iFileName, iFileName.Replace(iRemoveDirectory, '').TrimLeft(TPath.DirectorySeparatorChar));
+end;
+
 
 end.
