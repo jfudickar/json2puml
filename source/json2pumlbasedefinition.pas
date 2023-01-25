@@ -159,13 +159,13 @@ type
   tJson2PumlBasePropertyList = class(tJson2PumlBaseList)
   protected
     function GetIsValid: boolean; override;
-    function BuildFoundCondition (iConfigurationPropertyName, iConfiguredValue, iInputValue: string): string;
     function IndexOfProperty (iPropertyName, iParentPropertyName, iConfigurationPropertyName: string;
       var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
     procedure WriteObjectEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
     procedure WriteObjectStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
   public
     constructor Create; override;
+    function BuildFoundCondition(iConfigurationPropertyName, iConfiguredValue, iInputValue: string): string;
   end;
 
   tJson2PumlBaseObjectClass = class of tJson2PumlBaseObject;
