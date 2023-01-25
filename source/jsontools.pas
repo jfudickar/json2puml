@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit jsontools;
 
@@ -41,14 +41,15 @@ procedure FormatJsonFile (iFileName: string; iOutputFileName: string = '');
 
 function GetJsonArray (iJsonObject: TJsonObject; iName: string): TJsonArray;
 
-function GetJsonObject(iJsonValue: TJSONValue; iName: string): TJsonObject; overload;
+function GetJsonObject (iJsonValue: TJSONValue; iName: string): TJsonObject; overload;
 
-function GetJsonStringArray (iJsonObject: TJsonObject; iName: string): string;
+function GetJsonStringArray (iJsonObject: TJsonObject; iName: string): string; overload;
+function GetJsonStringArray (iJsonArray: TJsonArray): string; overload;
 
 function GetJsonStringValue (iJsonObject: TJsonObject; iNames: TStrings; iValueSeparator: string = ''): string;
   overload;
 
-function GetJsonStringValue (iJsonValue: TJsonValue; iPropertyName: string; iDefault: string = '';
+function GetJsonStringValue (iJsonValue: TJSONValue; iPropertyName: string; iDefault: string = '';
   iValueSeparator: string = ''): string; overload;
 
 function GetJsonStringValueBoolean (iJsonObject: TJsonObject; iName: string; iDefault: Boolean): Boolean; overload;
@@ -57,10 +58,10 @@ function GetJsonStringValueBoolean (iJsonObject: TJsonObject; iName: string; iDe
 
 function GetJsonStringValueInteger (iJsonObject: TJsonObject; iName: string; iDefault: Integer): Integer; overload;
 
-procedure GetJsonStringValueList (iValueList: tStringList; iJsonValue: TJsonValue; iPropertyName: string;
+procedure GetJsonStringValueList (iValueList: tStringList; iJsonValue: TJSONValue; iPropertyName: string;
   iMaxRecords: Integer = MaxInt; iClearListBefore: Boolean = true);
 
-function GetJsonValue (iJsonObject: TJsonObject; iName: string): TJsonValue;
+function GetJsonValue (iJsonObject: TJsonObject; iName: string): TJSONValue;
 
 function JsonLinePrefix (iLevel: Integer): string;
 
@@ -68,7 +69,7 @@ function JsonPropertyNameValue (iPropertyName, iPropertyvalue: string; iWriteEmp
 
 procedure PrettyPrintArray (jsonArray: TJsonArray; OutputStrings: TStrings; indent: Integer);
 
-procedure PrettyPrintJSON (jsonValue: TJsonValue; OutputStrings: TStrings; indent: Integer = 0);
+procedure PrettyPrintJSON (jsonValue: TJSONValue; OutputStrings: TStrings; indent: Integer = 0);
 
 procedure PrettyPrintPair (jsonPair: TJSONPair; OutputStrings: TStrings; last: Boolean; indent: Integer);
 
@@ -89,15 +90,15 @@ procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPrope
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName, iPropertyvalue: string; iLevel: Integer;
   iWriteEmpty: Boolean = false); overload;
 
-procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: TJsonValue; iLevel: Integer;
+procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: TJSONValue; iLevel: Integer;
   iWriteEmpty: Boolean = false); overload;
 
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalues: TStrings; iLevel: Integer;
   iCompress: Boolean; iWriteEmpty: Boolean = false); overload;
 
-function GetJsonObject(iJsonObject: TJsonObject; iName: string): TJsonObject; overload;
+function GetJsonObject (iJsonObject: TJsonObject; iName: string): TJsonObject; overload;
 
-function IsJsonSimple(iJsonValue: TJSONValue): boolean;
+function IsJsonSimple (iJsonValue: TJSONValue): Boolean;
 
 implementation
 
@@ -144,7 +145,7 @@ end;
 procedure FormatJsonFile (iFileName: string; iOutputFileName: string = '');
 var
   InputFile, OutputFile: tStringList;
-  jsonValue: TJsonValue;
+  jsonValue: TJSONValue;
 
 begin
   InputFile := tStringList.Create;
@@ -168,7 +169,7 @@ end;
 
 function GetJsonArray (iJsonObject: TJsonObject; iName: string): TJsonArray;
 var
-  jsonValue: TJsonValue;
+  jsonValue: TJSONValue;
 begin
   Result := nil;
   if not Assigned (iJsonObject) then
@@ -184,22 +185,19 @@ begin
   end;
 end;
 
-function GetJsonObject(iJsonValue: TJSONValue; iName: string): TJsonObject;
+function GetJsonObject (iJsonValue: TJSONValue; iName: string): TJsonObject;
 begin
   Result := nil;
   if not Assigned (iJsonValue) then
     Exit;
-  if iJsonValue is TJSONObject then
-    Result := GetJsonObject(TJSONObject(iJsonValue), iName);
+  if iJsonValue is TJsonObject then
+    Result := GetJsonObject (TJsonObject(iJsonValue), iName);
 end;
 
 function GetJsonStringArray (iJsonObject: TJsonObject; iName: string): string;
 var
-  jsonValue: TJsonValue;
+  jsonValue: TJSONValue;
   jsonArray: TJsonArray;
-  ResultList: tStringList;
-  name, value: string;
-  i: Integer;
 begin
   Result := '';
   if not Assigned (iJsonObject) then
@@ -212,31 +210,44 @@ begin
   else if jsonValue is TJSONBool then
     Result := TJSONBool (jsonValue).toString
   else if jsonValue is TJSONNumber then
-    Result := TJSONNumber(jsonValue).toString
+    Result := TJSONNumber (jsonValue).toString
   else if jsonValue is TJsonArray then
   begin
     jsonArray := TJsonArray (jsonValue);
-    ResultList := tStringList.Create;
-    try
-      for i := 0 to jsonArray.Count - 1 do
-      begin
-        value := '';
-        jsonValue := jsonArray.Items[i];
-        if IsJsonSimple(jsonValue) then
-          value := jsonValue.value;
-        if (value.IsEmpty) and (name.IsEmpty) then
-          Continue
-        else if (not value.IsEmpty) and (not name.IsEmpty) then
-          ResultList.AddPair (name, value)
-        else if (not name.IsEmpty) then
-          ResultList.Add (name)
-        else
-          ResultList.Add (value);
-      end;
-      Result := ResultList.Text;
-    finally
-      ResultList.Free;
+    Result := GetJsonStringArray (jsonArray);
+  end;
+end;
+
+function GetJsonStringArray (iJsonArray: TJsonArray): string;
+var
+  jsonValue: TJSONValue;
+  ResultList: tStringList;
+  name, value: string;
+  i: Integer;
+begin
+  Result := '';
+  if not Assigned (iJsonArray) then
+    Exit;
+  ResultList := tStringList.Create;
+  try
+    for i := 0 to iJsonArray.Count - 1 do
+    begin
+      value := '';
+      jsonValue := iJsonArray.Items[i];
+      if IsJsonSimple (jsonValue) then
+        value := jsonValue.value;
+      if (value.IsEmpty) and (name.IsEmpty) then
+        Continue
+      else if (not value.IsEmpty) and (not name.IsEmpty) then
+        ResultList.AddPair (name, value)
+      else if (not name.IsEmpty) then
+        ResultList.Add (name)
+      else
+        ResultList.Add (value);
     end;
+    Result := ResultList.Text;
+  finally
+    ResultList.Free;
   end;
 end;
 
@@ -258,7 +269,7 @@ begin
   end;
 end;
 
-function GetJsonStringValue (iJsonValue: TJsonValue; iPropertyName: string; iDefault: string = '';
+function GetJsonStringValue (iJsonValue: TJSONValue; iPropertyName: string; iDefault: string = '';
   iValueSeparator: string = ''): string;
 var
   i: Integer;
@@ -301,10 +312,10 @@ begin
   Result := StringToInteger (GetJsonStringValue(iJsonObject, iName, iDefault.toString), iDefault);
 end;
 
-procedure GetJsonStringValueList (iValueList: tStringList; iJsonValue: TJsonValue; iPropertyName: string;
+procedure GetJsonStringValueList (iValueList: tStringList; iJsonValue: TJSONValue; iPropertyName: string;
   iMaxRecords: Integer = MaxInt; iClearListBefore: Boolean = true);
 var
-  jsonValue: TJsonValue;
+  jsonValue: TJSONValue;
   jsonArray: TJsonArray;
   jsonObject: TJsonObject;
   i, p: Integer;
@@ -463,7 +474,7 @@ begin
   end;
 end;
 
-function GetJsonValue (iJsonObject: TJsonObject; iName: string): TJsonValue;
+function GetJsonValue (iJsonObject: TJsonObject; iName: string): TJSONValue;
 begin
   Result := nil;
   if not Assigned (iJsonObject) then
@@ -471,7 +482,7 @@ begin
   if not iName.IsEmpty then
     Result := iJsonObject.Values[iName]
   else
-    Result := TJsonValue (iJsonObject);
+    Result := TJSONValue (iJsonObject);
 end;
 
 function JsonLinePrefix (iLevel: Integer): string;
@@ -506,7 +517,7 @@ begin
   OutputStrings.Add (JsonLinePrefix(indent) + ']');
 end;
 
-procedure PrettyPrintJSON (jsonValue: TJsonValue; OutputStrings: TStrings; indent: Integer = 0);
+procedure PrettyPrintJSON (jsonValue: TJSONValue; OutputStrings: TStrings; indent: Integer = 0);
 var
   i: Integer;
 begin
@@ -602,7 +613,7 @@ begin
     iWriteEmpty)]));
 end;
 
-procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: TJsonValue; iLevel: Integer;
+procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: TJSONValue; iLevel: Integer;
   iWriteEmpty: Boolean = false);
 begin
   if iPropertyName.IsEmpty then
@@ -644,9 +655,9 @@ begin
   end;
 end;
 
-function GetJsonObject(iJsonObject: TJsonObject; iName: string): TJsonObject;
+function GetJsonObject (iJsonObject: TJsonObject; iName: string): TJsonObject;
 var
-  jsonValue: TJsonValue;
+  jsonValue: TJSONValue;
 begin
   Result := nil;
   if not Assigned (iJsonObject) then
@@ -664,10 +675,10 @@ begin
     Result := iJsonObject;
 end;
 
-function IsJsonSimple(iJsonValue: TJSONValue): boolean;
+function IsJsonSimple (iJsonValue: TJSONValue): Boolean;
 begin
   Result := (iJsonValue is TJSONString) or (iJsonValue is TJSONBool) or (iJsonValue is TJSONNumber) or
-      (iJsonValue is TJSONNull) ;
+    (iJsonValue is TJSONNull);
 end;
 
 end.

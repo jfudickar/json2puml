@@ -399,8 +399,19 @@ begin
               iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, cname, cvalue, '',
                 CharacteristicDefinition);
             end
+            else if iJsonObject.Pairs[i].JsonValue is TJSONArray then
+            begin
+              cvalue := GetJsonStringArray(TJSONArray(iJsonObject.Pairs[i].JsonValue));
+              iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, cname, cvalue, '',
+                CharacteristicDefinition);
+              AddFileLog ('Property "%s.%s" fetched from array : "%s"',
+                [iInfo.PropertyName, cname,cvalue]);
+            end
             else
-              AddFileLog ('Property "%s.%s" defined as hidden %s', [cname, iInfo.PropertyName, FoundCondition]);
+              AddFileLog ('Property "%s.%s" will be ignored, it'' not a simple type',
+                [iInfo.PropertyName, cname])
+          else
+            AddFileLog ('Property "%s.%s" defined as hidden %s', [iInfo.PropertyName, cname, FoundCondition]);
         end;
       end;
     end;

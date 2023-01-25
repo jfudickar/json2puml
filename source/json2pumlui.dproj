@@ -129,7 +129,7 @@
         <VerInfo_Build>58</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <Debugger_RunParams>/parameterfile:samples-local\tmf\data\100000145100\tmf_parameter.json</Debugger_RunParams>
+        <Debugger_RunParams>/parameterfile:samples\spacex\spacex_parameter_launches.json /curlparameter:launch=latest</Debugger_RunParams>
         <Debugger_CWD>e:\Delphi\Projects\json2puml</Debugger_CWD>
         <VerInfo_Keys>CompanyName=SWE Jens Fudickar;FileDescription=$(MSBuildProjectName) UI;FileVersion=2.0.6.58;LegalCopyright=(c) by Jens Fudickar in 2023;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0</VerInfo_Keys>
         <UWP_DelphiLogo44>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo44>
