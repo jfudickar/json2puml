@@ -668,10 +668,11 @@
     ],
     "characteristicProperties": [
       {
-        "parentProperty": "characteristic",
+        "parentProperty": "product.characteristic",
         "type": "list",
         "nameProperty": "name",
-        "valueProperty": "value"
+        "valueProperty": "value",
+        "infoProperty": "valueType"
       },
       {
         "parentProperty": "productCharacteristic",

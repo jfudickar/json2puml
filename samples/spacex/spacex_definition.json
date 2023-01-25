@@ -134,7 +134,7 @@
 	],
 	"baseOption": {
 		"continueAfterUnhandledObjects": "true",
-		"groupDetailObjectsTogether": null,
+		"groupDetailObjectsTogether": "true",
 		"hideDuplicateRelations": null,
 		"identifyObjectsByTypeAndIdent": "false",
 		"legendShowInfo": null,
