@@ -236,6 +236,7 @@ type
     FDetailObjects: tPumlDetailObjectList;
     FFiltered: boolean;
     FFormatDefinition: tJson2PumlSingleFormatDefinition;
+    FFormatPriority: Integer;
     FIdentifyObjectsByTypeAndIdent: boolean;
     FInputFilter: tJson2PumlFilterList;
     FIsGroupObject: boolean;
@@ -282,6 +283,7 @@ type
     property ShowObject: boolean read GetShowObject;
   published
     property DetailObjects: tPumlDetailObjectList read FDetailObjects;
+    property FormatPriority: Integer read FFormatPriority write FFormatPriority;
     property IdentifyObjectsByTypeAndIdent: boolean read FIdentifyObjectsByTypeAndIdent
       write FIdentifyObjectsByTypeAndIdent;
     property ObjectIdent: string read FObjectIdent write FObjectIdent;
@@ -451,8 +453,10 @@ var
   pObject: tPumlObject;
   i: Integer;
   FormatDefinition: tJson2PumlSingleFormatDefinition;
-  ObjectCreated: boolean;
   Search: string;
+  FormatMsg: string;
+  Priority: Integer;
+  FoundCondition: string;
 
 begin
   Result := nil;
@@ -468,31 +472,37 @@ begin
   i := IndexOf (pObject.ObjectIdentifier);
   if i >= 0 then
   begin
+    oLogMessage := 'Use existing';
     Search := Format (' (based on search condition "%s")', [pObject.ObjectIdentifier]);
     Result := PumlObject[i];
     pObject.Free;
-    ObjectCreated := False;
   end
   else
   begin
+    oLogMessage := 'Create new';
+    Search := '';
     Result := pObject;
     addPumlObject (pObject);
-    ObjectCreated := true;
-    Search := '';
   end;
-  FormatDefinition := ConverterDefinition.ObjectFormats.GetFormatByName (Result.ObjectType, Result.ParentObjectType);
-  // pObject.ObjectType := pObject.ObjectType + '-' + FormatDefinition.FormatName;
-  if Assigned (FormatDefinition) then
+  FormatDefinition := ConverterDefinition.ObjectFormats.GetFormatByName (iObjectType, iParentObjectType, Priority,
+    FoundCondition);
+  if (Priority < Result.FormatPriority) or not Assigned (Result.FormatDefinition) then
+  begin
     Result.FormatDefinition := FormatDefinition;
-
-  if ObjectCreated then
-    oLogMessage := 'Create new'
+    Result.FormatPriority := Priority;
+    if FormatDefinition.FormatName.IsEmpty then
+      FormatMsg := '<default>'
+    else
+      FormatMsg := FormatDefinition.FormatName;
+    FormatMsg := Format (' (Format : %s - Prio : %d - Condition : %s)', [FormatMsg, Priority, FoundCondition]);
+  end
   else
-    oLogMessage := 'Use existing';
+    FormatMsg := Format (' (Format "%s" not changed)', [FormatDefinition.FormatName]);;
+
   oLogMessage := Format ('%s %s "%s":"%s" %s', [oLogMessage, iFileLogObjectDescription, Result.ObjectType,
     Result.ObjectIdent, Search, iFileLogObjectAddition.trim]).trim;
-  if Assigned (FormatDefinition) and not FormatDefinition.FormatName.IsEmpty then
-    oLogMessage := Format ('%s (Format : %s)', [oLogMessage, FormatDefinition.FormatName]);
+  if not FormatMsg.IsEmpty then
+    oLogMessage := Format ('%s%s', [oLogMessage, FormatMsg]);
 
 end;
 
@@ -614,6 +624,7 @@ begin
   FIsGroupObject := False;
   FFiltered := true;
   FChildObjectCount := 0;
+  FFormatPriority := MaxInt;
 end;
 
 destructor tPumlObject.Destroy;
@@ -1494,7 +1505,6 @@ end;
 class function tPumlHelper.TableLine (const iColumns: array of const; iHeader: boolean = False): string;
 var
   i: Integer;
-  s: string;
 begin
   Result := '';
   if high(iColumns) < 0 then

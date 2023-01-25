@@ -81,8 +81,8 @@ type
     constructor Create; override;
     procedure AddDefinition (iPropertyName, iChildPropertyName, iNextValueSeparator: string);
     procedure Assign (Source: tPersistent); override;
-    function GetDefinitionByName (iPropertyName: string; iParentPropertyName: string = '')
-      : tJson2PumlPropertyValueDefinition;
+    function GetDefinitionByName (iPropertyName, iParentPropertyName, iConfigurationPropertyName: string;
+      var oFoundCondition: string): tJson2PumlPropertyValueDefinition;
     function GetEnumerator: tJson2PumlPropertyValueDefinitionEnumerator;
     property Definition[index: Integer]: tJson2PumlPropertyValueDefinition read GetDefinition; default;
   end;
@@ -124,7 +124,8 @@ type
     constructor Create; override;
     procedure AddDefinition (iObjectName: string; iGenerateWithoutIdentifier: boolean);
     procedure Assign (Source: tPersistent); override;
-    function GetDefinitionByName (iPropertyName: string; iParentPropertyName: string = ''): tJson2PumlObjectDefinition;
+    function GetDefinitionByName (iPropertyName, iParentPropertyName: string; var oFoundCondition: string)
+      : tJson2PumlObjectDefinition;
     function GetEnumerator: tJson2PumlObjectDefinitionEnumerator;
     property Definition[index: Integer]: tJson2PumlObjectDefinition read GetDefinition; default;
   end;
@@ -228,8 +229,8 @@ type
     procedure AddDefinition (iDefinition: tJson2PumlSingleFormatDefinition);
     procedure Assign (Source: tPersistent); override;
     procedure GeneratePuml (ipuml: TStrings);
-    function GetDefinitionByName (iPropertyName: string; iParentPropertyName: string = '')
-      : tJson2PumlSingleFormatDefinition;
+    function GetDefinitionByName (iPropertyName, iParentPropertyName: string; var oPriority: Integer;
+      var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
     function GetEnumerator: tJson2PumlFormatDefinitionEnumerator;
     property Definition[index: Integer]: tJson2PumlSingleFormatDefinition read GetDefinition; default;
   end;
@@ -249,8 +250,8 @@ type
     destructor Destroy; override;
     procedure Assign (Source: tPersistent); override;
     procedure Clear; override;
-    function GetFormatByName (iPropertyName: string; iParentPropertyName: string = '')
-      : tJson2PumlSingleFormatDefinition;
+    function GetFormatByName (iPropertyName, iParentPropertyName: string; var oPriority: Integer;
+      var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
     procedure MergeWith (iMergeDefinition: tJson2PumlBaseObject); override;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -317,7 +318,7 @@ type
     procedure AddDefinition (iParentProperty, iNames, iValues, iInfos, iIncludeIndex: string;
       iCharacteristicType: tJson2PumlCharacteristicType);
     procedure Assign (Source: tPersistent); override;
-    function GetDefinitionByName (iPropertyName: string; iParentPropertyName: string = '')
+    function GetDefinitionByName (iPropertyName, iParentPropertyName: string; var oFoundCondition: string)
       : tJson2PumlCharacteristicDefinition;
     function GetEnumerator: tJson2PumlCharacteristicDefinitionEnumerator;
     property Definition[index: Integer]: tJson2PumlCharacteristicDefinition read GetDefinition; default;
@@ -391,18 +392,26 @@ type
     destructor Destroy; override;
     procedure Assign (Source: tPersistent); override;
     procedure Clear; override;
-    function IsCharacteristicProperty (iPropertyName: string; iParentPropertyName: string = ''): boolean;
-    function IsGroupProperty (iPropertyName, iParentPropertyName: string; var oGroupName: string): boolean;
-    function IsObjectDetailProperty (iPropertyName: string; iParentPropertyName: string = ''): boolean;
-    function IsObjectIdentifierProperty (iPropertyName: string; iParentPropertyName: string = ''): boolean;
-    function IsObjectProperty (iPropertyName: string; iParentPropertyName: string = ''): boolean;
-    function IsPropertyAllowed (iPropertyName: string; iParentPropertyName: string = ''): boolean;
-    function IsPropertyHidden (iPropertyName: string; iParentPropertyName: string = ''): boolean;
-    function isRelationshipProperty (iPropertyName: string; iParentPropertyName: string = ''): boolean;
-    function IsRelationshipTypeProperty (iPropertyName: string; iParentPropertyName: string = ''): boolean;
+    function IsCharacteristicProperty (iPropertyName, iParentPropertyName: string; var oFoundCondition: string)
+      : boolean;
+    function IsGroupProperty (iPropertyName, iParentPropertyName: string;
+      var oFoundCondition, oGroupName: string): boolean;
+    function IsObjectDetailProperty (iPropertyName, iParentPropertyName: string; var oFoundCondition: string): boolean;
+    function IsObjectIdentifierProperty (iPropertyName, iParentPropertyName: string;
+      var oFoundCondition: string): boolean;
+    function IsObjectProperty (iPropertyName: string; iParentPropertyName: string; var oFoundCondition: string)
+      : boolean;
+    function IsPropertyAllowed (iPropertyName: string; iParentPropertyName: string;
+      var oFoundCondition: string): boolean;
+    function IsPropertyHidden (iPropertyName: string; iParentPropertyName: string; var oFoundCondition: string)
+      : boolean;
+    function isRelationshipProperty (iPropertyName: string; iParentPropertyName: string;
+      var oFoundCondition: string): boolean;
+    function IsRelationshipTypeProperty (iPropertyName: string; iParentPropertyName: string;
+      var oFoundCondition: string): boolean;
     procedure MergeWith (iMergeDefinition: tJson2PumlBaseObject); override;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
-    function RenameObjectType (iPropertyName: string; iParentPropertyName: string = ''): string;
+    function RenameObjectType (iPropertyName, iParentPropertyName: string; var oFoundCondition: string): string;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
     property OptionName: string read FOptionName write SetOptionName;
@@ -673,10 +682,11 @@ begin
   Result := LegendShowInfo or LegendShowObjectFormats or LegendShowFileInfos;
 end;
 
-function tJson2PumlConverterDefinition.IsCharacteristicProperty (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.IsCharacteristicProperty (iPropertyName, iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
-  Result := CharacteristicProperties.IndexOfProperty (iPropertyName, iParentPropertyName, true) >= 0;
+  Result := CharacteristicProperties.IndexOfProperty (iPropertyName, iParentPropertyName, 'characteristicProperties',
+    oFoundCondition, true) >= 0;
 end;
 
 function tJson2PumlConverterDefinition.GetIsFilled: boolean;
@@ -691,11 +701,12 @@ begin
 end;
 
 function tJson2PumlConverterDefinition.IsGroupProperty (iPropertyName, iParentPropertyName: string;
-  var oGroupName: string): boolean;
+  var oFoundCondition, oGroupName: string): boolean;
 var
   Index: Integer;
 begin
-  index := GroupProperties.IndexOfProperty (iPropertyName, iParentPropertyName, true);
+  index := GroupProperties.IndexOfProperty (iPropertyName, iParentPropertyName, 'groupProperties',
+    oFoundCondition, true);
   Result := index >= 0;
   if Result then
   begin
@@ -705,55 +716,62 @@ begin
   end;
 end;
 
-function tJson2PumlConverterDefinition.IsObjectDetailProperty (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.IsObjectDetailProperty (iPropertyName, iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
-  Result := ObjectDetailProperties.IndexOfProperty (iPropertyName, iParentPropertyName, true) >= 0;
+  Result := ObjectDetailProperties.IndexOfProperty (iPropertyName, iParentPropertyName, 'objectDetailProperties',
+    oFoundCondition, true) >= 0;
 end;
 
-function tJson2PumlConverterDefinition.IsObjectIdentifierProperty (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.IsObjectIdentifierProperty (iPropertyName, iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
   if ObjectIdentifierProperties.Count = 0 then
     Result := iPropertyName = 'id'
   else
-    Result := ObjectIdentifierProperties.IndexOfProperty (iPropertyName, iParentPropertyName) >= 0;
+    Result := ObjectIdentifierProperties.IndexOfProperty (iPropertyName, iParentPropertyName,
+      'objectIdentifierProperties', oFoundCondition) >= 0;
 end;
 
-function tJson2PumlConverterDefinition.IsObjectProperty (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.IsObjectProperty (iPropertyName: string; iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
   if ObjectProperties.Count > 0 then
-    Result := ObjectProperties.IndexOfProperty (iPropertyName, iParentPropertyName, true) >= 0
+    Result := ObjectProperties.IndexOfProperty (iPropertyName, iParentPropertyName, 'objectProperties', oFoundCondition,
+      true) >= 0
   else
     Result := true;
 end;
 
-function tJson2PumlConverterDefinition.IsPropertyAllowed (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.IsPropertyAllowed (iPropertyName: string; iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
   if AttributeProperties.Count > 0 then
-    Result := AttributeProperties.IndexOfProperty (iPropertyName, iParentPropertyName, true) >= 0
+    Result := AttributeProperties.IndexOfProperty (iPropertyName, iParentPropertyName, 'attributeProperties',
+      oFoundCondition, true) >= 0
   else
     Result := true;
 end;
 
-function tJson2PumlConverterDefinition.IsPropertyHidden (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.IsPropertyHidden (iPropertyName: string; iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
-  Result := HiddenProperties.IndexOfProperty (iPropertyName, iParentPropertyName, true) >= 0;
+  Result := HiddenProperties.IndexOfProperty (iPropertyName, iParentPropertyName, 'hiddenProperties', oFoundCondition,
+    true) >= 0;
 end;
 
-function tJson2PumlConverterDefinition.isRelationshipProperty (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.isRelationshipProperty (iPropertyName: string; iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
-  Result := RelationshipProperties.IndexOfProperty (iPropertyName, iParentPropertyName, true) >= 0;
+  Result := RelationshipProperties.IndexOfProperty (iPropertyName, iParentPropertyName, 'relationshipProperties',
+    oFoundCondition, true) >= 0;
 end;
 
-function tJson2PumlConverterDefinition.IsRelationshipTypeProperty (iPropertyName: string;
-  iParentPropertyName: string = ''): boolean;
+function tJson2PumlConverterDefinition.IsRelationshipTypeProperty (iPropertyName: string; iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
 begin
-  Result := RelationshipTypeProperties.IndexOfProperty (iPropertyName, iParentPropertyName) >= 0;
+  Result := RelationshipTypeProperties.IndexOfProperty (iPropertyName, iParentPropertyName,
+    'relationshipTypeProperties', oFoundCondition) >= 0;
 end;
 
 procedure tJson2PumlConverterDefinition.MergeWith (iMergeDefinition: tJson2PumlBaseObject);
@@ -838,12 +856,13 @@ begin
   OutputFormats := OutputFormatsFromString (GetJsonStringArray(DefinitionRecord, 'outputFormats'));
 end;
 
-function tJson2PumlConverterDefinition.RenameObjectType (iPropertyName: string;
-  iParentPropertyName: string = ''): string;
+function tJson2PumlConverterDefinition.RenameObjectType (iPropertyName, iParentPropertyName: string;
+  var oFoundCondition: string): string;
 var
   Index: Integer;
 begin
-  index := ObjectTypeRenames.IndexOfProperty (iPropertyName, iParentPropertyName, true);
+  index := ObjectTypeRenames.IndexOfProperty (iPropertyName, iParentPropertyName, 'objectTypeRenames',
+    oFoundCondition, true);
   Result := ObjectTypeRenames.ValueFromIndex[index];
   if Result.IsEmpty then
     Result := iPropertyName;
@@ -1142,12 +1161,12 @@ begin
   Result := tJson2PumlPropertyValueDefinition (Objects[index]);
 end;
 
-function tJson2PumlPropertyValueDefinitionList.GetDefinitionByName (iPropertyName: string;
-  iParentPropertyName: string = ''): tJson2PumlPropertyValueDefinition;
+function tJson2PumlPropertyValueDefinitionList.GetDefinitionByName (iPropertyName, iParentPropertyName,
+  iConfigurationPropertyName: string; var oFoundCondition: string): tJson2PumlPropertyValueDefinition;
 var
   i: Integer;
 begin
-  i := IndexOfProperty (iPropertyName, iParentPropertyName, true, false);
+  i := IndexOfProperty (iPropertyName, iParentPropertyName, iConfigurationPropertyName, oFoundCondition, true, false);
   if i >= 0 then
     Result := Definition[i]
   else
@@ -1237,12 +1256,12 @@ begin
   Result := tJson2PumlObjectDefinition (Objects[index]);
 end;
 
-function tJson2PumlObjectDefinitionList.GetDefinitionByName (iPropertyName: string; iParentPropertyName: string = '')
-  : tJson2PumlObjectDefinition;
+function tJson2PumlObjectDefinitionList.GetDefinitionByName (iPropertyName, iParentPropertyName: string;
+  var oFoundCondition: string): tJson2PumlObjectDefinition;
 var
   i: Integer;
 begin
-  i := IndexOfProperty (iPropertyName, iParentPropertyName, true, false);
+  i := IndexOfProperty (iPropertyName, iParentPropertyName, 'objectProperties', oFoundCondition, true, false);
   if i >= 0 then
     Result := Definition[i]
   else
@@ -1648,39 +1667,57 @@ begin
   Result := tJson2PumlSingleFormatDefinition (Objects[index]);
 end;
 
-function tJson2PumlFormatDefinitionList.GetDefinitionByName (iPropertyName: string; iParentPropertyName: string = '')
-  : tJson2PumlSingleFormatDefinition;
+function tJson2PumlFormatDefinitionList.GetDefinitionByName (iPropertyName, iParentPropertyName: string;
+  var oPriority: Integer; var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
 var
   S: string;
   Search: string;
-  Format: tJson2PumlSingleFormatDefinition;
+  FormatDefinition: tJson2PumlSingleFormatDefinition;
   i: Integer;
+  l1, l2, l3: Integer;
 begin
   Result := nil;
-  for i := 1 to 2 do
-  begin
-    if i = 1 then
-      Search := iPropertyName
-    else
-      Search := iParentPropertyName + '.' + iPropertyName;
-    for Format in self do
+  oFoundCondition := '';
+  l1 := 0;
+  l2 := 0;
+  l3 := 0;
+  try
+    for i := 1 to 2 do
     begin
-      if (Format.ObjectFilter.Count <= 0) and not Format.FormatName.IsEmpty then
-      begin
-        if MatchesMask (Search, Format.FormatName) then
-        begin
-          Result := Format;
-          exit;
-        end;
-      end
+      Inc (l1);
+      l2 := 0;
+      if i = 1 then
+        Search := iPropertyName
       else
-        for S in Format.ObjectFilter do
-          if MatchesMask (Search, S) then
+        Search := iParentPropertyName + '.' + iPropertyName;
+      for FormatDefinition in self do
+      begin
+        Inc (l2);
+        l3 := 0;
+        if (FormatDefinition.ObjectFilter.Count <= 0) and not FormatDefinition.FormatName.IsEmpty then
+        begin
+          if MatchesMask (Search, FormatDefinition.FormatName) then
           begin
-            Result := Format;
+            oFoundCondition := BuildFoundCondition ('formats.formatName', Search, FormatDefinition.FormatName);
+            Result := FormatDefinition;
             exit;
-          end
+          end;
+        end
+        else
+          for S in FormatDefinition.ObjectFilter do
+          begin
+            Inc (l3);
+            if MatchesMask (Search, S) then
+            begin
+              oFoundCondition := BuildFoundCondition ('formats.definition.objectFilter', Search, S);
+              Result := FormatDefinition;
+              exit;
+            end;
+          end;
+      end;
     end;
+  finally
+    oPriority := l3 + l2 * 1000 + l1 * 1000 * 1000;
   end;
 end;
 
@@ -1736,12 +1773,16 @@ begin
   Formats.Clear;
 end;
 
-function tJson2PumlFormatDefinition.GetFormatByName (iPropertyName: string; iParentPropertyName: string = '')
-  : tJson2PumlSingleFormatDefinition;
+function tJson2PumlFormatDefinition.GetFormatByName (iPropertyName, iParentPropertyName: string; var oPriority: Integer;
+  var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
 begin
-  Result := Formats.GetDefinitionByName (iPropertyName, iParentPropertyName);
+  Result := Formats.GetDefinitionByName (iPropertyName, iParentPropertyName, oPriority, oFoundCondition);
   if not Assigned (Result) then
+  begin
     Result := BaseFormat;
+    oPriority := 9999999;
+    oFoundCondition := '<default>';
+  end;
 end;
 
 function tJson2PumlFormatDefinition.GetIdent: string;
@@ -1860,12 +1901,12 @@ begin
   Result := tJson2PumlCharacteristicDefinition (Objects[index]);
 end;
 
-function tJson2PumlCharacteristicDefinitionList.GetDefinitionByName (iPropertyName: string;
-  iParentPropertyName: string = ''): tJson2PumlCharacteristicDefinition;
+function tJson2PumlCharacteristicDefinitionList.GetDefinitionByName (iPropertyName, iParentPropertyName: string;
+  var oFoundCondition: string): tJson2PumlCharacteristicDefinition;
 var
   i: Integer;
 begin
-  i := IndexOfProperty (iPropertyName, iParentPropertyName, true);
+  i := IndexOfProperty (iPropertyName, iParentPropertyName, 'characteristicProperties', oFoundCondition, true);
   if i >= 0 then
     Result := Definition[i]
   else
@@ -2205,8 +2246,9 @@ end;
 function tJson2PumlConverterDefinitionList.GetDefinitionByName (iOptionName: string): tJson2PumlConverterDefinition;
 var
   i: Integer;
+  FoundCondition: string;
 begin
-  i := IndexOfProperty (iOptionName, '', false, false);
+  i := IndexOfProperty (iOptionName, '', '', FoundCondition, false, false);
   if i >= 0 then
     Result := Definition[i]
   else

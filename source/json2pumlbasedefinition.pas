@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumlbasedefinition;
 
@@ -29,13 +29,13 @@ interface
 uses System.JSON, System.Classes, json2pumlconst;
 
 type
-  TJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = ''):
-      string of object;
+  TJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
+    : string of object;
 
   tJson2PumlOutputFormatHelper = record helper for tJson2PumlOutputFormat
     function FileExtension (iLeadingSeparator: boolean = false): string;
     procedure FromString (aValue: string);
-    procedure FromStringExtension(aValue: string);
+    procedure FromStringExtension (aValue: string);
     function IsPumlOutput: boolean;
     function PumlGenerateFlag: string;
     function ServiceResultName: string;
@@ -58,10 +58,9 @@ type
   end;
 
   tJson2PumlFileNameReplaceHelper = record helper for tJson2PumlFileNameReplace
-    procedure FromString(aValue: string);
+    procedure FromString (aValue: string);
     function ToString: string;
   end;
-
 
   tJson2PumlBaseObject = class(tPersistent)
   private
@@ -89,7 +88,7 @@ type
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; overload; virtual;
     function ReadFromJsonFile (iFileName: string): boolean; virtual;
     function ReplaceValueFromEnvironment (iValue: string): string;
-    function SaveToFile(iJsonLines: TStrings; iFileName: string; iWriteEmpty: boolean = false): boolean;
+    function SaveToFile (iJsonLines: TStrings; iFileName: string; iWriteEmpty: boolean = false): boolean;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); virtual;
     procedure WriteToJsonFile (iFileName: string; iWriteEmpty: boolean = false); virtual;
@@ -160,8 +159,9 @@ type
   tJson2PumlBasePropertyList = class(tJson2PumlBaseList)
   protected
     function GetIsValid: boolean; override;
-    function IndexOfProperty (iPropertyName: string; iParentPropertyName: string = ''; iUseMatch: boolean = false;
-      iSearchEmpyAsDefault: boolean = false): Integer;
+    function BuildFoundCondition (iConfigurationPropertyName, iConfiguredValue, iInputValue: string): string;
+    function IndexOfProperty (iPropertyName, iParentPropertyName, iConfigurationPropertyName: string;
+      var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
     procedure WriteObjectEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
     procedure WriteObjectStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
   public
@@ -229,12 +229,12 @@ begin
     end;
 end;
 
-procedure tJson2PumlOutputFormatHelper.FromStringExtension(aValue: string);
+procedure tJson2PumlOutputFormatHelper.FromStringExtension (aValue: string);
 var
   dbot: tJson2PumlOutputFormat;
 begin
   self := low(self);
-  aValue := aValue.ToLower.Trim.TrimLeft([tPath.ExtensionSeparatorChar]);
+  aValue := aValue.ToLower.Trim.TrimLeft ([tPath.ExtensionSeparatorChar]);
   for dbot := low(self) to high(self) do
     if aValue = dbot.FileExtension then
     begin
@@ -440,40 +440,40 @@ end;
 function tJson2PumlBaseObject.ReplaceValueFromEnvironment (iValue: string): string;
 var
   Value: string;
-  s,v : String;
-  i : Integer;
+  S, v: string;
+  i: Integer;
 begin
-  s := iValue;
+  S := iValue;
   Value := '';
-  while not s.IsEmpty do
+  while not S.IsEmpty do
   begin
-    i := s.IndexOf('${');
+    i := S.IndexOf ('${');
     if i < 0 then
     begin
-      Value := Value+s;
+      Value := Value + S;
       break;
     end;
-    Value := s.Substring(0,i);
-    s := s.Substring(i);
-    i := s.IndexOf('}');
+    Value := S.Substring (0, i);
+    S := S.Substring (i);
+    i := S.IndexOf ('}');
     if i < 0 then
     begin
-      Value := Value+s;
+      Value := Value + S;
       break;
     end;
-    v := s.Substring(2,i-2);
-    v := GetEnvironmentVariable(v);
+    v := S.Substring (2, i - 2);
+    v := GetEnvironmentVariable (v);
     if v.IsEmpty then
-      Value := Value+s.Substring(0,i+1)
+      Value := Value + S.Substring (0, i + 1)
     else
       Value := Value + v;
-    s := s.Substring(i+1);
+    S := S.Substring (i + 1);
   end;
   Result := Value;
 end;
 
-function tJson2PumlBaseObject.SaveToFile(iJsonLines: TStrings; iFileName: string; iWriteEmpty: boolean = false):
-    boolean;
+function tJson2PumlBaseObject.SaveToFile (iJsonLines: TStrings; iFileName: string;
+  iWriteEmpty: boolean = false): boolean;
 begin
   Result := ReadFromJson (iJsonLines.Text, SourceFileName);
   if Result then
@@ -811,49 +811,77 @@ begin
   OwnsObjects := true;
 end;
 
-function tJson2PumlBasePropertyList.IndexOfProperty (iPropertyName: string; iParentPropertyName: string = '';
-  iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
-var
-  i: Integer;
-  S: string;
+function tJson2PumlBasePropertyList.BuildFoundCondition (iConfigurationPropertyName, iConfiguredValue,
+  iInputValue: string): string;
 begin
-  if iPropertyName.IsEmpty then
+  if iInputValue.IsEmpty then
+    Result := Format ('- ["%s" : Configured "%s"]', [iConfigurationPropertyName, iConfiguredValue])
+  else if iConfiguredValue.IsEmpty then
+    Result := Format ('- ["%s" : Not found "%s"]', [iConfigurationPropertyName, iInputValue])
+  else
+    Result := Format ('- ["%s" : Configured "%s" : Input "%s"]', [iConfigurationPropertyName, iConfiguredValue,
+      iInputValue]);
+end;
+
+function tJson2PumlBasePropertyList.IndexOfProperty (iPropertyName, iParentPropertyName, iConfigurationPropertyName
+  : string; var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
+
+  procedure DirectSearch (iValue: string);
   begin
-    Result := - 1;
-    exit;
+    if Result < 0 then
+      Result := IndexOfName (iValue);
+    if Result < 0 then
+      Result := IndexOf (iValue);
+    if Result >= 0 then
+      oFoundCondition := iValue;
   end;
-  Result := IndexOfName (iPropertyName);
-  if Result < 0 then
-    Result := IndexOf (iPropertyName);
-  if Result < 0 then
-    Result := IndexOfName (iParentPropertyName + '.' + iPropertyName);
-  if Result < 0 then
-    Result := IndexOf (iParentPropertyName + '.' + iPropertyName);
-  if iUseMatch and (Result < 0) then
+  procedure MatchSearch (iValue: string);
+  var
+    i: Integer;
+    S: string;
   begin
+    if Result >= 0 then
+      exit;
     for i := 0 to Count - 1 do
     begin
       S := Names[i];
       if S.IsEmpty then
         S := ItemList[i];
-      if MatchesMask (iPropertyName, S) then
+      if MatchesMask (iValue, S) then
         Result := i;
       if Result >= 0 then
-        exit;
+        break;
     end;
-    for i := 0 to Count - 1 do
-    begin
-      S := Names[i];
-      if S.IsEmpty then
-        S := ItemList[i];
-      if MatchesMask (iParentPropertyName + '.' + iPropertyName, S) then
-        Result := i;
-      if Result >= 0 then
-        exit;
-    end;
+    if Result >= 0 then
+      oFoundCondition := iValue;
+  end;
+
+begin
+  Result := - 1;
+  if iPropertyName.IsEmpty then
+    exit;
+  DirectSearch (iPropertyName);
+  if not iParentPropertyName.IsEmpty then
+    DirectSearch (iParentPropertyName + '.' + iPropertyName);
+  if iUseMatch then
+  begin
+    MatchSearch (iPropertyName);
+    if not iParentPropertyName.IsEmpty then
+      MatchSearch (iParentPropertyName + '.' + iPropertyName);
   end;
   if (Result < 0) and iSearchEmpyAsDefault then
+  begin
+    oFoundCondition := '<default>';
     Result := IndexOf ('');
+    if Result >= 0 then
+      oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, oFoundCondition, '');
+  end
+  else if Result >= 0 then
+    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, self[Result], oFoundCondition)
+  else if not iParentPropertyName.IsEmpty then
+    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iParentPropertyName + '.' + iPropertyName)
+  else
+    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iPropertyName)
 end;
 
 function tJson2PumlBasePropertyList.GetIsValid: boolean;
@@ -885,7 +913,7 @@ begin
   oJsonOutPut.Add (Format('%s%s{', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName)]));
 end;
 
-procedure tJson2PumlFileNameReplaceHelper.FromString(aValue: string);
+procedure tJson2PumlFileNameReplaceHelper.FromString (aValue: string);
 var
   dbot: tJson2PumlFileNameReplace;
 begin

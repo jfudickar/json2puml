@@ -2225,7 +2225,7 @@ end;
 procedure tJson2PumlCommandLineParameter.SetOutputFormatStr (const Value: string);
 begin
   FOutputFormatStr := Value;
-  FOutputFormats.FromString (Value, true, true);
+  FOutputFormats.FromString (Value, false, true);
 end;
 
 procedure tJson2PumlCommandLineParameter.SetOutputSuffix (const Value: string);

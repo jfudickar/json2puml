@@ -218,6 +218,7 @@ var
   AlreadyHandled: Boolean;
   ObjectTitle: string;
   LogMessage: string;
+  FoundCondition: string;
 
 begin
   AlreadyHandled := false;
@@ -226,9 +227,6 @@ begin
 
   SaveRecursionRecord := IncRecursionRecord (iInfo, trpObject);
   try
-    CharacteristicDefinition := Definition.CharacteristicProperties.GetDefinitionByName (iInfo.PropertyName,
-      iInfo.ParentProperty);
-    IsCharacteristic := Assigned (CharacteristicDefinition);
     ObjectIdent := GetObjectIdent (iJsonObject, iInfo.PropertyName);
     if not ObjectIdent.IsEmpty then
       AddFileLog ('Objectidentifier "%s" identified - "%s"', [ObjectIdent, 'objectIdentifierProperties']);
@@ -242,16 +240,32 @@ begin
     begin
       ObjectType := iInfo.PropertyName;
       if not ObjectType.IsEmpty then
-        AddFileLog ('Objecttype "%s" used based on property', [ObjectType]);
+        AddFileLog ('Objecttype "%s" used based on current property name', [ObjectType]);
     end;
-    ObjectTypeRenamed := Definition.RenameObjectType (ObjectType, iInfo.ParentProperty);
+    ObjectTypeRenamed := Definition.RenameObjectType (ObjectType, iInfo.ParentProperty, FoundCondition);
     if ObjectTypeRenamed <> ObjectType then
-      AddFileLog ('Objecttype renamed to "%s" - "%s"', [ObjectTypeRenamed, 'objectTypeRenames']);
-    ObjectDefinition := Definition.ObjectProperties.GetDefinitionByName (ObjectTypeRenamed, iInfo.ParentProperty);
-    IsObjectProperty := Assigned (ObjectDefinition);
+      AddFileLog ('Objecttype renamed to "%s" %s', [ObjectTypeRenamed, FoundCondition]);
 
-    IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentProperty);
-    IsObjectDetail := Definition.IsObjectDetailProperty (iInfo.PropertyName, iInfo.ParentProperty);
+    ObjectDefinition := Definition.ObjectProperties.GetDefinitionByName (ObjectTypeRenamed, iInfo.ParentProperty,
+      FoundCondition);
+    IsObjectProperty := Assigned (ObjectDefinition);
+    if IsObjectProperty then
+      AddFileLog ('Objecttype "%s" identified as object %s', [ObjectTypeRenamed, FoundCondition]);
+
+    CharacteristicDefinition := Definition.CharacteristicProperties.GetDefinitionByName (iInfo.PropertyName,
+      iInfo.ParentProperty, FoundCondition);
+    IsCharacteristic := Assigned (CharacteristicDefinition);
+    if IsCharacteristic then
+      AddFileLog ('Property "%s.%s" identified as characteristic %s', [iInfo.ParentProperty, iInfo.PropertyName,
+        FoundCondition]);
+    IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentProperty, FoundCondition);
+    if IsRelationShip then
+      AddFileLog ('Property "%s.%s" identified as relationship %s', [iInfo.ParentProperty, iInfo.PropertyName,
+        FoundCondition]);
+    IsObjectDetail := Definition.IsObjectDetailProperty (iInfo.PropertyName, iInfo.ParentProperty, FoundCondition);
+    if IsObjectDetail then
+      AddFileLog ('Property "%s.%s" identified as object detail %s', [iInfo.ParentProperty, iInfo.PropertyName,
+        FoundCondition]);
 
     if IsRelationShip then
     begin
@@ -272,28 +286,33 @@ begin
       RelationshipProperty := iInfo.ParentRelationshipProperty;
     end;
 
-    if ObjectIdent.IsEmpty and IsObjectProperty and ObjectDefinition.GenerateWithoutIdentifier and
-      not IsObjectDetail { and not IsRelationShip } and not IsCharacteristic then
+    if ObjectIdent.IsEmpty and IsObjectProperty and not IsObjectDetail { and not IsRelationShip } and not IsCharacteristic
+    then
     begin
-      if Assigned (iInfo.HierarchieParentObject) then
-        ObjectIdent := iInfo.HierarchieParentObject.CalculateChildObjectDefaultIdent (ObjectTypeRenamed)
+      if not ObjectDefinition.GenerateWithoutIdentifier then
+        AddFileLog ('Object not created, no ident identified')
       else
-        ObjectIdent := Format ('%s_%s', [ObjectTypeRenamed, 'root']);
-      AddFileLog ('Default object ident "%s" generated', [ObjectIdent]);
+      begin
+        if Assigned (iInfo.HierarchieParentObject) then
+          ObjectIdent := iInfo.HierarchieParentObject.CalculateChildObjectDefaultIdent (ObjectTypeRenamed)
+        else
+          ObjectIdent := Format ('%s_%s', [ObjectTypeRenamed, 'root']);
+        AddFileLog ('Default object ident "%s" generated', [ObjectIdent]);
+      end;
     end;
-    if ObjectIdent.IsEmpty and IsObjectProperty then
-      AddFileLog ('Object not created, no ident identified');
-    if IsCharacteristic or (ObjectIdent.IsEmpty) then
+
+    if IsCharacteristic then
       PumlObject := nil
-    else if IsRelationShip and Definition.IsObjectProperty (RelationshipObject) then
+    else if IsRelationShip and Definition.IsObjectProperty (RelationshipObject, '', FoundCondition) then
     begin
-      PumlObject := PumlObjects.SearchCreatePumlObject (Definition.RenameObjectType(RelationshipObject), ObjectIdent,
-        iInfo.ParentProperty, LogMessage, 'relationship object',
+      AddFileLog ('Type "%s" identified as relationship object %s', [RelationshipObject, FoundCondition]);
+      PumlObject := PumlObjects.SearchCreatePumlObject (Definition.RenameObjectType(RelationshipObject, '',
+        FoundCondition), ObjectIdent, iInfo.ParentProperty, LogMessage, 'relationship object',
         Format('- "%s"/"%s"', ['relationshipProperties', 'objectProperties']));
       AddFileLog (LogMessage);
       PumlObject.IsRelationShip := true;
     end
-    else if IsObjectProperty then
+    else if IsObjectProperty and not (ObjectIdent.IsEmpty) then
     begin
       PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, ObjectIdent, iInfo.ParentProperty,
         LogMessage);
@@ -302,6 +321,7 @@ begin
     end
     else
       PumlObject := nil;
+
     if not Assigned (PumlObject) and IsObjectDetail and Assigned (iInfo.ParentObject) and not IsCharacteristic then
     begin
       if ObjectIdent.IsEmpty then
@@ -313,11 +333,12 @@ begin
       PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, ObjectIdent, iInfo.ParentObject.ObjectType,
         LogMessage, 'detail object', Format('for %s - "%s"', [iInfo.ParentObject.ObjectTypeIdent,
         'objectDetailProperties']));
+      iInfo.ParentObject.DetailObjects.AddObject (PumlObject.ObjectIdentifier, PumlObject);
       AddFileLog (LogMessage);
       PumlObject.IsObjectDetail := true;
     end;
 
-    if not Assigned (PumlObject) then
+    if not Assigned (PumlObject) and not IsCharacteristic then
       AddFileLog ('Objecttype "%s" is not defined , object will be ignored - "%s/%s/%s"',
         [ObjectTypeRenamed, 'objectProperties', 'objectDetailProperties', 'relationshipProperties']);
 
@@ -356,13 +377,15 @@ begin
         for i := 0 to iJsonObject.Count - 1 do
         begin
           cname := iJsonObject.Pairs[i].JsonString.Value;
-          if not Definition.IsPropertyHidden (cname, iInfo.PropertyName) then
-            if IsJsonSimple(iJsonObject.Pairs[i].JsonValue) then
+          if not Definition.IsPropertyHidden (cname, iInfo.PropertyName, FoundCondition) then
+            if IsJsonSimple (iJsonObject.Pairs[i].JsonValue) then
             begin
               cvalue := iJsonObject.Pairs[i].JsonValue.Value;
               iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, cname, cvalue, '',
                 CharacteristicDefinition);
-            end;
+            end
+            else
+              AddFileLog ('Property "%s.%s" defined as hidden %s', [cname, iInfo.PropertyName, FoundCondition]);
         end;
       end;
     end;
@@ -389,14 +412,15 @@ begin
       for i := 0 to iJsonObject.Count - 1 do
       begin
         cname := iJsonObject.Pairs[i].JsonString.Value;
-        if not Definition.IsPropertyHidden (cname, iInfo.ParentProperty) then
+        if not Definition.IsPropertyHidden (cname, iInfo.ParentProperty, FoundCondition) then
         begin
           iInfo.PropertyName := cname;
           iInfo.OriginalPropertyName := cname;
           ConvertValue (iJsonObject.Pairs[i].JsonValue, iInfo, trpObject);
         end
         else
-          AddFileLog ('Stop property handling, property [%s.%s] is hidden', [iInfo.ParentProperty, cname]);
+          AddFileLog ('Stop property handling, property [%s.%s] is hidden %s',
+            [iInfo.ParentProperty, cname, FoundCondition]);
       end;
   finally
     DecRecursionRecord (iInfo, SaveRecursionRecord, trpObject);
@@ -413,6 +437,7 @@ var
   Value: string;
   IsRelationShip: Boolean;
   LogMessage: string;
+  FoundCondition: string;
 begin
   if not Assigned (iJsonValue) then
     Exit;
@@ -425,16 +450,18 @@ begin
       if not iInfo.StopRecursion then
         ConvertObject (iJsonValue as TJsonObject, iInfo)
     end
-    else if IsJsonSimple(iJsonValue) then
+    else if IsJsonSimple (iJsonValue) then
     begin
       Value := iJsonValue.Value;
-      IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentProperty);
+      IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentProperty, FoundCondition);
       if Assigned (iInfo.ParentObject) and IsRelationShip then
       begin
-        ObjectTypeRenamed := Definition.RenameObjectType (iInfo.PropertyName);
+        AddFileLog ('Type "%s" identified as relationship object %s', [iInfo.PropertyName, FoundCondition]);
+        ObjectTypeRenamed := Definition.RenameObjectType (iInfo.PropertyName, '', FoundCondition);
+        if ObjectTypeRenamed <> iInfo.PropertyName then
+          AddFileLog ('Objecttype renamed to "%s" %s', [ObjectTypeRenamed, FoundCondition]);
         PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, Value, iInfo.ParentObject.ObjectType,
           LogMessage);
-
         AddFileLog (LogMessage);
         ReplaceObjectType (PumlObject, ObjectTypeRenamed);
         BuildObjectRelationships (iInfo.ParentObject, PumlObject, iInfo.PropertyName, '', '',
@@ -443,13 +470,13 @@ begin
       else
       begin
         if Assigned (iInfo.ParentObject) then
-          if Definition.IsPropertyAllowed (iInfo.PropertyName, iInfo.ParentProperty) then
+          if Definition.IsPropertyAllowed (iInfo.PropertyName, iInfo.ParentProperty, FoundCondition) then
           begin
             iInfo.ParentObject.AddValue (iInfo.PropertyName, Value, not (iRecursionParent = trpArray));
-            AddFileLog ('property [%s] value [%s] found', [iInfo.PropertyName, Value]);
+            AddFileLog ('property [%s] value [%s] found %s', [iInfo.PropertyName, Value, FoundCondition]);
           end
           else
-            AddFileLog ('property [%s.%s] not allowed and skipped', [iInfo.ParentProperty, iInfo.PropertyName]);
+            AddFileLog ('property [%s] not allowed and skipped %s', [iInfo.PropertyName, FoundCondition]);
       end;
     end;
   finally
@@ -463,12 +490,13 @@ var
   ObjectType, ObjectIdent: string;
   PumlObject: tPumlObject;
   LogMessage: string;
+  FoundCondition: string;
 begin
   Result := nil;
-  if not Definition.IsGroupProperty (iObjectType, ioInfo.ParentProperty, ObjectType) then
+  if not Definition.IsGroupProperty (iObjectType, ioInfo.ParentProperty, FoundCondition, ObjectType) then
     Exit;
   ObjectIdent := Format ('%s_%s_%s', ['group', ObjectType, ioInfo.ParentObject.ObjectIdentifier]);
-  AddFileLog ('  Group object ident "%s" generated', [ObjectIdent]);
+  AddFileLog ('  Group object ident "%s" generated %s', [ObjectIdent, FoundCondition]);
   PumlObject := PumlObjects.SearchCreatePumlObject (ObjectType, ObjectIdent, ioInfo.ParentObject.ObjectType, LogMessage,
     'group object', Format('for %s', [ioInfo.ParentObject.ObjectTypeIdent]));
   AddFileLog ('  ' + LogMessage);

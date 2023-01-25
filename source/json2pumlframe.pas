@@ -68,6 +68,7 @@ type
     FPUmlFileName: string;
     FPUmlOutput: TStrings;
     FLogList: TStrings;
+    FConverterLogFileName: string;
     FSVGFileName: string;
   {$IFDEF SVGICONIMAGE}
     SVGIconImage: TSVGIconImage;
@@ -84,6 +85,7 @@ type
     procedure SetPUmlFileName (const Value: string);
     procedure SetPUmlOutput (const Value: TStrings);
     procedure SetLogList (const Value: TStrings);
+    procedure SetConverterLogFileName(const Value: string);
     procedure SetSVGFileName (const Value: string);
   public
     procedure CreateMemos (iCreateMemoProc: TJson2PumlSingleFileFrameCreateMemoEvent);
@@ -95,6 +97,7 @@ type
     property PUmlFileName: string read FPUmlFileName write SetPUmlFileName;
     property PUmlOutput: TStrings read GetPUmlOutput write SetPUmlOutput;
     property LogList: TStrings read GetLogList write SetLogList;
+    property ConverterLogFileName: string read FConverterLogFileName write SetConverterLogFileName;
     property SVGFileName: string read FSVGFileName write SetSVGFileName;
   end;
 
@@ -206,6 +209,12 @@ end;
 procedure TJson2PumlSingleFileFrame.SetLogList (const Value: TStrings);
 begin
   FLogList.Assign (Value);
+end;
+
+procedure TJson2PumlSingleFileFrame.SetConverterLogFileName(const Value: string);
+begin
+  FConverterLogFileName := Value;
+  LogFileNameEdit.Text := Value;
 end;
 
 procedure TJson2PumlSingleFileFrame.SetSVGFileName (const Value: string);

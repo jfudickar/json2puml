@@ -76,7 +76,7 @@ object Json2PumlSingleFileFrame: TJson2PumlSingleFileFrame
         Top = 1
         Width = 561
         Height = 430
-        ActivePage = SVGTabSheet
+        ActivePage = LogFileTabSheet
         Align = alClient
         TabOrder = 0
         object PumlTabSheet: TTabSheet
@@ -85,7 +85,7 @@ object Json2PumlSingleFileFrame: TJson2PumlSingleFileFrame
             Left = 0
             Top = 0
             Width = 553
-            Height = 21
+            Height = 23
             Align = alTop
             ReadOnly = True
             TabOrder = 0
@@ -98,7 +98,7 @@ object Json2PumlSingleFileFrame: TJson2PumlSingleFileFrame
             Left = 0
             Top = 0
             Width = 553
-            Height = 21
+            Height = 23
             Align = alTop
             ReadOnly = True
             TabOrder = 0
@@ -109,16 +109,16 @@ object Json2PumlSingleFileFrame: TJson2PumlSingleFileFrame
           ImageIndex = 1
           object PNGScrollBox: TScrollBox
             Left = 0
-            Top = 21
+            Top = 23
             Width = 553
-            Height = 381
+            Height = 377
             Align = alClient
             TabOrder = 0
             object ResultImage: TImage
               Left = 0
               Top = 0
               Width = 549
-              Height = 377
+              Height = 373
               Align = alClient
               AutoSize = True
               Proportional = True
@@ -128,7 +128,7 @@ object Json2PumlSingleFileFrame: TJson2PumlSingleFileFrame
             Left = 0
             Top = 0
             Width = 553
-            Height = 21
+            Height = 23
             Align = alTop
             ReadOnly = True
             TabOrder = 1

@@ -399,6 +399,7 @@ begin
   SingleFileFrame.Frame.PNGFileName := InputHandlerRecord.InputFile.Output.PNGFileName;
   SingleFileFrame.Frame.SVGFileName := InputHandlerRecord.InputFile.Output.SVGFileName;
   SingleFileFrame.Frame.PUmlFileName := InputHandlerRecord.InputFile.Output.PUmlFileName;
+  SingleFileFrame.Frame.ConverterLogFileName := InputHandlerRecord.InputFile.Output.ConverterLogFileName;
 end;
 
 procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: TObject);
@@ -627,6 +628,7 @@ begin
   if iUseHighlighter then
     NewEdit.Highlighter := fSynJSONSyn;
   NewEdit.Lines.Clear;
+  NewEdit.ReadOnly := not iUseHighlighter;
   NewEdit.Options := [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoEnhanceHomeKey, eoEnhanceEndKey,
     eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabIndent, eoTabsToSpaces,
     eoTrimTrailingSpaces];
