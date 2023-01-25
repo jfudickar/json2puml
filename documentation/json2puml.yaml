@@ -55,7 +55,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Json2PumlResponse'          
-  /json2pumlRequestSimple:
+  /json2pumlRequestSvg:
+    post:
+      description: 'Execute a json2puml curl and generation call'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Json2PumlRequest'
+      responses:
+        '200':
+          description: Successful operation, returns the generated SVG file
+          content:
+            image/*:
+              schema: 
+                type: string
+                format: binary
+  /json2pumlRequestZip:
     post:
       description: 'Execute a json2puml curl and generation call'
       requestBody:
@@ -184,27 +200,36 @@ components:
                 example: 1
         option: 
           type: string
+          description: The option which should be used to generate the image. The possible options are defined in the definition file.
           example: full, default, core
+        description: 
+          type: string
+          description: The description will be added to the legend of the generated images
+          example: Datamodel status after migration of the customer
         generateDetails: 
           type: boolean
+          description: Flag to define if for every single result file a image will be generated\nWill be ignored for json2pumlRequestSvg
         generateSummary: 
           type: boolean
+          description: Flag to define if a summary file should be generated\nWill be ignored for json2pumlRequestSvg
+        generateSuffix: 
+          type: string
+          description: Suffix to be added at the end of the generated files'
+          example : .<option>
         outputFormats:
           type: array
-          description: List of file formats to be calculated
+          description: List of file formats to be calculated and added to the result set
           items:
             type: string
             enum:
               - svg
               - png
-              - pdf
               - json
               - puml
+              - zip
             example:
             - svg
             - png
-      required:
-        - definitionFile
     Json2PumlResponse:
       type: object
       properties:
@@ -218,7 +243,9 @@ components:
     OutputFile:
       type: object
       properties:
-        filename:
+        outputFilename:
+          type: string
+        fullFilename:
           type: string
         content:  
           type: string
@@ -226,10 +253,10 @@ components:
       type: object
       properties:
         source:
-          $ref: '#/components/schemas/OutputFile'
+          type: string
         curlcommand:
           type: string    
-        pdfFile:
+        logFile:
           $ref: '#/components/schemas/OutputFile'
         pngFile:
           $ref: '#/components/schemas/OutputFile'
