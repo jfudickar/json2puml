@@ -6,8 +6,8 @@
 	],
 	"generateSummary": "true",
 	"generateDetails": "true",
-	"outputFormats": "svg,log,json,puml,zip",
-	"option": "full",
+	"outputFormats": "svg,log,json,puml,png,zip",
+	"option": "default",
 	"outputSuffix": ".<option>",
 	"curlParameter":  [
 	]

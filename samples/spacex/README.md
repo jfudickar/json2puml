@@ -8,5 +8,5 @@ The SpaceX API is an Open Source REST API for launch, rocket, core, capsule, sta
 You can use the API's from "https://github.com/r-spacex/SpaceX-API"
 
 ## How To Use
-Try makewapiall.cmd to see how it works.
+Try makespacexall.cmd to see how it works.
 You will find the results in the configured output directory.

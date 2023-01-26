@@ -23,8 +23,11 @@
 					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
+					"objectDetailProperties": {
+						"operation": "replace",
+						"list":  [
+						]
+					},
 					"groupProperties":  [
 					],
 					"objectIdentifierProperties":  [
@@ -41,7 +44,10 @@
 					],
 					"hiddenProperties":  [
 							"links",
-							"*image*"
+							"*image*",
+							"details",
+							"wikipedia",
+							"description"
 					],
 					"pumlHeaderLines":  [
 					],
@@ -62,6 +68,66 @@
 							"showFromRelations": "false",
 							"showIfEmpty": "false",
 							"showToRelations": "false",
+							"valueSplitLength": null
+						}
+					}
+				}
+			},
+			{
+				"option": "default",
+				"definition": {
+					"continueAfterUnhandledObjects": null,
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties":  [
+							"*"
+					],
+					"objectProperties":  [
+					],
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": null,
+							"showToRelations": null,
 							"valueSplitLength": null
 						}
 					}
@@ -160,14 +226,15 @@
 				"launches=launch",
 				"launch.crew=launchcrew",
 				"launch.cores=launchcore",
+				"rockets=rocket",
 				"capsules=capsule",
 				"payloads=payload",
 				"ships=ship"
 		],
 		"objectDetailProperties":  [
 				"links",
-				"rocket.*",
-				"rocket.landing_legs",
+				"rocket.engines",
+				"rocket.*stage",
 				"dragon",
 				"composite_fairing"
 		],
@@ -181,6 +248,7 @@
 		"relationshipProperties":  [
 				"launches",
 				"launch",
+				"rockets",
 				"rocket",
 				"crew.crew",
 				"dragon.capsule",
@@ -205,14 +273,13 @@
 		"relationshipTypeArrowFormats":  [
 		],
 		"hiddenProperties":  [
-				"landpad.launches",
-				"launchpad.launches",
 				"*.launches"
 		],
 		"pumlHeaderLines":  [
 				"hide stereotype"
 		],
 		"characteristicProperties":  [
+				{"parentProperty": "*pad.images", "type": "record"},
 				{"parentProperty": "height", "type": "record"},
 				{"parentProperty": "landing_legs", "type": "record"},
 				{"parentProperty": "mass", "type": "record"},
@@ -283,14 +350,6 @@
 						}
 					},
 					{
-						"formatName": "har",
-						"definition": {
-							"objectFilter": ["network"],
-							"iconColor": "purple",
-							"skinParams": ["BackgroundColor=plum"]
-						}
-					},
-					{
 						"formatName": "hardware",
 						"definition": {
 							"objectFilter": [
@@ -310,7 +369,9 @@
 						"definition": {
 							"objectFilter": [
 								"rocket.*",
-								"dragon.*"
+								"dragon.*",
+								"second_stage.payload",
+								"composite_fairing"
 							],
 							"iconColor": "orangeRed",
 							"skinParams": ["BackgroundColor=orangeRed"]
