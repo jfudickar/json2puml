@@ -225,27 +225,46 @@ var
   LogMessage: string;
   FoundCondition: string;
 
+  function CheckObjectIdent (iObjectType: string): Boolean;
+  begin
+    if ObjectIdent.isempty then
+
+      if not ObjectDefinition.GenerateWithoutIdentifier then
+        AddFileLog ('Object "%s" not created, no ident identified', [iObjectType])
+      else
+      begin
+        if Assigned (iInfo.HierarchieParentObject) then
+          ObjectIdent := iInfo.HierarchieParentObject.CalculateChildObjectDefaultIdent (ObjectTypeRenamed)
+        else
+          ObjectIdent := Format ('%s_%s', [ObjectTypeRenamed, 'root']);
+        AddFileLog ('Default object ident "%s" generated', [ObjectIdent]);
+      end;
+    Result := not ObjectIdent.isempty;
+  end;
+
 begin
   AlreadyHandled := false;
   if not Assigned (iJsonObject) then
     Exit;
 
+  PumlObject := nil;
+
   SaveRecursionRecord := IncRecursionRecord (iInfo, trpObject);
   try
     ObjectIdent := GetObjectIdent (iJsonObject, iInfo.PropertyName, FoundCondition);
-    if not ObjectIdent.IsEmpty then
+    if not ObjectIdent.isempty then
       AddFileLog ('Objectidentifier "%s" identified - "%s" %s', [ObjectIdent, 'objectIdentifierProperties',
         FoundCondition]);
     ObjectTitle := GetObjectTitleProperties (iJsonObject, iInfo.PropertyName, FoundCondition);
-    if not ObjectTitle.IsEmpty then
+    if not ObjectTitle.isempty then
       AddFileLog ('Objecttitle "%s" identified - "%s" %s', [ObjectTitle, 'objectTitleProperties', FoundCondition]);
     ObjectType := GetObjectTypeProperties (iJsonObject, iInfo.PropertyName, FoundCondition);
-    if not ObjectType.IsEmpty then
+    if not ObjectType.isempty then
       AddFileLog ('Objecttype "%s" identified - "%s" %s', [ObjectType, 'objectTypeProperties', FoundCondition])
     else
     begin
       ObjectType := iInfo.PropertyName;
-      if not ObjectType.IsEmpty then
+      if not ObjectType.isempty then
         AddFileLog ('Objecttype "%s" used based on current property name', [ObjectType]);
     end;
     ObjectTypeRenamed := Definition.RenameObjectType (ObjectType, iInfo.ParentProperty, FoundCondition);
@@ -283,16 +302,20 @@ begin
     begin
       RelationshipObject := ObjectTypeRenamed;
       GetRelationshipType (iJsonObject, iInfo.PropertyName, RelationshipType, RelationshipTypeProperty, FoundCondition);
-      if not RelationshipType.IsEmpty then
+      if not RelationshipType.isempty then
         AddFileLog ('Relationshiptype "%s" identified %s', [RelationshipType, FoundCondition]);
       RelationshipProperty := iInfo.OriginalPropertyName;
     end
     else
     begin
       RelationshipObject := '';
-      if iInfo.ParentRelationShipTypeProperty.IsEmpty then
+      if iInfo.ParentRelationShipTypeProperty.isempty then
+      begin
         GetRelationshipType (iJsonObject, iInfo.PropertyName, RelationshipType, RelationshipTypeProperty,
-          FoundCondition)
+          FoundCondition);
+        if not RelationshipType.isempty then
+          AddFileLog ('Relationshiptype "%s" identified %s', [RelationshipType, FoundCondition]);
+      end
       else
       begin
         RelationshipTypeProperty := iInfo.ParentRelationShipTypeProperty;
@@ -301,45 +324,33 @@ begin
       RelationshipProperty := iInfo.ParentRelationshipProperty;
     end;
 
-    if ObjectIdent.IsEmpty and IsObjectProperty and not IsObjectDetail { and not IsRelationShip } and not IsCharacteristic
-    then
-    begin
-      if not ObjectDefinition.GenerateWithoutIdentifier then
-        AddFileLog ('Object not created, no ident identified')
-      else
-      begin
-        if Assigned (iInfo.HierarchieParentObject) then
-          ObjectIdent := iInfo.HierarchieParentObject.CalculateChildObjectDefaultIdent (ObjectTypeRenamed)
-        else
-          ObjectIdent := Format ('%s_%s', [ObjectTypeRenamed, 'root']);
-        AddFileLog ('Default object ident "%s" generated', [ObjectIdent]);
-      end;
-    end;
+    if ObjectIdent.isempty and IsObjectProperty and not IsObjectDetail and not IsCharacteristic then
+      CheckObjectIdent (ObjectTypeRenamed);
 
-    if IsCharacteristic then
-      PumlObject := nil
-    else if IsRelationShip and Definition.IsObjectProperty (RelationshipObject, '', FoundCondition) then
-    begin
-      AddFileLog ('Type "%s" identified as relationship object %s', [RelationshipObject, FoundCondition]);
-      PumlObject := PumlObjects.SearchCreatePumlObject (Definition.RenameObjectType(RelationshipObject, '',
-        FoundCondition), ObjectIdent, iInfo.ParentProperty, LogMessage, 'relationship object',
-        Format('- "%s"/"%s"', ['relationshipProperties', 'objectProperties']));
-      AddFileLog (LogMessage);
-      PumlObject.IsRelationShip := true;
-    end
-    else if IsObjectProperty and not (ObjectIdent.IsEmpty) then
-    begin
-      PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, ObjectIdent, iInfo.ParentProperty,
-        LogMessage);
-      AddFileLog (LogMessage);
-      CreateGroupObject (ObjectTypeRenamed, iInfo);
-    end
-    else
-      PumlObject := nil;
+    if not IsCharacteristic then
+      if IsRelationShip and Definition.IsObjectProperty (RelationshipObject, '', FoundCondition) then
+      begin
+        AddFileLog ('Type "%s" identified as relationship object %s', [RelationshipObject, FoundCondition]);
+        if CheckObjectIdent (RelationshipObject) then
+        begin
+          PumlObject := PumlObjects.SearchCreatePumlObject (Definition.RenameObjectType(RelationshipObject, '',
+            FoundCondition), ObjectIdent, iInfo.ParentProperty, LogMessage, 'relationship object',
+            Format('- "%s"/"%s"', ['relationshipProperties', 'objectProperties']));
+          AddFileLog (LogMessage);
+          PumlObject.IsRelationShip := true;
+        end;
+      end
+      else if IsObjectProperty and not (ObjectIdent.isempty) then
+      begin
+        PumlObject := PumlObjects.SearchCreatePumlObject (ObjectTypeRenamed, ObjectIdent, iInfo.ParentProperty,
+          LogMessage);
+        AddFileLog (LogMessage);
+        CreateGroupObject (ObjectTypeRenamed, iInfo);
+      end;
 
     if not Assigned (PumlObject) and IsObjectDetail and Assigned (iInfo.ParentObject) and not IsCharacteristic then
     begin
-      if ObjectIdent.IsEmpty then
+      if ObjectIdent.isempty then
       begin
         ObjectIdent := iInfo.HierarchieParentObject.CalculateChildObjectDefaultIdent (ObjectTypeRenamed);
         AddFileLog ('Default object ident "%s" generated', [ObjectIdent]);
@@ -359,7 +370,7 @@ begin
 
     if Assigned (iInfo.HierarchieParentObject) and Assigned (PumlObject) then
     begin
-      if not iInfo.ParentIsRelationship or RelationshipProperty.IsEmpty then
+      if not iInfo.ParentIsRelationship or RelationshipProperty.isempty then
         RelationshipProperty := iInfo.OriginalPropertyName;
       BuildObjectRelationships (iInfo.HierarchieParentObject, PumlObject, RelationshipProperty, RelationshipType,
         RelationshipTypeProperty, not Definition.HideDuplicateRelations);
@@ -380,7 +391,7 @@ begin
         cname := GetJsonStringValue (iJsonObject, CharacteristicDefinition.NameProperties);
         cvalue := GetJsonStringValue (iJsonObject, CharacteristicDefinition.ValueProperties);
         cinfo := GetJsonStringValue (iJsonObject, CharacteristicDefinition.InfoProperties);
-        if not cname.IsEmpty then
+        if not cname.isempty then
           iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, cname, cvalue, cinfo,
             CharacteristicDefinition)
         else
@@ -401,15 +412,13 @@ begin
             end
             else if iJsonObject.Pairs[i].JsonValue is TJSONArray then
             begin
-              cvalue := GetJsonStringArray(TJSONArray(iJsonObject.Pairs[i].JsonValue));
+              cvalue := GetJsonStringArray (TJSONArray(iJsonObject.Pairs[i].JsonValue));
               iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, cname, cvalue, '',
                 CharacteristicDefinition);
-              AddFileLog ('Property "%s.%s" fetched from array : "%s"',
-                [iInfo.PropertyName, cname,cvalue]);
+              AddFileLog ('Property "%s.%s" fetched from array : "%s"', [iInfo.PropertyName, cname, cvalue]);
             end
             else
-              AddFileLog ('Property "%s.%s" will be ignored, it'' not a simple type',
-                [iInfo.PropertyName, cname])
+              AddFileLog ('Property "%s.%s" will be ignored, it'' not a simple type', [iInfo.PropertyName, cname])
           else
             AddFileLog ('Property "%s.%s" defined as hidden %s', [iInfo.PropertyName, cname, FoundCondition]);
         end;
@@ -417,9 +426,9 @@ begin
     end;
     if Assigned (PumlObject) then
     begin
-      if not ObjectIdent.IsEmpty then
+      if not ObjectIdent.isempty then
         iInfo.HierarchieParentObject := PumlObject;
-      if not ObjectTitle.IsEmpty and PumlObject.ObjectTitle.IsEmpty then
+      if not ObjectTitle.isempty and PumlObject.ObjectTitle.isempty then
         PumlObject.ObjectTitle := ObjectTitle;
     end;
     ReplaceObjectType (PumlObject, ObjectType);
@@ -577,7 +586,7 @@ begin
     // Generating skinparams
     Definition.ObjectFormats.Formats.GeneratePuml (Puml);
     // Generating Title
-    if not Title.IsEmpty then
+    if not Title.isempty then
     begin
       Puml.Add (Format('title "%s"', [Title]));
       Puml.Add ('');
@@ -679,17 +688,17 @@ begin
 
       Value := GetJsonStringValue (iJsonObject, Search, '', Sep);
 
-      if not Value.IsEmpty then
+      if not Value.isempty then
       begin
-        if oPropertyName.IsEmpty then
+        if oPropertyName.isempty then
           oPropertyName := Search
         else
           oPropertyName := string.Join (';', [oPropertyName, Search]);
-        if Result.IsEmpty then
+        if Result.isempty then
           Result := Value
         else
           Result := string.Join (LastSep, [Result, Value]);
-        if Sep.IsEmpty then
+        if Sep.isempty then
           Exit;
         LastSep := Sep;
       end;
@@ -720,7 +729,7 @@ end;
 
 function TJson2PumlConverter.ParentPropertyName (iParentProperty, iPropertyName: string): string;
 begin
-  if iParentProperty.IsEmpty then
+  if iParentProperty.isempty then
     Result := iPropertyName
   else
     Result := Format ('%s.%s', [iParentProperty, iPropertyName]);
@@ -730,11 +739,11 @@ procedure TJson2PumlConverter.ReplaceObjectType (iPumlObject: tPumlObject; iObje
 var
   oldIdx, newIdx: Integer;
 begin
-  if not Assigned (iPumlObject) or iObjectType.IsEmpty or (iPumlObject.ObjectType = iObjectType) then
+  if not Assigned (iPumlObject) or iObjectType.isempty or (iPumlObject.ObjectType = iObjectType) then
     Exit;
   if Definition.IdentifyObjectsByTypeAndIdent then
     Exit;
-  if iPumlObject.ObjectType.IsEmpty then
+  if iPumlObject.ObjectType.isempty then
   begin
     AddFileLog ('Objecttype changed to %s', [iObjectType]);
     iPumlObject.ObjectType := iObjectType
@@ -834,13 +843,13 @@ begin
     Puml.Add (tPumlHelper.TableLine(['<b>json2puml', '<b>' + FileVersion]));
     Puml.Add (tPumlHelper.TableLine(['Generated at', Format('%s %s', [DateTostr(Now), TimetoStr(Now)])]));
     AddFileLine ('Definition File', InputHandler.CurrentDefinitionFileName);
-    if not InputHandler.CmdLineParameter.InputFileName.IsEmpty then
+    if not InputHandler.CmdLineParameter.InputFileName.isempty then
     begin
       AddFileLine ('Input File', InputHandlerRecord.InputFile.OutputFileName);
-      if not InputHandler.CmdLineParameter.LeadingObject.IsEmpty then
+      if not InputHandler.CmdLineParameter.LeadingObject.isempty then
         Puml.Add (tPumlHelper.TableLine(['Leading Object', InputHandler.CmdLineParameter.LeadingObject]));
     end;
-    if not InputHandler.CurrentInputListFileName.IsEmpty then
+    if not InputHandler.CurrentInputListFileName.isempty then
       AddFileLine ('Input List File', InputHandler.CurrentInputListFileName);
     Puml.Add (tPumlHelper.TableLine(['Definition Option', Definition.OptionName]));
     for i := 0 to InputFilter.IdentFilter.Count - 1 do
@@ -854,7 +863,7 @@ begin
       else
         Puml.Add (tPumlHelper.TableLine(['', InputFilter.TitleFilter[i]]));
   end;
-  if not InputHandler.CurrentDescription.IsEmpty then
+  if not InputHandler.CurrentDescription.isempty then
   begin
     if vAdd then
       Puml.Add ('')

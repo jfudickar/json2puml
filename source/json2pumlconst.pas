@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumlconst;
 
@@ -41,12 +41,16 @@ type
   tUmlRelationDirection = (urdTo, urdFrom);
 
 const
-  cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log', 'zip', 'filelist.json');
-  cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '', '', '', '');
-  cJson2PumlServiceResultName : array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile', 'pumlFile', 'jsonFile', 'logFile','', '');
+  cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',
+    'zip', 'filelist.json');
+  cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '',
+    '', '', '');
+  cJson2PumlServiceResultName: array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile',
+    'pumlFile', 'jsonFile', 'logFile', '', '');
   cJson2PumlCharacteristicType: array [tJson2PumlCharacteristicType] of string = ('record', 'list');
   cJson2PumlListHandlingMode: array [tJson2PumlListOperation] of string = ('replace', 'merge');
-  cJson2PumlFileNameReplace : array [tJson2PumlFileNameReplace] of string = ('<group>', '<detail>', '<option>', '<job>', '<file>');
+  cJson2PumlFileNameReplace: array [tJson2PumlFileNameReplace] of string = ('<group>', '<detail>', '<option>', '<job>',
+    '<file>');
   cUmlRelationDirection: array [tUmlRelationDirection] of string = ('To', 'From');
 
   cDefaultDefinitionFile = 'json2pumldefinition.json';
@@ -71,13 +75,10 @@ const
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.0.5.57';
+  cCurrentVersion = '2.0.7.59';
 
-  JSON2PUML_EVENTTYPENAMES : TEventTypeNames = ['','INFO    ','SUCCESS ','WARNING ','ERROR   ','CRITICAL','EXCEPT  ','DEBUG   ','TRACE   ','DONE    ','CUSTOM1 ','CUSTOM2 '];
-
-
-
-
+  JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
+    'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];
 
 implementation
 
