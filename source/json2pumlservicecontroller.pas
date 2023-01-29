@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumlservicecontroller;
 
@@ -36,9 +36,12 @@ type
   TJson2PumlController = class(TMVCController)
   private
   protected
+    function GetCurlTracePassThroughHeader (iContext: TWebContext): string;
     procedure OnBeforeAction (Context: TWebContext; const AActionName: string; var Handled: Boolean); override;
     procedure OnAfterAction (Context: TWebContext; const AActionName: string); override;
     procedure GetFileListResponse (iFileList: tstringlist; iInputList: Boolean);
+    procedure LogRequestStart (iContext: TWebContext);
+    procedure LogRequestEnd (iContext: TWebContext);
   public
     [MVCPath]
     [MVCHTTPMethod([httpGET])]
@@ -70,7 +73,38 @@ implementation
 uses
   System.SysUtils, MVCFramework.Logger, System.StrUtils, json2pumlconverter, json2pumldefinition,
   json2pumlconst, jsontools, json2pumlbasedefinition,
-  json2pumlconverterdefinition, json2pumltools, json2pumlloghandler, System.IOUtils;
+  json2pumlconverterdefinition, json2pumltools, json2pumlloghandler, System.IOUtils, IdHTTPWebBrokerBridge,
+  IdHTTPHeaderInfo;
+
+type
+  TIdHTTPAppRequestHelper = class helper for TIdHTTPAppRequest
+  public
+    function GetRequestInfo: TIdEntityHeaderInfo;
+  end;
+
+function TIdHTTPAppRequestHelper.GetRequestInfo: TIdEntityHeaderInfo;
+begin
+  Result := FRequestInfo;
+end;
+
+function TJson2PumlController.GetCurlTracePassThroughHeader (iContext: TWebContext): string;
+var
+  s, v: string;
+
+  procedure AddHeader (iName, iValue: string);
+  begin
+    if not iName.IsEmpty and not iValue.IsEmpty then
+      Result := Format ('%s  --header "%s: %s"', [Result, iName, iValue]).Trim;
+  end;
+
+begin
+  Result := '';
+  for s in GlobalConfigurationDefinition.CurlPassThroughHeader do
+  begin
+    v := iContext.Request.Headers[s];
+    AddHeader (s, v);
+  end;
+end;
 
 procedure TJson2PumlController.GetDefinitionFiles;
 begin
@@ -80,20 +114,15 @@ end;
 procedure TJson2PumlController.GetFileListResponse (iFileList: tstringlist; iInputList: Boolean);
 var
   jsonOutput: tstringlist;
-  h: string;
-  cnt: Integer;
 begin
+  LogRequestStart (Context);
   jsonOutput := tstringlist.Create;
   try
     try
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-      GlobalLoghandler.Trace ('%s started from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
-      cnt := GetServiceFileListResponse (jsonOutput, iFileList, iInputList);
-      GlobalLoghandler.Trace ('%d files found', [cnt]);
+      GetServiceFileListResponse (jsonOutput, iFileList, iInputList);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
-      GlobalLoghandler.Trace ('%s stopped from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
-      GlobalLoghandler.Trace (h.PadLeft(60, '-'));
     except
       on e: exception do
       begin
@@ -105,6 +134,7 @@ begin
   finally
     jsonOutput.Free;
   end;
+  LogRequestEnd (Context);
 end;
 
 procedure TJson2PumlController.GetInputListFile;
@@ -136,15 +166,14 @@ end;
 procedure TJson2PumlController.HandleJson2PumlRequest;
 var
   InputHandler: TJson2PumlInputHandler;
-  h: string;
 begin
+  LogRequestStart (Context);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
     try
-      GlobalLoghandler.Trace ('%s started from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
       InputHandler.CmdLineParameter.ReadInputParameter;
       InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
-      GlobalLoghandler.Trace (Context.Request.Body);
+      InputHandler.CmdLineParameter.CurlPassThroughHeader := GetCurlTracePassThroughHeader (Context);
       InputHandler.LoadDefinitionFiles;
       if not GlobalLoghandler.Failed then
       begin
@@ -158,8 +187,6 @@ begin
         RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
-      GlobalLoghandler.Trace ('%s stopped from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
-      GlobalLoghandler.Trace (h.PadLeft(60, '-'));
     except
       on e: exception do
       begin
@@ -171,24 +198,24 @@ begin
   finally
     InputHandler.Free;
   end;
+  LogRequestEnd (Context);
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestSvg;
 var
   InputHandler: TJson2PumlInputHandler;
   f: tJson2PumlInputFileDefinition;
-  h: string;
 begin
+  LogRequestStart (Context);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
     try
-      GlobalLoghandler.Trace ('%s started from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
       InputHandler.CmdLineParameter.ReadInputParameter;
       InputHandler.CmdLineParameter.GenerateDetailsStr := 'false';
       InputHandler.CmdLineParameter.GenerateSummaryStr := 'true';
       InputHandler.CmdLineParameter.OutputFormatStr := jofSvg.ToString;
       InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
-      GlobalLoghandler.Trace (Context.Request.Body);
+      InputHandler.CmdLineParameter.CurlPassThroughHeader := GetCurlTracePassThroughHeader (Context);
       InputHandler.LoadDefinitionFiles;
       if not GlobalLoghandler.Failed then
       begin
@@ -208,8 +235,6 @@ begin
         RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
-      GlobalLoghandler.Trace ('%s stopped from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
-      GlobalLoghandler.Trace (h.PadLeft(60, '-'));
     except
       on e: exception do
       begin
@@ -221,20 +246,20 @@ begin
   finally
     InputHandler.Free;
   end;
+  LogRequestEnd (Context);
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestZip;
 var
   InputHandler: TJson2PumlInputHandler;
-  h: string;
 begin
+  LogRequestStart (Context);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
     try
-      GlobalLoghandler.Trace ('%s started from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
       InputHandler.CmdLineParameter.ReadInputParameter;
       InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
-      GlobalLoghandler.Trace (Context.Request.Body);
+      InputHandler.CmdLineParameter.CurlPassThroughHeader := GetCurlTracePassThroughHeader (Context);
       InputHandler.LoadDefinitionFiles;
       if not GlobalLoghandler.Failed then
       begin
@@ -255,8 +280,6 @@ begin
         RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
-      GlobalLoghandler.Trace ('%s stopped from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
-      GlobalLoghandler.Trace (h.PadLeft(60, '-'));
     except
       on e: exception do
       begin
@@ -267,6 +290,32 @@ begin
     end;
   finally
     InputHandler.Free;
+  end;
+  LogRequestEnd (Context);
+end;
+
+procedure TJson2PumlController.LogRequestEnd (iContext: TWebContext);
+begin
+  GlobalLoghandler.Trace ('%s stopped - Result : %d', [Context.Request.PathInfo, Context.Response.StatusCode]);
+  GlobalLoghandler.Trace (''.PadLeft(60, '-'));
+end;
+
+procedure TJson2PumlController.LogRequestStart (iContext: TWebContext);
+var
+  Name: string;
+  I: Integer;
+
+begin
+  GlobalLoghandler.Info ('%s started from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
+  if Context.Request.RawWebRequest is TIdHTTPAppRequest then
+  begin
+    for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do
+    begin
+      name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
+      GlobalLoghandler.Info ('Header %s : %s', [name, Context.Request.Headers[name]]);
+    end;
+    if not Context.Request.Body.IsEmpty then
+      GlobalLoghandler.Info ('Body : %s ', [Context.Request.Body]);
   end;
 end;
 

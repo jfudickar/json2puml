@@ -729,6 +729,7 @@ begin
   try
     if Assigned (BeforeCreateAllRecords) then
       BeforeCreateAllRecords (self);
+    ConverterInputList.CurlPassThroughHeader := CmdLineParameter.CurlPassThroughHeader;
     ConverterInputList.ExpandInputList;
     GenSummary := CurrentGenerateSummary;
     GenDetails := CurrentGenerateDetails;

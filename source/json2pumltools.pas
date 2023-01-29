@@ -40,15 +40,15 @@ function ClearPropertyValue (iValue: string): string;
 type
   TCurlUtils = class
   public
-    class function FullUrl (const iBaseUrl, iUrl: string;
-      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
-    class function CalculateCommand (const iUrl, iOptions, iOutputFile: string;
-      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+    class function FullUrl(const iBaseUrl: string; const iUrlParts: array of string; iCurlParameterList,
+        iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+    class function CalculateCommand(const iUrl: string; const iOptions: array of string; const iOutputFile: string;
+        iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
     class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
       var oErrorMessage: string): Boolean;
-    class function Execute (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
-      iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
+    class function Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const iOutputFile: string;
+        iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList, iCurlParameterList:
+        tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
   end;
 
 function FileCount (iFileFilter: string): Integer;
@@ -586,23 +586,18 @@ begin
       Result[i] := iReplaceWith;
 end;
 
-class function TCurlUtils.FullUrl (const iBaseUrl, iUrl: string;
-  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+class function TCurlUtils.FullUrl(const iBaseUrl: string; const iUrlParts: array of string; iCurlParameterList,
+    iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
 begin
-  if iBaseUrl.Trim.isEmpty then
-    Result := iUrl.Trim.TrimLeft (['/'])
-  else if iUrl.Trim.isEmpty then
-    Result := iBaseUrl.Trim
-  else
-    Result := Format ('%s/%s', [iBaseUrl.Trim.TrimRight(['/']), iUrl.Trim.TrimLeft(['/'])]);
+  Result := string.Join('/',[iBaseUrl.TrimRight(['/']), string.join('', iUrlParts).Trim(['/'])]);
   if Assigned (iCurlDetailParameterList) then
     Result := iCurlDetailParameterList.ReplaceParameterValues (Result);
   if Assigned (iCurlParameterList) then
     Result := iCurlParameterList.ReplaceParameterValues (Result);
 end;
 
-class function TCurlUtils.CalculateCommand (const iUrl, iOptions, iOutputFile: string;
-  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+class function TCurlUtils.CalculateCommand(const iUrl: string; const iOptions: array of string; const iOutputFile:
+    string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
 var
   Command: string;
 begin
@@ -612,7 +607,7 @@ begin
   if iUrl.isEmpty then
     Exit;
 
-  Command := Format ('%s --url "%s" --output "%s"', [iOptions.Trim, iUrl, iOutputFile]);
+  Command := Format ('--url "%s" %s --output "%s"', [iUrl, string.Join(' ', iOptions).Trim, iOutputFile]);
 
   if Assigned (iCurlDetailParameterList) then
     Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
@@ -669,9 +664,9 @@ begin
   Result := oErrorMessage.isEmpty;
 end;
 
-class function TCurlUtils.Execute (const iBaseUrl, iUrl, iOptions, iOutputFile: string;
-  iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
+class function TCurlUtils.Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const
+    iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList,
+    iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
 var
   url: string;
   ProtocolCommand: string;
@@ -686,12 +681,12 @@ var
 begin
 
   Result := False;
-  if (iBaseUrl + iUrl).Trim.isEmpty then
-    Exit;
   if iOutputFile.Trim.isEmpty then
     Exit;
 
-  url := FullUrl (iBaseUrl, iUrl, iCurlParameterList, iCurlDetailParameterList);
+  url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
+  if url.trim.isEmpty then
+    Exit;
 
   ProtocolCommand := CalculateCommand (url, iOptions, iOutputFile, iCurlParameterList, iCurlDetailParameterList);
   if ProtocolCommand.isEmpty then
