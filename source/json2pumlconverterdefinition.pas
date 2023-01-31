@@ -324,6 +324,12 @@ type
     property Definition[index: Integer]: tJson2PumlCharacteristicDefinition read GetDefinition; default;
   end;
 
+  tJson2PumlRelationshipTypeArrowFormatList = class(tJson2PumlOperationPropertyList)
+
+  public
+    function GetFormat (iObjectType, iPropertyName, iRelationshipType: string; var oFoundCondition: string): string;
+  end;
+
   tJson2PumlConverterDefinition = class(tJson2PumlBaseObject)
   private
     FAttributeProperties: tJson2PumlOperationPropertyList;
@@ -345,10 +351,9 @@ type
     FObjectTypeProperties: tJson2PumlPropertyValueDefinitionList;
     FObjectTypeRenames: tJson2PumlOperationPropertyList;
     FOptionName: string;
-    FOutputFormats: tJson2PumlOutputFormats;
     FPUMLHeaderLines: tJson2PumlOperationPropertyList;
     FRelationshipProperties: tJson2PumlOperationPropertyList;
-    FRelationshipTypeArrowFormats: tJson2PumlOperationPropertyList;
+    FRelationshipTypeArrowFormats: tJson2PumlRelationshipTypeArrowFormatList;
     FRelationshipTypeProperties: tJson2PumlPropertyValueDefinitionList;
     function GetContinueAfterUnhandledObjects: boolean;
     function GetGroupDetailObjectsTogether: boolean;
@@ -379,7 +384,7 @@ type
     procedure SetOptionName (const Value: string);
     procedure SetPUMLHeaderLines (const Value: tJson2PumlOperationPropertyList);
     procedure SetRelationshipProperties (const Value: tJson2PumlOperationPropertyList);
-    procedure SetRelationshipTypeArrowFormats (const Value: tJson2PumlOperationPropertyList);
+    procedure SetRelationshipTypeArrowFormats (const Value: tJson2PumlRelationshipTypeArrowFormatList);
     procedure SetRelationshipTypeProperties (const Value: tJson2PumlPropertyValueDefinitionList);
   protected
     function GetIdent: string; override;
@@ -394,8 +399,10 @@ type
     procedure Clear; override;
     function IsCharacteristicProperty (iPropertyName, iParentPropertyName: string; var oFoundCondition: string)
       : boolean;
-    function IsGroupProperty (iPropertyName, iParentPropertyName: string;
-      var oFoundCondition, oGroupName: string): boolean;
+    function IsGroupProperty (iPropertyName, iParentPropertyName: string; var oFoundCondition, oGroupName: string)
+      : boolean; overload;
+    function IsGroupProperty (iPropertyName, iParentPropertyName: string; var oFoundCondition: string)
+      : boolean; overload;
     function IsObjectDetailProperty (iPropertyName, iParentPropertyName: string; var oFoundCondition: string): boolean;
     function IsObjectIdentifierProperty (iPropertyName, iParentPropertyName: string;
       var oFoundCondition: string): boolean;
@@ -415,7 +422,6 @@ type
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
     property OptionName: string read FOptionName write SetOptionName;
-    property OutputFormats: tJson2PumlOutputFormats read FOutputFormats write FOutputFormats;
     property ShowLegend: boolean read GetShowLegend;
   published
     property AttributeProperties: tJson2PumlOperationPropertyList read FAttributeProperties
@@ -452,7 +458,7 @@ type
     property PUMLHeaderLines: tJson2PumlOperationPropertyList read FPUMLHeaderLines write SetPUMLHeaderLines;
     property RelationshipProperties: tJson2PumlOperationPropertyList read FRelationshipProperties
       write SetRelationshipProperties;
-    property RelationshipTypeArrowFormats: tJson2PumlOperationPropertyList read FRelationshipTypeArrowFormats
+    property RelationshipTypeArrowFormats: tJson2PumlRelationshipTypeArrowFormatList read FRelationshipTypeArrowFormats
       write SetRelationshipTypeArrowFormats;
     property RelationshipTypeProperties: tJson2PumlPropertyValueDefinitionList read FRelationshipTypeProperties
       write SetRelationshipTypeProperties;
@@ -554,7 +560,7 @@ begin
   FObjectTypeRenames := tJson2PumlOperationPropertyList.Create;
   FPUMLHeaderLines := tJson2PumlOperationPropertyList.Create ();
   FRelationshipProperties := tJson2PumlOperationPropertyList.Create;
-  FRelationshipTypeArrowFormats := tJson2PumlOperationPropertyList.Create;
+  FRelationshipTypeArrowFormats := tJson2PumlRelationshipTypeArrowFormatList.Create;
   FRelationshipTypeProperties := tJson2PumlPropertyValueDefinitionList.Create;
 end;
 
@@ -601,7 +607,6 @@ begin
     ObjectTypeProperties := tJson2PumlConverterDefinition (Source).ObjectTypeProperties;
     ObjectTypeRenames := tJson2PumlConverterDefinition (Source).ObjectTypeRenames;
     OptionName := tJson2PumlConverterDefinition (Source).OptionName;
-    OutputFormats := tJson2PumlConverterDefinition (Source).OutputFormats;
     PUMLHeaderLines := tJson2PumlConverterDefinition (Source).PUMLHeaderLines;
     RelationshipProperties := tJson2PumlConverterDefinition (Source).RelationshipProperties;
     RelationshipTypeArrowFormats := tJson2PumlConverterDefinition (Source).RelationshipTypeArrowFormats;
@@ -630,7 +635,6 @@ begin
   ObjectTypeProperties.Clear;
   ObjectTypeRenames.Clear;
   OptionName := '';
-  OutputFormats := [jofPNG];
   PUMLHeaderLines.Clear;
   RelationshipProperties.Clear;
   RelationshipTypeArrowFormats.Clear;
@@ -714,6 +718,15 @@ begin
     if oGroupName.IsEmpty then
       oGroupName := iPropertyName;
   end;
+end;
+
+function tJson2PumlConverterDefinition.IsGroupProperty (iPropertyName, iParentPropertyName: string;
+  var oFoundCondition: string): boolean;
+var
+  Index: Integer;
+  GroupName: string;
+begin
+  Result := IsGroupProperty (iPropertyName, iParentPropertyName, oFoundCondition, GroupName);
 end;
 
 function tJson2PumlConverterDefinition.IsObjectDetailProperty (iPropertyName, iParentPropertyName: string;
@@ -809,8 +822,6 @@ begin
   RelationshipTypeArrowFormats.MergeWith (Definition.RelationshipTypeArrowFormats);
   RelationshipTypeProperties.MergeWith (Definition.RelationshipTypeProperties);
 
-  OutputFormats := OutputFormats + Definition.OutputFormats;
-
 end;
 
 function tJson2PumlConverterDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
@@ -853,7 +864,6 @@ begin
   RelationshipTypeArrowFormats.ReadFromJson (DefinitionRecord, 'relationshipTypeArrowFormats');
   RelationshipTypeArrowFormats.Text := RelationshipTypeArrowFormats.Text.ToLower;
   RelationshipTypeProperties.ReadFromJson (DefinitionRecord, 'relationshipTypeProperties');
-  OutputFormats := OutputFormatsFromString (GetJsonStringArray(DefinitionRecord, 'outputFormats'));
 end;
 
 function tJson2PumlConverterDefinition.RenameObjectType (iPropertyName, iParentPropertyName: string;
@@ -975,7 +985,8 @@ begin
   FRelationshipProperties.Assign (Value);
 end;
 
-procedure tJson2PumlConverterDefinition.SetRelationshipTypeArrowFormats (const Value: tJson2PumlOperationPropertyList);
+procedure tJson2PumlConverterDefinition.SetRelationshipTypeArrowFormats
+  (const Value: tJson2PumlRelationshipTypeArrowFormatList);
 begin
   FRelationshipTypeArrowFormats.Assign (Value);
 end;
@@ -1020,9 +1031,6 @@ begin
   WriteToJsonValue (oJsonOutPut, 'legendShowInfo', LegendShowInfoStr, Level + 1, WriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'legendShowObjectFormats', LegendShowObjectFormatsStr, Level + 1, WriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'legendShowFileInfos', LegendShowFileInfosStr, Level + 1, WriteEmpty);
-  S := OutputFormatsToString (OutputFormats);
-  if not S.IsEmpty or WriteEmpty then
-    oJsonOutPut.Add (Format('%s"%s":[%s],', [JsonLinePrefix(Level + 1), 'outputFormats', S.trimRight([','])]));
   AttributeProperties.WriteToJson (oJsonOutPut, 'attributeProperties', Level + 1, WriteEmpty);
   ObjectProperties.WriteToJson (oJsonOutPut, 'objectProperties', Level + 1, WriteEmpty);
   ObjectTypeRenames.WriteToJson (oJsonOutPut, 'objectTypeRenames', Level + 1, WriteEmpty);
@@ -2379,6 +2387,38 @@ begin
   WriteToJsonValue (oJsonOutPut, 'displayName', DisplayName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'description', Description, iLevel + 1, iWriteEmpty);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
+end;
+
+function tJson2PumlRelationshipTypeArrowFormatList.GetFormat (iObjectType, iPropertyName, iRelationshipType: string;
+  var oFoundCondition: string): string;
+
+var
+  ArrowFormat: string;
+  function Search (iName: string): boolean;
+  var
+    i: Integer;
+  begin
+    i := IndexOfName (iName.ToLower);
+    Result := i >= 0;
+    if Result then
+    begin
+      ArrowFormat := ValueFromIndex[i];
+      oFoundCondition := iName;
+    end;
+  end;
+
+begin
+  try
+    ArrowFormat := '';
+    if Search (Format('%s.%s', [iPropertyName, iRelationshipType])) then
+      exit;
+    if Search (iPropertyName) then
+      exit;
+    if Search (iRelationshipType) then
+      exit;
+  finally
+    Result := ArrowFormat;
+  end;
 end;
 
 end.

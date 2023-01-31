@@ -33,6 +33,8 @@ type
 
   tPumlHelper = class
   public
+    class function RelationLine (iFromIdent, iArrowFormat, iToIdent, iComment: string): string;
+    class function PUmlIdentifier (iIdentifier: string): string;
     class function CleanCRLF (iValue: string): string;
     class function CleanValue (iValue: string; iSplitLength: Integer): string;
     class function ReplaceNewLine (iValue: string): string;
@@ -80,25 +82,36 @@ type
 
   tPumlObjectRelationship = class(tBasePumlObject)
   private
+    FArrowFormat: string;
     FDirection: tUmlRelationDirection;
+    FGroupAtObject: boolean;
+    FGroupAtRelatedObject: boolean;
     FPropertyName: string;
     FRelatedObject: tPumlObject;
     FRelationshipType: string;
     FRelationshipTypeProperty: string;
     function GetFilled: boolean; override;
     function GetIdent: string; override;
+    function GetObjectGroupName: string;
     function GetRelatedObjectCaption: string;
     function GetRelatedObjectFilled: boolean;
     function GetRelatedObjectFiltered: boolean;
+    function GetRelatedObjectGroupName: string;
     function GetRelatedObjectTypeIdent: string;
   public
-    procedure GeneratePuml (ipuml: TStrings);
+    procedure GeneratePumlObjectDetail (ipuml: TStrings);
+    procedure GeneratePumlRelation (ipuml, iGroupList: TStrings);
+    property ArrowFormat: string read FArrowFormat write FArrowFormat;
     property Direction: tUmlRelationDirection read FDirection write FDirection;
+    property GroupAtObject: boolean read FGroupAtObject write FGroupAtObject;
+    property GroupAtRelatedObject: boolean read FGroupAtRelatedObject write FGroupAtRelatedObject;
+    property ObjectGroupName: string read GetObjectGroupName;
     property PropertyName: string read FPropertyName write FPropertyName;
     property RelatedObject: tPumlObject read FRelatedObject write FRelatedObject;
     property RelatedObjectCaption: string read GetRelatedObjectCaption;
     property RelatedObjectFilled: boolean read GetRelatedObjectFilled;
     property RelatedObjectFiltered: boolean read GetRelatedObjectFiltered;
+    property RelatedObjectGroupName: string read GetRelatedObjectGroupName;
     property RelatedObjectTypeIdent: string read GetRelatedObjectTypeIdent;
     property RelationshipType: string read FRelationshipType write FRelationshipType;
     property RelationshipTypeProperty: string read FRelationshipTypeProperty write FRelationshipTypeProperty;
@@ -128,8 +141,11 @@ type
   public
     constructor Create (iParentUmlObject: tPumlObject);
     function addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty: string;
-      RelatedObject: tPumlObject; Direction: tUmlRelationDirection; iAllways: boolean = true): boolean;
-    procedure GeneratePuml (ipuml: TStrings; iDirection: tUmlRelationDirection; var iAddLine: boolean);
+      RelatedObject: tPumlObject; iDirection: tUmlRelationDirection; iGroupAtObject, iGroupAtRelatedObject: boolean;
+      iArrowFormat: string; iAllways: boolean = true): boolean;
+    procedure GeneratePumlObjectDetail (ipuml: TStrings; iDirection: tUmlRelationDirection; var iAddLine: boolean);
+    procedure GeneratePumlRelation (ipuml, iGroupList: TStrings);
+    procedure GeneratePumlRelationGroup (ipuml, iGroupList, iGroupCountList: TStrings);
     function GetEnumerator: tPumlObjectRelationshipEnumerator;
     property FromCount: Integer read GetFromCount;
     property FromCountValid: Integer read GetFromCountValid;
@@ -218,7 +234,7 @@ type
 
   tPumlDetailObjectList = class(tBasePumlStringList)
   public
-    procedure GeneratePuml (ipuml: TStrings; iParentObjectName, iParentObjectTitle: string);
+    procedure GeneratePumlTogether (ipuml: TStrings; iParentObjectName, iParentObjectTitle: string);
     procedure GeneratePumlClassList (ipuml: TStrings);
   end;
 
@@ -239,7 +255,6 @@ type
     FFormatPriority: Integer;
     FIdentifyObjectsByTypeAndIdent: boolean;
     FInputFilter: tJson2PumlFilterList;
-    FIsGroupObject: boolean;
     FIsObjectDetail: boolean;
     FIsRelationship: boolean;
     FObjectIdent: string;
@@ -264,7 +279,8 @@ type
     procedure AddCharacteristic (iParentProperty, iName, iValue, iInfo: string;
       iCharacteristicDefinition: tJson2PumlCharacteristicDefinition);
     function addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty: string;
-      RelatedObject: tPumlObject; Direction: tUmlRelationDirection; iAllways: boolean = true): boolean;
+      RelatedObject: tPumlObject; iDirection: tUmlRelationDirection; iGroupAtObject, iGroupAtRelatedObject: boolean;
+      iArrowFormat: string; iAllways: boolean = true): boolean;
     procedure AddValue (iName, iValue: string; iReplace: boolean = true);
     function CalculateChildObjectDefaultIdent (iChildObjectType: string): string;
     function GeneratePuml (ipuml: TStrings): boolean;
@@ -274,7 +290,6 @@ type
     property Filtered: boolean read FFiltered write FFiltered;
     property FormatDefinition: tJson2PumlSingleFormatDefinition read FFormatDefinition write FFormatDefinition;
     property InputFilter: tJson2PumlFilterList read FInputFilter write FInputFilter;
-    property IsGroupObject: boolean read FIsGroupObject write FIsGroupObject;
     property IsObjectDetail: boolean read FIsObjectDetail write FIsObjectDetail;
     property IsRelationship: boolean read FIsRelationship write FIsRelationship;
     property ObjectIdentifier: string read GetObjectIdentifier;
@@ -325,103 +340,11 @@ type
     property PumlObject[index: Integer]: tPumlObject read GetPumlObject; default;
   end;
 
-  tPumlRelationship = class(tBasePumlObject)
-  private
-    FFromObject: tPumlObject;
-    FPropertyName: string;
-    FRelationshipType: string;
-    FRelationshipTypeProperty: string;
-    FToObject: tPumlObject;
-    function GetFilled: boolean; override;
-    function GetFiltered: boolean;
-    function GetFromObjectIdentifier: string;
-    function GetFromObjectPlantUmlIdent: string;
-    function GetIdent: string; override;
-    function GetIsGroupObjectRelationship: boolean;
-    function GetIsObjectDetailRelationship: boolean;
-    function GetToObjectIdentifier: string;
-    function GetToObjectPlantUmlIdent: string;
-  public
-    function GeneratePuml (ipuml, iRelationshipTypeArrowFormats: TStrings): boolean;
-    property Filtered: boolean read GetFiltered;
-    property IsGroupObjectRelationship: boolean read GetIsGroupObjectRelationship;
-    property IsObjectDetailRelationship: boolean read GetIsObjectDetailRelationship;
-  published
-    property FromObject: tPumlObject read FFromObject write FFromObject;
-    property FromObjectIdentifier: string read GetFromObjectIdentifier;
-    property FromObjectPlantUmlIdent: string read GetFromObjectPlantUmlIdent;
-    property PropertyName: string read FPropertyName write FPropertyName;
-    property RelationshipType: string read FRelationshipType write FRelationshipType;
-    property RelationshipTypeProperty: string read FRelationshipTypeProperty write FRelationshipTypeProperty;
-    property ToObject: tPumlObject read FToObject write FToObject;
-    property ToObjectIdentifier: string read GetToObjectIdentifier;
-    property ToObjectPlantUmlIdent: string read GetToObjectPlantUmlIdent;
-  end;
-
-  tPumlRelationshipList = class;
-
-  tPumlRelationshipEnumerator = class
-  private
-    FIndex: Integer;
-    fObjectList: tPumlRelationshipList;
-  public
-    constructor Create (ARelationshipList: tPumlRelationshipList);
-    function GetCurrent: tPumlRelationship;
-    function MoveNext: boolean;
-    property Current: tPumlRelationship read GetCurrent;
-  end;
-
-  tPumlRelationshipList = class(tBasePumlStringList)
-  private
-    function GetRelationship (Index: Integer): tPumlRelationship;
-  public
-    constructor Create (iParentUmlObject: tPumlObject);
-    procedure addRelationship (FromObject, ToObject: tPumlObject; RelationshipType, RelationshipTypeProperty,
-      PropertyName: string; iAddDuplicate: boolean);
-    function GetEnumerator: tPumlRelationshipEnumerator;
-    property Relationship[index: Integer]: tPumlRelationship read GetRelationship; default;
-  end;
-
 implementation
 
 uses
   System.SysUtils,
   System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, System.Variants;
-
-constructor tPumlRelationshipList.Create (iParentUmlObject: tPumlObject);
-begin
-  inherited Create (iParentUmlObject);
-  Sorted := true;
-  duplicates := dupAccept;
-  OwnsObjects := true;
-end;
-
-procedure tPumlRelationshipList.addRelationship (FromObject, ToObject: tPumlObject;
-  RelationshipType, RelationshipTypeProperty, PropertyName: string; iAddDuplicate: boolean);
-var
-  PumlRelationship: tPumlRelationship;
-begin
-  PumlRelationship := tPumlRelationship.Create (ParentUmlObject);
-  PumlRelationship.FromObject := FromObject;
-  PumlRelationship.ToObject := ToObject;
-  PumlRelationship.RelationshipType := RelationshipType;
-  PumlRelationship.RelationshipTypeProperty := RelationshipTypeProperty;
-  PumlRelationship.PropertyName := PropertyName;
-  if iAddDuplicate or (IndexOf(PumlRelationship.Ident) < 0) then
-    AddObject (PumlRelationship.Ident, PumlRelationship)
-  else
-    PumlRelationship.Free;
-end;
-
-function tPumlRelationshipList.GetEnumerator: tPumlRelationshipEnumerator;
-begin
-  Result := tPumlRelationshipEnumerator.Create (Self);
-end;
-
-function tPumlRelationshipList.GetRelationship (Index: Integer): tPumlRelationship;
-begin
-  Result := tPumlRelationship (Objects[index]);
-end;
 
 constructor tPumlObjectList.Create;
 begin
@@ -506,110 +429,6 @@ begin
 
 end;
 
-function tPumlRelationship.GeneratePuml (ipuml, iRelationshipTypeArrowFormats: TStrings): boolean;
-var
-  line: string;
-  Arrow: string;
-  i: Integer;
-  Comment: string;
-begin
-  Result := False;
-  if not (FromObject.ShowObject and ToObject.ShowObject) then
-    Exit;
-  Result := true;
-  i := iRelationshipTypeArrowFormats.IndexOfName (Format('%s.%s', [PropertyName, RelationshipType]).ToLower);
-  if i < 0 then
-    i := iRelationshipTypeArrowFormats.IndexOfName (PropertyName.ToLower);
-  if i < 0 then
-    i := iRelationshipTypeArrowFormats.IndexOfName (RelationshipType.ToLower);
-  if i >= 0 then
-    Arrow := iRelationshipTypeArrowFormats.ValueFromIndex[i]
-  else
-    Arrow := '';
-  Arrow := Format ('-%s->', [Arrow]);
-  if IsObjectDetailRelationship then
-    Arrow := '*' + Arrow
-  else if IsGroupObjectRelationship then
-    Arrow := 'o' + Arrow;
-  line := Format ('%s %s %s', [FromObjectPlantUmlIdent, Arrow, ToObjectPlantUmlIdent]);
-  Comment := PropertyName;
-  if not RelationshipType.trim.IsEmpty then
-  begin
-    if not Comment.IsEmpty then
-      Comment := Format ('%s\l', [Comment]);
-    if not RelationshipTypeProperty.IsEmpty then
-      Comment := Format ('%s%s: ', [Comment, RelationshipTypeProperty]);
-    Comment := Format ('%s%s', [Comment, RelationshipType]);
-  end;
-  if not Comment.IsEmpty then
-    line := Format ('%s:%s', [line, Comment]);
-  ipuml.add (line);
-end;
-
-function tPumlRelationship.GetFilled: boolean;
-begin
-  Result := Assigned (FromObject) and FromObject.Filled and Assigned (ToObject) and ToObject.Filled;
-end;
-
-function tPumlRelationship.GetFiltered: boolean;
-begin
-  Result := FromObject.Filtered or ToObject.Filtered;
-end;
-
-function tPumlRelationship.GetFromObjectIdentifier: string;
-begin
-  if Assigned (FromObject) then
-    Result := FromObject.ObjectIdentifier
-  else
-    Result := '';
-end;
-
-function tPumlRelationship.GetFromObjectPlantUmlIdent: string;
-begin
-  if Assigned (FromObject) then
-    Result := FromObject.PlantUmlIdent
-  else
-    Result := '';
-end;
-
-function tPumlRelationship.GetIdent: string;
-begin
-  Result := Format ('%s=>%s:%s.%s', [FromObjectIdentifier, ToObjectIdentifier, RelationshipTypeProperty,
-    RelationshipType]);
-end;
-
-function tPumlRelationship.GetIsGroupObjectRelationship: boolean;
-begin
-  if Assigned (ToObject) then
-    Result := ToObject.IsGroupObject
-  else
-    Result := False;
-end;
-
-function tPumlRelationship.GetIsObjectDetailRelationship: boolean;
-begin
-  if Assigned (ToObject) then
-    Result := ToObject.IsObjectDetail
-  else
-    Result := False;
-end;
-
-function tPumlRelationship.GetToObjectIdentifier: string;
-begin
-  if Assigned (ToObject) then
-    Result := ToObject.ObjectIdentifier
-  else
-    Result := '';
-end;
-
-function tPumlRelationship.GetToObjectPlantUmlIdent: string;
-begin
-  if Assigned (ToObject) then
-    Result := ToObject.PlantUmlIdent
-  else
-    Result := '';
-end;
-
 constructor tPumlObject.Create;
 begin
   inherited Create (Self);
@@ -621,7 +440,6 @@ begin
   FDetailObjects.duplicates := dupIgnore;
   FIsObjectDetail := False;
   FIsRelationship := False;
-  FIsGroupObject := False;
   FFiltered := true;
   FChildObjectCount := 0;
   FFormatPriority := MaxInt;
@@ -643,10 +461,11 @@ begin
 end;
 
 function tPumlObject.addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty: string;
-  RelatedObject: tPumlObject; Direction: tUmlRelationDirection; iAllways: boolean = true): boolean;
+  RelatedObject: tPumlObject; iDirection: tUmlRelationDirection; iGroupAtObject, iGroupAtRelatedObject: boolean;
+  iArrowFormat: string; iAllways: boolean = true): boolean;
 begin
   Result := Relations.addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty, RelatedObject,
-    Direction, iAllways);
+    iDirection, iGroupAtObject, iGroupAtRelatedObject, iArrowFormat, iAllways);
 end;
 
 procedure tPumlObject.AddValue (iName, iValue: string; iReplace: boolean = true);
@@ -715,9 +534,9 @@ begin
   if FormatDefinition.ShowCharacteristics then
     PropertyCharacteristics.GeneratePuml (ipuml, AddLine);
   if FormatDefinition.ShowFromRelations then
-    Relations.GeneratePuml (ipuml, urdFrom, AddLine);
+    Relations.GeneratePumlObjectDetail (ipuml, urdFrom, AddLine);
   if FormatDefinition.ShowToRelations then
-    Relations.GeneratePuml (ipuml, urdTo, AddLine);
+    Relations.GeneratePumlObjectDetail (ipuml, urdTo, AddLine);
   ipuml.add ('}');
 end;
 
@@ -752,8 +571,7 @@ end;
 
 function tPumlObject.GetPlantUmlIdent: string;
 begin
-  Result := ObjectIdentifier.Replace (' ', '_').Replace ('-', '_').Replace (':', '_').Replace ('/', '_')
-    .Replace ('\', '_').Replace ('.', '_');
+  Result := tPumlHelper.PUmlIdentifier (ObjectIdentifier);
 end;
 
 function tPumlObject.GetShowObject: boolean;
@@ -766,7 +584,7 @@ begin
   // If not filtered then the filled status can be ignored
   if Result then
   begin
-    Result := Filled or FormatDefinition.ShowIfEmpty or IsGroupObject;
+    Result := Filled or FormatDefinition.ShowIfEmpty;
     if not Result then
       for r in Relations do
       begin
@@ -858,7 +676,7 @@ begin
   SplitIdent;
   if FormatDefinition.CaptionShowType then
     addpart (ObjectType, 'u');
-  if FormatDefinition.CaptionShowIdent and not IsObjectDetail and not IsGroupObject then
+  if FormatDefinition.CaptionShowIdent and not IsObjectDetail then
     addpart (NewIdent, 'i');
   if FormatDefinition.CaptionShowTitle then
     addpart (ObjectTitle, 'b');
@@ -872,7 +690,7 @@ begin
   Filtered := IsFiltered;
 end;
 
-procedure tPumlObjectRelationship.GeneratePuml (ipuml: TStrings);
+procedure tPumlObjectRelationship.GeneratePumlObjectDetail (ipuml: TStrings);
 var
   rType: string;
 begin
@@ -892,6 +710,40 @@ begin
       tPumlHelper.CleanCRLF(rType)]));
 end;
 
+procedure tPumlObjectRelationship.GeneratePumlRelation (ipuml, iGroupList: TStrings);
+var
+  Comment: string;
+  FromIdent: string;
+  ToIdent: string;
+begin
+  if not RelatedObject.ShowObject then
+    Exit;
+  if not (Direction = urdTo) then
+    Exit;
+  if not Filled then
+    Exit;
+  if iGroupList.IndexOf (ObjectGroupName) >= 0 then
+    FromIdent := ObjectGroupName
+  else
+    FromIdent := ParentUmlObject.PlantUmlIdent;
+  if iGroupList.IndexOf (RelatedObjectGroupName) >= 0 then
+    ToIdent := RelatedObjectGroupName
+  else
+    ToIdent := RelatedObject.PlantUmlIdent;
+  Comment := PropertyName;
+  if not RelationshipType.trim.IsEmpty then
+  begin
+    if not Comment.IsEmpty then
+      Comment := Format ('%s\l', [Comment]);
+    if not RelationshipTypeProperty.IsEmpty then
+      Comment := Format ('%s%s: ', [Comment, RelationshipTypeProperty]);
+    Comment := Format ('%s%s', [Comment, RelationshipType]);
+  end;
+
+  ipuml.add (tPumlHelper.RelationLine(FromIdent, ArrowFormat, ToIdent, Comment));
+
+end;
+
 function tPumlObjectRelationship.GetFilled: boolean;
 begin
   Result := Assigned (RelatedObject) and RelatedObject.Filled;
@@ -899,7 +751,14 @@ end;
 
 function tPumlObjectRelationship.GetIdent: string;
 begin
-  Result := string.Join (';', [Direction.ToString, RelatedObjectTypeIdent, PropertyName, RelationshipType]);
+  Result := string.Join (';', [ParentUmlObject.ObjectTypeIdent, Direction.ToString, RelatedObjectTypeIdent,
+    PropertyName, RelationshipType]);
+end;
+
+function tPumlObjectRelationship.GetObjectGroupName: string;
+begin
+  Result := tPumlHelper.PUmlIdentifier (Format('%s_group_%s', [ParentUmlObject.ObjectIdentifier,
+    RelatedObject.ObjectType]));
 end;
 
 function tPumlObjectRelationship.GetRelatedObjectCaption: string;
@@ -926,6 +785,12 @@ begin
     Result := False;
 end;
 
+function tPumlObjectRelationship.GetRelatedObjectGroupName: string;
+begin
+  Result := tPumlHelper.PUmlIdentifier (Format('%s_group_%s', [RelatedObject.ObjectIdentifier,
+    ParentUmlObject.ObjectType]));
+end;
+
 function tPumlObjectRelationship.GetRelatedObjectTypeIdent: string;
 begin
   if Assigned (RelatedObject) then
@@ -943,7 +808,8 @@ begin
 end;
 
 function tPumlObjectRelationshipList.addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty: string;
-  RelatedObject: tPumlObject; Direction: tUmlRelationDirection; iAllways: boolean = true): boolean;
+  RelatedObject: tPumlObject; iDirection: tUmlRelationDirection; iGroupAtObject, iGroupAtRelatedObject: boolean;
+  iArrowFormat: string; iAllways: boolean = true): boolean;
 var
   pumlObjectRelationship: tPumlObjectRelationship;
 begin
@@ -952,7 +818,10 @@ begin
   pumlObjectRelationship.RelatedObject := RelatedObject;
   pumlObjectRelationship.RelationshipType := RelationshipType;
   pumlObjectRelationship.RelationshipTypeProperty := RelationshipTypeProperty;
-  pumlObjectRelationship.Direction := Direction;
+  pumlObjectRelationship.Direction := iDirection;
+  pumlObjectRelationship.GroupAtObject := iGroupAtObject;
+  pumlObjectRelationship.GroupAtRelatedObject := iGroupAtRelatedObject;
+  pumlObjectRelationship.ArrowFormat := iArrowFormat;
   Result := iAllways or (IndexOf(pumlObjectRelationship.Ident) < 0);
   if Result then
     AddObject (pumlObjectRelationship.Ident, pumlObjectRelationship)
@@ -960,7 +829,7 @@ begin
     pumlObjectRelationship.Free;
 end;
 
-procedure tPumlObjectRelationshipList.GeneratePuml (ipuml: TStrings; iDirection: tUmlRelationDirection;
+procedure tPumlObjectRelationshipList.GeneratePumlObjectDetail (ipuml: TStrings; iDirection: tUmlRelationDirection;
   var iAddLine: boolean);
 var
   r: tPumlObjectRelationship;
@@ -984,7 +853,7 @@ begin
     try
       for r in Self do
         if (r.Direction = iDirection) then
-          r.GeneratePuml (TempList);
+          r.GeneratePumlObjectDetail (TempList);
       iAddLine := true;
       TempList.Sort;
       ipuml.AddStrings (TempList);
@@ -992,6 +861,60 @@ begin
       TempList.Free;
     end;
   end;
+end;
+
+procedure tPumlObjectRelationshipList.GeneratePumlRelation (ipuml, iGroupList: TStrings);
+var
+  r: tPumlObjectRelationship;
+begin
+  for r in Self do
+    r.GeneratePumlRelation (ipuml, iGroupList);
+end;
+
+procedure tPumlObjectRelationshipList.GeneratePumlRelationGroup (ipuml, iGroupList, iGroupCountList: TStrings);
+var
+  r: tPumlObjectRelationship;
+
+  procedure CheckGroup (iDirection: tUmlRelationDirection);
+  var
+    i: Integer;
+    GroupIdent: string;
+  begin
+    if (iDirection = urdTo) and r.GroupAtObject then
+      GroupIdent := r.ObjectGroupName
+    else if (iDirection = urdFrom) and r.GroupAtRelatedObject then
+      GroupIdent := r.RelatedObjectGroupName
+    else
+      Exit;
+    i := iGroupCountList.IndexOfName (GroupIdent);
+    if i < 0 then
+      iGroupCountList.AddPair (GroupIdent, '1')
+    else if iGroupCountList.ValueFromIndex[i].ToInteger <= 1 then
+    begin
+      ipuml.add (Format('diamond %s', [GroupIdent]));
+      iGroupList.add (GroupIdent);
+      ipuml.add ('together {');
+      if iDirection = urdTo then
+        ipuml.add (Format('  %s', [r.ParentUmlObject.GeneratePumlClassName]))
+      else
+        ipuml.add (Format('  %s', [r.RelatedObject.GeneratePumlClassName]));
+      ipuml.add (Format('  diamond %s', [GroupIdent]));
+      ipuml.add ('}');
+      if iDirection = urdTo then
+        ipuml.add (tPumlHelper.RelationLine(r.ParentUmlObject.PlantUmlIdent, r.ArrowFormat, GroupIdent, 'to '+r.PropertyName))
+      else
+        ipuml.add (tPumlHelper.RelationLine(GroupIdent, r.ArrowFormat, r.RelatedObject.PlantUmlIdent, 'from '+r.ParentUmlObject.ObjectType));
+      iGroupCountList.ValueFromIndex[i] := (iGroupCountList.ValueFromIndex[i].ToInteger + 1).ToString;
+    end;
+  end;
+
+begin
+  for r in Self do
+    if (r.Filled) and (r.Direction = urdTo) then
+    begin
+      CheckGroup (urdTo);
+      CheckGroup (urdFrom);
+    end;
 end;
 
 function tPumlObjectRelationshipList.GetDirectionCount (iDirection: tUmlRelationDirection; iValidOnly: boolean)
@@ -1184,25 +1107,6 @@ begin
     inc (FIndex);
 end;
 
-constructor tPumlRelationshipEnumerator.Create (ARelationshipList: tPumlRelationshipList);
-begin
-  inherited Create;
-  FIndex := - 1;
-  fObjectList := ARelationshipList;
-end;
-
-function tPumlRelationshipEnumerator.GetCurrent: tPumlRelationship;
-begin
-  Result := fObjectList[FIndex];
-end;
-
-function tPumlRelationshipEnumerator.MoveNext: boolean;
-begin
-  Result := FIndex < fObjectList.Count - 1;
-  if Result then
-    inc (FIndex);
-end;
-
 constructor tBasePumlStringList.Create (iParentUmlObject: tPumlObject);
 begin
   inherited Create;
@@ -1248,15 +1152,12 @@ begin
         tBasePumlObject (Objects[i]).UpdateRedundant;
 end;
 
-procedure tPumlDetailObjectList.GeneratePuml (ipuml: TStrings; iParentObjectName, iParentObjectTitle: string);
+procedure tPumlDetailObjectList.GeneratePumlTogether (ipuml: TStrings; iParentObjectName, iParentObjectTitle: string);
 begin
   if (Count <= 0) then
     Exit;
   ipuml.add ('together {');
-  if iParentObjectTitle.IsEmpty then
-    ipuml.add (Format('  class %s ', [iParentObjectName]))
-  else
-    ipuml.add (Format('  class "%s" as %s ', [iParentObjectTitle, iParentObjectName]));
+  ipuml.add (Format('  %s', [ParentUmlObject.GeneratePumlClassName]));
   GeneratePumlClassList (ipuml);
   ipuml.add ('}');
   ipuml.add ('');
@@ -1309,7 +1210,7 @@ var
   CharRec: tPumlCharacteristicRecord;
 begin
   CharRec := tPumlCharacteristicRecord.Create (ParentUmlObject);
-  CharRec.Name := iName;
+  CharRec.name := iName;
   CharRec.Value := iValue;
   CharRec.Info := iInfo;
   if IncludeIndex then
@@ -1361,14 +1262,14 @@ begin
         begin
           if IncludeIndex then
             Columns.add (i.ToString);
-          Columns.add (tPumlHelper.CleanCRLF(CharRec.Name));
+          Columns.add (tPumlHelper.CleanCRLF(CharRec.name));
           Columns.add (tPumlHelper.CleanValue(CharRec.Value, ParentUmlObject.FormatDefinition.ValueSplitLength));
         end
         else
         begin
           if IncludeIndex then
             Columns.add (i.ToString);
-          Columns.add (tPumlHelper.CleanCRLF(CharRec.Name));
+          Columns.add (tPumlHelper.CleanCRLF(CharRec.name));
           if not ValueProperty.IsEmpty then
             Columns.add (tPumlHelper.CleanValue(CharRec.Value, ParentUmlObject.FormatDefinition.ValueSplitLength));
           if not InfoProperty.IsEmpty then
@@ -1526,6 +1427,19 @@ begin
   for s in iColumns do
     Result := Result + TableColumn (s, iHeader);
   iColumns.Clear;
+end;
+
+class function tPumlHelper.PUmlIdentifier (iIdentifier: string): string;
+begin
+  Result := iIdentifier.Replace (' ', '_').Replace ('-', '_').Replace (':', '_').Replace ('/', '_').Replace ('\', '_')
+    .Replace ('.', '_').ToLower;
+end;
+
+class function tPumlHelper.RelationLine (iFromIdent, iArrowFormat, iToIdent, iComment: string): string;
+begin
+  Result := Format ('%s -%s-> %s', [iFromIdent, iArrowFormat, iToIdent]);
+  if not iComment.IsEmpty then
+    Result := Format ('%s:%s', [Result, iComment]);
 end;
 
 end.

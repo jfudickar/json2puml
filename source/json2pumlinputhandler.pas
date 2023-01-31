@@ -133,13 +133,11 @@ type
     function GetCurrentJavaRuntimeParameter: string;
     function GetCurrentJobName: string;
     function GetCurrentOption: string;
-    function GetCurrentOutputFormats (ConverterDefinition: tJson2PumlConverterDefinition): tJson2PumlOutputFormats;
+    function GetCurrentOutputFormats: tJson2PumlOutputFormats;
     function GetCurrentOutputPath: string;
     function GetCurrentOutputSuffix: string;
     function GetCurrentPlantUmlJarFileName: string;
     function GetCurrentSummaryFileName: string;
-    function GetDefinedDetail: string;
-    function GetDefinedGroup: string;
     function GetDefinedOption: string;
     function GetDefinitionLines: TStrings;
     function GetGenerateDetails: Boolean;
@@ -235,8 +233,6 @@ type
     property CurrentOutputSuffix: string read GetCurrentOutputSuffix;
     property CurrentPlantUmlJarFileName: string read GetCurrentPlantUmlJarFileName;
     property CurrentSummaryFileName: string read GetCurrentSummaryFileName;
-    property DefinedDetail: string read GetDefinedDetail;
-    property DefinedGroup: string read GetDefinedGroup;
     property DefinedOption: string read GetDefinedOption;
     property HandlerRecord[index: Integer]: TJson2PumlInputHandlerRecord read GetHandlerRecord; default;
     property AfterCreateAllRecords: TNotifyEvent read FAfterCreateAllRecords write FAfterCreateAllRecords;
@@ -637,7 +633,7 @@ begin
       SingleRecord := self[i];
 
       SingleRecord.ConverterLog.Clear;
-      OutputFormats := GetCurrentOutputFormats (CurrentConverterDefinition);
+      OutputFormats := GetCurrentOutputFormats;
       SingleRecord.InputFile.IsConverted := false;
       if not SingleRecord.InputFile.IncludeIntoOutput then
         Continue;
@@ -647,9 +643,6 @@ begin
       else
         OutputFile := CalculateOutputFileNamePath (SingleRecord.InputFile.OutputFileName,
           SingleRecord.InputFile.InputFileName, jofPUML.FileExtension(true));
-      // SingleRecord.InputFile.OutputFileName := CurlParameterList.ReplaceParameterValuesFileName
-      // (SingleRecord.InputFile.OutputFileName);
-      // OutputFile := ChangeFileExt (SingleRecord.InputFile.OutputFileName, jofPUML.FileExtension(true));
       GenerateFileDirectory (OutputFile);
 
       if SingleRecord.InputFile.IsSummaryFile then
@@ -705,8 +698,7 @@ begin
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
     ConverterInputList.WriteToJsonOutputFiles (tpath.ChangeExtension(CalculateSummaryFileName(jofPUML),
       jofFileList.FileExtension)); // Use PUML to get the Filename with the option included
-    ConverterInputList.WriteToJsonServiceResult (ServerResultLines,
-      GetCurrentOutputFormats(CurrentConverterDefinition), false);
+    ConverterInputList.WriteToJsonServiceResult (ServerResultLines, GetCurrentOutputFormats, false);
     if jofZip in OutputFormats then
       GenerateSummaryZipFile;
     if Assigned (AfterHandleAllRecords) then
@@ -898,8 +890,10 @@ function TJson2PumlInputHandler.GetCurrentDetail: string;
 begin
   if not CmdLineParameter.Detail.IsEmpty then
     Result := CmdLineParameter.Detail
+  else if not ParameterDefinition.Detail.IsEmpty then
+    Result := ParameterDefinition.Detail
   else
-    Result := DefinedDetail;
+    Result := ConverterInputList.Detail;
 end;
 
 function TJson2PumlInputHandler.GetCurrentDescription: string;
@@ -922,8 +916,10 @@ function TJson2PumlInputHandler.GetCurrentGroup: string;
 begin
   if not CmdLineParameter.Group.IsEmpty then
     Result := CmdLineParameter.Group
+  else if not ParameterDefinition.Group.IsEmpty then
+    Result := ParameterDefinition.Group
   else
-    Result := DefinedGroup;
+    Result := ConverterInputList.Group;
 end;
 
 function TJson2PumlInputHandler.GetCurrentInputListFileName: string;
@@ -946,6 +942,8 @@ function TJson2PumlInputHandler.GetCurrentJobName: string;
 begin
   if not CmdLineParameter.JobName.IsEmpty then
     Result := CmdLineParameter.JobName
+  else if not ParameterDefinition.JobName.IsEmpty then
+    Result := ParameterDefinition.JobName
   else if not ConverterInputList.JobName.IsEmpty then
     Result := ConverterInputList.JobName
   else if not ConverterInputList.SourceFileName.IsEmpty then
@@ -967,8 +965,7 @@ begin
     Result := ConverterDefinitionGroup.DefaultOption;
 end;
 
-function TJson2PumlInputHandler.GetCurrentOutputFormats (ConverterDefinition: tJson2PumlConverterDefinition)
-  : tJson2PumlOutputFormats;
+function TJson2PumlInputHandler.GetCurrentOutputFormats: tJson2PumlOutputFormats;
 begin
   if not (CmdLineParameter.OutputFormats = []) then
     Result := CmdLineParameter.OutputFormats
@@ -977,7 +974,7 @@ begin
   else if not (ConverterInputList.OutputFormats = []) then
     Result := ConverterInputList.OutputFormats
   else
-    Result := ConverterDefinition.OutputFormats;
+    Result := [jofSvg];
 end;
 
 function TJson2PumlInputHandler.GetCurrentOutputPath: string;
@@ -1033,16 +1030,6 @@ begin
     Result := ConverterInputList.SummaryFileName;
   if Result.IsEmpty then
     Result := 'summary';
-end;
-
-function TJson2PumlInputHandler.GetDefinedDetail: string;
-begin
-  Result := ConverterInputList.Detail;
-end;
-
-function TJson2PumlInputHandler.GetDefinedGroup: string;
-begin
-  Result := ConverterInputList.Group;
 end;
 
 function TJson2PumlInputHandler.GetDefinedOption: string;
@@ -1473,7 +1460,7 @@ begin
   log ('Detail', CurrentDetail);
   log ('OutputPath', CurrentOutputPath);
   log ('OutputSuffix', CurrentOutputSuffix);
-  log ('OutputFormats', GetCurrentOutputFormats(CurrentConverterDefinition).ToString(false));
+  log ('OutputFormats', GetCurrentOutputFormats.ToString(false));
   log ('GenerateSummary', BooleanToString(CurrentGenerateSummary));
   log ('GenerateDetails', BooleanToString(CurrentGenerateDetails));
   log ('BaseOutputPath', BaseOutputPath);

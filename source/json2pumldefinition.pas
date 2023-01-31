@@ -100,10 +100,13 @@ type
     FCurlParameter: tJson2PumlCurlParameterList;
     FDefinitionFileName: string;
     FDescription: string;
+    FDetail: string;
     FGenerateDetailsStr: string;
     FGenerateSummaryStr: string;
+    FGroup: string;
     FInputFiles: tJson2PumlParameterInputFileDefinitionList;
     FInputListFileName: string;
+    FJobname: string;
     FOption: string;
     FOutputFormats: tJson2PumlOutputFormats;
     FOutputFormatStr: string;
@@ -133,10 +136,13 @@ type
   published
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
     property Description: string read FDescription write FDescription;
+    property Detail: string read FDetail write FDetail;
     property GenerateDetails: boolean read GetGenerateDetails;
     property GenerateDetailsStr: string read FGenerateDetailsStr write FGenerateDetailsStr;
     property GenerateSummaryStr: string read FGenerateSummaryStr write FGenerateSummaryStr;
+    property Group: string read FGroup write FGroup;
     property InputListFileName: string read FInputListFileName write FInputListFileName;
+    property Jobname: string read FJobname write FJobname;
     property Option: string read FOption write FOption;
     property OutputFormatStr: string read FOutputFormatStr write SetOutputFormatStr;
     property OutputSuffix: string read FOutputSuffix write SetOutputSuffix;
@@ -429,7 +435,7 @@ type
     FGenerateDetailsStr: string;
     FGenerateSummaryStr: string;
     FGroup: string;
-    FJobName: string;
+    FJobname: string;
     FOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent;
     FOption: string;
     FOutputFormats: tJson2PumlOutputFormats;
@@ -518,7 +524,7 @@ type
     property GenerateSummary: boolean read GetGenerateSummary;
     property GenerateSummaryStr: string read FGenerateSummaryStr write FGenerateSummaryStr;
     property Group: string read FGroup write FGroup;
-    property JobName: string read FJobName write FJobName;
+    property Jobname: string read FJobname write FJobname;
     property Option: string read FOption write FOption;
     property OutputFormatStr: string read FOutputFormatStr write SetOutputFormatStr;
     property OutputPath: string read FOutputPath write SetOutputPath;
@@ -552,7 +558,7 @@ type
     FInputFilterList: tJson2PumlFilterList;
     FInputListFileName: string;
     FJavaRuntimeParameter: string;
-    FJobName: string;
+    FJobname: string;
     FLeadingObject: string;
     FOpenOutputs: tJson2PumlOutputFormats;
     FOpenOutputsStr: string;
@@ -631,7 +637,7 @@ type
     property InputFileName: string read FInputFileName write FInputFileName;
     property InputListFileName: string read FInputListFileName write FInputListFileName;
     property JavaRuntimeParameter: string read FJavaRuntimeParameter write FJavaRuntimeParameter;
-    property JobName: string read FJobName write FJobName;
+    property Jobname: string read FJobname write FJobname;
     property LeadingObject: string read FLeadingObject write FLeadingObject;
     property OpenOutputsStr: string read FOpenOutputsStr write SetOpenOutputsStr;
     property Option: string read FOption write FOption;
@@ -983,7 +989,7 @@ function tJson2PumlInputFileDefinition.HandleCurl (const iBaseUrl: string; iUrlA
 var
   BaseUrl: string;
   FullUrl: string;
-  Options: Array of string;
+  Options: array of string;
 begin
   Result := false;
   if not HasValidCurl then
@@ -992,7 +998,7 @@ begin
     BaseUrl := iBaseUrl
   else
     BaseUrl := CurlBaseUrlDecoded;
-  Options := [string.Join(' ', [CurlOptions, string.Join(' ', iOptions)]).trim];
+  Options := [string.Join(' ', [CurlOptions, string.Join(' ', iOptions)]).Trim];
   FullUrl := tCurlUtils.FullUrl (BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim], iExecuteCurlParameterList,
     ioResultCurlParameterList);
   ExpandFileNameWithCurlParameter (iExecuteCurlParameterList);
@@ -1706,8 +1712,9 @@ begin
   Detail := GetJsonStringValue (Definition, 'detail');
   Group := GetJsonStringValue (Definition, 'group');
   Option := GetJsonStringValue (Definition, 'option');
-  JobName := GetJsonStringValue (Definition, 'job');
-  FOutputFormats := OutputFormatsFromString (GetJsonStringArray(Definition, 'outputFormats'));
+  Jobname := GetJsonStringValue (Definition, 'job');
+  //OutputFormatstr := OutputFormatsFromString (GetJsonStringArray(Definition, 'outputFormats'));
+  OutputFormatStr := GetJsonStringValue (Definition, 'outputFormats');
   OutputPath := GetJsonStringValue (Definition, 'outputPath');
   OutputSuffix := GetJsonStringValue (Definition, 'outputSuffix');
   CurlBaseUrl := GetJsonStringValue (Definition, 'curlBaseUrl');
@@ -1789,7 +1796,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'group', Group, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'detail', Detail, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'option', Option, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'job', JobName, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'job', Jobname, iLevel + 1, iWriteEmpty);
   S := OutputFormatsToString (OutputFormats);
   if not S.IsEmpty or iWriteEmpty then
     oJsonOutPut.Add (Format('%s"%s":[%s],', [JsonLinePrefix(iLevel + 1), 'outputFormats', S.TrimRight([','])]));
@@ -2136,7 +2143,7 @@ begin
   SplitIdentifier := ReadSingleInputParameter ('splitidentifier');
   Group := ReadSingleInputParameter ('group');
   Detail := ReadSingleInputParameter ('detail');
-  JobName := ReadSingleInputParameter ('job');
+  Jobname := ReadSingleInputParameter ('job');
   OptionFileName := ReadSingleInputParameterFile ('Optionfile');
   Option := ReadSingleInputParameter ('option');
   GenerateDetailsStr := ReadSingleInputParameter ('GenerateDetails');
@@ -2459,8 +2466,8 @@ begin
   GlobalLoghandler.Info ('  %-30s: %s', ['baseOutputPath', BaseOutputPath]);
   GlobalLoghandler.Info ('  %-30s: %s', ['curlAuthenticationFileName', CurlAuthenticationFileName]);
   GlobalLoghandler.Info ('  %-30s: ', ['curlPassThroughHeader']);
-  for i := 0 to curlPassThroughHeader.Count - 1 do
-    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), curlPassThroughHeader[i]]);
+  for i := 0 to CurlPassThroughHeader.Count - 1 do
+    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), CurlPassThroughHeader[i]]);
   GlobalLoghandler.Info ('  %-30s: ', ['defaultInputListFileFolder']);
   GlobalLoghandler.Info ('  %-30s: %s', ['defaultDefinitionFileName', DefaultDefinitionFileName]);
   GlobalLoghandler.Info ('  %-30s: ', ['defaultDefinitionFileFolder']);
@@ -3180,6 +3187,9 @@ begin
   if not Assigned (DefinitionRecord) then
     exit;
   Description := GetJsonStringValue (DefinitionRecord, 'description');
+  Jobname := GetJsonStringValue (DefinitionRecord, 'job');
+  Group := GetJsonStringValue (DefinitionRecord, 'group');
+  Detail := GetJsonStringValue (DefinitionRecord, 'detail');
   InputListFileName := GetJsonStringValue (DefinitionRecord, 'inputListFile');
   DefinitionFileName := GetJsonStringValue (DefinitionRecord, 'definitionFile');
   GenerateSummaryStr := GetJsonStringValue (DefinitionRecord, 'generateSummary');
@@ -3216,6 +3226,9 @@ begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'definitionFile', DefinitionFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'description', Description, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'detail', Detail, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'group', Group, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'job', Jobname, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'inputListFile', InputListFileName, iLevel + 1, iWriteEmpty);
   InputFiles.WriteToJson (oJsonOutPut, 'inputFiles', iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'generateSummary', GenerateSummaryStr, iLevel + 1, iWriteEmpty);
