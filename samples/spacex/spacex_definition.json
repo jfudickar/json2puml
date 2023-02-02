@@ -196,6 +196,73 @@
 						}
 					}
 				}
+			},
+			{
+				"option": "launch-crew-rocket",
+				"definition": {
+					"continueAfterUnhandledObjects": null,
+					"groupDetailObjectsTogether": null,
+					"hideDuplicateRelations": null,
+					"identifyObjectsByTypeAndIdent": null,
+					"legendShowInfo": null,
+					"legendShowObjectFormats": null,
+					"legendShowFileInfos": null,
+					"outputFormats":[],
+					"attributeProperties":  [
+							"*"
+					],
+					"objectProperties": {
+						"operation": "replace",
+						"list":  [
+								"launch",
+								"rocket",
+								"crew",
+								{"objectName": "launchcrew","generateWithoutIdentifier": "true"}
+						]
+					},
+					"objectTypeRenames":  [
+					],
+					"objectDetailProperties":  [
+					],
+					"groupProperties":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"relationshipProperties":  [
+					],
+					"relationshipTypeProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectTypeProperties":  [
+					],
+					"relationshipTypeArrowFormats":  [
+					],
+					"hiddenProperties":  [
+					],
+					"pumlHeaderLines":  [
+					],
+					"characteristicProperties":  [
+					],
+					"objectFormats": {
+						"baseFormat": {
+							"objectFilter": [],
+							"iconColor": null,
+							"skinParams": [],
+							"captionShowIdent": null,
+							"captionShowTitle": null,
+							"captionShowType": null,
+							"captionSplitCharacter": null,
+							"captionSplitLength": null,
+							"showAttributes": null,
+							"showCharacteristics": null,
+							"showFromRelations": null,
+							"showIfEmpty": null,
+							"showToRelations": null,
+							"valueSplitLength": null
+						}
+					}
+				}
 			}
 	],
 	"baseOption": {
@@ -239,8 +306,8 @@
 				"composite_fairing"
 		],
 		"groupProperties":  [
-				"launchcrew",
-				"launchcore"
+				"xlaunchcrew",
+				"xlaunchcore"
 		],
 		"objectIdentifierProperties":  [
 				"id"
