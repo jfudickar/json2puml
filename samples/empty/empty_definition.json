@@ -1,0 +1,72 @@
+{
+	"description": {
+		"displayName": "Empty Definition",
+		"description": "Use this definition file as a starting point to create your own definitions"
+	},
+	"defaultOption": "default",
+	"options":  [
+	],
+	"baseOption": {
+		"continueAfterUnhandledObjects": "true",
+		"groupDetailObjectsTogether": null,
+		"hideDuplicateRelations": "false",
+		"identifyObjectsByTypeAndIdent": "true",
+		"legendShowInfo": "true",
+		"legendShowObjectFormats": "true",
+		"legendShowFileInfos": "true",
+		"outputFormats":["svg"],
+		"attributeProperties":  [
+				"*"
+		],
+		"objectProperties":  [
+				"*"
+		],
+		"objectTypeRenames":  [
+		],
+		"objectDetailProperties":  [
+		],
+		"groupProperties":  [
+		],
+		"objectIdentifierProperties":  [
+				"id"
+		],
+		"relationshipProperties":  [
+		],
+		"relationshipTypeProperties":  [
+		],
+		"objectTitleProperties":  [
+				"title",
+				"name"
+		],
+		"objectTypeProperties":  [
+				"type"
+		],
+		"relationshipTypeArrowFormats":  [
+		],
+		"hiddenProperties":  [
+		],
+		"pumlHeaderLines":  [
+				"hide stereotype"
+		],
+		"characteristicProperties":  [
+		],
+		"objectFormats": {
+			"baseFormat": {
+				"objectFilter": [],
+				"iconColor": null,
+				"skinParams": ["BackgroundColor=STRATEGY"],
+				"captionShowIdent": "true",
+				"captionShowTitle": "true",
+				"captionShowType": "true",
+				"captionSplitCharacter": "_",
+				"captionSplitLength": "0",
+				"showAttributes": "true",
+				"showCharacteristics": "true",
+				"showFromRelations": "true",
+				"showIfEmpty": "true",
+				"showToRelations": "true",
+				"valueSplitLength": "100"
+			}
+		}
+	}
+}
