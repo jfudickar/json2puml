@@ -1,0 +1,10 @@
+@startuml
+
+start
+:Curl pre-processor;
+:Json 2 PlantUml converter;
+:PlantUML post-processor;
+
+stop
+
+@enduml

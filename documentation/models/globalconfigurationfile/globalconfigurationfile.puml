@@ -1,0 +1,28 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class GlobalConfiguration <<Pivot>>{
+	baseOutputPath : String
+	outputPath : String
+   curlAuthenticationFileName : String
+   curlPassThroughHeader : Array of String
+   defaultDefinitionFileName : String
+   definitionFileSearchFolder : Array of String
+   inputListFileSearchFolder : Array of String
+   javaRuntimeParameter : String
+   logFileOutputPath : String
+   plantUmlJarFileName : String
+   servicePort : Integer
+}
+
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class OutputFormat <<Enumeration>> {
+    png
+    svg
+    zip
+    log
+    puml
+    listfile
+}
+
+class CurlParameter{
+   name : String
+   value : String
+}
+
+class SingleFile {
+   fileName : String
+   leadingObject : String
+   content : Any Object
+}
+
+class Json2PumlParameter <<Pivot>>{
+   definitionFile : String
+   --
+   inputListFile : String
+   inputFiles : Array of SingleFile
+   --
+	description : String
+   detail : String
+   group : String
+   job : String
+   option : String
+   --
+   generateSummary : Boolean
+   generateDetails : generateSummary
+   outputFormats : Array of OutputFormat 
+   outputSuffix : String
+  --
+   curlParameter : Array of CurlParameter
+}
+
+Json2PumlParameter::outputFormats -left-> OutputFormat
+Json2PumlParameter::inputFiles -right-> SingleFile
+Json2PumlParameter::curlParameter --> CurlParameter
+
+@enduml

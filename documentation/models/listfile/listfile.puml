@@ -2,6 +2,7 @@
 hide circle
 hide methods
 hide stereotype
+'skinparam linetype polyline
 show <<Enumeration>> stereotype
 skinparam class {
    BackgroundColor<<Enumeration>> #E6F5F7
@@ -11,17 +12,35 @@ skinparam class {
 }
 
 class OutputFormat <<Enumeration>> {
-    pdf
     png
     svg
 }
 
+class InfoListDescription {
+    displayName : String
+    description : String
+    curlParameter : Array of InfoListDescriptionCurlParameter
+}
+
+class InfoListDescriptionCurlParameter {
+    name : String
+    displayName : String
+    description : String
+    mandatory : Boolean
+    regularExpression : String
+}
+
 class InfolistFile  <<Pivot>> {
+  description : InfoListDescription
+  --
+  definitionFile : String
+  --
   generateDetails : Boolean 
   generateSummary : Boolean
   --
   group : String
   detail : String
+  job : string
   option : String
   --
   outputFormats : Array of OutputFormat 
@@ -36,20 +55,31 @@ class InfolistFile  <<Pivot>> {
   input : Array of SingleListFile
 }
 
+class singleListFileCurlOutputParameter {
+    name : String
+    value : String
+    maxValues : Integer
+}
 
 class SingleListFile {
     inputFile : String
     leadingObject : String
+    ---
+	generateOutput : Boolean
+    splitIdentifier : String
+    splitInputFile : String
+    ---
     curlBaseUrl : String
     curlUrl : String
 	curlCache : Integer
     curlOptions: String
 	curlOutputParameter : <AnyRecord>
-	generateOutput : Boolean
-    splitIdentifier : String
-    splitInputFile : String
 }
 
-InfolistFile::input --> SingleListFile
+InfolistFile::input --> SingleListFile::inputFile
+InfolistFile::outputFormats -left-> OutputFormat
+InfolistFile::description -right-> InfoListDescription::displayName
+InfoListDescription::curlParameter -right-> InfoListDescriptionCurlParameter::name
+SingleListFile::curlOutputParameter -right-> singleListFileCurlOutputParameter::name
 
 @enduml

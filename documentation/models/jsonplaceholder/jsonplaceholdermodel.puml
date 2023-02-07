@@ -1,0 +1,55 @@
+@startuml
+
+'skinparam linetype polyline
+'skinparam linetype ortho
+class user {
+    id:integer
+    name:string
+    username:string
+    email:string
+    ....
+}
+class post {
+    id:integer
+    userid:integer
+    title:string
+    body:string
+
+}
+
+class comment {
+    id:integer
+    postid:integer
+    name:string
+    email:string
+    body:string
+}
+
+class album {
+    id:integer
+    userid:integer
+    title:string
+}
+
+class photo {
+    id:integer
+    albumid:integer
+    title:string
+    url:string
+    thumbnailurl: string
+}
+
+class todo {
+    id:integer
+    userid:integer
+    title:string
+    completed:boolean
+}
+user -right-> post::userid
+post -right-> comment::postid
+user -up-> album::userid
+album -right-> photo::albumid
+user --> todo::userid
+
+
+@enduml
