@@ -120,7 +120,7 @@
         <UWP_DelphiLogo44>..\documentation\icons\json2puml-icon.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml-icon.png</UWP_DelphiLogo150>
         <Debugger_CWD>e:\Delphi\Projects\json2puml\</Debugger_CWD>
-        <Debugger_RunParams>/inputlistfile:samples-local\tmf\data\100000145100\tmf_inputlist_local.json /curlparameter:customer_number=100000145100</Debugger_RunParams>
+        <Debugger_RunParams>/parameterfile:samples\spacex\spacex_parameter_launches.json /curlparameter:launch=latest /formatdefinitionfiles</Debugger_RunParams>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_Release>9</VerInfo_Release>
     </PropertyGroup>

@@ -56,7 +56,7 @@ type
   protected
     function GetIdent: string; override;
   public
-    constructor Create; reintroduce;
+    constructor Create; override;
     destructor Destroy; override;
     property index: Integer read FIndex write FIndex;
     property InputDetail: string read FInputDetail write FInputDetail;
@@ -331,7 +331,7 @@ begin
   FCurlAuthenticationList := tJson2PumlCurlAuthenticationList.Create ();
   FCurlParameterList := tJson2PumlCurlParameterList.Create ();
   FCurlParameterList.MulitpleValues := true;
-  FConverterInputList := tJson2PumlInputList.Create (CalculateOutputFileNamePath);
+  FConverterInputList := tJson2PumlInputList.CreateOnCalculate(CalculateOutputFileNamePath);
   FConverterInputList.CurlAuthenticationList := CurlAuthenticationList;
   FConverterInputList.CurlParameterList := CurlParameterList;
   FOptionFileDefinition := tJson2PumlConverterDefinition.Create ();
@@ -933,9 +933,9 @@ end;
 function TJson2PumlInputHandler.GetCurrentJavaRuntimeParameter: string;
 begin
   if CmdLineParameter.JavaRuntimeParameter.IsEmpty then
-    Result := GlobalConfiguration.JavaRuntimeParameter
+    Result := CmdLineParameter.JavaRuntimeParameter
   else
-    Result := CmdLineParameter.JavaRuntimeParameter;
+    Result := GlobalConfiguration.JavaRuntimeParameter;
 end;
 
 function TJson2PumlInputHandler.GetCurrentJobName: string;
@@ -1404,16 +1404,17 @@ procedure TJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2
 var
   FileList: TStringList;
   Definition: tJson2PumlBaseObject;
+  NewFileName: string;
 begin
   if not FileExists (iFileName) then
     Exit;
+  NewFileName := TPath.ChangeExtension(iFileName, 'formatted.json');
   FileList := TStringList.Create;
   Definition := iClass.Create;
   try
     FileList.LoadFromFile (iFileName);
-    tFile.copy (iFileName, iFileName + '.bak', true);
     Definition.ReadFromJson (FileList.Text, Definition.SourceFileName);
-    Definition.WriteToJsonFile (iFileName, true);
+    Definition.WriteToJsonFile (NewFileName, true);
   finally
     FileList.Free;
     Definition.Free;

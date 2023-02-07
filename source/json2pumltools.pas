@@ -859,7 +859,7 @@ begin
     for s in FileList do
     begin
       if iInputList then
-        ConfigFile := tJson2PumlInputList.Create (nil)
+        ConfigFile := tJson2PumlInputList.Create
       else
         ConfigFile := tJson2PumlConverterGroupDefinition.Create;
       try

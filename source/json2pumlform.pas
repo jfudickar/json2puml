@@ -327,21 +327,6 @@ type
     property InputHandler: TJson2PumlInputHandler read FInputHandler;
   end;
 
-  // type
-  // TStringListLogAppender = class(TLoggerProAppenderBase)
-  // private
-  // FMaxLogLines: Word;
-  // FClearOnStartup: Boolean;
-  // FLogList: TStrings;
-  // FLogControl: TWinControl;
-  // public
-  // constructor Create(iLogList: TStrings; iLogControl: TWinControl; iMaxLogLines: Word = 10000; iClearOnStartup: Boolean =
-  // false; iLogFormat: string = DEFAULT_LOG_FORMAT); reintroduce;
-  // procedure Setup; override;
-  // procedure TearDown; override;
-  // procedure WriteLog (const iLogItem: TLogItem); override;
-  // end;
-
 var
   json2pumlMainForm: Tjson2pumlMainForm;
 
@@ -759,9 +744,9 @@ end;
 procedure Tjson2pumlMainForm.GenerateServiceListResults;
 begin
   GetServiceFileListResponse (ServiceinputlistfileResultLines,
-    InputHandler.GlobalConfiguration.DefaultInputListFileFolder, True);
+    InputHandler.GlobalConfiguration.InputListFileSearchFolder, True);
   GetServiceFileListResponse (ServicedefinitionfileResultLines,
-    InputHandler.GlobalConfiguration.DefaultDefinitionFileFolder, false);
+    InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false);
 end;
 
 function Tjson2pumlMainForm.GetCurrentInputHandlerRecord: TJson2PumlInputHandlerRecord;
@@ -1183,56 +1168,5 @@ function tFrameList.GetFileFrame (Index: Integer): tSingleFileFrame;
 begin
   Result := tSingleFileFrame (Objects[index]);
 end;
-
-{ TStringListLogAppender }
-
-// constructor TStringListLogAppender.Create(iLogList: TStrings; iLogControl: TWinControl; iMaxLogLines: Word = 10000;
-// iClearOnStartup: Boolean = false; iLogFormat: string = DEFAULT_LOG_FORMAT);
-// begin
-// inherited Create (iLogFormat);
-// FLogList := iLogList;
-// FMaxLogLines := iMaxLogLines;
-// FClearOnStartup := iClearOnStartup;
-// FLogControl := iLogControl;
-// end;
-//
-// procedure TStringListLogAppender.Setup;
-// begin
-// inherited;
-// if FClearOnStartup then
-// begin
-// TThread.Synchronize (nil,
-// procedure
-// begin
-// FLogList.Clear;
-// end);
-// end;
-// end;
-//
-// procedure TStringListLogAppender.TearDown;
-// begin
-// // do nothing
-// end;
-//
-// procedure TStringListLogAppender.WriteLog (const iLogItem: TLogItem);
-// var
-// lText: string;
-// begin
-// lText := FormatLog (iLogItem);
-// TThread.Queue (nil,
-// procedure
-// begin
-// FLogList.BeginUpdate;
-// try
-// if FLogList.Count = FMaxLogLines then
-// FLogList.Delete(0);
-// FLogList.add(lText)
-// finally
-// FLogList.EndUpdate;
-// end;
-// if Assigned(FLogControl) then
-// SendMessage(FLogControl.Handle, EM_SCROLLCARET, 0, 0);
-// end);
-// end;
 
 end.

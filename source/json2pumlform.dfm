@@ -2,8 +2,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   Left = 0
   Top = 0
   Caption = 'json2puml'
-  ClientHeight = 905
-  ClientWidth = 1355
+  ClientHeight = 904
+  ClientWidth = 1351
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -53,8 +53,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 886
-    Width = 1355
+    Top = 885
+    Width = 1351
     Height = 19
     Margins.Left = 2
     Margins.Top = 2
@@ -67,7 +67,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object MainActionToolBar: TActionToolBar
     Left = 0
     Top = 25
-    Width = 1355
+    Width = 1351
     Height = 23
     ActionManager = MainActionManager
     AllowHiding = False
@@ -89,7 +89,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object ActionMainMenuBar: TActionMainMenuBar
     Left = 0
     Top = 0
-    Width = 1355
+    Width = 1351
     Height = 25
     UseSystemFont = False
     ActionManager = MainActionManager
@@ -109,8 +109,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object MainPageControl: TPageControl
     Left = 0
     Top = 48
-    Width = 1355
-    Height = 838
+    Width = 1351
+    Height = 837
     ActivePage = DefinitionFileTabSheet
     Align = alClient
     TabOrder = 3
@@ -121,8 +121,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object InputListPanel: TPanel
         Left = 0
         Top = 0
-        Width = 1337
-        Height = 800
+        Width = 1333
+        Height = 799
         Align = alClient
         BevelEdges = []
         BevelOuter = bvNone
@@ -131,7 +131,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object InputlistLabel: TLabel
           Left = 2
           Top = 25
-          Width = 1333
+          Width = 1329
           Height = 13
           Align = alTop
           Caption = 'Inputlist'
@@ -139,7 +139,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object InputlistActionToolBar: TActionToolBar
           Left = 2
           Top = 2
-          Width = 1333
+          Width = 1329
           Height = 23
           ActionManager = MainActionManager
           AllowHiding = False
@@ -166,8 +166,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object CurlAuthenticationFilePanel: TPanel
         Left = 0
         Top = 0
-        Width = 1347
-        Height = 810
+        Width = 1343
+        Height = 809
         Align = alClient
         BevelEdges = []
         BevelOuter = bvNone
@@ -176,7 +176,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object CurlAuthenticationFileLabel: TLabel
           Left = 2
           Top = 25
-          Width = 1343
+          Width = 1339
           Height = 13
           Align = alTop
           Caption = 'Curl Authentication File'
@@ -184,7 +184,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object ActionToolBar2: TActionToolBar
           Left = 2
           Top = 2
-          Width = 1343
+          Width = 1339
           Height = 23
           ActionManager = MainActionManager
           AllowHiding = False
@@ -211,8 +211,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object CurlParameterFilePanel: TPanel
         Left = 0
         Top = 0
-        Width = 1347
-        Height = 810
+        Width = 1343
+        Height = 809
         Align = alClient
         BevelEdges = []
         BevelOuter = bvNone
@@ -221,7 +221,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object CurlParameterFileLabel: TLabel
           Left = 2
           Top = 25
-          Width = 1343
+          Width = 1339
           Height = 13
           Align = alTop
           Caption = 'Curl Parameter File'
@@ -229,7 +229,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object ActionToolBar3: TActionToolBar
           Left = 2
           Top = 2
-          Width = 1343
+          Width = 1339
           Height = 23
           ActionManager = MainActionManager
           AllowHiding = False
@@ -257,8 +257,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object DefinitionPanel: TPanel
         Left = 0
         Top = 0
-        Width = 1337
-        Height = 800
+        Width = 1333
+        Height = 799
         Align = alClient
         BevelEdges = []
         BorderWidth = 2
@@ -266,7 +266,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object DefinitionLabel: TLabel
           Left = 3
           Top = 26
-          Width = 1331
+          Width = 1327
           Height = 13
           Align = alTop
           Caption = 'Definition'
@@ -276,7 +276,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Tag = 3
           Left = 3
           Top = 3
-          Width = 1331
+          Width = 1327
           Height = 23
           ActionManager = MainActionManager
           AllowHiding = False
@@ -304,8 +304,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object OptionFilePanel: TPanel
         Left = 0
         Top = 0
-        Width = 1337
-        Height = 800
+        Width = 1333
+        Height = 799
         Align = alClient
         BevelEdges = []
         BorderWidth = 2
@@ -313,7 +313,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object OptionFileLabel: TLabel
           Left = 3
           Top = 26
-          Width = 1331
+          Width = 1327
           Height = 13
           Align = alTop
           Caption = 'Option File'
@@ -323,7 +323,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Tag = 3
           Left = 3
           Top = 3
-          Width = 1331
+          Width = 1327
           Height = 23
           ActionManager = MainActionManager
           AllowHiding = False
@@ -350,8 +350,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object ParameterFilePanel: TPanel
         Left = 0
         Top = 0
-        Width = 1347
-        Height = 810
+        Width = 1343
+        Height = 809
         Align = alClient
         BevelEdges = []
         BorderWidth = 2
@@ -359,7 +359,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         object ParameterFileLabel: TLabel
           Left = 3
           Top = 26
-          Width = 1341
+          Width = 1337
           Height = 13
           Align = alTop
           Caption = 'Parameter File'
@@ -369,7 +369,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Tag = 3
           Left = 3
           Top = 3
-          Width = 1341
+          Width = 1337
           Height = 23
           ActionManager = MainActionManager
           AllowHiding = False
@@ -396,7 +396,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object CommandLineEditPanel: TPanel
         Left = 0
         Top = 0
-        Width = 1337
+        Width = 1333
         Height = 345
         Align = alTop
         BevelOuter = bvNone
@@ -878,8 +878,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object LogFileDetailPageControl: TPageControl
         Left = 0
         Top = 345
-        Width = 1337
-        Height = 455
+        Width = 1333
+        Height = 454
         ActivePage = ExecutionLogTabSheet
         Align = alClient
         TabOrder = 1

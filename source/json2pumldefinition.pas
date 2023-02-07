@@ -153,9 +153,9 @@ type
     FBaseOutputPath: string;
     FCurlAuthenticationFileName: string;
     FCurlPassThroughHeader: tStringList;
-    FDefaultDefinitionFileFolder: tStringList;
+    FDefinitionFileSearchFolder: tStringList;
     FDefaultDefinitionFileName: string;
-    FDefaultInputListFileFolder: tStringList;
+    FInputListFileSearchFolder: tStringList;
     FJavaRuntimeParameter: string;
     FLogFileOutputPath: string;
     FOutputPath: string;
@@ -179,9 +179,9 @@ type
     property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
     property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
     property CurlPassThroughHeader: tStringList read FCurlPassThroughHeader;
-    property DefaultDefinitionFileFolder: tStringList read FDefaultDefinitionFileFolder;
+    property DefinitionFileSearchFolder: tStringList read FDefinitionFileSearchFolder;
     property DefaultDefinitionFileName: string read FDefaultDefinitionFileName write FDefaultDefinitionFileName;
-    property DefaultInputListFileFolder: tStringList read FDefaultInputListFileFolder;
+    property InputListFileSearchFolder: tStringList read FInputListFileSearchFolder;
     property JavaRuntimeParameter: string read FJavaRuntimeParameter write FJavaRuntimeParameter;
     property LogFileOutputPath: string read FLogFileOutputPath write FLogFileOutputPath;
     property OutputPath: string read FOutputPath write FOutputPath;
@@ -475,7 +475,8 @@ type
     function GetIsValid: boolean; override;
     property OnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent read FOnCalculateOutputFileName;
   public
-    constructor Create (iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent); reintroduce;
+    constructor Create; override;
+    constructor CreateOnCalculate(iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent);
     destructor Destroy; override;
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     function AddInputFileCommandLine (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
@@ -1114,10 +1115,15 @@ begin
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 
-constructor tJson2PumlInputList.Create (iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent);
+constructor tJson2PumlInputList.CreateOnCalculate(iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent);
+begin
+  Create;
+  FOnCalculateOutputFileName := iOnCalculateOutputFileName;
+end;
+
+constructor tJson2PumlInputList.Create;
 begin
   inherited Create;
-  FOnCalculateOutputFileName := iOnCalculateOutputFileName;
   FDescription := tJson2PumlInputListDescriptionDefinition.Create ();
 end;
 
@@ -1713,7 +1719,6 @@ begin
   Group := GetJsonStringValue (Definition, 'group');
   Option := GetJsonStringValue (Definition, 'option');
   Jobname := GetJsonStringValue (Definition, 'job');
-  //OutputFormatstr := OutputFormatsFromString (GetJsonStringArray(Definition, 'outputFormats'));
   OutputFormatStr := GetJsonStringValue (Definition, 'outputFormats');
   OutputPath := GetJsonStringValue (Definition, 'outputPath');
   OutputSuffix := GetJsonStringValue (Definition, 'outputSuffix');
@@ -1921,7 +1926,7 @@ begin
   if not DefinitionFileName.IsEmpty then
   begin
     FileName := GlobalConfigurationDefinition.FindFileInFolderList (DefinitionFileName,
-      GlobalConfigurationDefinition.FDefaultDefinitionFileFolder);
+      GlobalConfigurationDefinition.DefinitionFileSearchFolder);
     if FileExists (FileName) then
     begin
       DefinitionFile := tJson2PumlConverterGroupDefinition.Create;
@@ -2365,12 +2370,12 @@ end;
 constructor tJson2PumlGlobalDefinition.Create;
 begin
   inherited Create;
-  FDefaultInputListFileFolder := tStringList.Create ();
-  FDefaultInputListFileFolder.Delimiter := ';';
-  FDefaultInputListFileFolder.StrictDelimiter := true;
-  FDefaultDefinitionFileFolder := tStringList.Create ();
-  FDefaultDefinitionFileFolder.Delimiter := ';';
-  FDefaultDefinitionFileFolder.StrictDelimiter := true;
+  FInputListFileSearchFolder := tStringList.Create ();
+  FInputListFileSearchFolder.Delimiter := ';';
+  FInputListFileSearchFolder.StrictDelimiter := true;
+  FDefinitionFileSearchFolder := tStringList.Create ();
+  FDefinitionFileSearchFolder.Delimiter := ';';
+  FDefinitionFileSearchFolder.StrictDelimiter := true;
   FServicePort := 8080;
   FCurlPassThroughHeader := tStringList.Create ();
 end;
@@ -2378,23 +2383,23 @@ end;
 destructor tJson2PumlGlobalDefinition.Destroy;
 begin
   FCurlPassThroughHeader.Free;
-  FDefaultDefinitionFileFolder.Free;
-  FDefaultInputListFileFolder.Free;
+  FDefinitionFileSearchFolder.Free;
+  FInputListFileSearchFolder.Free;
   inherited Destroy;
 end;
 
 procedure tJson2PumlGlobalDefinition.Clear;
 begin
   PlantUmlJarFileName := '';
-  DefaultDefinitionFileFolder.Clear;
-  DefaultInputListFileFolder.Clear;
+  DefinitionFileSearchFolder.Clear;
+  InputListFileSearchFolder.Clear;
   DefaultDefinitionFileName := '';
   CurlAuthenticationFileName := '';
 end;
 
 function tJson2PumlGlobalDefinition.FindDefinitionFile (iFileName: string): string;
 begin
-  Result := FindFileInFolderList (iFileName, DefaultDefinitionFileFolder);
+  Result := FindFileInFolderList (iFileName, DefinitionFileSearchFolder);
 end;
 
 function tJson2PumlGlobalDefinition.FindFileInFolderList (iFileName: string; iFolderList: tStringList): string;
@@ -2449,8 +2454,7 @@ end;
 
 function tJson2PumlGlobalDefinition.FindInputListFile (iFileName: string): string;
 begin
-  Result := FindFileInFolderList (iFileName, DefaultInputListFileFolder);
-  // TODO -cMM: tJson2PumlGlobalDefinition.FindInputListFile default body inserted
+  Result := FindFileInFolderList (iFileName, InputListFileSearchFolder);
 end;
 
 function tJson2PumlGlobalDefinition.GetIdent: string;
@@ -2468,14 +2472,14 @@ begin
   GlobalLoghandler.Info ('  %-30s: ', ['curlPassThroughHeader']);
   for i := 0 to CurlPassThroughHeader.Count - 1 do
     GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), CurlPassThroughHeader[i]]);
-  GlobalLoghandler.Info ('  %-30s: ', ['defaultInputListFileFolder']);
+  GlobalLoghandler.Info ('  %-30s: ', ['InputListFileSearchFolder']);
   GlobalLoghandler.Info ('  %-30s: %s', ['defaultDefinitionFileName', DefaultDefinitionFileName]);
-  GlobalLoghandler.Info ('  %-30s: ', ['defaultDefinitionFileFolder']);
-  for i := 0 to DefaultDefinitionFileFolder.Count - 1 do
-    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), DefaultDefinitionFileFolder[i]]);
-  GlobalLoghandler.Info ('  %-30s: ', ['defaultInputListFileFolder']);
-  for i := 0 to DefaultInputListFileFolder.Count - 1 do
-    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), DefaultInputListFileFolder[i]]);
+  GlobalLoghandler.Info ('  %-30s: ', ['definitionFileSearchFolder']);
+  for i := 0 to DefinitionFileSearchFolder.Count - 1 do
+    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), DefinitionFileSearchFolder[i]]);
+  GlobalLoghandler.Info ('  %-30s: ', ['inputListFileSearchFolder']);
+  for i := 0 to InputListFileSearchFolder.Count - 1 do
+    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), InputListFileSearchFolder[i]]);
   GlobalLoghandler.Info ('  %-30s: %s', ['javaRuntimeParameter', JavaRuntimeParameter]);
   GlobalLoghandler.Info ('  %-30s: %s', ['logFileOutputPath', LogFileOutputPath]);
   GlobalLoghandler.Info ('  %-30s: %s', ['putputPath', OutputPath]);
@@ -2497,8 +2501,8 @@ begin
     CurlAuthenticationFileName);
   DefaultDefinitionFileName := GetJsonStringValue (DefinitionRecord, 'defaultDefinitionFileName',
     DefaultDefinitionFileName);
-  GetJsonStringValueList (DefaultDefinitionFileFolder, DefinitionRecord, 'defaultDefinitionFileFolder');
-  GetJsonStringValueList (DefaultInputListFileFolder, DefinitionRecord, 'defaultInputListFileFolder');
+  GetJsonStringValueList (DefinitionFileSearchFolder, DefinitionRecord, 'definitionFileSearchFolder');
+  GetJsonStringValueList (InputListFileSearchFolder, DefinitionRecord, 'inputListFileSearchFolder');
   JavaRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'javaRuntimeParameter', PlantUmlJarFileName);
   LogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', PlantUmlJarFileName);
   PlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', PlantUmlJarFileName);
@@ -2516,10 +2520,10 @@ begin
   WriteToJsonValue (oJsonOutPut, 'outputPath', OutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlAuthenticationFileName', CurlAuthenticationFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlPassThroughHeader', CurlPassThroughHeader, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'defaultDefinitionFileName', DefaultDefinitionFileName, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'defaulDefinitionFileFolder', DefaultDefinitionFileFolder, iLevel + 1, false,
+  WriteToJsonValue (oJsonOutPut, 'definitionFileSearchFolder', DefaultDefinitionFileName, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'definitionFileSearchFolder', DefinitionFileSearchFolder, iLevel + 1, false,
     iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'defaultInputListFileFolder', DefaultInputListFileFolder, iLevel + 1, false,
+  WriteToJsonValue (oJsonOutPut, 'inputListFileSearchFolder', InputListFileSearchFolder, iLevel + 1, false,
     iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'javaRuntimeParameter', JavaRuntimeParameter, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'logFileOutputPath', LogFileOutputPath, iLevel + 1, iWriteEmpty);
