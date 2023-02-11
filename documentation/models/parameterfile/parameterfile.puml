@@ -48,10 +48,13 @@ class Json2PumlParameter <<Pivot>>{
    outputSuffix : String
   --
    curlParameter : Array of CurlParameter
+   curlAuthenticationParameter : Array of CurlParameter
 }
 
 Json2PumlParameter::outputFormats -left-> OutputFormat
 Json2PumlParameter::inputFiles -right-> SingleFile
-Json2PumlParameter::curlParameter --> CurlParameter
+Json2PumlParameter::curlParameter --> CurlParameter::name
+Json2PumlParameter::curlAuthenticationParameter --> CurlParameter::name
+
 
 @enduml

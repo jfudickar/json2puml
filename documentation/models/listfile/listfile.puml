@@ -16,13 +16,14 @@ class OutputFormat <<Enumeration>> {
     svg
 }
 
-class InfoListDescription {
+class InputlistDescription {
     displayName : String
     description : String
-    curlParameter : Array of InfoListDescriptionCurlParameter
+    curlParameter : Array of InputlistDescriptionCurlParameter
+    curlAuthenticationParameter : Array of InputlistDescriptionCurlParameter
 }
 
-class InfoListDescriptionCurlParameter {
+class InputlistDescriptionCurlParameter {
     name : String
     displayName : String
     description : String
@@ -30,8 +31,8 @@ class InfoListDescriptionCurlParameter {
     regularExpression : String
 }
 
-class InfolistFile  <<Pivot>> {
-  description : InfoListDescription
+class InputlistFile  <<Pivot>> {
+  description : InputlistDescription
   --
   definitionFile : String
   --
@@ -55,7 +56,7 @@ class InfolistFile  <<Pivot>> {
   input : Array of SingleListFile
 }
 
-class singleListFileCurlOutputParameter {
+class curlOutputParameter {
     name : String
     value : String
     maxValues : Integer
@@ -71,15 +72,18 @@ class SingleListFile {
     ---
     curlBaseUrl : String
     curlUrl : String
+    curlFileSuffix : String
+    curlFormatOutput : Boolean
 	curlCache : Integer
     curlOptions: String
-	curlOutputParameter : <AnyRecord>
+	curlOutputParameter : Array of curlOutputParmater
 }
 
-InfolistFile::input --> SingleListFile::inputFile
-InfolistFile::outputFormats -left-> OutputFormat
-InfolistFile::description -right-> InfoListDescription::displayName
-InfoListDescription::curlParameter -right-> InfoListDescriptionCurlParameter::name
-SingleListFile::curlOutputParameter -right-> singleListFileCurlOutputParameter::name
+InputlistFile::input --> SingleListFile::inputFile
+InputlistFile::outputFormats -left-> OutputFormat
+InputlistFile::description -right-> InputlistDescription::displayName
+InputlistDescription::curlParameter -right-> InputlistDescriptionCurlParameter::name
+InputlistDescription::curlAuthenticationParameter -right-> InputlistDescriptionCurlParameter::name
+SingleListFile::curlOutputParameter -right-> curlOutputParameter::name
 
 @enduml
