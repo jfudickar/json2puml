@@ -1,0 +1,1 @@
+json2puml /inputlistfile:swapi_inputlist_local.json

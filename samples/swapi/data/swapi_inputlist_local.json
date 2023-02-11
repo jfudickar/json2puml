@@ -1,0 +1,24 @@
+{
+	"definitionFile": "swapi_definition.json",
+	"generateDetails": null,
+	"generateSummary": null,
+	"group": null,
+	"detail": null,
+	"option": null,
+	"job": null,
+	"outputFormats":["svg"],
+	"outputPath": null,
+	"outputSuffix": null,
+	"curlBaseUrl": null,
+	"curlUrlAddon": null,
+	"curlOptions": null,
+	"summaryFile": "swapi_all",
+	"input":  [
+			{
+				"inputFile": "swapi_data_*.json",
+				"splitIdentifier": null,
+				"splitInputFile": null,
+				"generateOutput": "true"
+			}
+	]
+}
