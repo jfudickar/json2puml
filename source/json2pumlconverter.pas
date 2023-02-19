@@ -890,7 +890,10 @@ begin
 
         Line := '|';
         for i := 1 to min(5, Colors.Count) do
-          Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('Objectformat', true);
+          if i = 1 then
+            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('Objectformat', true)
+          else
+            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('', true);
         Puml.Add (Line);
         Line := '|';
 

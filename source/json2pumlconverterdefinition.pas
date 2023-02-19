@@ -315,8 +315,8 @@ type
     procedure ReadListValueFromJson (iJsonValue: TJSONValue); override;
   public
     constructor Create; override;
-    procedure AddDefinition (iParentProperty, iNames, iValues, iInfos, iIncludeIndex: string;
-      iCharacteristicType: tJson2PumlCharacteristicType);
+    procedure AddDefinition (iParentProperty: string; iCharacteristicType: tJson2PumlCharacteristicType;
+      iNames: string = ''; iValues: string = ''; iInfos: string = ''; iIncludeIndex: string = '');
     procedure Assign (Source: tPersistent); override;
     function GetDefinitionByName (iPropertyName, iParentPropertyName: string; var oFoundCondition: string)
       : tJson2PumlCharacteristicDefinition;
@@ -723,7 +723,6 @@ end;
 function tJson2PumlConverterDefinition.IsGroupProperty (iPropertyName, iParentPropertyName: string;
   var oFoundCondition: string): boolean;
 var
-  Index: Integer;
   GroupName: string;
 begin
   Result := IsGroupProperty (iPropertyName, iParentPropertyName, oFoundCondition, GroupName);
@@ -1000,7 +999,6 @@ end;
 procedure tJson2PumlConverterDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
   iWriteEmpty: boolean = false);
 var
-  S: string;
   Level: Integer;
   PropertyName: string;
   WriteEmpty: boolean;
@@ -1033,18 +1031,18 @@ begin
   WriteToJsonValue (oJsonOutPut, 'legendShowFileInfos', LegendShowFileInfosStr, Level + 1, WriteEmpty);
   AttributeProperties.WriteToJson (oJsonOutPut, 'attributeProperties', Level + 1, WriteEmpty);
   ObjectProperties.WriteToJson (oJsonOutPut, 'objectProperties', Level + 1, WriteEmpty);
+  ObjectTypeProperties.WriteToJson (oJsonOutPut, 'objectTypeProperties', Level + 1, WriteEmpty);
   ObjectTypeRenames.WriteToJson (oJsonOutPut, 'objectTypeRenames', Level + 1, WriteEmpty);
-  ObjectDetailProperties.WriteToJson (oJsonOutPut, 'objectDetailProperties', Level + 1, WriteEmpty);
-  GroupProperties.WriteToJson (oJsonOutPut, 'groupProperties', Level + 1, WriteEmpty);
   ObjectIdentifierProperties.WriteToJson (oJsonOutPut, 'objectIdentifierProperties', Level + 1, WriteEmpty);
+  ObjectTitleProperties.WriteToJson (oJsonOutPut, 'objectTitleProperties', Level + 1, WriteEmpty);
+  ObjectDetailProperties.WriteToJson (oJsonOutPut, 'objectDetailProperties', Level + 1, WriteEmpty);
   RelationshipProperties.WriteToJson (oJsonOutPut, 'relationshipProperties', Level + 1, WriteEmpty);
   RelationshipTypeProperties.WriteToJson (oJsonOutPut, 'relationshipTypeProperties', Level + 1, WriteEmpty);
-  ObjectTitleProperties.WriteToJson (oJsonOutPut, 'objectTitleProperties', Level + 1, WriteEmpty);
-  ObjectTypeProperties.WriteToJson (oJsonOutPut, 'objectTypeProperties', Level + 1, WriteEmpty);
   RelationshipTypeArrowFormats.WriteToJson (oJsonOutPut, 'relationshipTypeArrowFormats', Level + 1, WriteEmpty);
+  GroupProperties.WriteToJson (oJsonOutPut, 'groupProperties', Level + 1, WriteEmpty);
+  CharacteristicProperties.WriteToJson (oJsonOutPut, 'characteristicProperties', Level + 1, WriteEmpty);
   HiddenProperties.WriteToJson (oJsonOutPut, 'hiddenProperties', Level + 1, WriteEmpty);
   PUMLHeaderLines.WriteToJson (oJsonOutPut, 'pumlHeaderLines', Level + 1, WriteEmpty);
-  CharacteristicProperties.WriteToJson (oJsonOutPut, 'characteristicProperties', Level + 1, WriteEmpty);
   ObjectFormats.WriteToJson (oJsonOutPut, 'objectFormats', Level + 1, WriteEmpty);
   ClearLastLineComma (oJsonOutPut);
   oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(Level)]));
@@ -1866,8 +1864,9 @@ begin
   OwnsObjects := true;
 end;
 
-procedure tJson2PumlCharacteristicDefinitionList.AddDefinition (iParentProperty, iNames, iValues, iInfos,
-  iIncludeIndex: string; iCharacteristicType: tJson2PumlCharacteristicType);
+procedure tJson2PumlCharacteristicDefinitionList.AddDefinition (iParentProperty: string;
+  iCharacteristicType: tJson2PumlCharacteristicType; iNames: string = ''; iValues: string = ''; iInfos: string = '';
+  iIncludeIndex: string = '');
 var
   intDefinition: tJson2PumlCharacteristicDefinition;
   i: Integer;
@@ -1898,9 +1897,8 @@ begin
   begin
     Clear;
     for intDefinition in tJson2PumlCharacteristicDefinitionList (Source) do
-      AddDefinition (intDefinition.ParentProperty, intDefinition.NameProperties.Text,
-        intDefinition.ValueProperties.Text, intDefinition.InfoProperties.Text, intDefinition.IncludeIndexStr,
-        intDefinition.CharacteristicType);
+      AddDefinition (intDefinition.ParentProperty, intDefinition.CharacteristicType, intDefinition.NameProperties.Text,
+        intDefinition.ValueProperties.Text, intDefinition.InfoProperties.Text, intDefinition.IncludeIndexStr);
   end;
 end;
 
@@ -1946,7 +1944,12 @@ begin
     Values := GetJsonStringArray (DefinitionRecord, 'valueProperty');
     Infos := GetJsonStringArray (DefinitionRecord, 'infoProperty');
     IncludeIndex := GetJsonStringArray (DefinitionRecord, 'includeIndex');
-    AddDefinition (ParentProperty, Names, Values, Infos, IncludeIndex, cType);
+    AddDefinition (ParentProperty, cType, Names, Values, Infos, IncludeIndex);
+  end
+  else if iJsonValue is TJSONString then
+  begin
+    ParentProperty := TJSONString (iJsonValue).Value;
+    AddDefinition (ParentProperty, jctRecord);
   end;
 end;
 
@@ -2034,17 +2037,28 @@ procedure tJson2PumlCharacteristicDefinition.WriteToJson (oJsonOutPut: TStrings;
   iWriteEmpty: boolean = false);
 var
   Value: string;
+  IsRecord : Boolean;
 begin
+  IsRecord := True;
   if CharacteristicType = jctRecord then
-    Value := JsonAttributeValue ('parentProperty', ParentProperty) + JsonAttributeValue ('type',
-      CharacteristicType.ToString + JsonAttributeValue('includeIndex', IncludeIndexStr))
+    if Not IncludeIndex then
+    begin
+      Value := ClearPropertyValue(ParentProperty);
+      IsRecord := False;
+    end
+    else
+      Value := JsonAttributeValue('parentProperty', ParentProperty) + JsonAttributeValue('type',
+        CharacteristicType.ToString) + JsonAttributeValue('includeIndex', IncludeIndexStr)
   else
-    Value := JsonAttributeValue ('parentProperty', ParentProperty) + JsonAttributeValue ('type',
-      CharacteristicType.ToString) + JsonAttributeValue ('nameProperty', NameProperties.Text) +
-      JsonAttributeValue ('valueProperty', ValueProperties.Text) + JsonAttributeValue ('infoProperty',
-      InfoProperties.Text) + JsonAttributeValue ('includeIndex', IncludeIndexStr);
-  oJsonOutPut.Add (Format('%s%s{%s},', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName),
-    Value.trimRight([',', ' '])]));
+    Value := JsonAttributeValue('parentProperty', ParentProperty) + JsonAttributeValue('type',
+      CharacteristicType.ToString) + JsonAttributeValue('nameProperty', NameProperties.Text) +
+      JsonAttributeValue('valueProperty', ValueProperties.Text) + JsonAttributeValue('infoProperty',
+      InfoProperties.Text) + JsonAttributeValue('includeIndex', IncludeIndexStr);
+  if IsRecord then
+    Value := Format ('{%s}', [Value.trimRight([',', ' '])])
+  else
+    Value := Format ('"%s"', [Value]);
+  oJsonOutPut.Add (Format('%s%s%s,', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName), Value]));
 end;
 
 procedure tJson2PumlObjectDefinition.Assign (Source: tPersistent);

@@ -42,7 +42,7 @@ type
 
 const
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',
-    'zip', 'filelist.json');
+    'zip', 'filelist');
   cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '',
     '', '', '');
   cJson2PumlServiceResultName: array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile',

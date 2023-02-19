@@ -58,6 +58,10 @@ type
     [MVCHTTPMethod([httpPOST])]
     procedure HandleJson2PumlRequestSvg;
 
+    [MVCPath('/json2pumlRequestPng')]
+    [MVCHTTPMethod([httpPOST])]
+    procedure HandleJson2PumlRequestPng;
+
     [MVCPath('/json2pumlRequestZip')]
     [MVCHTTPMethod([httpPOST])]
     procedure HandleJson2PumlRequestZip;
@@ -108,7 +112,7 @@ end;
 
 procedure TJson2PumlController.GetDefinitionFiles;
 begin
-  GetFileListResponse (GlobalConfigurationDefinition.DefaultDefinitionFileFolder, false);
+  GetFileListResponse (GlobalConfigurationDefinition.DefinitionFileSearchFolder, false);
 end;
 
 procedure TJson2PumlController.GetFileListResponse (iFileList: tstringlist; iInputList: Boolean);
@@ -139,7 +143,7 @@ end;
 
 procedure TJson2PumlController.GetInputListFile;
 begin
-  GetFileListResponse (GlobalConfigurationDefinition.DefaultInputListFileFolder, true);
+  GetFileListResponse (GlobalConfigurationDefinition.InputListFileSearchFolder, true);
 end;
 
 procedure TJson2PumlController.Index;
@@ -180,6 +184,54 @@ begin
         Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
         Render (InputHandler.ServerResultLines.Text);
         Context.Response.StatusCode := HTTP_STATUS.OK;
+      end
+      else
+      begin
+        Context.Response.StatusCode := HTTP_STATUS.BadRequest;
+        RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+      end;
+      InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
+    except
+      on e: exception do
+      begin
+        GlobalLoghandler.Error (e.Message);
+        GlobalLoghandler.Error (e.StackTrace);
+        RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
+      end;
+    end;
+  finally
+    InputHandler.Free;
+  end;
+  LogRequestEnd (Context);
+end;
+
+procedure TJson2PumlController.HandleJson2PumlRequestPng;
+var
+  InputHandler: TJson2PumlInputHandler;
+  f: tJson2PumlInputFileDefinition;
+begin
+  LogRequestStart (Context);
+  InputHandler := TJson2PumlInputHandler.Create (jatService);
+  try
+    try
+      InputHandler.CmdLineParameter.ReadInputParameter;
+      InputHandler.CmdLineParameter.GenerateDetailsStr := 'false';
+      InputHandler.CmdLineParameter.GenerateSummaryStr := 'true';
+      InputHandler.CmdLineParameter.OutputFormatStr := jofPng.ToString;
+      InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
+      InputHandler.CmdLineParameter.CurlPassThroughHeader := GetCurlTracePassThroughHeader (Context);
+      InputHandler.LoadDefinitionFiles;
+      if not GlobalLoghandler.Failed then
+      begin
+        f := InputHandler.ConverterInputList.SummaryInputFile;
+        if Assigned (f) and f.Exists then
+        begin
+          Context.Response.ContentType := TMVCMediaType.IMAGE_PNG;
+          SendFile (f.Output.PNGFileName);
+          Context.Response.StatusCode := HTTP_STATUS.OK;
+        end
+        else
+          RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
       end
       else
       begin
