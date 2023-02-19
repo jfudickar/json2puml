@@ -24,3 +24,13 @@ java -jar ..\..\plantuml\plantuml.jar 	parameterfile\parameterfile.puml -svg
 
 java -jar ..\..\plantuml\plantuml.jar 	curlparameterfile\curlparameterfile.puml -png
 java -jar ..\..\plantuml\plantuml.jar 	curlparameterfile\curlparameterfile.puml -svg
+
+java -jar ..\..\plantuml\plantuml.jar 	getdefinitionfiles\getdefinitionfiles.puml -png
+java -jar ..\..\plantuml\plantuml.jar 	getdefinitionfiles\getdefinitionfiles.puml -svg
+
+java -jar ..\..\plantuml\plantuml.jar 	getinputlistfiles\getinputlistfiles.puml -png
+java -jar ..\..\plantuml\plantuml.jar 	getinputlistfiles\getinputlistfiles.puml -svg
+
+java -jar ..\..\plantuml\plantuml.jar 	json2pumlrequest\json2pumlrequest.puml -png
+java -jar ..\..\plantuml\plantuml.jar 	json2pumlrequest\json2pumlrequest.puml -svg
+

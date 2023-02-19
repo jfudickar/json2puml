@@ -1,0 +1,44 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class FileDefinition{
+   outputFileName : String
+   fullFileName : String
+   content : String
+}
+
+class OutputFile {
+   source : String
+   curlCommand : String
+   svgFile : FileDefinition
+   pngFile : FileDefinition
+   pumlFile : FileDefinition
+   logFile : FileDefinition
+   zipFile : FileDefinition
+}
+
+class json2pumlRequest <<pivot>> {
+   summaryFile : OutputFile
+   detailFiles : Array of OutputFiles
+}
+
+
+json2pumlRequest::summaryFile -right-> "0..1" OutputFile
+json2pumlRequest::detailFiles --> "0..*" OutputFile
+OutputFile::svgFile -right-> FileDefinition
+OutputFile::pngFile -right-> FileDefinition
+OutputFile::pumlFile -right-> FileDefinition
+OutputFile::logFile -right-> FileDefinition
+OutputFile::zipFile -right-> FileDefinition
+
+
+@enduml

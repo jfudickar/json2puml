@@ -11,9 +11,14 @@ skinparam class {
 }
 
 
-class CurlParameter <<Pivot>>{
+class CurlParameter {
 	name : String
 	value : String
 }
 
+class CurlParameterList <<Pivot>>{
+   Array of CurlParameter
+}
+
+CurlParameterList -right-> "0..*" CurlParameter 
 @enduml

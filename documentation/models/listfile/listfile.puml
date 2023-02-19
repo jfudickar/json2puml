@@ -81,7 +81,7 @@ class SingleListFile {
 
 InputlistFile::input --> SingleListFile::inputFile
 InputlistFile::outputFormats -left-> OutputFormat
-InputlistFile::description -right-> InputlistDescription::displayName
+InputlistFile::description -up-> InputlistDescription
 InputlistDescription::curlParameter -right-> InputlistDescriptionCurlParameter::name
 InputlistDescription::curlAuthenticationParameter -right-> InputlistDescriptionCurlParameter::name
 SingleListFile::curlOutputParameter -right-> curlOutputParameter::name

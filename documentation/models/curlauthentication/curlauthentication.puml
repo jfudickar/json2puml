@@ -16,5 +16,16 @@ class CurlParameter {
 	value : String
 }
 
+class UrlConfiguration {
+   baseUrl : String
+   parameter : Array of CurlParameter
+}
+
+class UrlAuthentication <<pivot>> {
+   Array of UrlConfiguration
+}
+
+UrlAuthentication --> "0..*" UrlConfiguration
+UrlConfiguration::parameter -right-> "0..*" CurlParameter
 
 @enduml

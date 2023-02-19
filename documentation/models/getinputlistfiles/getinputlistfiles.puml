@@ -1,0 +1,48 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class DefinitionFile{
+   name : String
+   displayName : String
+   description : String
+   options : Array of string
+}
+class CurlParameter{
+   name : String
+   displayName : String
+   description : String
+   mandatory : Boolean
+   RegularExpression : String
+}
+
+class InputListFile {
+   name : String
+   displayName : String
+   description : String
+   definitionFile : DefinitionFile
+   curlParameter : Array of CurlParameter
+   curlAuthenticationParameter : Array of CurlParameter
+}
+
+class InputListFiles <<pivot>>{
+   Array of InputListFile
+}
+InputListFiles -right-> "0..*" InputListFile
+InputListFile::definitionFile --> "0..1" DefinitionFile
+InputListFile::curlParameter --> "0..*" CurlParameter
+InputListFile::curlAuthenticationParameter -> "0..*" CurlParameter
+
+CurlParameter -[hidden]up-> DefinitionFile
+CurlParameter <-[hidden]left- DefinitionFile
+
+
+@enduml

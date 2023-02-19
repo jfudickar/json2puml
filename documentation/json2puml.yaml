@@ -55,9 +55,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Json2PumlResponse'          
+  /json2pumlRequestPng:
+    post:
+      description: 'Execute a json2puml curl and generation call and returns the summary PNG file'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Json2PumlRequest'
+      responses:
+        '200':
+          description: Successful operation, returns the generated PNG file
+          content:
+            image/*:
+              schema: 
+                type: string
+                format: binary
   /json2pumlRequestSvg:
     post:
-      description: 'Execute a json2puml curl and generation call'
+      description: 'Execute a json2puml curl and generation call and returns the summary SVG file'
       requestBody:
         content:
           application/json:
@@ -73,7 +89,7 @@ paths:
                 format: binary
   /json2pumlRequestZip:
     post:
-      description: 'Execute a json2puml curl and generation call'
+      description: 'Execute a json2puml curl and generation call and returns a zip file containing all generated filee'
       requestBody:
         content:
           application/json:
