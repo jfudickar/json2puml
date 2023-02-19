@@ -50,6 +50,7 @@ Source: "..\source\Win64\Release\json2puml.exe"; DestDir: "{app}\bin"; Flags: ig
 Source: "..\source\Win64\Release\json2pumlui.exe"; DestDir: "{app}\bin"; Flags: ignoreversion; Components: Windows
 Source: "..\source\Win64\Release\json2pumlservice.exe"; DestDir: "{app}\bin"; Flags: ignoreversion; Components: Windows
 Source: "..\source\Win64\Release\json2pumlwindowsservice.exe"; DestDir: "{app}\bin"; Flags: ignoreversion; Components: Windows
+Source: "cmdfiles\*install_json2pumlwindowsservice.cmd"; DestDir: "{app}\bin"; Flags: ignoreversion; Components: Windows
 Source: "..\source\Linux64\Release\json2puml"; DestDir: "{app}\bin\linux"; Flags: ignoreversion; Components: Linux
 Source: "..\source\Linux64\Release\json2pumlservice"; DestDir: "{app}\bin\linux"; Flags: ignoreversion; Components: Linux
 Source: "..\source\Linux64\Release\json2puml"; DestDir: "{app}\docker\src\json2puml\bin\"; Flags: ignoreversion; Components: Docker
@@ -76,7 +77,7 @@ Source: "..\samples\tmf\tmf-productdetail.json"; DestDir: "{app}\samples\tmf"; C
 Source: "..\samples\tmf\*.md"; DestDir: "{app}\samples\tmf"; Components: Samples
 Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\service\*.json"; DestDir: "{app}\samples\service"; Components: Samples
-Source: "..\samples\service\*.cmd"; DestDir: "{app}\samples\service"; Components: Samples
+Source: "..\samples\service\*.cmd"; DestDir: "{app}\samples\service"; Components: Samples; Excludes: "*vm.cmd" 
 Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\tvmaze\*.json"; DestDir: "{app}\samples\tvmaze"; Components: Samples
 Source: "..\samples\tvmaze\*.cmd"; DestDir: "{app}\samples\tvmaze"; Components: Samples
@@ -110,6 +111,7 @@ Name: "{app}\samples\tmf"; Components: Samples
 Name: "{app}\samples\swapi"; Components: Samples
 Name: "{app}\samples\jsonplaceholder"; Components: Samples
 Name: "{app}\samples\service"; Components: Samples
+Name: "{app}\samples\service\result"; Components: Samples
 Name: "{app}\samples\tvmaze"; Components: Samples
 Name: "{app}\samples\spacex"; Components: Samples
 Name: "{app}\docker"; Components: Docker
@@ -118,6 +120,7 @@ Name: "{app}\docker"; Components: Docker
 Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "PlantUmlJarFile"; ValueData: "{app}\plantuml\{#plantumljarfile}"; Flags: uninsdeletevalue; Tasks: downloadPlantUml
 Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "Json2PumlDefinitionFile"; Flags: uninsdeletevalue createvalueifdoesntexist
 Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "Json2PumlCurlAuthenticationFile"; Flags: uninsdeletevalue createvalueifdoesntexist
+Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "Json2PumlConfigurationFile"; Flags: uninsdeletevalue createvalueifdoesntexist
 
 [Tasks]
 Name: "envPath"; Description: "Add bin directory to PATH variable"

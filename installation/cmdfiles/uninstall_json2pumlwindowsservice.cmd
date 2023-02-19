@@ -1,0 +1,1 @@
+json2pumlwindowsservice.exe /uninstall
