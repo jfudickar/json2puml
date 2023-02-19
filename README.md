@@ -22,6 +22,10 @@ Make data visible and understandable
 2. Convert json files into plantuml configuration files
 3. [optional] Use the Plantuml executabe to generate images based on the plantuml configuration files.
 
+**plantuml** is a wonderfull tool to generate a various type of images and diagrams based on a text definition file.
+You can find further details around **plantuml** here : https://plantuml.com/en/
+
+
 # How to start
 A full documentation can be found in the documentation folder.
 Sample files for different public api's can be found in the samples folder.
