@@ -2,7 +2,7 @@
 	"definitionFile": "",
 	"inputListFile": "placeholder_inputlist_curl.json",
 	"generateSummary": "true",
-	"generateDetails": "false",
+	"generateDetails": "true",
 	"outputFormats": "svg,log,json,puml,zip",
 	"option": "default",
 	"curlParameter": [
