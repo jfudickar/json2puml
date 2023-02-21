@@ -7,7 +7,7 @@
 	"option": "default",
 	"curlParameter": [
 			{
-				"${id}": "1"
+				"${userid}": "1"
 			}
 	]
 }
