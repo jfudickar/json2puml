@@ -36,7 +36,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.ComCtrls, Vcl.ToolWin,
   System.ImageList, Vcl.ImgList, Vcl.StdActns, System.Actions, Vcl.ActnList,
   json2pumlframe, json2pumldefinition, Vcl.ActnMenus, Vcl.ActnMan, Vcl.ActnCtrls,
-  Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls;
+  Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB, Datasnap.DBClient,
+  Vcl.DBGrids;
 
 type
   tSingleFileFrame = class(TObject)
@@ -171,7 +172,7 @@ type
     Label19: TLabel;
     CurlParameterFileEdit: TEdit;
     Label20: TLabel;
-    CurlParameterTabSheet: TTabSheet;
+    CurlParameterFileTabSheet: TTabSheet;
     RelaoadAndConvertFilesCurlParameterAction: TAction;
     OpenCurlParameterAction: TAction;
     SaveCurlParameterAction: TAction;
@@ -179,8 +180,6 @@ type
     CurlParameterFilePanel: TPanel;
     CurlParameterFileLabel: TLabel;
     ActionToolBar3: TActionToolBar;
-    Label21: TLabel;
-    curlParameterStringGrid: TStringGrid;
     Label22: TLabel;
     outputsuffixEdit: TEdit;
     Label23: TLabel;
@@ -205,6 +204,19 @@ type
     TabSheet2: TTabSheet;
     ServiceInputListFileResultPanel: TPanel;
     ServiceDefinitionFileResultPanel: TPanel;
+    CurlParameterPageControl: TPageControl;
+    CurlParameterTabSheet1: TTabSheet;
+    CurlAuthenticationParameterTabSheet: TTabSheet;
+    CurlParameterDBGrid: TDBGrid;
+    CurlParameterDataSource: TDataSource;
+    CurlParameterDataSet: TClientDataSet;
+    CurlParameterDataSetName: TStringField;
+    CurlParameterDataSetValue: TStringField;
+    CurlAuthenticationParameterDataSource: TDataSource;
+    CurlAuthenticationParameterDataset: TClientDataSet;
+    StringField1: TStringField;
+    StringField2: TStringField;
+    CurlAuthenticationParameterDBGrid: TDBGrid;
     procedure ShowParameterFileActionExecute (Sender: TObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
@@ -436,9 +448,6 @@ begin
 end;
 
 procedure Tjson2pumlMainForm.CommandLineToForm;
-var
-  Parameter: tJson2PumlCurlParameterDefinition;
-  r: Integer;
 
   procedure setCheckBox (iCheckBox: TCheckBox; iValue: string);
   begin
@@ -446,6 +455,16 @@ var
       iCheckBox.State := cbGrayed
     else
       iCheckBox.Checked := iValue.ToBoolean;
+  end;
+
+  procedure FillDataset (iDataset: tDataset; iCurlParameter: tJson2PumlCurlParameterList);
+  var
+    Parameter: tJson2PumlCurlParameterDefinition;
+  begin
+    while iDataset.RecordCount > 0 do
+      iDataset.Delete;
+    for Parameter in iCurlParameter do
+      iDataset.InsertRecord ([Parameter.Name, Parameter.Value]);
   end;
 
 begin
@@ -480,19 +499,8 @@ begin
   titlefilterEdit.Text := InputHandler.CmdLineParameter.TitleFilter;
   generateoutputdefinitionCheckBox.Checked := InputHandler.CmdLineParameter.GenerateOutputDefinition;
   debugCheckBox.Checked := InputHandler.CmdLineParameter.Debug;
-  curlParameterStringGrid.RowCount := InputHandler.CmdLineParameter.CurlParameter.Count + 1;
-  curlParameterStringGrid.ColCount := 2;
-  curlParameterStringGrid.ColWidths[0] := round (curlParameterStringGrid.Width / 2);
-  curlParameterStringGrid.ColWidths[1] := round (curlParameterStringGrid.Width / 2);
-  curlParameterStringGrid.Cells[0, 0] := 'Name';
-  curlParameterStringGrid.Cells[1, 0] := 'Value';
-  r := 0;
-  for Parameter in InputHandler.CmdLineParameter.CurlParameter do
-  begin
-    r := r + 1;
-    curlParameterStringGrid.Cells[0, r] := Parameter.Name;
-    curlParameterStringGrid.Cells[1, r] := Parameter.Value;
-  end;
+  FillDataset (CurlParameterDataSet,  InputHandler.CmdLineParameter.CurlParameter);
+  FillDataset (CurlAuthenticationParameterDataset,  InputHandler.CmdLineParameter.CurlAuthenticationParameter);
 end;
 
 procedure Tjson2pumlMainForm.ConvertAllFrames;
@@ -703,8 +711,18 @@ procedure Tjson2pumlMainForm.FormToCommandline;
       Result := cfalse;
   end;
 
-var
-  i: Integer;
+  procedure FillParameterList (iCurlParameter :  tJson2PumlCurlParameterList; iDataset : TDataSet);
+  begin
+  iCurlParameter.Clear;
+  iDataset.First;
+  while not iDataset.Eof do
+  begin
+    iCurlParameter.AddParameter (iDataset.fieldValues['Name'],
+      iDataset.fieldValues['Value']);
+    iDataset.Next;
+  end;
+  end;
+
 
 begin
   InputHandler.CmdLineParameter.PlantUmlJarFileName := PlantUmlJarFileEdit.Text;
@@ -735,10 +753,8 @@ begin
   InputHandler.CmdLineParameter.TitleFilter := titlefilterEdit.Text;
   InputHandler.CmdLineParameter.GenerateOutputDefinition := generateoutputdefinitionCheckBox.Checked;
   InputHandler.CmdLineParameter.Debug := debugCheckBox.Checked;
-  InputHandler.CmdLineParameter.CurlParameter.Clear;
-  for i := 1 to curlParameterStringGrid.RowCount - 1 do
-    InputHandler.CmdLineParameter.CurlParameter.AddParameter (curlParameterStringGrid.Cells[0, i],
-      curlParameterStringGrid.Cells[1, i]);
+  FillParameterList (InputHandler.CmdLineParameter.CurlParameter, CurlParameterDataSet);
+  FillParameterList (InputHandler.CmdLineParameter.CurlAuthenticationParameter, CurlAuthenticationParameterDataset);
 end;
 
 procedure Tjson2pumlMainForm.GenerateServiceListResults;
@@ -1099,7 +1115,7 @@ end;
 
 procedure Tjson2pumlMainForm.ShowCurlParameterActionExecute (Sender: TObject);
 begin
-  MainPageControl.ActivePage := CurlParameterTabSheet;
+  MainPageControl.ActivePage := CurlParameterFileTabSheet;
 end;
 
 procedure Tjson2pumlMainForm.ShowDefinitionFileActionExecute (Sender: TObject);

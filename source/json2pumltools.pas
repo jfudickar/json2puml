@@ -39,16 +39,21 @@ function ClearPropertyValue (iValue: string): string;
 
 type
   TCurlUtils = class
+  private
+    class function CalculateCommandExecute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+      const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList; iIncludeWriteOut: Boolean): string;
+    class function FullUrl (const iBaseUrl: string; const iUrlParts: array of string;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
   public
-    class function FullUrl(const iBaseUrl: string; const iUrlParts: array of string; iCurlParameterList,
-        iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
-    class function CalculateCommand(const iUrl: string; const iOptions: array of string; const iOutputFile: string;
-        iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+    class function CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+      const iOutputFile: string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+      iIncludeWriteOut: Boolean): string;
     class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
       var oErrorMessage: string): Boolean;
     class function Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const iOutputFile: string;
         iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList, iCurlParameterList:
-        tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
+        tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
   end;
 
 function FileCount (iFileFilter: string): Integer;
@@ -95,7 +100,7 @@ function PathCombineIfRelative (iBasePath, iPath: string): string;
 
 function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
 
-procedure AddFileToZipFile(iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
+procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
 
 {$IFDEF LINUX}
 
@@ -586,33 +591,50 @@ begin
       Result[i] := iReplaceWith;
 end;
 
-class function TCurlUtils.FullUrl(const iBaseUrl: string; const iUrlParts: array of string; iCurlParameterList,
-    iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+class function TCurlUtils.FullUrl (const iBaseUrl: string; const iUrlParts: array of string;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
 begin
-  Result := string.Join('/',[iBaseUrl.TrimRight(['/']), string.join('', iUrlParts).Trim(['/'])]);
+  Result := string.Join ('/', [iBaseUrl.TrimRight(['/']), string.Join('', iUrlParts).Trim(['/'])]);
   if Assigned (iCurlDetailParameterList) then
     Result := iCurlDetailParameterList.ReplaceParameterValues (Result);
   if Assigned (iCurlParameterList) then
     Result := iCurlParameterList.ReplaceParameterValues (Result);
 end;
 
-class function TCurlUtils.CalculateCommand(const iUrl: string; const iOptions: array of string; const iOutputFile:
-    string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+class function TCurlUtils.CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+  const iOutputFile: string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+  iIncludeWriteOut: Boolean): string;
+begin
+  Result := CalculateCommandExecute (iBaseUrl, iUrlParts, iOptions, iOutputFile, nil, iCurlParameterList,
+    iCurlDetailParameterList, iIncludeWriteOut);
+end;
+
+class function TCurlUtils.CalculateCommandExecute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+  const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList; iIncludeWriteOut: Boolean): string;
 var
   Command: string;
+  Url: string;
 begin
 
   Result := '';
 
-  if iUrl.isEmpty then
+  Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
+  if Url.isEmpty then
     Exit;
 
-  Command := Format ('--url "%s" %s --output "%s"', [iUrl, string.Join(' ', iOptions).Trim, iOutputFile]);
+  Command := Format ('--url "%s" %s', [Url, string.Join(' ', iOptions).Trim]);
+  if Assigned (iCurlAuthenticationList) then
+    Command := iCurlAuthenticationList.ReplaceParameterValues (iBaseUrl, Command);
+  Command := Format ('%s --output "%s"', [Command, iOutputFile]);
 
   if Assigned (iCurlDetailParameterList) then
     Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
   if Assigned (iCurlParameterList) then
     Command := iCurlParameterList.ReplaceParameterValues (Command);
+  if iIncludeWriteOut then
+    Command := Format ('%s --write-out "%s" ',
+      [Command, '\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}']);
 
   Result := Command;
 end;
@@ -666,10 +688,9 @@ end;
 
 class function TCurlUtils.Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const
     iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList,
-    iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer): Boolean;
+    iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
 var
-  url: string;
-  ProtocolCommand: string;
+  Url: string;
   Command: string;
   FilePath: string;
   Authentication: tJson2PumlCurlAuthenticationDefinition;
@@ -684,39 +705,32 @@ begin
   if iOutputFile.Trim.isEmpty then
     Exit;
 
-  url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
-  if url.trim.isEmpty then
+  Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
+  if Url.Trim.isEmpty then
     Exit;
 
-  ProtocolCommand := CalculateCommand (url, iOptions, iOutputFile, iCurlParameterList, iCurlDetailParameterList);
-  if ProtocolCommand.isEmpty then
+  oProtocolCurlCommand := CalculateCommand (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlParameterList,
+    iCurlDetailParameterList, true);
+  if oProtocolCurlCommand.isEmpty then
     Exit;
+  oProtocolCurlCommand := Format ('%s %s', ['curl', oProtocolCurlCommand]);
 
-  ProtocolCommand := Format ('%s --write-out "%s" ',
-    [ProtocolCommand, '\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}']);
+  Command := CalculateCommandExecute (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlAuthenticationList,
+    iCurlParameterList, iCurlDetailParameterList, true);
 
-  Command := ProtocolCommand;
-  ProtocolCommand := Format ('%s %s', ['curl', ProtocolCommand]);
   FilePath := tPath.GetDirectoryName (iOutputFile);
   if tPath.IsRelativePath (FilePath) or IsLinuxHomeBasedPath (FilePath) then
     FilePath := ExpandFileName (FilePath);
   GenerateDirectory (FilePath);
-
-  if Assigned (iCurlAuthenticationList) then
-  begin
-    Authentication := iCurlAuthenticationList.FindAuthentication (iBaseUrl);
-    if Assigned (Authentication) then
-      Command := Authentication.Parameter.ReplaceParameterValues (Command);
-  end;
 
   if (iCurlCache > 0) and FileExists (iOutputFile) then
   begin
     FileLastWriteDate := tFile.GetLastWriteTime (iOutputFile);
     if Now - FileLastWriteDate < iCurlCache / (24 * 60 * 60) then
     begin
-      GlobalLoghandler.Info (ProtocolCommand);
+      GlobalLoghandler.Info (oProtocolCurlCommand);
       GlobalLoghandler.Info ('  curl skipped - %s is not older then %d seconds.', [iOutputFile, iCurlCache]);
-      Result := True;
+      Result := true;
       Exit;
     end;
   end;
@@ -727,7 +741,7 @@ begin
   vCommandOutPut := TStringList.Create;
   vCommandErrors := TStringList.Create;
   try
-    ExecuteCommand ('curl ' + Command, ProtocolCommand, vCommandOutPut, vCommandErrors);
+    ExecuteCommand ('curl ' + Command, oProtocolCurlCommand, vCommandOutPut, vCommandErrors);
     Result := GetResultFromOutput (iOutputFile, vCommandOutPut, vErrorMessage);
   finally
     vCommandOutPut.Free;
@@ -735,13 +749,13 @@ begin
   end;
   if Result then
     GlobalLoghandler.Info ('  curl "%s" fetched to "%s" (%d ms)',
-      [url, iOutputFile, MillisecondsBetween(Now, StartTime)])
+      [Url, iOutputFile, MillisecondsBetween(Now, StartTime)])
   else
   begin
-    if FileExists(iOutputFile) then
-      tFile.SetLastWriteTime(iOutputFile, now-10);
+    if FileExists (iOutputFile) then
+      tFile.SetLastWriteTime (iOutputFile, Now - 10);
     GlobalLoghandler.Warn ('Fetching from "%s" for "%s" FAILED (%d ms) : [%s]',
-      [url, iOutputFile, MillisecondsBetween(Now, StartTime), vErrorMessage]);
+      [Url, iOutputFile, MillisecondsBetween(Now, StartTime), vErrorMessage]);
   end;
 end;
 
@@ -882,12 +896,10 @@ begin
   end;
 end;
 
-
-procedure AddFileToZipFile(iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
+procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
 begin
-  if FileExists(iFileName)  then
-    iZipFile.Add (iFileName, iFileName.Replace(iRemoveDirectory, '').TrimLeft(TPath.DirectorySeparatorChar));
+  if FileExists (iFileName) then
+    iZipFile.Add (iFileName, iFileName.replace(iRemoveDirectory, '').TrimLeft(tPath.DirectorySeparatorChar));
 end;
-
 
 end.

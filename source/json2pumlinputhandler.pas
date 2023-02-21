@@ -331,7 +331,7 @@ begin
   FCurlAuthenticationList := tJson2PumlCurlAuthenticationList.Create ();
   FCurlParameterList := tJson2PumlCurlParameterList.Create ();
   FCurlParameterList.MulitpleValues := true;
-  FConverterInputList := tJson2PumlInputList.CreateOnCalculate(CalculateOutputFileNamePath);
+  FConverterInputList := tJson2PumlInputList.CreateOnCalculate (CalculateOutputFileNamePath);
   FConverterInputList.CurlAuthenticationList := CurlAuthenticationList;
   FConverterInputList.CurlParameterList := CurlParameterList;
   FOptionFileDefinition := tJson2PumlConverterDefinition.Create ();
@@ -600,6 +600,7 @@ begin
     BeforeDeleteAllRecords (self);
   HandlerRecordList.Clear;
   CurlParameterList.Clear;
+  CurlAuthenticationList.AdditionalCurlParameter.Clear;
 end;
 
 procedure TJson2PumlInputHandler.ConvertAllRecords (iIndex: Integer = - 1);
@@ -1259,7 +1260,7 @@ begin
   Filename := GlobalConfiguration.FindInputListFile (CurrentInputListFileName);
   if not Filename.IsEmpty then
     CmdLineParameter.InputListFileName := Filename
-  else
+  else if not CurrentInputListFileName.IsEmpty then
     GlobalLoghandler.Warn ('InputListFile : "%s" not found', [CurrentInputListFileName]);
   Result := LoadFileToStringList (InputListLines, Filename, 'InputListFile', tJson2PumlInputList,
     ParseInputListFile, false);
@@ -1320,6 +1321,8 @@ begin
 
   CurlParameterList.AddParameter (CmdLineParameter.CurlParameter);
   CurlParameterList.AddParameter (ParameterDefinition.CurlParameter);
+  CurlAuthenticationList.AdditionalCurlParameter.AddParameter (CmdLineParameter.CurlAuthenticationParameter);
+  CurlAuthenticationList.AdditionalCurlParameter.AddParameter (ParameterDefinition.CurlAuthenticationParameter);
 end;
 
 procedure TJson2PumlInputHandler.ParseInputListFile;
@@ -1408,7 +1411,7 @@ var
 begin
   if not FileExists (iFileName) then
     Exit;
-  NewFileName := TPath.ChangeExtension(iFileName, 'formatted.json');
+  NewFileName := tpath.ChangeExtension (iFileName, 'formatted.json');
   FileList := TStringList.Create;
   Definition := iClass.Create;
   try
@@ -1446,7 +1449,8 @@ function TJson2PumlInputHandler.ValidateCurrentOptions: Boolean;
 
   procedure log (iName, iValue: string);
   begin
-    GlobalLoghandler.InfoParameter ('', iName, iValue);
+    if not iValue.IsEmpty then
+      GlobalLoghandler.InfoParameter ('', iName, iValue);
   end;
 
 var
@@ -1457,6 +1461,7 @@ begin
   GlobalLoghandler.Info ('');
   GlobalLoghandler.Info ('Current Configuration');
   log ('Option', CurrentOption);
+  log ('Job', CurrentJobName);
   log ('Group', CurrentGroup);
   log ('Detail', CurrentDetail);
   log ('OutputPath', CurrentOutputPath);
@@ -1471,9 +1476,14 @@ begin
   for InputFile in ConverterInputList do
     if InputFile.GenerateOutput and not InputFile.IsSummaryFile then
       GlobalLoghandler.Info ('  %s', [InputFile.OutputFileName]);
-  GlobalLoghandler.Info ('Curl Parameter');
+  if CurlParameterList.Count > 0 then
+    GlobalLoghandler.Info ('Curl Parameter');
   for CurlParameter in CurlParameterList do
-    log (CurlParameter.name, CurlParameter.Value);
+    log ('  '+CurlParameter.name, CurlParameter.Value);
+  if CurlAuthenticationList.AdditionalCurlParameter.Count > 0 then
+    GlobalLoghandler.Info ('Curl Authentication Parameter');
+  for CurlParameter in CurlAuthenticationList.AdditionalCurlParameter do
+    log ('  '+CurlParameter.name, '****');
   GlobalLoghandler.Info ('');
 end;
 

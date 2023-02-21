@@ -98,6 +98,7 @@ type
   tJson2PumlParameterFileDefinition = class(tJson2PumlBaseObject)
   private
     FCurlParameter: tJson2PumlCurlParameterList;
+    FCurlAuthenticationParameter: tJson2PumlCurlParameterList;
     FDefinitionFileName: string;
     FDescription: string;
     FDetail: string;
@@ -127,17 +128,18 @@ type
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
-    property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property DefinitionFileNameExpanded: string read GetDefinitionFileNameExpanded;
+    property GenerateDetails: boolean read GetGenerateDetails;
     property GenerateSummary: boolean read GetGenerateSummary;
     property InputFiles: tJson2PumlParameterInputFileDefinitionList read FInputFiles write FInputFiles;
     property InputListFileNameExpanded: string read GetInputListFileNameExpanded;
     property OutputFormats: tJson2PumlOutputFormats read FOutputFormats;
   published
+    property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
+    property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
     property Description: string read FDescription write FDescription;
     property Detail: string read FDetail write FDetail;
-    property GenerateDetails: boolean read GetGenerateDetails;
     property GenerateDetailsStr: string read FGenerateDetailsStr write FGenerateDetailsStr;
     property GenerateSummaryStr: string read FGenerateSummaryStr write FGenerateSummaryStr;
     property Group: string read FGroup write FGroup;
@@ -476,7 +478,7 @@ type
     property OnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent read FOnCalculateOutputFileName;
   public
     constructor Create; override;
-    constructor CreateOnCalculate(iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent);
+    constructor CreateOnCalculate (iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent);
     destructor Destroy; override;
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     function AddInputFileCommandLine (const iInputFileName, iOutputFileName, iLeadingObject, iSplitInputFileStr,
@@ -541,6 +543,7 @@ type
     FCurlAuthenticationFileName: string;
     FCurlAuthenticationFileNameEnvironment: string;
     FCurlParameter: tJson2PumlCurlParameterList;
+    FCurlAuthenticationParameter: tJson2PumlCurlParameterList;
     FCurlParameterFileName: string;
     FCurlPassThroughHeader: string;
     FDebug: boolean;
@@ -606,6 +609,7 @@ type
       iLineLength: Integer = 110);
     procedure WriteHelpScreen;
     property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
+    property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
     property CurlPassThroughHeader: string read FCurlPassThroughHeader write FCurlPassThroughHeader;
     property GenerateSummary: boolean read GetGenerateSummary;
     property InputFilterList: tJson2PumlFilterList read FInputFilterList;
@@ -761,15 +765,19 @@ type
 
   tJson2PumlCurlAuthenticationList = class(tJson2PumlBasePropertyList)
   private
+    FAdditionalCurlParameter: tJson2PumlCurlParameterList;
     function GetAuthentication (Index: Integer): tJson2PumlCurlAuthenticationDefinition;
   protected
     function CreateListValueObject: tJson2PumlBaseObject; override;
   public
     constructor Create; override;
+    destructor Destroy; override;
     function AddAuthentication (iBaseUrl: string): tJson2PumlCurlAuthenticationDefinition;
     function FindAuthentication (const iBaseUrl: string): tJson2PumlCurlAuthenticationDefinition;
     function GetEnumerator: tJson2PumlCurlAuthenticationEnumerator;
+    function ReplaceParameterValues (const iBaseUrl, iCommand: string): string;
     property Authentication[index: Integer]: tJson2PumlCurlAuthenticationDefinition read GetAuthentication; default;
+    property AdditionalCurlParameter: tJson2PumlCurlParameterList read FAdditionalCurlParameter;
   end;
 
 function GlobalConfigurationDefinition: tJson2PumlGlobalDefinition;
@@ -989,8 +997,8 @@ function tJson2PumlInputFileDefinition.HandleCurl (const iBaseUrl: string; iUrlA
   iCurlAuthenticationList: tJson2PumlCurlAuthenticationList): boolean;
 var
   BaseUrl: string;
-  FullUrl: string;
   Options: array of string;
+  Command : string;
 begin
   Result := false;
   if not HasValidCurl then
@@ -1000,14 +1008,11 @@ begin
   else
     BaseUrl := CurlBaseUrlDecoded;
   Options := [string.Join(' ', [CurlOptions, string.Join(' ', iOptions)]).Trim];
-  FullUrl := tCurlUtils.FullUrl (BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim], iExecuteCurlParameterList,
-    ioResultCurlParameterList);
   ExpandFileNameWithCurlParameter (iExecuteCurlParameterList);
   ExpandFileNameWithCurlParameter (ioResultCurlParameterList);
-  CurlCommand := tCurlUtils.CalculateCommand (FullUrl, Options, OutputFileName, iExecuteCurlParameterList,
-    ioResultCurlParameterList);
   Result := tCurlUtils.Execute (BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim], Options, OutputFileName,
-    iCurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache);
+    iCurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache, Command);
+  CurlCommand := command;
   if Result then
   begin
     Result := true;
@@ -1115,7 +1120,7 @@ begin
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 
-constructor tJson2PumlInputList.CreateOnCalculate(iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent);
+constructor tJson2PumlInputList.CreateOnCalculate (iOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent);
 begin
   Create;
   FOnCalculateOutputFileName := iOnCalculateOutputFileName;
@@ -1968,10 +1973,13 @@ begin
   FInputFilterList := tJson2PumlFilterList.Create ();
   FCurlParameter := tJson2PumlCurlParameterList.Create ();
   FCurlParameter.MulitpleValues := true;
+  FCurlAuthenticationParameter := tJson2PumlCurlParameterList.Create ();
+  FCurlAuthenticationParameter.MulitpleValues := true;
 end;
 
 destructor tJson2PumlCommandLineParameter.Destroy;
 begin
+  FCurlAuthenticationParameter.Free;
   FCurlParameter.Free;
   FInputFilterList.Free;
   inherited Destroy;
@@ -2073,47 +2081,58 @@ end;
 
 procedure tJson2PumlCommandLineParameter.ReadCurlParameter;
 var
-  i: Integer;
+  l, i: Integer;
   S: string;
 
   pName: string;
   pValue: string;
   p, p1, p2: Integer;
 const
-  ccurlparam: string = 'curlparameter';
+  ccurlparam: array [0 .. 1] of string = ('curlparameter', 'curlauthenticationparameter');
 begin
   CurlParameter.Clear;
   for i := 0 to ParamCount do
   begin
     S := ParamStr (i).Trim;
-    if S.StartsWith ('/' + ccurlparam + ':', true) or S.StartsWith ('/' + ccurlparam + '=', true) or
-      S.StartsWith ('-' + ccurlparam + ':', true) or S.StartsWith ('-' + ccurlparam + '=', true) then
+    for l := 0 to 1 do
     begin
-      S := S.Substring (length(ccurlparam) + 2).DeQuotedString;
-      p1 := S.IndexOf ('=');
-      p2 := S.IndexOf (':');
-      if p1 < 0 then
-        p1 := p2;
-      if p2 < 0 then
-        p2 := p1;
-      if p1 < p2 then
-        p := p1
-      else
-        p := p2;
-      if p >= 0 then
+      if S.StartsWith ('/' + ccurlparam[l] + ':', true) or S.StartsWith ('/' + ccurlparam[l] + '=', true) or
+        S.StartsWith ('-' + ccurlparam[l] + ':', true) or S.StartsWith ('-' + ccurlparam[l] + '=', true) then
       begin
-        pName := S.Substring (0, p).Trim;
-        pValue := S.Substring (p + 1);
-      end
-      else
-      begin
-        pName := S.Trim;
-        pValue := '';
-      end;
-      if not pName.IsEmpty then
-      begin
-        CurlParameter.AddParameter (pName, pValue);
-        LogParameterValue ('CurlParameter', Format('%s:%s', [pName, pValue]));
+        S := S.Substring (length(ccurlparam[l]) + 2).DeQuotedString;
+        p1 := S.IndexOf ('=');
+        p2 := S.IndexOf (':');
+        if p1 < 0 then
+          p1 := p2;
+        if p2 < 0 then
+          p2 := p1;
+        if p1 < p2 then
+          p := p1
+        else
+          p := p2;
+        if p >= 0 then
+        begin
+          pName := S.Substring (0, p).Trim;
+          pValue := S.Substring (p + 1);
+        end
+        else
+        begin
+          pName := S.Trim;
+          pValue := '';
+        end;
+        if not pName.IsEmpty then
+        begin
+          if l = 0 then
+          begin
+            CurlParameter.AddParameter (pName, pValue);
+            LogParameterValue ('CurlParameter', Format('%s:%s', [pName, pValue]));
+          end
+          else
+          begin
+            CurlAuthenticationParameter.AddParameter (pName, pValue);
+            LogParameterValue ('CurlAuthenticationParameter', Format('%s:%s', [pName, '******']));
+          end;
+        end;
       end;
     end;
   end;
@@ -2660,6 +2679,13 @@ begin
   inherited Create;
   Sorted := true;
   Duplicates := dupIgnore;
+  FAdditionalCurlParameter := tJson2PumlCurlParameterList.Create ();
+end;
+
+destructor tJson2PumlCurlAuthenticationList.Destroy;
+begin
+  FAdditionalCurlParameter.Free;
+  inherited Destroy;
 end;
 
 function tJson2PumlCurlAuthenticationList.AddAuthentication (iBaseUrl: string): tJson2PumlCurlAuthenticationDefinition;
@@ -2706,6 +2732,17 @@ end;
 function tJson2PumlCurlAuthenticationList.GetEnumerator: tJson2PumlCurlAuthenticationEnumerator;
 begin
   Result := tJson2PumlCurlAuthenticationEnumerator.Create (self);
+end;
+
+function tJson2PumlCurlAuthenticationList.ReplaceParameterValues (const iBaseUrl, iCommand: string): string;
+var
+  Authentication: tJson2PumlCurlAuthenticationDefinition;
+begin
+  Result := iCommand;
+  Authentication := FindAuthentication (iBaseUrl);
+  if Assigned (Authentication) then
+    Result := Authentication.Parameter.ReplaceParameterValues (Result);
+  Result := AdditionalCurlParameter.ReplaceParameterValues (Result);
 end;
 
 function tJson2PumlCurlParameterDefinition.GetValueDecoded: string;
@@ -3139,10 +3176,12 @@ begin
   inherited Create;
   FCurlParameter := tJson2PumlCurlParameterList.Create ();
   FInputFiles := tJson2PumlParameterInputFileDefinitionList.Create ();
+  FCurlAuthenticationParameter := tJson2PumlCurlParameterList.Create ();
 end;
 
 destructor tJson2PumlParameterFileDefinition.Destroy;
 begin
+  FCurlAuthenticationParameter.Free;
   FInputFiles.Free;
   FCurlParameter.Free;
   inherited Destroy;
@@ -3152,8 +3191,8 @@ procedure tJson2PumlParameterFileDefinition.Clear;
 begin
   inherited Clear;
   CurlParameter.Clear;
+  CurlAuthenticationParameter.Clear;
   InputFiles.Clear;
-
 end;
 
 function tJson2PumlParameterFileDefinition.GetDefinitionFileNameExpanded: string;
@@ -3202,6 +3241,7 @@ begin
   Option := GetJsonStringValue (DefinitionRecord, 'option');
   OutputSuffix := GetJsonStringValue (DefinitionRecord, 'outputSuffix');
   CurlParameter.ReadFromJson (DefinitionRecord, 'curlParameter');
+  CurlAuthenticationParameter.ReadFromJson (DefinitionRecord, 'curlAuthenticationParameter');
   InputFiles.ReadFromJson (DefinitionRecord, 'inputFiles');
   Result := true;
 end;
@@ -3222,6 +3262,7 @@ begin
   inherited SetSourceFileName (Value);
   InputFiles.SourceFileName := Value;
   CurlParameter.SourceFileName := Value;
+  CurlAuthenticationParameter.SourceFileName := Value;
 end;
 
 procedure tJson2PumlParameterFileDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -3241,6 +3282,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'option', Option, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputSuffix', OutputSuffix, iLevel + 1, iWriteEmpty);
   CurlParameter.WriteToJson (oJsonOutPut, 'curlParameter', iLevel + 1, iWriteEmpty);
+  CurlAuthenticationParameter.WriteToJson (oJsonOutPut, 'curlAuthenticationParameter', iLevel + 1, iWriteEmpty);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 

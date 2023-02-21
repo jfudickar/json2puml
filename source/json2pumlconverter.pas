@@ -142,8 +142,8 @@ begin
     GroupFromCondition);
   GroupObjectTo := Definition.IsGroupProperty (iHierarchieParentObject.ObjectType, iPumlObject.ObjectType,
     GroupToCondition);
-  ArrowFormat := Definition.RelationshipTypeArrowFormats.GetFormat (iPumlObject.ObjectType,
-    iHierarchieParentObject.ObjectType, iRelationshipType, ArrowCondition);
+  ArrowFormat := Definition.RelationshipTypeArrowFormats.GetFormat (iPumlObject.ObjectType, iRelationshipProperty,
+    iRelationshipType, ArrowCondition);
   added := iHierarchieParentObject.addRelationship (iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty,
     iPumlObject, urdTo, GroupObjectFrom, GroupObjectTo, ArrowFormat, iAllways);
   if added then

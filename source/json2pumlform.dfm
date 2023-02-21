@@ -111,7 +111,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Top = 48
     Width = 1351
     Height = 837
-    ActivePage = DefinitionFileTabSheet
+    ActivePage = LogTabSheet
     Align = alClient
     TabOrder = 3
     object InputListTabSheet: TTabSheet
@@ -205,7 +205,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         end
       end
     end
-    object CurlParameterTabSheet: TTabSheet
+    object CurlParameterFileTabSheet: TTabSheet
       Caption = 'Curl Parameter File (Ctrl+F3)'
       ImageIndex = 6
       object CurlParameterFilePanel: TPanel
@@ -407,17 +407,9 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Width = 3
           Height = 13
         end
-        object Label21: TLabel
-          Left = 8
-          Top = 217
-          Width = 71
-          Height = 13
-          Caption = '/curlparameter'
-          FocusControl = curlParameterStringGrid
-        end
         object GroupBox1: TGroupBox
           Left = 820
-          Top = 200
+          Top = 216
           Width = 400
           Height = 77
           Caption = 'PlantUML Jar'
@@ -790,7 +782,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         end
         object GroupBox5: TGroupBox
           Left = 414
-          Top = 229
+          Top = 233
           Width = 400
           Height = 77
           Caption = 'Filter'
@@ -835,7 +827,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Left = 820
           Top = 157
           Width = 400
-          Height = 37
+          Height = 53
           Caption = 'Other'
           TabOrder = 3
           object generateoutputdefinitionCheckBox: TCheckBox
@@ -857,22 +849,54 @@ object json2pumlMainForm: Tjson2pumlMainForm
         end
         object Button1: TButton
           Left = 1059
-          Top = 283
+          Top = 299
           Width = 161
           Height = 25
           Action = ReloadAndConvertAction
           TabOrder = 6
         end
-        object curlParameterStringGrid: TStringGrid
+        object CurlParameterPageControl: TPageControl
           Left = 8
-          Top = 233
-          Width = 320
-          Height = 106
-          ColCount = 2
-          FixedCols = 0
-          RowCount = 2
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goEditing, goAlwaysShowEditor]
+          Top = 217
+          Width = 400
+          Height = 120
+          ActivePage = CurlParameterTabSheet1
           TabOrder = 7
+          object CurlParameterTabSheet1: TTabSheet
+            Caption = '/curlparameter'
+            object CurlParameterDBGrid: TDBGrid
+              Left = 0
+              Top = 0
+              Width = 392
+              Height = 92
+              Align = alClient
+              DataSource = CurlParameterDataSource
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -11
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = []
+            end
+          end
+          object CurlAuthenticationParameterTabSheet: TTabSheet
+            Caption = '/curlauthenticationparameter'
+            ImageIndex = 1
+            object CurlAuthenticationParameterDBGrid: TDBGrid
+              Left = 0
+              Top = 0
+              Width = 392
+              Height = 92
+              Align = alClient
+              DataSource = CurlAuthenticationParameterDataSource
+              TabOrder = 0
+              TitleFont.Charset = DEFAULT_CHARSET
+              TitleFont.Color = clWindowText
+              TitleFont.Height = -11
+              TitleFont.Name = 'Tahoma'
+              TitleFont.Style = []
+            end
+          end
         end
       end
       object LogFileDetailPageControl: TPageControl
@@ -888,8 +912,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ExecutionLogPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1329
-            Height = 427
+            Width = 1325
+            Height = 426
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -901,8 +925,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object FileListPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1329
-            Height = 427
+            Width = 1325
+            Height = 426
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -914,8 +938,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1329
-            Height = 427
+            Width = 1325
+            Height = 426
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -927,8 +951,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceInputListFileResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1329
-            Height = 427
+            Width = 1325
+            Height = 426
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -940,8 +964,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceDefinitionFileResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1329
-            Height = 427
+            Width = 1325
+            Height = 426
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -956,8 +980,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object FilePageControl: TPageControl
         Left = 0
         Top = 0
-        Width = 1337
-        Height = 800
+        Width = 1333
+        Height = 799
         Align = alClient
         MultiLine = True
         TabOrder = 0
@@ -2287,5 +2311,49 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
     Left = 596
     Top = 745
+  end
+  object CurlParameterDataSource: TDataSource
+    DataSet = CurlParameterDataSet
+    Left = 96
+    Top = 528
+  end
+  object CurlParameterDataSet: TClientDataSet
+    PersistDataPacket.Data = {
+      4D0000009619E0BD0100000018000000020000000000030000004D00044E616D
+      6501004900000001000557494454480200020014000556616C75650100490000
+      0001000557494454480200020014000000}
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 96
+    Top = 464
+    object CurlParameterDataSetName: TStringField
+      FieldName = 'Name'
+    end
+    object CurlParameterDataSetValue: TStringField
+      FieldName = 'Value'
+    end
+  end
+  object CurlAuthenticationParameterDataSource: TDataSource
+    DataSet = CurlAuthenticationParameterDataset
+    Left = 232
+    Top = 536
+  end
+  object CurlAuthenticationParameterDataset: TClientDataSet
+    PersistDataPacket.Data = {
+      4D0000009619E0BD0100000018000000020000000000030000004D00044E616D
+      6501004900000001000557494454480200020014000556616C75650100490000
+      0001000557494454480200020014000000}
+    Active = True
+    Aggregates = <>
+    Params = <>
+    Left = 232
+    Top = 472
+    object StringField1: TStringField
+      FieldName = 'Name'
+    end
+    object StringField2: TStringField
+      FieldName = 'Value'
+    end
   end
 end
