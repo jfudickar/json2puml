@@ -39,9 +39,7 @@ class CharacteristicPropertyType <<Enumeration>> {
 class CharacteristicProperty {
     parentProperty : String
     type : CharacteristicPropertyType
-    nameProperty : String
-    valueProperty : String
-    infoProperty : String
+    propertyList : Array of String
     includeIndex : Boolean
 }
 
