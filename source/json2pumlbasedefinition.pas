@@ -72,6 +72,7 @@ type
     function GetIsFilled: boolean; virtual;
     function GetIsValid: boolean; virtual;
     function JsonAttributeValue (iPropertyName, iValue: string): string;
+    function JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;
     function JsonPropertyName (iPropertyName: string): string;
     function MergeValue (iValue, iNewValue: string): string;
     procedure SetSourceFileName (const Value: string); virtual;
@@ -101,7 +102,7 @@ type
 
   tJson2PumlBaseList = class(tJson2PumlBaseObject)
   private
-    FItemList: tStringList;
+    FItemList: TStringList;
     function GetBaseObject (Index: Integer): tJson2PumlBaseObject;
     function GetCount: Integer;
     function GetDuplicates: TDuplicates;
@@ -145,7 +146,7 @@ type
       iWriteEmpty: boolean = false); virtual;
     property Count: Integer read GetCount;
     property Duplicates: TDuplicates read GetDuplicates write SetDuplicates;
-    property ItemList: tStringList read FItemList;
+    property ItemList: TStringList read FItemList;
     property Names[index: Integer]: string read GetNames;
     property Objects[index: Integer]: TObject read GetObjects write SetObjects;
     property OwnsObjects: boolean read GetOwnsObjects write SetOwnsObjects;
@@ -159,13 +160,13 @@ type
   tJson2PumlBasePropertyList = class(tJson2PumlBaseList)
   protected
     function GetIsValid: boolean; override;
-    function IndexOfProperty (iPropertyName, iParentPropertyName, iConfigurationPropertyName: string;
+    function IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, iConfigurationPropertyName: string;
       var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
     procedure WriteObjectEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
     procedure WriteObjectStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
   public
     constructor Create; override;
-    function BuildFoundCondition(iConfigurationPropertyName, iConfiguredValue, iInputValue: string): string;
+    function BuildFoundCondition (iConfigurationPropertyName, iConfiguredValue, iInputValue: string): string;
   end;
 
   tJson2PumlBaseObjectClass = class of tJson2PumlBaseObject;
@@ -181,11 +182,11 @@ uses
 
 function OutputFormatsFromString (iOutputFormats: string): tJson2PumlOutputFormats;
 var
-  TempList: tStringList;
+  TempList: TStringList;
 var
   f: tJson2PumlOutputFormat;
 begin
-  TempList := tStringList.Create;
+  TempList := TStringList.Create;
   try
     TempList.Text := iOutputFormats.ToLower;
     Result := [];
@@ -266,13 +267,13 @@ end;
 procedure tJson2PumlOutputFormatsHelper.FromString (aValue: string; iPumlOutputOnly: boolean;
   iSupportOutPutAll: boolean);
 var
-  TempList: tStringList;
+  TempList: TStringList;
   S: string;
   f: tJson2PumlOutputFormat;
   allFound: boolean;
 begin
   self := [];
-  TempList := tStringList.Create;
+  TempList := TStringList.Create;
   try
     TempList.LineBreak := ',';
     TempList.Text := aValue.ToLower;
@@ -379,6 +380,23 @@ begin
   Result := Format ('%s, ', [JsonPropertyNameValue(iPropertyName, iValue)]);
 end;
 
+function tJson2PumlBaseObject.JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  if iPropertyName.IsEmpty or (iValueList.Count <= 0) then
+    exit;
+  if iValueList.Count = 1 then
+    Result := JsonAttributeValue (iPropertyName, iValueList[0])
+  else
+  begin
+    for i := 0 to iValueList.Count - 1 do
+      Result := Format ('%s, "%s"', [Result, ClearJsonPropertyValue(iValueList[i])]);
+    Result := Format ('"%s": [%s],', [iPropertyName, Result.TrimLeft([' ', ','])]);
+  end;
+end;
+
 function tJson2PumlBaseObject.JsonPropertyName (iPropertyName: string): string;
 begin
   if not iPropertyName.IsEmpty then
@@ -422,13 +440,13 @@ end;
 
 function tJson2PumlBaseObject.ReadFromJsonFile (iFileName: string): boolean;
 var
-  Lines: tStringList;
+  Lines: TStringList;
 begin
   Result := false;
   Clear;
   if not FileExists (iFileName) then
     exit;
-  Lines := tStringList.Create;
+  Lines := TStringList.Create;
   try
     Lines.LoadFromFile (iFileName);
     Result := ReadFromJson (Lines.Text, iFileName);
@@ -528,9 +546,9 @@ end;
 
 procedure tJson2PumlBaseObject.WriteToJsonFile (iFileName: string; iWriteEmpty: boolean = false);
 var
-  TempList: tStringList;
+  TempList: TStringList;
 begin
-  TempList := tStringList.Create;
+  TempList := TStringList.Create;
   try
     WriteToJson (TempList, '', 0, iWriteEmpty);
     TempList.SaveToFile (iFileName);
@@ -542,7 +560,7 @@ end;
 constructor tJson2PumlBaseList.Create;
 begin
   inherited Create;
-  FItemList := tStringList.Create ();
+  FItemList := TStringList.Create ();
 end;
 
 destructor tJson2PumlBaseList.Destroy;
@@ -823,16 +841,25 @@ begin
       iInputValue]);
 end;
 
-function tJson2PumlBasePropertyList.IndexOfProperty (iPropertyName, iParentPropertyName, iConfigurationPropertyName
-  : string; var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
+function tJson2PumlBasePropertyList.IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType,
+  iConfigurationPropertyName: string; var oFoundCondition: string; iUseMatch: boolean = false;
+  iSearchEmpyAsDefault: boolean = false): Integer;
+
+var
+  PropertyIndex: Integer;
+
+  function found: boolean;
+  begin
+    Result := PropertyIndex >= 0;
+  end;
 
   procedure DirectSearch (iValue: string);
   begin
-    if Result < 0 then
-      Result := IndexOfName (iValue);
-    if Result < 0 then
-      Result := IndexOf (iValue);
-    if Result >= 0 then
+    if not found then
+      PropertyIndex := IndexOfName (iValue);
+    if not found then
+      PropertyIndex := IndexOf (iValue);
+    if found then
       oFoundCondition := iValue;
   end;
   procedure MatchSearch (iValue: string);
@@ -840,7 +867,7 @@ function tJson2PumlBasePropertyList.IndexOfProperty (iPropertyName, iParentPrope
     i: Integer;
     S: string;
   begin
-    if Result >= 0 then
+    if found then
       exit;
     for i := 0 to Count - 1 do
     begin
@@ -848,40 +875,48 @@ function tJson2PumlBasePropertyList.IndexOfProperty (iPropertyName, iParentPrope
       if S.IsEmpty then
         S := ItemList[i];
       if MatchesMask (iValue, S) then
-        Result := i;
-      if Result >= 0 then
+        PropertyIndex := i;
+      if found then
         break;
     end;
-    if Result >= 0 then
+    if found then
       oFoundCondition := iValue;
   end;
 
 begin
   Result := - 1;
+  PropertyIndex := - 1;
   if iPropertyName.IsEmpty then
     exit;
   DirectSearch (iPropertyName);
-  if not iParentPropertyName.IsEmpty then
+  if not found and not iParentPropertyName.IsEmpty then
     DirectSearch (iParentPropertyName + '.' + iPropertyName);
+  if not found and not iParentObjectType.IsEmpty then
+    DirectSearch (iParentObjectType + '.' + iPropertyName);
   if iUseMatch then
   begin
     MatchSearch (iPropertyName);
-    if not iParentPropertyName.IsEmpty then
+    if not found and not iParentPropertyName.IsEmpty then
       MatchSearch (iParentPropertyName + '.' + iPropertyName);
+    if not found and not iParentObjectType.IsEmpty then
+      MatchSearch (iParentObjectType + '.' + iPropertyName);
   end;
-  if (Result < 0) and iSearchEmpyAsDefault then
+  if not found and iSearchEmpyAsDefault then
   begin
     oFoundCondition := '<default>';
-    Result := IndexOf ('');
-    if Result >= 0 then
+    PropertyIndex := IndexOf ('');
+    if found then
       oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, oFoundCondition, '');
   end
-  else if Result >= 0 then
-    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, self[Result], oFoundCondition)
+  else if found then
+    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, self[PropertyIndex], oFoundCondition)
+  else if not iParentObjectType.IsEmpty then
+    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iParentObjectType + '.' + iPropertyName)
   else if not iParentPropertyName.IsEmpty then
     oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iParentPropertyName + '.' + iPropertyName)
   else
-    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iPropertyName)
+    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iPropertyName);
+  Result := PropertyIndex;
 end;
 
 function tJson2PumlBasePropertyList.GetIsValid: boolean;

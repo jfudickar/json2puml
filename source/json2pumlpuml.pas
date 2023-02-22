@@ -154,82 +154,73 @@ type
     property ToCountValid: Integer read GetToCountValid;
   end;
 
-  tPumlCharacteristicRecord = class(tBasePumlObject)
+  tPumlCharacteristicRecord = class(tBasePumlStringList)
   private
-    FIndex: Integer;
-    FInfo: string;
-    FName: string;
-    FValue: string;
     function GetIdent: string; override;
   public
-    property index: Integer read FIndex write FIndex;
-    property Info: string read FInfo write FInfo;
-    property name: string read FName write FName;
-    property Value: string read FValue write FValue;
   end;
 
-  tPumlCharacteristic = class;
+  tPumlCharacteristicObject = class;
 
   tPumlCharacteristicRecordEnumerator = class
   private
-    fCharacteristic: tPumlCharacteristic;
+    fCharacteristic: tPumlCharacteristicObject;
     FIndex: Integer;
   public
-    constructor Create (ACharacteristic: tPumlCharacteristic);
+    constructor Create (ACharacteristic: tPumlCharacteristicObject);
     function GetCurrent: tPumlCharacteristicRecord;
     function MoveNext: boolean;
     property Current: tPumlCharacteristicRecord read GetCurrent;
   end;
 
-  tPumlCharacteristic = class(tBasePumlStringList)
+  tPumlCharacteristicObject = class(tBasePumlStringList)
   private
-    FCharacteristicType: tJson2PumlCharacteristicType;
-    FIncludeIndex: boolean;
-    FInfoProperty: string;
-    FNameProperty: string;
+    FDefinition: tJson2PumlCharacteristicDefinition;
     FParentProperty: string;
-    FValueProperty: string;
-    function GetCharRecord (Index: Integer): tPumlCharacteristicRecord;
+    FUsedProperties: TStringList;
     function GetIdent: string; override;
+  protected
+    procedure AddUsedProperties (iPropertyList: TStringList);
+    procedure AddUsedProperty (iName: string);
+    property UsedProperties: TStringList read FUsedProperties;
   public
-    procedure AddRecord (iName, iValue, iInfo: string);
+    constructor Create (iParentUmlObject: tPumlObject);
+    destructor Destroy; override;
+    procedure AddRecord (iPropertyList: TStringList); overload;
     procedure GeneratePuml (ipuml: TStrings; var iAddLine: boolean);
     function GetEnumerator: tPumlCharacteristicRecordEnumerator;
-    property CharRecord[index: Integer]: tPumlCharacteristicRecord read GetCharRecord; default;
+
   published
-    property CharacteristicType: tJson2PumlCharacteristicType read FCharacteristicType write FCharacteristicType;
-    property IncludeIndex: boolean read FIncludeIndex write FIncludeIndex;
-    property InfoProperty: string read FInfoProperty write FInfoProperty;
-    property NameProperty: string read FNameProperty write FNameProperty;
+    property Definition: tJson2PumlCharacteristicDefinition read FDefinition write FDefinition;
     property ParentProperty: string read FParentProperty write FParentProperty;
-    property ValueProperty: string read FValueProperty write FValueProperty;
   end;
 
   tPumlCharacteristicList = class;
 
-  tPumlCharacteristicEnumerator = class
+  tPumlCharacteristicObjectEnumerator = class
   private
     fCharacteristicList: tPumlCharacteristicList;
     FIndex: Integer;
   public
     constructor Create (ACharacteristicList: tPumlCharacteristicList);
-    function GetCurrent: tPumlCharacteristic;
+    function GetCurrent: tPumlCharacteristicObject;
     function MoveNext: boolean;
-    property Current: tPumlCharacteristic read GetCurrent;
+    property Current: tPumlCharacteristicObject read GetCurrent;
   end;
 
   tPumlCharacteristicList = class(tBasePumlStringList)
   private
-    function GetPropertyCharacteristic (Index: Integer): tPumlCharacteristic;
+    function GetPropertyCharacteristic (Index: Integer): tPumlCharacteristicObject;
   protected
-    function AddPropertyCharacteristic (iParentProperty: string): tPumlCharacteristic;
+    function AddPropertyCharacteristic (iParentProperty: string;
+      iCharacteristicDefinition: tJson2PumlCharacteristicDefinition): tPumlCharacteristicObject;
   public
     constructor Create (iParentUmlObject: tPumlObject); overload;
-    procedure AddCharacteristic (iParentProperty, iName, iValue, iInfo: string;
-      iCharacteristicDefinition: tJson2PumlCharacteristicDefinition);
+    procedure AddCharacteristic (iParentProperty: string; iPropertyList: TStringList;
+      iCharacteristicDefinition: tJson2PumlCharacteristicDefinition); overload;
     procedure GeneratePuml (ipuml: TStrings; var iAddLine: boolean);
-    function GetEnumerator: tPumlCharacteristicEnumerator;
-    property PropertyCharacteristic[index: Integer]: tPumlCharacteristic read GetPropertyCharacteristic; default;
+    function GetEnumerator: tPumlCharacteristicObjectEnumerator;
+    property PropertyCharacteristic[index: Integer]: tPumlCharacteristicObject read GetPropertyCharacteristic; default;
   end;
 
   tPumlDetailObjectList = class(tBasePumlStringList)
@@ -276,7 +267,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure AddCharacteristic (iParentProperty, iName, iValue, iInfo: string;
+    procedure AddCharacteristic (iParentProperty: string; iPropertyList: TStringList;
       iCharacteristicDefinition: tJson2PumlCharacteristicDefinition);
     function addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty: string;
       RelatedObject: tPumlObject; iDirection: tUmlRelationDirection; iGroupAtObject, iGroupAtRelatedObject: boolean;
@@ -454,10 +445,10 @@ begin
   inherited Destroy;
 end;
 
-procedure tPumlObject.AddCharacteristic (iParentProperty, iName, iValue, iInfo: string;
+procedure tPumlObject.AddCharacteristic (iParentProperty: string; iPropertyList: TStringList;
   iCharacteristicDefinition: tJson2PumlCharacteristicDefinition);
 begin
-  PropertyCharacteristics.AddCharacteristic (iParentProperty, iName, iValue, iInfo, iCharacteristicDefinition);
+  PropertyCharacteristics.AddCharacteristic (iParentProperty, iPropertyList, iCharacteristicDefinition);
 end;
 
 function tPumlObject.addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty: string;
@@ -901,9 +892,11 @@ var
       ipuml.add (Format('  diamond %s', [GroupIdent]));
       ipuml.add ('}');
       if iDirection = urdTo then
-        ipuml.add (tPumlHelper.RelationLine(r.ParentUmlObject.PlantUmlIdent, r.ArrowFormat, GroupIdent, 'to '+r.PropertyName))
+        ipuml.add (tPumlHelper.RelationLine(r.ParentUmlObject.PlantUmlIdent, r.ArrowFormat, GroupIdent,
+          'to ' + r.PropertyName))
       else
-        ipuml.add (tPumlHelper.RelationLine(GroupIdent, r.ArrowFormat, r.RelatedObject.PlantUmlIdent, 'from '+r.ParentUmlObject.ObjectType));
+        ipuml.add (tPumlHelper.RelationLine(GroupIdent, r.ArrowFormat, r.RelatedObject.PlantUmlIdent,
+          'from ' + r.ParentUmlObject.ObjectType));
       iGroupCountList.ValueFromIndex[i] := (iGroupCountList.ValueFromIndex[i].ToInteger + 1).ToString;
     end;
   end;
@@ -962,53 +955,53 @@ constructor tPumlCharacteristicList.Create (iParentUmlObject: tPumlObject);
 begin
   inherited Create (iParentUmlObject);
   OwnsObjects := true;
+//  Sorted := true;
+//  duplicates := dupError;
 end;
 
-procedure tPumlCharacteristicList.AddCharacteristic (iParentProperty, iName, iValue, iInfo: string;
+procedure tPumlCharacteristicList.AddCharacteristic (iParentProperty: string; iPropertyList: TStringList;
   iCharacteristicDefinition: tJson2PumlCharacteristicDefinition);
 var
-  Characteristic: tPumlCharacteristic;
+  Characteristic: tPumlCharacteristicObject;
 begin
-  Characteristic := AddPropertyCharacteristic (iParentProperty);
-  Characteristic.IncludeIndex := iCharacteristicDefinition.IncludeIndex;
-  Characteristic.NameProperty := iCharacteristicDefinition.NameProperties.Text;
-  Characteristic.ValueProperty := iCharacteristicDefinition.ValueProperties.Text;
-  Characteristic.InfoProperty := iCharacteristicDefinition.InfoProperties.Text;
-  Characteristic.CharacteristicType := iCharacteristicDefinition.CharacteristicType;
-  Characteristic.AddRecord (iName, iValue, iInfo);
+  Characteristic := AddPropertyCharacteristic (iParentProperty, iCharacteristicDefinition);
+  Characteristic.AddRecord (iPropertyList);
 end;
 
-function tPumlCharacteristicList.AddPropertyCharacteristic (iParentProperty: string): tPumlCharacteristic;
+function tPumlCharacteristicList.AddPropertyCharacteristic (iParentProperty: string;
+  iCharacteristicDefinition: tJson2PumlCharacteristicDefinition): tPumlCharacteristicObject;
 var
   i: Integer;
 begin
-  i := IndexOf (iParentProperty);
+  Result := tPumlCharacteristicObject.Create (ParentUmlObject);
+  Result.ParentProperty := iParentProperty;
+  Result.Definition := iCharacteristicDefinition;
+  i := IndexOf (Result.Ident);
   if i < 0 then
-  begin
-    Result := tPumlCharacteristic.Create (ParentUmlObject);
-    Result.ParentProperty := iParentProperty;
-    AddObject (iParentProperty, Result);
-  end
+    AddObject (Result.Ident, Result)
   else
-    Result := PropertyCharacteristic[i];
+  begin
+    Result.Free;
+    Result := tPumlCharacteristicObject (Objects[i]);
+  end;
 end;
 
 procedure tPumlCharacteristicList.GeneratePuml (ipuml: TStrings; var iAddLine: boolean);
 var
-  PropertyCharacteristic: tPumlCharacteristic;
+  PropertyCharacteristic: tPumlCharacteristicObject;
 begin
   for PropertyCharacteristic in Self do
     PropertyCharacteristic.GeneratePuml (ipuml, iAddLine);
 end;
 
-function tPumlCharacteristicList.GetEnumerator: tPumlCharacteristicEnumerator;
+function tPumlCharacteristicList.GetEnumerator: tPumlCharacteristicObjectEnumerator;
 begin
-  Result := tPumlCharacteristicEnumerator.Create (Self);
+  Result := tPumlCharacteristicObjectEnumerator.Create (Self);
 end;
 
-function tPumlCharacteristicList.GetPropertyCharacteristic (Index: Integer): tPumlCharacteristic;
+function tPumlCharacteristicList.GetPropertyCharacteristic (Index: Integer): tPumlCharacteristicObject;
 begin
-  Result := tPumlCharacteristic (Objects[index]);
+  Result := tPumlCharacteristicObject (Objects[index]);
 end;
 
 constructor tBasePumlObject.Create (iParentUmlObject: tPumlObject);
@@ -1069,19 +1062,19 @@ begin
   Result := cUmlRelationDirection[Self];
 end;
 
-constructor tPumlCharacteristicEnumerator.Create (ACharacteristicList: tPumlCharacteristicList);
+constructor tPumlCharacteristicObjectEnumerator.Create (ACharacteristicList: tPumlCharacteristicList);
 begin
   inherited Create;
   FIndex := - 1;
   fCharacteristicList := ACharacteristicList;
 end;
 
-function tPumlCharacteristicEnumerator.GetCurrent: tPumlCharacteristic;
+function tPumlCharacteristicObjectEnumerator.GetCurrent: tPumlCharacteristicObject;
 begin
   Result := fCharacteristicList[FIndex];
 end;
 
-function tPumlCharacteristicEnumerator.MoveNext: boolean;
+function tPumlCharacteristicObjectEnumerator.MoveNext: boolean;
 begin
   Result := FIndex < fCharacteristicList.Count - 1;
   if Result then
@@ -1183,10 +1176,10 @@ end;
 
 function tPumlCharacteristicRecord.GetIdent: string;
 begin
-  Result := Format ('%s-%s-%s-%d', [name, Value, Info, index]);
+  Result := '';
 end;
 
-constructor tPumlCharacteristicRecordEnumerator.Create (ACharacteristic: tPumlCharacteristic);
+constructor tPumlCharacteristicRecordEnumerator.Create (ACharacteristic: tPumlCharacteristicObject);
 begin
   inherited Create;
   FIndex := - 1;
@@ -1205,28 +1198,47 @@ begin
     inc (FIndex);
 end;
 
-procedure tPumlCharacteristic.AddRecord (iName, iValue, iInfo: string);
-var
-  CharRec: tPumlCharacteristicRecord;
+constructor tPumlCharacteristicObject.Create (iParentUmlObject: tPumlObject);
 begin
-  CharRec := tPumlCharacteristicRecord.Create (ParentUmlObject);
-  CharRec.name := iName;
-  CharRec.Value := iValue;
-  CharRec.Info := iInfo;
-  if IncludeIndex then
-    CharRec.Index := Count
-  else
-    CharRec.Index := - 1;
-  if IndexOf (CharRec.Ident) < 0 then
-    AddObject (CharRec.Ident, CharRec)
-  else
-    CharRec.Free;
+  inherited Create (iParentUmlObject);
+  FUsedProperties := TStringList.Create ();
 end;
 
-procedure tPumlCharacteristic.GeneratePuml (ipuml: TStrings; var iAddLine: boolean);
+destructor tPumlCharacteristicObject.Destroy;
+begin
+  FUsedProperties.Free;
+  inherited Destroy;
+end;
+
+procedure tPumlCharacteristicObject.AddRecord (iPropertyList: TStringList);
+var
+  Rec: tPumlCharacteristicRecord;
+begin
+  Rec := tPumlCharacteristicRecord.Create (ParentUmlObject);
+  Rec.AddStrings (iPropertyList);
+  AddUsedProperties (Rec);
+  AddObject (Rec.Ident, Rec);
+end;
+
+procedure tPumlCharacteristicObject.AddUsedProperties (iPropertyList: TStringList);
+var
+  i: Integer;
+begin
+  for i := 0 to iPropertyList.Count - 1 do
+    AddUsedProperty (iPropertyList.Names[i]);
+end;
+
+procedure tPumlCharacteristicObject.AddUsedProperty (iName: string);
+begin
+  if UsedProperties.IndexOf (iName) < 0 then
+    UsedProperties.add (iName);
+end;
+
+procedure tPumlCharacteristicObject.GeneratePuml (ipuml: TStrings; var iAddLine: boolean);
 var
   CharRec: tPumlCharacteristicRecord;
   Columns: TStringList;
+  PropName: string;
   i: Integer;
 begin
   if Count > 0 then
@@ -1236,45 +1248,22 @@ begin
       if iAddLine then
         ipuml.add ('---');
       ipuml.add (Format('<b>%s</b>', [ParentProperty]));
-      if CharacteristicType = jctRecord then
-      begin
-        if IncludeIndex then
-          Columns.add ('idx');
-        Columns.add ('attribute');
-        Columns.add ('value');
-        ipuml.add (tPumlHelper.TableLine(Columns, true));
-      end
-      else
-      begin
-        if IncludeIndex then
-          Columns.add ('idx');
-        Columns.add (tPumlHelper.CleanCRLF(NameProperty));
-        if not ValueProperty.IsEmpty then
-          Columns.add (tPumlHelper.CleanValue(ValueProperty, ParentUmlObject.FormatDefinition.ValueSplitLength));
-        if not InfoProperty.IsEmpty then
-          Columns.add (tPumlHelper.CleanValue(InfoProperty, ParentUmlObject.FormatDefinition.ValueSplitLength));
-        ipuml.add (tPumlHelper.TableLine(Columns, true));
-      end;
+      if Definition.IncludeIndex then
+        Columns.add ('idx');
+      for PropName in UsedProperties do
+        if not PropName.IsEmpty then
+          Columns.add (tPumlHelper.CleanValue(PropName, ParentUmlObject.FormatDefinition.ValueSplitLength));
+      ipuml.add (tPumlHelper.TableLine(Columns, true));
       i := 0;
       for CharRec in Self do
       begin
-        if (CharacteristicType = jctRecord) or InfoProperty.IsEmpty then
-        begin
-          if IncludeIndex then
-            Columns.add (i.ToString);
-          Columns.add (tPumlHelper.CleanCRLF(CharRec.name));
-          Columns.add (tPumlHelper.CleanValue(CharRec.Value, ParentUmlObject.FormatDefinition.ValueSplitLength));
-        end
-        else
-        begin
-          if IncludeIndex then
-            Columns.add (i.ToString);
-          Columns.add (tPumlHelper.CleanCRLF(CharRec.name));
-          if not ValueProperty.IsEmpty then
-            Columns.add (tPumlHelper.CleanValue(CharRec.Value, ParentUmlObject.FormatDefinition.ValueSplitLength));
-          if not InfoProperty.IsEmpty then
-            Columns.add (tPumlHelper.CleanValue(CharRec.Info, ParentUmlObject.FormatDefinition.ValueSplitLength));
-        end;
+        Columns.Clear;
+        if Definition.IncludeIndex then
+          Columns.add (i.ToString);
+        for PropName in UsedProperties do
+          if not PropName.IsEmpty then
+            Columns.add (tPumlHelper.CleanValue(CharRec.Values[PropName],
+              ParentUmlObject.FormatDefinition.ValueSplitLength));
         ipuml.add (tPumlHelper.TableLine(Columns));
         inc (i);
       end;
@@ -1285,17 +1274,12 @@ begin
   end;
 end;
 
-function tPumlCharacteristic.GetCharRecord (Index: Integer): tPumlCharacteristicRecord;
-begin
-  Result := tPumlCharacteristicRecord (Objects[index]);
-end;
-
-function tPumlCharacteristic.GetEnumerator: tPumlCharacteristicRecordEnumerator;
+function tPumlCharacteristicObject.GetEnumerator: tPumlCharacteristicRecordEnumerator;
 begin
   Result := tPumlCharacteristicRecordEnumerator.Create (Self);
 end;
 
-function tPumlCharacteristic.GetIdent: string;
+function tPumlCharacteristicObject.GetIdent: string;
 begin
   Result := ParentProperty;
 end;
