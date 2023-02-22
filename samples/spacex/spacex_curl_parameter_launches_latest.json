@@ -1,3 +1,5 @@
 [
-"launch=latest"
+		{
+			"${launch}": "latest"
+		}
 ]

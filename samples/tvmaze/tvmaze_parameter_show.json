@@ -1,8 +1,12 @@
 {
+	"definitionFile": null,
+	"description": null,
+	"detail": null,
+	"group": null,
+	"job": null,
 	"inputListFile": "tvmaze_inputlist_show.json",
 	"inputFiles":  [
 	],
-	"definitionFile": null,
 	"generateSummary": "true",
 	"generateDetails": "false",
 	"outputFormats": "svg,log,json,puml,zip",

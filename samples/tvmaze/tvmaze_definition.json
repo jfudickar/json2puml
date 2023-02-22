@@ -15,7 +15,6 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"outputFormats":[],
 					"attributeProperties":  [
 							"*"
 					],
@@ -78,7 +77,6 @@
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
-		"outputFormats":["png","svg"],
 		"attributeProperties":  [
 				"*"
 		],

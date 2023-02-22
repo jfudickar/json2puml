@@ -15,7 +15,6 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"outputFormats":[],
 					"attributeProperties": {
 						"operation": "replace",
 						"list":  [
@@ -64,7 +63,8 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
-							"showToRelations": null
+							"showToRelations": null,
+							"valueSplitLength": null
 						}
 					}
 				}
@@ -79,7 +79,6 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"outputFormats":[],
 					"attributeProperties":  [
 							"*"
 					],
@@ -123,7 +122,8 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": "true",
-							"showToRelations": null
+							"showToRelations": null,
+							"valueSplitLength": null
 						}
 					}
 				}
@@ -138,7 +138,6 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"outputFormats":[],
 					"attributeProperties":  [
 							"*"
 					],
@@ -186,7 +185,8 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": "true",
-							"showToRelations": null
+							"showToRelations": null,
+							"valueSplitLength": null
 						}
 					}
 				}
@@ -201,7 +201,6 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"outputFormats":[],
 					"attributeProperties": {
 						"operation": "replace",
 						"list":  [
@@ -254,7 +253,8 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
-							"showToRelations": null
+							"showToRelations": null,
+							"valueSplitLength": null
 						}
 					}
 				}
@@ -269,7 +269,6 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"outputFormats":[],
 					"attributeProperties": {
 						"operation": "replace",
 						"list":  [
@@ -318,7 +317,8 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
-							"showToRelations": null
+							"showToRelations": null,
+							"valueSplitLength": null
 						}
 					}
 				}
@@ -332,7 +332,6 @@
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
-		"outputFormats":["png","svg"],
 		"attributeProperties":  [
 				"*"
 		],
@@ -389,7 +388,8 @@
 				"showCharacteristics": "true",
 				"showFromRelations": "true",
 				"showIfEmpty": "false",
-				"showToRelations": "true"
+				"showToRelations": "true",
+				"valueSplitLength": null
 			},
 			"formats":  [
 					{

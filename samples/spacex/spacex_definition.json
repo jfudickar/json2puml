@@ -355,7 +355,7 @@
 				"reddit",
 				"norad_ids",
 				{"parentProperty": "xdragon", "type": "record", "includeIndex": "true"},
-				{"parentProperty": "payload_weights", "type": "list", "nameProperty": "name", "valueProperty": "kg", "infoProperty": "lb"}
+				{"parentProperty": "payload_weights", "type": "list", "propertyList": ["name", "kg", "lb"]}
 		],
 		"hiddenProperties":  [
 				"*.launches"

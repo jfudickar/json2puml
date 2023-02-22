@@ -25,30 +25,30 @@
 					},
 					"objectProperties":  [
 					],
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 							"contact*"
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -98,29 +98,29 @@
 								"customer"
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -157,29 +157,29 @@
 					],
 					"objectProperties":  [
 					],
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -220,29 +220,29 @@
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -289,32 +289,32 @@
 								"customer"
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
 					],
 					"objectDetailProperties": {
 						"operation": "replace",
 						"list":  [
 						]
 					},
-					"groupProperties":  [
-					],
-					"objectIdentifierProperties":  [
-					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -360,32 +360,32 @@
 								"customer"
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
+					],
+					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
 					],
 					"objectDetailProperties": {
 						"operation": "replace",
 						"list":  [
 						]
 					},
-					"groupProperties":  [
-					],
-					"objectIdentifierProperties":  [
-					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -431,30 +431,30 @@
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 							"appliedTax"
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -496,30 +496,30 @@
 					},
 					"objectProperties":  [
 					],
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 							"contactMedium.characteristic"
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -599,6 +599,13 @@
 				"party",
 				"customerEntity"
 		],
+		"objectTypeProperties":  [
+				"refType",
+				"externalIdentifierType",
+				"@referredType",
+				"@type",
+				"deserializationType"
+		],
 		"objectTypeRenames":  [
 				"compositeProduct=product",
 				"defaultPaymentMethod=paymentMethod",
@@ -609,6 +616,16 @@
 				"postalAddress=contactMedium",
 				"originalaccount=account",
 				"customerEntity=customer"
+		],
+		"objectIdentifierProperties":  [
+				"id",
+				"referenceId"
+		],
+		"objectTitleProperties":  [
+				"fullName",
+				"name",
+				"characteristic.contactType",
+				"contactMedium.mediumType"
 		],
 		"objectDetailProperties":  [
 				"contactMedium.characteristic",
@@ -623,17 +640,8 @@
 				"order*Price.price",
 				"item*Price.*Price",
 				"item*Price.price",
-				"*Price.appliedTax",
+				"appliedTax",
 				"billStructure"
-		],
-		"groupProperties":  [
-				"contactMedium",
-				"financialaccount",
-				"commitment"
-		],
-		"objectIdentifierProperties":  [
-				"id",
-				"referenceId"
 		],
 		"relationshipProperties":  [
 				"relatedParty",
@@ -646,19 +654,6 @@
 				"relationshipType",
 				"characteristic.contactType",
 				"contactMedium.mediumType"
-		],
-		"objectTitleProperties":  [
-				"fullName",
-				"name",
-				"characteristic.contactType",
-				"contactMedium.mediumType"
-		],
-		"objectTypeProperties":  [
-				"refType",
-				"externalIdentifierType",
-				"@referredType",
-				"@type",
-				"deserializationType"
 		],
 		"relationshipTypeArrowFormats":  [
 				"relatedparty=[dotted]",
@@ -673,6 +668,41 @@
 				"productrelationship.commercialrelation=[#gold,dashed]",
 				"productrelationship.subscriptionrelation=[#green,dashed]",
 				"productrelationship.orderitem=[#orange,dashed]"
+		],
+		"groupProperties":  [
+				"contactMedium",
+				"financialaccount",
+				"commitment"
+		],
+		"characteristicProperties":  [
+				{"parentProperty": "product.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
+				{"parentProperty": "orderItem.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
+				{"parentProperty": "productCharacteristic", "type": "list", "propertyList": ["name", "value"]},
+				{"parentProperty": "metadata", "type": "list", "propertyList": ["name", "value", "metadataType"]},
+				{"parentProperty": "modifyReason", "type": "list", "propertyList": ["name", "action"]},
+				{"parentProperty": "stateDate", "type": "list", "propertyList": ["name", "effectiveDate"]},
+				{"parentProperty": "businessActivity", "type": "list", "propertyList": ["name", "effectiveDate"]},
+				{"parentProperty": "individual.externalReference", "type": "list", "propertyList": ["externalReferenceType", "name", "id"]},
+				"details",
+				"extensions",
+				"size",
+				"interactionDate",
+				"itemDate",
+				"validFor",
+				{"parentProperty": "channel", "type": "list", "propertyList": ["name", "id"]},
+				{"parentProperty": "productOfferingCharacteristic", "type": "list", "propertyList": ["name", "value"]},
+				"tax*Amount",
+				"exemptAmount",
+				"dutyFreeAmount",
+				"duration",
+				"quantity",
+				"amount",
+				"presentationMedia",
+				"format",
+				"cycleSpecification",
+				"periodCoverage",
+				"taxDefinition",
+				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner"]}
 		],
 		"hiddenProperties":  [
 				"characteristicMetadata",
@@ -691,35 +721,6 @@
 				"'skinparam linetype ortho",
 				"skinparam HeaderFontSize 18",
 				"skinparam FooterFontSize 18"
-		],
-		"characteristicProperties":  [
-				{"parentProperty": "product.characteristic", "type": "list", "nameProperty": "name", "valueProperty": "value", "infoProperty": "valueType"},
-				{"parentProperty": "orderItem.characteristic", "type": "list", "nameProperty": "name", "valueProperty": "value", "infoProperty": "valueType"},
-				{"parentProperty": "productCharacteristic", "type": "list", "nameProperty": "name", "valueProperty": "value"},
-				{"parentProperty": "metadata", "type": "list", "nameProperty": "name", "valueProperty": "value", "infoProperty": "metadataType"},
-				{"parentProperty": "modifyReason", "type": "list", "nameProperty": "name", "valueProperty": "action"},
-				{"parentProperty": "stateDate", "type": "list", "nameProperty": "name", "valueProperty": "effectiveDate"},
-				{"parentProperty": "businessActivity", "type": "list", "nameProperty": "name", "valueProperty": "effectiveDate"},
-				{"parentProperty": "individual.externalReference", "type": "list", "nameProperty": "externalReferenceType", "valueProperty": "name", "infoProperty": "id"},
-				{"parentProperty": "details", "type": "record"},
-				{"parentProperty": "extensions", "type": "record"},
-				{"parentProperty": "size", "type": "record"},
-				{"parentProperty": "interactionDate", "type": "record"},
-				{"parentProperty": "itemDate", "type": "record"},
-				{"parentProperty": "validFor", "type": "record"},
-				{"parentProperty": "channel", "type": "list", "nameProperty": "name", "valueProperty": "id"},
-				{"parentProperty": "productOfferingCharacteristic", "type": "list", "nameProperty": "name", "valueProperty": "value"},
-				{"parentProperty": "tax*Amount", "type": "record"},
-				{"parentProperty": "exemptAmount", "type": "record"},
-				{"parentProperty": "dutyFreeAmount", "type": "record"},
-				{"parentProperty": "duration", "type": "record"},
-				{"parentProperty": "quantity", "type": "record"},
-				{"parentProperty": "amount", "type": "record"},
-				{"parentProperty": "presentationMedia", "type": "record"},
-				{"parentProperty": "format", "type": "record"},
-				{"parentProperty": "cycleSpecification", "type": "record"},
-				{"parentProperty": "externalIdentifier", "type": "list", "nameProperty": "externalIdentifierType", "valueProperty": "id", "infoProperty": "owner"},
-				{"parentProperty": "product.externalIdentifier", "type": "list", "nameProperty": "type", "valueProperty": "id"}
 		],
 		"objectFormats": {
 			"baseFormat": {

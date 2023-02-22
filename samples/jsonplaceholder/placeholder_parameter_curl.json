@@ -1,8 +1,17 @@
 {
-    "inputListFile": "placeholder_inputlist_curl.json",
-    "generateSummary": "true",
-    "generateDetails": "false",
-    "outputFormats": "svg,log,png,json,puml,zip",
-    "option": "default",
-    "curlParameter": []
+	"definitionFile": null,
+	"description": null,
+	"detail": null,
+	"group": null,
+	"job": null,
+	"inputListFile": "placeholder_inputlist_curl.json",
+	"inputFiles":  [
+	],
+	"generateSummary": "true",
+	"generateDetails": "false",
+	"outputFormats": "svg,log,png,json,puml,zip",
+	"option": "default",
+	"outputSuffix": null,
+	"curlParameter":  [
+	]
 }
