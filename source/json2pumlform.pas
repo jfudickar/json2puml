@@ -36,8 +36,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.ComCtrls, Vcl.ToolWin,
   System.ImageList, Vcl.ImgList, Vcl.StdActns, System.Actions, Vcl.ActnList,
   json2pumlframe, json2pumldefinition, Vcl.ActnMenus, Vcl.ActnMan, Vcl.ActnCtrls,
-  Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB, Datasnap.DBClient,
-  Vcl.DBGrids;
+  Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
+  Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
   tSingleFileFrame = class(TObject)
@@ -209,14 +210,14 @@ type
     CurlAuthenticationParameterTabSheet: TTabSheet;
     CurlParameterDBGrid: TDBGrid;
     CurlParameterDataSource: TDataSource;
-    CurlParameterDataSet: TClientDataSet;
+    CurlAuthenticationParameterDataSource: TDataSource;
+    CurlAuthenticationParameterDBGrid: TDBGrid;
+    CurlParameterDataSet: TFDMemTable;
     CurlParameterDataSetName: TStringField;
     CurlParameterDataSetValue: TStringField;
-    CurlAuthenticationParameterDataSource: TDataSource;
-    CurlAuthenticationParameterDataset: TClientDataSet;
-    StringField1: TStringField;
-    StringField2: TStringField;
-    CurlAuthenticationParameterDBGrid: TDBGrid;
+    CurlAuthenticationParameterDataset: TFDMemTable;
+    StringField3: TStringField;
+    StringField4: TStringField;
     procedure ShowParameterFileActionExecute (Sender: TObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);

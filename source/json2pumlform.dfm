@@ -2317,16 +2317,22 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Left = 96
     Top = 528
   end
-  object CurlParameterDataSet: TClientDataSet
-    PersistDataPacket.Data = {
-      4D0000009619E0BD0100000018000000020000000000030000004D00044E616D
-      6501004900000001000557494454480200020014000556616C75650100490000
-      0001000557494454480200020014000000}
+  object CurlAuthenticationParameterDataSource: TDataSource
+    DataSet = CurlAuthenticationParameterDataset
+    Left = 232
+    Top = 536
+  end
+  object CurlParameterDataSet: TFDMemTable
     Active = True
-    Aggregates = <>
-    Params = <>
-    Left = 96
-    Top = 464
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 88
+    Top = 609
     object CurlParameterDataSetName: TStringField
       FieldName = 'Name'
     end
@@ -2334,25 +2340,21 @@ object json2pumlMainForm: Tjson2pumlMainForm
       FieldName = 'Value'
     end
   end
-  object CurlAuthenticationParameterDataSource: TDataSource
-    DataSet = CurlAuthenticationParameterDataset
-    Left = 232
-    Top = 536
-  end
-  object CurlAuthenticationParameterDataset: TClientDataSet
-    PersistDataPacket.Data = {
-      4D0000009619E0BD0100000018000000020000000000030000004D00044E616D
-      6501004900000001000557494454480200020014000556616C75650100490000
-      0001000557494454480200020014000000}
+  object CurlAuthenticationParameterDataset: TFDMemTable
     Active = True
-    Aggregates = <>
-    Params = <>
-    Left = 232
-    Top = 472
-    object StringField1: TStringField
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 216
+    Top = 617
+    object StringField3: TStringField
       FieldName = 'Name'
     end
-    object StringField2: TStringField
+    object StringField4: TStringField
       FieldName = 'Value'
     end
   end
