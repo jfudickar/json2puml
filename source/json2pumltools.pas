@@ -693,7 +693,6 @@ var
   Url: string;
   Command: string;
   FilePath: string;
-  Authentication: tJson2PumlCurlAuthenticationDefinition;
   FileLastWriteDate: tDateTime;
   StartTime: tDateTime;
   vErrorMessage: string;

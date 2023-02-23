@@ -95,6 +95,7 @@ type
     function GetObjectGroupName: string;
     function GetRelatedObjectCaption: string;
     function GetRelatedObjectFilled: boolean;
+    function GetRelatedObjectShowObject: boolean;
     function GetRelatedObjectFiltered: boolean;
     function GetRelatedObjectGroupName: string;
     function GetRelatedObjectTypeIdent: string;
@@ -110,6 +111,7 @@ type
     property RelatedObject: tPumlObject read FRelatedObject write FRelatedObject;
     property RelatedObjectCaption: string read GetRelatedObjectCaption;
     property RelatedObjectFilled: boolean read GetRelatedObjectFilled;
+    property RelatedObjectShowObject: boolean read GetRelatedObjectShowObject;
     property RelatedObjectFiltered: boolean read GetRelatedObjectFiltered;
     property RelatedObjectGroupName: string read GetRelatedObjectGroupName;
     property RelatedObjectTypeIdent: string read GetRelatedObjectTypeIdent;
@@ -156,7 +158,11 @@ type
 
   tPumlCharacteristicRecord = class(tBasePumlStringList)
   private
+    FIntIdent: String;
     function GetIdent: string; override;
+  protected
+    procedure AddProperties(iPropertyList: tStringList);
+    property IntIdent: String read FIntIdent;
   public
   end;
 
@@ -275,6 +281,7 @@ type
     procedure AddValue (iName, iValue: string; iReplace: boolean = true);
     function CalculateChildObjectDefaultIdent (iChildObjectType: string): string;
     function GeneratePuml (ipuml: TStrings): boolean;
+    function GeneratePumlColorDefinition: string;
     function IsFiltered: boolean;
     function ObjectCaption (iSeparator: string; iFormat: boolean): string;
     procedure UpdateRedundant; override;
@@ -482,27 +489,7 @@ begin
   if not Result then
     Exit;
   AddLine := False;
-  if not ObjectType.IsEmpty then
-    Color := ObjectType.Substring (0, 1)
-  else if not ObjectTitle.IsEmpty then
-    Color := ObjectTitle.Substring (0, 1)
-  else if not FormatDefinition.FormatName.IsEmpty then
-    Color := FormatDefinition.FormatName.Substring (0, 1)
-  else if not ObjectIdent.IsEmpty then
-    Color := ObjectIdent.Substring (0, 1)
-  else
-    Color := ' ';
-  if Assigned (FormatDefinition) then
-  begin
-    if FormatDefinition.IconColor.IsEmpty then
-      FormatDefinition.IconColor := 'Peru';
-    Color := Format ('(%s,%s)', [Color.ToUpper, FormatDefinition.IconColor]);
-    if not FormatDefinition.FormatName.IsEmpty then
-      Color := Format ('%s %s', [Color, FormatDefinition.FormatName.ToLower]);
-  end
-  else
-    Color := Format ('(%s,Peru)', [Color.ToUpper]);
-  Color := Format ('<< %s >>', [Color]);
+  Color := GeneratePumlColorDefinition;
   ipuml.add (Format('%s %s {', [GeneratePumlClassName, Color]));
   if not ObjectType.IsEmpty then
     ipuml.add (Format('<b>%s - %s</b>', [ObjectType, ObjectIdent]))
@@ -681,6 +668,33 @@ begin
   Filtered := IsFiltered;
 end;
 
+function tPumlObject.GeneratePumlColorDefinition: string;
+var Color: string;
+begin
+  if not ObjectType.IsEmpty then
+    Color := ObjectType.Substring (0, 1)
+  else if not ObjectTitle.IsEmpty then
+    Color := ObjectTitle.Substring (0, 1)
+  else if not FormatDefinition.FormatName.IsEmpty then
+    Color := FormatDefinition.FormatName.Substring (0, 1)
+  else if not ObjectIdent.IsEmpty then
+    Color := ObjectIdent.Substring (0, 1)
+  else
+    Color := ' ';
+  if Assigned(FormatDefinition) then
+  begin
+    if FormatDefinition.IconColor.IsEmpty then
+      FormatDefinition.IconColor := 'Peru';
+    Color := Format('(%s,%s)', [Color.ToUpper, FormatDefinition.IconColor]);
+    if not FormatDefinition.FormatName.IsEmpty then
+      Color := Format('%s %s', [Color, FormatDefinition.FormatName.ToLower]);
+  end
+  else
+    Color := Format('(%s,Peru)', [Color.ToUpper]);
+  Color := Format('<< %s >>', [Color]);
+  Result := Color;
+end;
+
 procedure tPumlObjectRelationship.GeneratePumlObjectDetail (ipuml: TStrings);
 var
   rType: string;
@@ -707,11 +721,9 @@ var
   FromIdent: string;
   ToIdent: string;
 begin
-  if not RelatedObject.ShowObject then
+  if not RelatedObjectShowObject then
     Exit;
   if not (Direction = urdTo) then
-    Exit;
-  if not Filled then
     Exit;
   if iGroupList.IndexOf (ObjectGroupName) >= 0 then
     FromIdent := ObjectGroupName
@@ -764,6 +776,14 @@ function tPumlObjectRelationship.GetRelatedObjectFilled: boolean;
 begin
   if Assigned (RelatedObject) then
     Result := RelatedObject.Filled
+  else
+    Result := False;
+end;
+
+function tPumlObjectRelationship.GetRelatedObjectShowObject: boolean;
+begin
+  if Assigned (RelatedObject) then
+    Result := RelatedObject.ShowObject
   else
     Result := False;
 end;
@@ -870,6 +890,9 @@ var
   var
     i: Integer;
     GroupIdent: string;
+    ClassIdent: string;
+    color : string;
+    ParentObject : tPumlObject;
   begin
     if (iDirection = urdTo) and r.GroupAtObject then
       GroupIdent := r.ObjectGroupName
@@ -882,14 +905,19 @@ var
       iGroupCountList.AddPair (GroupIdent, '1')
     else if iGroupCountList.ValueFromIndex[i].ToInteger <= 1 then
     begin
-      ipuml.add (Format('diamond %s', [GroupIdent]));
+      if iDirection = urdTo then
+        ParentObject := r.ParentUmlObject
+      else
+        ParentObject := r.RelatedObject;
+      //ClassIdent := Format('diamond %s', [GroupIdent]);
+      ClassIdent := Format('class " " as %s', [GroupIdent]);
+      Color := ParentObject.GeneratePumlColorDefinition;
+
+      ipuml.add (Format('''generate relation group %s', [ParentObject.ObjectTypeIdent]));
       iGroupList.add (GroupIdent);
       ipuml.add ('together {');
-      if iDirection = urdTo then
-        ipuml.add (Format('  %s', [r.ParentUmlObject.GeneratePumlClassName]))
-      else
-        ipuml.add (Format('  %s', [r.RelatedObject.GeneratePumlClassName]));
-      ipuml.add (Format('  diamond %s', [GroupIdent]));
+      ipuml.add (Format('  %s', [ParentObject.GeneratePumlClassName]));
+      ipuml.add (Format('  %s', [ClassIdent]));
       ipuml.add ('}');
       if iDirection = urdTo then
         ipuml.add (tPumlHelper.RelationLine(r.ParentUmlObject.PlantUmlIdent, r.ArrowFormat, GroupIdent,
@@ -898,6 +926,7 @@ var
         ipuml.add (tPumlHelper.RelationLine(GroupIdent, r.ArrowFormat, r.RelatedObject.PlantUmlIdent,
           'from ' + r.ParentUmlObject.ObjectType));
       iGroupCountList.ValueFromIndex[i] := (iGroupCountList.ValueFromIndex[i].ToInteger + 1).ToString;
+      ipuml.add (Format('%s %s', [ClassIdent, color]));
     end;
   end;
 
@@ -1174,9 +1203,16 @@ begin
   end;
 end;
 
+procedure tPumlCharacteristicRecord.AddProperties(iPropertyList: tStringList);
+begin
+  AddStrings(iPropertyList);
+  iPropertyList.Sort;
+  fIntIdent := iPropertyList.Text;
+end;
+
 function tPumlCharacteristicRecord.GetIdent: string;
 begin
-  Result := '';
+  Result := IntIdent;
 end;
 
 constructor tPumlCharacteristicRecordEnumerator.Create (ACharacteristic: tPumlCharacteristicObject);
@@ -1215,9 +1251,14 @@ var
   Rec: tPumlCharacteristicRecord;
 begin
   Rec := tPumlCharacteristicRecord.Create (ParentUmlObject);
-  Rec.AddStrings (iPropertyList);
-  AddUsedProperties (Rec);
-  AddObject (Rec.Ident, Rec);
+  Rec.AddProperties(iPropertyList);
+  if IndexOf(Rec.Ident) < 0 then
+  begin
+    AddUsedProperties (Rec);
+    AddObject (Rec.Ident, Rec);
+  end
+  else
+    Rec.Free;
 end;
 
 procedure tPumlCharacteristicObject.AddUsedProperties (iPropertyList: TStringList);
@@ -1248,6 +1289,12 @@ begin
       if iAddLine then
         ipuml.add ('---');
       ipuml.add (Format('<b>%s</b>', [ParentProperty]));
+      if Definition.CharacteristicType = jctRecord then
+      begin
+        i := UsedProperties.IndexOf('parent');
+        if i > 0 then
+          UsedProperties.Move(i, 0);
+      end;
       if Definition.IncludeIndex then
         Columns.add ('idx');
       for PropName in UsedProperties do
@@ -1258,6 +1305,7 @@ begin
       for CharRec in Self do
       begin
         Columns.Clear;
+
         if Definition.IncludeIndex then
           Columns.add (i.ToString);
         for PropName in UsedProperties do

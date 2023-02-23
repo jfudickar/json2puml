@@ -100,7 +100,7 @@ type
     FCurlParameter: tJson2PumlCurlParameterList;
     FCurlAuthenticationParameter: tJson2PumlCurlParameterList;
     FDefinitionFileName: string;
-    FDescription: string;
+    FJobDescription: string;
     FDetail: string;
     FGenerateDetailsStr: string;
     FGenerateSummaryStr: string;
@@ -138,7 +138,7 @@ type
     property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
-    property Description: string read FDescription write FDescription;
+    property JobDescription: string read FJobDescription write FJobDescription;
     property Detail: string read FDetail write FDetail;
     property GenerateDetailsStr: string read FGenerateDetailsStr write FGenerateDetailsStr;
     property GenerateSummaryStr: string read FGenerateSummaryStr write FGenerateSummaryStr;
@@ -437,6 +437,7 @@ type
     FGenerateDetailsStr: string;
     FGenerateSummaryStr: string;
     FGroup: string;
+    FJobDescription: string;
     FJobname: string;
     FOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent;
     FOption: string;
@@ -527,6 +528,7 @@ type
     property GenerateSummary: boolean read GetGenerateSummary;
     property GenerateSummaryStr: string read FGenerateSummaryStr write FGenerateSummaryStr;
     property Group: string read FGroup write FGroup;
+    property JobDescription: string read FJobDescription write FJobDescription;
     property Jobname: string read FJobname write FJobname;
     property Option: string read FOption write FOption;
     property OutputFormatStr: string read FOutputFormatStr write SetOutputFormatStr;
@@ -549,7 +551,7 @@ type
     FDebug: boolean;
     FDefinitionFileName: string;
     FDefinitionFileNameEnvironment: string;
-    FDescription: string;
+    FJobDescription: string;
     FDetail: string;
     FFailed: boolean;
     FFormatDefinitionFiles: boolean;
@@ -629,7 +631,7 @@ type
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
     property DefinitionFileNameEnvironment: string read FDefinitionFileNameEnvironment
       write FDefinitionFileNameEnvironment;
-    property Description: string read FDescription write FDescription;
+    property JobDescription: string read FJobDescription write FJobDescription;
     property Detail: string read FDetail write FDetail;
     property Failed: boolean read FFailed write FFailed;
     property FormatDefinitionFiles: boolean read FFormatDefinitionFiles write FFormatDefinitionFiles;
@@ -1724,6 +1726,7 @@ begin
   Group := GetJsonStringValue (Definition, 'group');
   Option := GetJsonStringValue (Definition, 'option');
   Jobname := GetJsonStringValue (Definition, 'job');
+  JobDescription := GetJsonStringValue (Definition, 'jobDescription');
   OutputFormatStr := GetJsonStringValue (Definition, 'outputFormats');
   OutputPath := GetJsonStringValue (Definition, 'outputPath');
   OutputSuffix := GetJsonStringValue (Definition, 'outputSuffix');
@@ -1807,6 +1810,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'detail', Detail, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'option', Option, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'job', Jobname, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'jobDescription', JobDescription, iLevel + 1, iWriteEmpty);
   S := OutputFormatsToString (OutputFormats);
   if not S.IsEmpty or iWriteEmpty then
     oJsonOutPut.Add (Format('%s"%s":[%s],', [JsonLinePrefix(iLevel + 1), 'outputFormats', S.TrimRight([','])]));
@@ -2152,7 +2156,7 @@ begin
   ConfigurationFileNameEnvironment := ReadSingleInputParameterEnvironment (cConfigurationFileRegistry);
   ParameterFileName := ReadSingleInputParameterFile ('parameterfile');
   DefinitionFileName := ReadSingleInputParameterFile ('definitionfile');
-  Description := ReadSingleInputParameter ('description');
+  JobDescription := ReadSingleInputParameter ('jobdescription');
   DefinitionFileNameEnvironment := ReadSingleInputParameterEnvironment (cDefinitionFileRegistry);
   CurlAuthenticationFileName := ReadSingleInputParameterFile ('CurlAuthenticationfile');
   CurlAuthenticationFileNameEnvironment := ReadSingleInputParameterEnvironment (cCurlAuthenticationFileRegistry);
@@ -2381,8 +2385,8 @@ begin
     'Flag to define if the merged generator definition should be stored in the output folder.');
   WriteHelpLine ('debug', 'Flag to define that a converter log file should be generated parallel to the puml file');
   WriteHelpLine;
-  WriteHelpLine ('description',
-    'Description of the generated result. This information will be put into the legend of the image.');
+  WriteHelpLine ('jobdescription',
+    'Job description of the generated result. This information will be put into the legend of the image.');
   WriteHelpLine;
 end;
 
@@ -3229,7 +3233,7 @@ begin
   DefinitionRecord := GetJsonObject (iJsonValue, iPropertyName);
   if not Assigned (DefinitionRecord) then
     exit;
-  Description := GetJsonStringValue (DefinitionRecord, 'description');
+  JobDescription := GetJsonStringValue (DefinitionRecord, 'jobDescription');
   Jobname := GetJsonStringValue (DefinitionRecord, 'job');
   Group := GetJsonStringValue (DefinitionRecord, 'group');
   Detail := GetJsonStringValue (DefinitionRecord, 'detail');
@@ -3270,10 +3274,10 @@ procedure tJson2PumlParameterFileDefinition.WriteToJson (oJsonOutPut: TStrings; 
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'definitionFile', DefinitionFileName, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'description', Description, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'detail', Detail, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'group', Group, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'job', Jobname, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'jobDescription', jobDescription, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'inputListFile', InputListFileName, iLevel + 1, iWriteEmpty);
   InputFiles.WriteToJson (oJsonOutPut, 'inputFiles', iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'generateSummary', GenerateSummaryStr, iLevel + 1, iWriteEmpty);

@@ -126,7 +126,7 @@ type
     function GetCurrentCurlAuthenticationFileName: string;
     function GetCurrentDefinitionFileName: string;
     function GetCurrentDetail: string;
-    function GetCurrentDescription: string;
+    function GetCurrentJobDescription: string;
     function GetCurrentFullOutputPath: string;
     function GetCurrentGroup: string;
     function GetCurrentInputListFileName: string;
@@ -222,7 +222,7 @@ type
     property CurrentConverterDefinition: tJson2PumlConverterDefinition read FCurrentConverterDefinition;
     property CurrentCurlAuthenticationFileName: string read GetCurrentCurlAuthenticationFileName;
     property CurrentDefinitionFileName: string read GetCurrentDefinitionFileName;
-    property CurrentDescription: string read GetCurrentDescription;
+    property CurrentJobDescription: string read GetCurrentJobDescription;
     property CurrentFullOutputPath: string read GetCurrentFullOutputPath;
     property CurrentGroup: string read GetCurrentGroup;
     property CurrentInputListFileName: string read GetCurrentInputListFileName;
@@ -897,12 +897,14 @@ begin
     Result := ConverterInputList.Detail;
 end;
 
-function TJson2PumlInputHandler.GetCurrentDescription: string;
+function TJson2PumlInputHandler.GetCurrentJobDescription: string;
 begin
-  if not CmdLineParameter.Description.IsEmpty then
-    Result := CmdLineParameter.Description
-  else if not ParameterDefinition.Description.IsEmpty then
-    Result := ParameterDefinition.Description
+  if not CmdLineParameter.JobDescription.IsEmpty then
+    Result := CmdLineParameter.JobDescription
+  else if not ParameterDefinition.JobDescription.IsEmpty then
+    Result := ParameterDefinition.JobDescription
+  else if not ConverterInputList.JobDescription.IsEmpty then
+    Result := ConverterInputList.JobDescription
   else
     Result := '';
 end;

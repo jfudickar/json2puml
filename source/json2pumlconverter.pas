@@ -224,6 +224,58 @@ var
   propName: string;
   i: Integer;
   FoundCondition: string;
+
+  procedure AddPropertyListToCharacteristic;
+  begin
+    if PropertyList.Count > 0 then
+    begin
+      iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, PropertyList, iCharacteristicDefinition);
+      PropertyList.Clear;
+    end;
+
+  end;
+
+  procedure ConvertObjectProperties (iJsonObject: TJsonObject; iParentProperty: string);
+  var
+    i: Integer;
+    PropertyName: string;
+  begin
+    for i := 0 to iJsonObject.Count - 1 do
+    begin
+      PropertyList.Clear;
+      cName := iJsonObject.Pairs[i].JsonString.Value;
+      if not iParentProperty.IsEmpty then
+        PropertyName := Format ('%s.%s', [iParentProperty, cName])
+      else
+        PropertyName := cName;
+      if not Definition.IsPropertyHidden (cName, iInfo.PropertyName, iInfo.ParentObjectType, FoundCondition) then
+        if IsJsonSimple (iJsonObject.Pairs[i].JsonValue) then
+        begin
+          cValue := iJsonObject.Pairs[i].JsonValue.Value;
+          if not iParentProperty.IsEmpty then
+            PropertyList.AddPair ('parent', iParentProperty);
+          PropertyList.AddPair ('attribute', cName);
+          PropertyList.AddPair ('value', cValue);
+        end
+        else if iJsonObject.Pairs[i].JsonValue is TJSONArray then
+        begin
+          cValue := GetJsonStringArray (TJSONArray(iJsonObject.Pairs[i].JsonValue));
+          if not iParentProperty.IsEmpty then
+            PropertyList.AddPair ('parent', iParentProperty);
+          PropertyList.AddPair ('attribute', cName);
+          PropertyList.AddPair ('value', cValue);
+          AddFileLog ('Property "%s.%s" fetched from array : "%s"', [iInfo.PropertyName, PropertyName, cValue]);
+        end
+        else if iJsonObject.Pairs[i].JsonValue is TJsonObject then
+          ConvertObjectProperties (TJsonObject(iJsonObject.Pairs[i].JsonValue), PropertyName)
+        else
+          AddFileLog ('Property "%s.%s" will be ignored, it'' not a simple type', [iInfo.PropertyName, PropertyName])
+      else
+        AddFileLog ('Property "%s.%s" defined as hidden %s', [iInfo.PropertyName, PropertyName, FoundCondition]);
+      AddPropertyListToCharacteristic;
+    end;
+  end;
+
 begin
   PropertyList := TStringList.Create;
   try
@@ -238,36 +290,11 @@ begin
           if not cValue.IsEmpty then
             PropertyList.AddPair (propName, cValue);
         end;
-      if PropertyList.Count > 0 then
-        iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, PropertyList, iCharacteristicDefinition);
+      AddPropertyListToCharacteristic;
     end
     else
     begin
-      for i := 0 to iJsonObject.Count - 1 do
-      begin
-        PropertyList.Clear;
-        cName := iJsonObject.Pairs[i].JsonString.Value;
-        if not Definition.IsPropertyHidden (cName, iInfo.PropertyName, iInfo.ParentObjectType, FoundCondition) then
-          if IsJsonSimple (iJsonObject.Pairs[i].JsonValue) then
-          begin
-            cValue := iJsonObject.Pairs[i].JsonValue.Value;
-            PropertyList.AddPair ('attribute', cName);
-            PropertyList.AddPair ('value', cValue);
-          end
-          else if iJsonObject.Pairs[i].JsonValue is TJSONArray then
-          begin
-            cValue := GetJsonStringArray (TJSONArray(iJsonObject.Pairs[i].JsonValue));
-            PropertyList.AddPair ('attribute', cName);
-            PropertyList.AddPair ('value', cValue);
-            AddFileLog ('Property "%s.%s" fetched from array : "%s"', [iInfo.PropertyName, cName, cValue]);
-          end
-          else
-            AddFileLog ('Property "%s.%s" will be ignored, it'' not a simple type', [iInfo.PropertyName, cName])
-        else
-          AddFileLog ('Property "%s.%s" defined as hidden %s', [iInfo.PropertyName, cName, FoundCondition]);
-        if PropertyList.Count > 0 then
-          iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, PropertyList, iCharacteristicDefinition);
-      end;
+      ConvertObjectProperties (iJsonObject, '');
     end;
   finally
     PropertyList.Free;
@@ -299,7 +326,6 @@ var
   function CheckObjectIdent (iObjectType: string): Boolean;
   begin
     if ObjectIdent.IsEmpty then
-
       if not ObjectDefinition.GenerateWithoutIdentifier then
         AddFileLog ('Object "%s" not created, no ident identified', [iObjectType])
       else
@@ -623,6 +649,9 @@ begin
         if PumlObject.ShowObject and not PumlObject.IsObjectDetail then
           PumlObject.DetailObjects.GeneratePumlTogether (Puml, PumlObject.PlantUmlIdent,
             PumlObject.ObjectCaption('\l', true));
+    for PumlObject in PumlObjects do
+      PumlObject.Relations.GeneratePumlRelationGroup (Puml, GroupList, GroupCountList);
+
     // Generating classes
     for PumlObject in PumlObjects do
       if PumlObject.GeneratePuml (Puml) then
@@ -633,8 +662,6 @@ begin
       else
         AddFileLog ('Skipped   : Object "%s" ', [PumlObject.ObjectTypeIdent]);
     // Generating class relations
-    for PumlObject in PumlObjects do
-      PumlObject.Relations.GeneratePumlRelationGroup (Puml, GroupList, GroupCountList);
     for PumlObject in PumlObjects do
       PumlObject.Relations.GeneratePumlRelation (Puml, GroupList);
 
@@ -852,6 +879,7 @@ begin
   if not Definition.ShowLegend then
     Exit;
   vAdd := false;
+  Puml.Add ('');
   Puml.Add ('legend');
   FileLength := 0;
   if Definition.LegendShowInfo then
@@ -880,14 +908,14 @@ begin
       else
         Puml.Add (tPumlHelper.TableLine(['', InputFilter.TitleFilter[i]]));
   end;
-  if not InputHandler.CurrentDescription.IsEmpty then
+  if not InputHandler.CurrentJobDescription.IsEmpty then
   begin
     if vAdd then
       Puml.Add ('')
     else
       vAdd := true;
-    Puml.Add (tPumlHelper.TableLine(['<b>Description'.PadRight(FileLength + 50)]));
-    Puml.Add (tPumlHelper.TableLine([InputHandler.CurrentDescription]));
+    Puml.Add (tPumlHelper.TableLine(['<b>Job description'.PadRight(FileLength + 50)]));
+    Puml.Add (tPumlHelper.TableLine([InputHandler.CurlParameterList.ReplaceParameterValues(InputHandler.CurrentJobDescription)]));
   end;
   if Definition.LegendShowObjectFormats then
   begin
