@@ -36,10 +36,10 @@ class Json2PumlParameter <<Pivot>>{
    inputListFile : String
    inputFiles : Array of SingleFile
    --
-	description : String
    detail : String
    group : String
    job : String
+	jobDescription : String
    option : String
    --
    generateSummary : Boolean

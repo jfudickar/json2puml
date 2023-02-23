@@ -42,6 +42,7 @@ class InputlistFile  <<Pivot>> {
   group : String
   detail : String
   job : string
+  jobDescription : String
   option : String
   --
   outputFormats : Array of OutputFormat 
