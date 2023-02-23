@@ -582,7 +582,7 @@
 				"productOrder",
 				"productOrderItem",
 				"orderItem",
-				"orderTotalPrice",
+				"itemPrice",
 				"productOffering",
 				"agreement",
 				"agreementItem",
@@ -619,6 +619,7 @@
 		],
 		"objectIdentifierProperties":  [
 				"id",
+				"ticketId",
 				"referenceId"
 		],
 		"objectTitleProperties":  [
@@ -630,22 +631,15 @@
 		"objectDetailProperties":  [
 				"contactMedium.characteristic",
 				"contactMedium",
-				"note",
 				"totalBalance",
 				"product.productTerm",
-				"productPrice.*Price",
-				"productPrice.price",
 				"orderItem.itemTerm",
-				"order*Price.*Price",
-				"order*Price.price",
-				"item*Price.*Price",
-				"item*Price.price",
-				"appliedTax",
-				"billStructure"
+				"priceAlteration"
 		],
 		"relationshipProperties":  [
 				"relatedParty",
 				"engagedParty",
+				"relatedEntity",
 				"productRelationship"
 		],
 		"relationshipTypeProperties":  [
@@ -672,12 +666,11 @@
 		"groupProperties":  [
 				"contactMedium",
 				"financialaccount",
-				"commitment"
+				"historyRecord",
+				"productOrder.orderItem",
+				"orderItem.orderItem"
 		],
 		"characteristicProperties":  [
-				{"parentProperty": "product.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
-				{"parentProperty": "orderItem.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
-				{"parentProperty": "productCharacteristic", "type": "list", "propertyList": ["name", "value"]},
 				{"parentProperty": "metadata", "type": "list", "propertyList": ["name", "value", "metadataType"]},
 				{"parentProperty": "modifyReason", "type": "list", "propertyList": ["name", "action"]},
 				{"parentProperty": "stateDate", "type": "list", "propertyList": ["name", "effectiveDate"]},
@@ -691,9 +684,19 @@
 				"validFor",
 				{"parentProperty": "channel", "type": "list", "propertyList": ["name", "id"]},
 				{"parentProperty": "productOfferingCharacteristic", "type": "list", "propertyList": ["name", "value"]},
+				{"parentProperty": "product.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
+				{"parentProperty": "orderItem.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
+				{"parentProperty": "productCharacteristic", "type": "list", "propertyList": ["name", "value"]},
+				{"parentProperty": "customer.characteristic", "type": "list", "propertyList": ["name", "value"]},
+				{"parentProperty": "partyCharacteristic", "type": "list", "propertyList": ["name", "value"]},
+				{"parentProperty": "troubleticket.characteristic", "type": "list", "propertyList": ["name", "value"]},
+				{"parentProperty": "troubleticket.statusChange", "type": "list", "propertyList": ["status", "changeDate"]},
+				{"parentProperty": "note", "type": "list", "propertyList": ["date", "author", "text", "audiance"]},
+				{"parentProperty": "historyChange", "type": "list", "propertyList": ["operation", "path", "oldValue", "newValue"]},
 				"tax*Amount",
 				"exemptAmount",
 				"dutyFreeAmount",
+				"otherName",
 				"duration",
 				"quantity",
 				"amount",
@@ -702,6 +705,19 @@
 				"cycleSpecification",
 				"periodCoverage",
 				"taxDefinition",
+				"immediatePayOption",
+				"priceOverride",
+				"activitySource",
+				"businessProperties",
+				"elapsedDuration",
+				"remainingDuration",
+				"price",
+				"standalonePrice",
+				"finalPrice",
+				"itemTotalPrice",
+				"orderTotalPrice",
+				"billStructure",
+				"appliedTax",
 				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner"]}
 		],
 		"hiddenProperties":  [
@@ -759,7 +775,8 @@
 								"troubleTicket",
 								"appointment",
 								"calenderEvent",
-								"workorder"
+								"workorder",
+								"troubleTicket.historyRecord"
 							],
 							"iconColor": "Cornflowerblue",
 							"skinParams": ["BackgroundColor=deepskyBlue"]
@@ -779,8 +796,8 @@
 							"objectFilter": [
 								"productOrder",
 								"orderItem",
-								"item*Price",
 								"itemTerm",
+								"itemPrice",
 								"quote",
 								"quoteItem",
 								"orderTotalPrice"

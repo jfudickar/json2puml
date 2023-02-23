@@ -308,9 +308,8 @@
 				"name"
 		],
 		"objectDetailProperties":  [
-				"links",
-				"rocket.engines",
-				"rocket.*stage",
+				"xrocket.engines",
+				"xrocket.*stage",
 				"dragon",
 				"composite_fairing"
 		],
@@ -354,7 +353,11 @@
 				"patch",
 				"reddit",
 				"norad_ids",
-				{"parentProperty": "xdragon", "type": "record", "includeIndex": "true"},
+				"links",
+				"engines",
+				"rocket.*stage",
+				"xfirst_stage",
+				"xsecond_stage",
 				{"parentProperty": "payload_weights", "type": "list", "propertyList": ["name", "kg", "lb"]}
 		],
 		"hiddenProperties":  [

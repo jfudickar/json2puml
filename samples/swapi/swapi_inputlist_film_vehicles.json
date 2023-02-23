@@ -41,7 +41,9 @@
 				"generateOutput": "true",
 				"curlOutputParameter":  [
 						{
-							"${starships}": "starships"
+							"name": "${starships}",
+							"value": "starships",
+							"maxValues": "99"
 						},
 						{
 							"${title}": "title"
@@ -54,7 +56,7 @@
 			{
 				"inputFile": "vehicles.json",
 				"curlFileSuffix": "_${vehicles}",
-				"curlBaseUrl": "${vehicles}x",
+				"curlBaseUrl": "${vehicles}",
 				"curlFormatOutput": "true",
 				"curlUrl": null,
 				"curlOptions": null,
