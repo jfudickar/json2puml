@@ -63,10 +63,12 @@ class SingleFormat {
     captionShowType : Boolean
     captionSplitCharacter:String
     captionSplitLength:Integer
+    SortAttributes : Boolean
     showAttributes : Boolean
     showCharacteristics : Boolean
     showFromRelations : Boolean
     showIfEmpty : Boolean
+    showNullValues : Boolean
     showToRelations : Boolean
     valueSplitLength : Integer
 }
