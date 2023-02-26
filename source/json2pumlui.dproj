@@ -120,7 +120,7 @@
         <UWP_DelphiLogo44>..\documentation\icons\json2puml-icon.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml-icon.png</UWP_DelphiLogo150>
         <Debugger_CWD>e:\Delphi\Projects\json2puml\</Debugger_CWD>
-        <Debugger_RunParams>/parameterfile:samples\spacex\spacex_parameter_launches.json /curlparameter:launch=latest /formatdefinitionfiles /option:full</Debugger_RunParams>
+        <Debugger_RunParams>/inputfile:&quot;runtime\output\spacex_inputlist_launches\next\launches\launches_next.json&quot; /leadingobject:launch /definitionfile:&quot;samples\spacex\spacex_definition.json&quot; /option:full</Debugger_RunParams>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_Release>16</VerInfo_Release>
     </PropertyGroup>

@@ -527,7 +527,7 @@ begin
       else
         Value := iJsonValue.Value;
       IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentPropertyName,
-        iInfo.ParentObjectType, FoundCondition);
+        iInfo.ParentObjectType, FoundCondition) and not (iJsonValue is TjsonNull);
 
       if Assigned (iInfo.ParentObject) then
         if IsRelationShip then
