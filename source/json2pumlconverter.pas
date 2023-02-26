@@ -27,7 +27,7 @@ unit json2pumlconverter;
 interface
 
 uses System.JSON, System.Classes, json2pumldefinition, json2pumlpuml,
-  json2pumlinputhandler, json2pumlloghandler, json2pumlconverterdefinition;
+  json2pumlinputhandler, json2pumlloghandler, json2pumlconverterdefinition, json2pumlconst;
 
 type
 
@@ -50,8 +50,18 @@ type
     StopRecursion: Boolean;
     Level: Integer;
     ObjectLevel: Integer;
+    CharacteristicParentPropertyName: string;
+    CharacteristicObject: tPumlCharacteristicObject;
+    procedure Init(iLeadingObject: string);
     function GetParentObjectType: string;
+    function GetInCharacteristicMode: Boolean;
+    function GetCurrentCharacteristicDefinition: tJson2PumlCharacteristicDefinition;
+    function GetCurrentCharacteristicType: tJson2PumlCharacteristicType;
+    property InCharacteristicMode: Boolean read GetInCharacteristicMode;
     property ParentObjectType: string read GetParentObjectType;
+    property CurrentCharacteristicDefinition: tJson2PumlCharacteristicDefinition
+      read GetCurrentCharacteristicDefinition;
+    property CurrentCharacteristicType: tJson2PumlCharacteristicType read GetCurrentCharacteristicType;
   end;
 
   TJson2PumlConverter = class(tPersistent)
@@ -76,25 +86,24 @@ type
     procedure AddFileLog (iLog: string = ''); overload;
     procedure AddFileLog (iLog: string; const iArgs: array of const); overload;
     procedure ConvertArray (iJsonArray: TJSONArray; iInfo: tJson2PumlRecursionRecord);
-    procedure ConvertCharacteristic (iJsonObject: TJsonObject; iInfo: tJson2PumlRecursionRecord;
-      iCharacteristicDefinition: tJson2PumlCharacteristicDefinition);
     procedure ConvertObject (iJsonObject: TJsonObject; iInfo: tJson2PumlRecursionRecord);
     procedure ConvertValue (iJsonValue: TJSONValue; iInfo: tJson2PumlRecursionRecord;
       iRecursionParent: tJson2PumlRecursionParent);
     procedure DecRecursionRecord (var ioCurrentRecord: tJson2PumlRecursionRecord;
       iSafeCurrentRecord: tJson2PumlRecursionRecord; iParent: tJson2PumlRecursionParent);
     procedure GeneratePuml;
-    function GetObjectIdent (iJsonObject: TJsonObject; iParentProperty: string; var oFoundCondition: string): string;
+    function GetObjectIdent (iJsonObject: TJsonObject; iParentProperty: string;
+      var oPropertyName, oFoundCondition: string): string;
     function GetObjectTitleProperties (iJsonObject: TJsonObject; iParentProperty: string;
-      var oFoundCondition: string): string;
+      var oPropertyName, oFoundCondition: string): string;
     function GetObjectTypeProperties (iJsonObject: TJsonObject; iParentProperty: string;
       var oFoundCondition: string): string;
     function GetPropertyValueListProperties (iDefinitionList: tJson2PumlPropertyValueDefinitionList;
       iJsonObject: TJsonObject; iParentProperty, iConfigurationPropertyName: string; var oFoundCondition: string)
       : string; overload;
     function GetPropertyValueListProperties (iDefinitionList: tJson2PumlPropertyValueDefinitionList;
-      iJsonObject: TJsonObject; iParentProperty: string; var oPropertyName: string; iConfigurationPropertyName: string;
-      var oFoundCondition: string): string; overload;
+      iJsonObject: TJsonObject; iParentProperty, iConfigurationPropertyName: string;
+      var oPropertyName, oFoundCondition: string): string; overload;
     procedure GetRelationshipType (iJsonObject: TJsonObject; iPropertyName: string;
       var oRelationshipType, oRelationshipTypeProperty: string; var oFoundCondition: string);
     function IncRecursionRecord (var ioCurrentRecord: tJson2PumlRecursionRecord; iParent: tJson2PumlRecursionParent)
@@ -124,7 +133,7 @@ implementation
 
 uses
   System.SysUtils,
-  System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, Masks, jsontools, json2pumlconst,
+  System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, Masks, jsontools,
   json2pumlbasedefinition, System.Math;
 
 const
@@ -205,99 +214,17 @@ var
 begin
   if not Assigned (iJsonArray) then
     Exit;
-  SaveRecursionRecord := IncRecursionRecord (iInfo, trpArray);
-  try
-    for i := 0 to iJsonArray.Count - 1 do
-    begin
+  for i := 0 to iJsonArray.Count - 1 do
+  begin
+    SaveRecursionRecord := IncRecursionRecord (iInfo, trpArray);
+    try
+      if iInfo.CurrentCharacteristicType = jctList then
+        iInfo.CharacteristicParentPropertyName :=
+          Format ('%s[%s]', [iInfo.CharacteristicParentPropertyName, (i + 1).ToString.PadLeft((i mod 10) + 1)]);
       ConvertValue (iJsonArray.Items[i], iInfo, trpArray);
+    finally
+      DecRecursionRecord (iInfo, SaveRecursionRecord, trpArray);
     end;
-  finally
-    DecRecursionRecord (iInfo, SaveRecursionRecord, trpArray);
-  end;
-end;
-
-procedure TJson2PumlConverter.ConvertCharacteristic (iJsonObject: TJsonObject; iInfo: tJson2PumlRecursionRecord;
-  iCharacteristicDefinition: tJson2PumlCharacteristicDefinition);
-var
-  PropertyList: TStringList;
-  cName, cValue: string;
-  propName: string;
-  i: Integer;
-  FoundCondition: string;
-
-  procedure AddPropertyListToCharacteristic;
-  begin
-    if PropertyList.Count > 0 then
-    begin
-      iInfo.ParentObject.AddCharacteristic (iInfo.OriginalPropertyName, PropertyList, iCharacteristicDefinition);
-      PropertyList.Clear;
-    end;
-
-  end;
-
-  procedure ConvertObjectProperties (iJsonObject: TJsonObject; iParentProperty: string);
-  var
-    i: Integer;
-    PropertyName: string;
-  begin
-    for i := 0 to iJsonObject.Count - 1 do
-    begin
-      PropertyList.Clear;
-      cName := iJsonObject.Pairs[i].JsonString.Value;
-      if not iParentProperty.IsEmpty then
-        PropertyName := Format ('%s.%s', [iParentProperty, cName])
-      else
-        PropertyName := cName;
-      if not Definition.IsPropertyHidden (cName, iInfo.PropertyName, iInfo.ParentObjectType, FoundCondition) then
-        if IsJsonSimple (iJsonObject.Pairs[i].JsonValue) then
-        begin
-          cValue := iJsonObject.Pairs[i].JsonValue.Value;
-          if not iParentProperty.IsEmpty then
-            PropertyList.AddPair ('parent', iParentProperty);
-          PropertyList.AddPair ('attribute', cName);
-          PropertyList.AddPair ('value', cValue);
-        end
-        else if iJsonObject.Pairs[i].JsonValue is TJSONArray then
-        begin
-          cValue := GetJsonStringArray (TJSONArray(iJsonObject.Pairs[i].JsonValue));
-          if not iParentProperty.IsEmpty then
-            PropertyList.AddPair ('parent', iParentProperty);
-          PropertyList.AddPair ('attribute', cName);
-          PropertyList.AddPair ('value', cValue);
-          AddFileLog ('Property "%s.%s" fetched from array : "%s"', [iInfo.PropertyName, PropertyName, cValue]);
-        end
-        else if iJsonObject.Pairs[i].JsonValue is TJsonObject then
-          ConvertObjectProperties (TJsonObject(iJsonObject.Pairs[i].JsonValue), PropertyName)
-        else
-          AddFileLog ('Property "%s.%s" will be ignored, it'' not a simple type', [iInfo.PropertyName, PropertyName])
-      else
-        AddFileLog ('Property "%s.%s" defined as hidden %s', [iInfo.PropertyName, PropertyName, FoundCondition]);
-      AddPropertyListToCharacteristic;
-    end;
-  end;
-
-begin
-  PropertyList := TStringList.Create;
-  try
-    AddFileLog ('Handle as %s characteristic - "%s"', [iCharacteristicDefinition.CharacteristicType.ToString,
-      'characteristicProperties']);
-    if iCharacteristicDefinition.CharacteristicType = jctList then
-    begin
-      for propName in iCharacteristicDefinition.PropertyList do
-        if not propName.IsEmpty then
-        begin
-          cValue := GetJsonStringValue (iJsonObject, propName);
-          if not cValue.IsEmpty then
-            PropertyList.AddPair (propName, cValue);
-        end;
-      AddPropertyListToCharacteristic;
-    end
-    else
-    begin
-      ConvertObjectProperties (iJsonObject, '');
-    end;
-  finally
-    PropertyList.Free;
   end;
 end;
 
@@ -313,12 +240,13 @@ var
   RelationshipType: string;
   RelationshipProperty: string;
   ObjectIdent: string;
+  ObjectIdentProperty: string;
   ObjectType: string;
+  ObjectTitleProperty: string;
   ObjectTypeRenamed: string;
   CharacteristicDefinition: tJson2PumlCharacteristicDefinition;
   ObjectDefinition: tJson2PumlObjectDefinition;
   RelationshipTypeProperty: string;
-  AlreadyHandled: Boolean;
   ObjectTitle: string;
   LogMessage: string;
   FoundCondition: string;
@@ -326,7 +254,7 @@ var
   function CheckObjectIdent (iObjectType: string): Boolean;
   begin
     if ObjectIdent.IsEmpty then
-      if not ObjectDefinition.GenerateWithoutIdentifier then
+      if Assigned (ObjectDefinition) and not ObjectDefinition.GenerateWithoutIdentifier then
         AddFileLog ('Object "%s" not created, no ident identified', [iObjectType])
       else
       begin
@@ -340,21 +268,31 @@ var
   end;
 
 begin
-  AlreadyHandled := false;
   if not Assigned (iJsonObject) then
     Exit;
 
   PumlObject := nil;
+  CharacteristicDefinition := nil;
+  ObjectDefinition := nil;
+  IsObjectProperty := false;
+  IsObjectDetail := false;
+  IsRelationShip := false;
+  IsCharacteristic := false;
+
+  cName := '';
+  RelationshipObject := '';
+  RelationshipType := '';
+  RelationshipProperty := '';
+  ObjectIdent := '';
+  ObjectIdentProperty := '';
+  ObjectType := '';
+  ObjectTitleProperty := '';
+  ObjectTypeRenamed := '';
+  RelationshipTypeProperty := '';
+  ObjectTitle := '';
 
   SaveRecursionRecord := IncRecursionRecord (iInfo, trpObject);
   try
-    ObjectIdent := GetObjectIdent (iJsonObject, iInfo.PropertyName, FoundCondition);
-    if not ObjectIdent.IsEmpty then
-      AddFileLog ('Objectidentifier "%s" identified - "%s" %s', [ObjectIdent, 'objectIdentifierProperties',
-        FoundCondition]);
-    ObjectTitle := GetObjectTitleProperties (iJsonObject, iInfo.PropertyName, FoundCondition);
-    if not ObjectTitle.IsEmpty then
-      AddFileLog ('Objecttitle "%s" identified - "%s" %s', [ObjectTitle, 'objectTitleProperties', FoundCondition]);
     ObjectType := GetObjectTypeProperties (iJsonObject, iInfo.PropertyName, FoundCondition);
     if not ObjectType.IsEmpty then
       AddFileLog ('Objecttype "%s" identified - "%s" %s', [ObjectType, 'objectTypeProperties', FoundCondition])
@@ -368,39 +306,58 @@ begin
       FoundCondition);
     if ObjectTypeRenamed <> ObjectType then
       AddFileLog ('Objecttype renamed to "%s" %s', [ObjectTypeRenamed, FoundCondition]);
-
-    ObjectDefinition := Definition.ObjectProperties.GetDefinitionByName (ObjectTypeRenamed, iInfo.ParentPropertyName,
-      iInfo.ParentObjectType, FoundCondition);
-    IsObjectProperty := Assigned (ObjectDefinition);
-    if IsObjectProperty then
-      AddFileLog ('Objecttype "%s" defined as object %s', [ObjectTypeRenamed, FoundCondition]);
-
-    CharacteristicDefinition := Definition.CharacteristicProperties.GetDefinitionByName (iInfo.PropertyName,
-      iInfo.ParentPropertyName, iInfo.ParentObjectType, FoundCondition);
-    IsCharacteristic := Assigned (CharacteristicDefinition);
-    if IsCharacteristic then
-      AddFileLog ('Object "%s.%s" defined as characteristic %s', [iInfo.ParentPropertyName, iInfo.PropertyName,
+    ObjectIdent := GetObjectIdent (iJsonObject, iInfo.PropertyName, ObjectIdentProperty, FoundCondition);
+    if not ObjectIdent.IsEmpty then
+      AddFileLog ('Objectidentifier "%s" identified - "%s" %s', [ObjectIdent, 'objectIdentifierProperties',
         FoundCondition]);
+    ObjectTitle := GetObjectTitleProperties (iJsonObject, iInfo.PropertyName, ObjectTitleProperty, FoundCondition);
+    if not ObjectTitle.IsEmpty then
+      AddFileLog ('Objecttitle "%s" identified - "%s" %s', [ObjectTitle, 'objectTitleProperties', FoundCondition]);
+
+    if not iInfo.InCharacteristicMode then
+    begin
+      ObjectDefinition := Definition.ObjectProperties.GetDefinitionByName (ObjectTypeRenamed, iInfo.ParentPropertyName,
+        iInfo.ParentObjectType, FoundCondition);
+      IsObjectProperty := Assigned (ObjectDefinition);
+      if IsObjectProperty then
+        AddFileLog ('Objecttype "%s" defined as object %s', [ObjectTypeRenamed, FoundCondition]);
+
+      CharacteristicDefinition := Definition.CharacteristicProperties.GetDefinitionByName (iInfo.PropertyName,
+        iInfo.ParentPropertyName, iInfo.ParentObjectType, FoundCondition);
+      IsCharacteristic := Assigned (CharacteristicDefinition);
+      if IsCharacteristic then
+        if Assigned (iInfo.ParentObject) then
+          AddFileLog ('Object "%s.%s" defined as characteristic %s', [iInfo.ParentPropertyName, iInfo.PropertyName,
+            FoundCondition])
+        else
+        begin
+          AddFileLog ('Object "%s.%s" can not be used as characteristic %s, there is no parent object',
+            [iInfo.ParentPropertyName, iInfo.PropertyName, FoundCondition]);
+          IsCharacteristic := false;
+        end;
+
+      IsObjectDetail := Definition.IsObjectDetailProperty (iInfo.PropertyName, iInfo.ParentPropertyName,
+        iInfo.ParentObjectType, FoundCondition);
+      if IsObjectDetail then
+        AddFileLog ('Object "%s.%s" defined as object detail %s', [iInfo.ParentPropertyName, iInfo.PropertyName,
+          FoundCondition]);
+      if IsObjectDetail and IsCharacteristic then
+      begin
+        AddFileLog ('Object "%s.%s" will be used as detail object and not as characteristic',
+          [iInfo.ParentPropertyName, iInfo.PropertyName]);
+        IsCharacteristic := false;
+      end;
+    end;
+
     IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentPropertyName,
       iInfo.ParentObjectType, FoundCondition);
     if IsRelationShip then
       AddFileLog ('Object "%s.%s" defined as relationship %s', [iInfo.ParentPropertyName, iInfo.PropertyName,
         FoundCondition]);
-    IsObjectDetail := Definition.IsObjectDetailProperty (iInfo.PropertyName, iInfo.ParentPropertyName,
-      iInfo.ParentObjectType, FoundCondition);
-    if IsObjectDetail then
-      AddFileLog ('Object "%s.%s" defined as object detail %s', [iInfo.ParentPropertyName, iInfo.PropertyName,
-        FoundCondition]);
-    if IsObjectDetail and IsCharacteristic then
-    begin
-      AddFileLog ('Object "%s.%s" will be used as detail object and not as characteristic',
-        [iInfo.ParentPropertyName, iInfo.PropertyName]);
-      IsCharacteristic := false;
-    end;
-
     if IsRelationShip then
     begin
       RelationshipObject := ObjectTypeRenamed;
+      iInfo.CharacteristicObject := nil;
       GetRelationshipType (iJsonObject, iInfo.PropertyName, RelationshipType, RelationshipTypeProperty, FoundCondition);
       if not RelationshipType.IsEmpty then
         AddFileLog ('Relationshiptype "%s" identified %s', [RelationshipType, FoundCondition]);
@@ -423,7 +380,6 @@ begin
       end;
       RelationshipProperty := iInfo.ParentRelationshipProperty;
     end;
-
     if ObjectIdent.IsEmpty and IsObjectProperty and not IsObjectDetail and not IsCharacteristic then
       CheckObjectIdent (ObjectTypeRenamed);
 
@@ -463,7 +419,7 @@ begin
       PumlObject.IsObjectDetail := true;
     end;
 
-    if not Assigned (PumlObject) and not IsCharacteristic then
+    if not Assigned (PumlObject) and not IsCharacteristic and not iInfo.InCharacteristicMode then
       AddFileLog ('Objecttype "%s" is not defined , object will be ignored - "%s/%s/%s"',
         [ObjectTypeRenamed, 'objectProperties', 'objectDetailProperties', 'relationshipProperties']);
 
@@ -480,45 +436,56 @@ begin
       RelationshipType := '';
       RelationshipTypeProperty := '';
     end;
-    if IsCharacteristic and Assigned (iInfo.ParentObject) and not IsObjectDetail then
+    if IsCharacteristic and not IsObjectDetail then
     begin
-      AlreadyHandled := true;
-      ConvertCharacteristic (iJsonObject, iInfo, CharacteristicDefinition);
+      iInfo.CharacteristicParentPropertyName := '';
+      iInfo.CharacteristicObject := iInfo.ParentObject.AddCharacteristic (iInfo.PropertyName, CharacteristicDefinition);
     end;
     if Assigned (PumlObject) then
     begin
       if not ObjectIdent.IsEmpty then
+      begin
         iInfo.HierarchieParentObject := PumlObject;
+        if PumlObject.ObjectIdentProperty.IsEmpty then
+          PumlObject.ObjectIdentProperty := ObjectIdentProperty;
+      end;
       if not ObjectTitle.IsEmpty and PumlObject.ObjectTitle.IsEmpty then
+      begin
         PumlObject.ObjectTitle := ObjectTitle;
+        PumlObject.ObjectTitleProperty := ObjectTitleProperty;
+      end;
+      ReplaceObjectType (PumlObject, ObjectTypeRenamed);
     end;
-    ReplaceObjectType (PumlObject, ObjectTypeRenamed);
-    iInfo.ParentObject := PumlObject;
+    if not IsCharacteristic and not iInfo.InCharacteristicMode then
+      iInfo.ParentObject := PumlObject;
     iInfo.ParentRelationshipProperty := RelationshipProperty;
     iInfo.ParentRelationshipType := RelationshipType;
     iInfo.ParentRelationShipTypeProperty := RelationshipTypeProperty;
-    iInfo.ParentPropertyName := iInfo.PropertyName;
     iInfo.ParentIsRelationship := IsRelationShip;
-    if Definition.ContinueAfterUnhandledObjects then
+    if iInfo.InCharacteristicMode and not IsCharacteristic then
+      iInfo.CharacteristicParentPropertyName :=
+        string.join ('.', [iInfo.CharacteristicParentPropertyName, iInfo.PropertyName]).TrimLeft (['.']);
+    iInfo.ParentPropertyName := iInfo.PropertyName;
+    if Definition.ContinueAfterUnhandledObjects or (iInfo.CurrentCharacteristicType = jctrecord) then
       iInfo.StopRecursion := false
     else
-      iInfo.StopRecursion := not (Assigned(PumlObject) or IsObjectDetail or IsRelationShip) and
-        Assigned (iInfo.HierarchieParentObject);
-    if not AlreadyHandled then
-      for i := 0 to iJsonObject.Count - 1 do
+      iInfo.StopRecursion := (not (Assigned(PumlObject) or IsObjectDetail or IsRelationShip) and
+        Assigned(iInfo.HierarchieParentObject)) or (iInfo.CurrentCharacteristicType = jctList);
+    for i := 0 to iJsonObject.Count - 1 do
+    begin
+      cName := iJsonObject.Pairs[i].JsonString.Value;
+      if not Definition.IsPropertyHidden (cName, iInfo.ParentPropertyName, iInfo.ParentObjectType, FoundCondition) then
       begin
-        cName := iJsonObject.Pairs[i].JsonString.Value;
-        if not Definition.IsPropertyHidden (cName, iInfo.ParentPropertyName, iInfo.ParentObjectType, FoundCondition)
-        then
-        begin
-          iInfo.PropertyName := cName;
-          iInfo.OriginalPropertyName := cName;
-          ConvertValue (iJsonObject.Pairs[i].JsonValue, iInfo, trpObject);
-        end
-        else
-          AddFileLog ('Stop property handling, property [%s.%s] is hidden %s',
-            [iInfo.ParentPropertyName, cName, FoundCondition]);
-      end;
+        iInfo.PropertyName := cName;
+        iInfo.OriginalPropertyName := cName;
+        ConvertValue (iJsonObject.Pairs[i].JsonValue, iInfo, trpObject);
+      end
+      else
+        AddFileLog ('Stop property handling, property [%s.%s] is hidden %s',
+          [iInfo.ParentPropertyName, cName, FoundCondition]);
+    end;
+    if iInfo.CurrentCharacteristicType = jctList then
+      iInfo.CharacteristicObject.AddRecord;
   finally
     DecRecursionRecord (iInfo, SaveRecursionRecord, trpObject);
   end;
@@ -549,7 +516,16 @@ begin
     end
     else if IsJsonSimple (iJsonValue) then
     begin
-      Value := iJsonValue.Value;
+      if iJsonValue is TjsonNull then
+        if Assigned (iInfo.ParentObject) and not (iInfo.ParentObject.FormatDefinition.ShowNullValues) then
+        begin
+          AddFileLog ('property [%s] skipped, null values hidden', [iInfo.PropertyName]);
+          Exit;
+        end
+        else
+          Value := cNullValue
+      else
+        Value := iJsonValue.Value;
       IsRelationShip := Definition.IsRelationshipProperty (iInfo.PropertyName, iInfo.ParentPropertyName,
         iInfo.ParentObjectType, FoundCondition);
 
@@ -569,14 +545,30 @@ begin
         end
         else
         begin
-          if Definition.IsPropertyAllowed (iInfo.PropertyName, iInfo.ParentPropertyName, iInfo.ParentObjectType,
-            FoundCondition) then
+          if iInfo.InCharacteristicMode then
           begin
-            iInfo.ParentObject.AddValue (iInfo.PropertyName, Value, not (iRecursionParent = trpArray));
-            AddFileLog ('property [%s] value [%s] found %s', [iInfo.PropertyName, Value, FoundCondition]);
+            if iInfo.CurrentCharacteristicDefinition.IsPropertyAllowed (iInfo.PropertyName,
+              iInfo.CharacteristicParentPropertyName, FoundCondition) then
+            begin
+              iInfo.CharacteristicObject.AddRecordProperty (iInfo.PropertyName, Value,
+                iInfo.CharacteristicParentPropertyName);
+              AddFileLog ('characteristic property [%s] value [%s] found %s',
+                [iInfo.PropertyName, Value, FoundCondition]);
+            end
+            else
+              AddFileLog ('property [%s] not allowed and skipped %s', [iInfo.PropertyName, FoundCondition]);
           end
           else
-            AddFileLog ('property [%s] not allowed and skipped %s', [iInfo.PropertyName, FoundCondition]);
+          begin
+            if Definition.IsPropertyAllowed (iInfo.PropertyName, iInfo.ParentPropertyName, iInfo.ParentObjectType,
+              FoundCondition) then
+            begin
+              iInfo.ParentObject.AddValue (iInfo.PropertyName, Value, not (iRecursionParent = trpArray));
+              AddFileLog ('property [%s] value [%s] found %s', [iInfo.PropertyName, Value, FoundCondition]);
+            end
+            else
+              AddFileLog ('property [%s] not allowed and skipped %s', [iInfo.PropertyName, FoundCondition]);
+          end;
         end
       else
         AddFileLog ('property [%s] skipped, no parent object found', [iInfo.PropertyName]);
@@ -679,17 +671,17 @@ begin
 end;
 
 function TJson2PumlConverter.GetObjectIdent (iJsonObject: TJsonObject; iParentProperty: string;
-  var oFoundCondition: string): string;
+  var oPropertyName, oFoundCondition: string): string;
 begin
   Result := GetPropertyValueListProperties (Definition.ObjectIdentifierProperties, iJsonObject, iParentProperty,
-    'objectIdentifierProperties', oFoundCondition);
+    'objectIdentifierProperties', oPropertyName, oFoundCondition);
 end;
 
 function TJson2PumlConverter.GetObjectTitleProperties (iJsonObject: TJsonObject; iParentProperty: string;
-  var oFoundCondition: string): string;
+  var oPropertyName, oFoundCondition: string): string;
 begin
   Result := GetPropertyValueListProperties (Definition.ObjectTitleProperties, iJsonObject, iParentProperty,
-    'objectTitleProperties', oFoundCondition);
+    'objectTitleProperties', oPropertyName, oFoundCondition);
 end;
 
 function TJson2PumlConverter.GetObjectTypeProperties (iJsonObject: TJsonObject; iParentProperty: string;
@@ -704,22 +696,23 @@ function TJson2PumlConverter.GetPropertyValueListProperties (iDefinitionList: tJ
 var
   PropertyName: string;
 begin
-  Result := GetPropertyValueListProperties (iDefinitionList, iJsonObject, iParentProperty, PropertyName,
-    iConfigurationPropertyName, oFoundCondition);
+  Result := GetPropertyValueListProperties (iDefinitionList, iJsonObject, iParentProperty, iConfigurationPropertyName,
+    PropertyName, oFoundCondition);
 end;
 
 function TJson2PumlConverter.GetPropertyValueListProperties (iDefinitionList: tJson2PumlPropertyValueDefinitionList;
-  iJsonObject: TJsonObject; iParentProperty: string; var oPropertyName: string; iConfigurationPropertyName: string;
-  var oFoundCondition: string): string;
+  iJsonObject: TJsonObject; iParentProperty, iConfigurationPropertyName: string;
+  var oPropertyName, oFoundCondition: string): string;
 var
   Search: string;
   Value: string;
   LastSep, Sep: string;
   Definition: tJson2PumlPropertyValueDefinition;
+  PropertyName: string;
 begin
   Result := '';
   LastSep := '';
-  oPropertyName := '';
+  PropertyName := '';
   try
     for Definition in iDefinitionList do
     begin
@@ -731,20 +724,20 @@ begin
           Continue;
 
       Sep := Definition.NextValueSeparator;
-      Search := string.Join ('.', [Search, Definition.ChildPropertyName]);
+      Search := string.join ('.', [Search, Definition.ChildPropertyName]);
 
       Value := GetJsonStringValue (iJsonObject, Search, '', Sep);
 
       if not Value.IsEmpty then
       begin
-        if oPropertyName.IsEmpty then
-          oPropertyName := Search
+        if PropertyName.IsEmpty then
+          PropertyName := Search
         else
-          oPropertyName := string.Join (';', [oPropertyName, Search]);
+          PropertyName := string.join (';', [PropertyName, Search]);
         if Result.IsEmpty then
           Result := Value
         else
-          Result := string.Join (LastSep, [Result, Value]);
+          Result := string.join (LastSep, [Result, Value]);
         if Sep.IsEmpty then
           Exit;
         LastSep := Sep;
@@ -752,7 +745,8 @@ begin
     end;
   finally
     oFoundCondition := iDefinitionList.BuildFoundCondition (iConfigurationPropertyName,
-      oPropertyName.TrimRight(['.']), Result);
+      PropertyName.TrimRight(['.']), Result);
+    oPropertyName := PropertyName.TrimRight (['.']);
   end;
 end;
 
@@ -760,7 +754,7 @@ procedure TJson2PumlConverter.GetRelationshipType (iJsonObject: TJsonObject; iPr
   var oRelationshipType, oRelationshipTypeProperty: string; var oFoundCondition: string);
 begin
   oRelationshipType := GetPropertyValueListProperties (Definition.RelationshipTypeProperties, iJsonObject,
-    iPropertyName, oRelationshipTypeProperty, 'relationshipTypeProperties', oFoundCondition);
+    iPropertyName, 'relationshipTypeProperties', oRelationshipTypeProperty, oFoundCondition);
 end;
 
 function TJson2PumlConverter.IncRecursionRecord (var ioCurrentRecord: tJson2PumlRecursionRecord;
@@ -838,18 +832,7 @@ begin
       [InputHandlerRecord.InputFile.OutputFileName])
   else
   begin
-    InfoRec.ParentObject := nil;
-    InfoRec.HierarchieParentObject := nil;
-    InfoRec.ParentPropertyName := '';
-    InfoRec.PropertyName := LeadingObject;
-    InfoRec.OriginalPropertyName := LeadingObject;
-    InfoRec.ParentRelationshipProperty := '';
-    InfoRec.ParentRelationshipType := '';
-    InfoRec.ParentRelationShipTypeProperty := '';
-    InfoRec.StopRecursion := false;
-    InfoRec.ParentIsRelationship := false;
-    InfoRec.Level := 0;
-    InfoRec.ObjectLevel := 0;
+    InfoRec.Init(LeadingObject);
     ConvertValue (jValue, InfoRec, trpStart);
     GeneratePuml;
     Result := true;
@@ -915,7 +898,8 @@ begin
     else
       vAdd := true;
     Puml.Add (tPumlHelper.TableLine(['<b>Job description'.PadRight(FileLength + 50)]));
-    Puml.Add (tPumlHelper.TableLine([InputHandler.CurlParameterList.ReplaceParameterValues(InputHandler.CurrentJobDescription)]));
+    Puml.Add (tPumlHelper.TableLine([InputHandler.CurlParameterList.ReplaceParameterValues
+      (InputHandler.CurrentJobDescription)]));
   end;
   if Definition.LegendShowObjectFormats then
   begin
@@ -1001,6 +985,45 @@ end;
 function tJson2PumlRecursionParentHelper.OperationName: string;
 begin
   Result := cJson2PumlRecursionParentFunction[self];
+end;
+
+procedure tJson2PumlRecursionRecord.Init(iLeadingObject: string);
+begin
+  ParentObject := nil;
+  HierarchieParentObject := nil;
+  PropertyName := iLeadingObject;
+  OriginalPropertyName := iLeadingObject;
+  ParentPropertyName := '';
+  ParentRelationshipProperty := '';
+  ParentRelationshipType := '';
+  ParentRelationShipTypeProperty := '';
+  ParentIsRelationship := false;
+  StopRecursion := false;
+  Level := 0;
+  ObjectLevel := 0;
+  CharacteristicParentPropertyName := '';
+  CharacteristicObject := nil;
+end;
+
+function tJson2PumlRecursionRecord.GetCurrentCharacteristicDefinition: tJson2PumlCharacteristicDefinition;
+begin
+  if Assigned (CharacteristicObject) then
+    Result := CharacteristicObject.Definition
+  else
+    Result := nil;
+end;
+
+function tJson2PumlRecursionRecord.GetCurrentCharacteristicType: tJson2PumlCharacteristicType;
+begin
+  if Assigned (CurrentCharacteristicDefinition) then
+    Result := CurrentCharacteristicDefinition.CharacteristicType
+  else
+    Result := jctUndefined;
+end;
+
+function tJson2PumlRecursionRecord.GetInCharacteristicMode: Boolean;
+begin
+  Result := Assigned (CharacteristicObject);
 end;
 
 function tJson2PumlRecursionRecord.GetParentObjectType: string;

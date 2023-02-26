@@ -33,7 +33,7 @@ type
   tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip, jofFileList);
   tJson2PumlApplicationType = (jatConsole, jatService, jatUI);
   tJson2PumlOutputFormats = set of tJson2PumlOutputFormat;
-  tJson2PumlCharacteristicType = (jctRecord, jctList);
+  tJson2PumlCharacteristicType = (jctUndefined, jctRecord, jctList);
   tJson2PumlListOperation = (jloReplace, jloMerge);
 
   tJson2PumlFileNameReplace = (jfnrGroup, jfnrDetail, jfnrOption, jfnrJob, jfnrFile);
@@ -47,7 +47,7 @@ const
     '', '', '');
   cJson2PumlServiceResultName: array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile',
     'pumlFile', 'jsonFile', 'logFile', '', '');
-  cJson2PumlCharacteristicType: array [tJson2PumlCharacteristicType] of string = ('record', 'list');
+  cJson2PumlCharacteristicType: array [tJson2PumlCharacteristicType] of string = ('', 'record', 'list');
   cJson2PumlListHandlingMode: array [tJson2PumlListOperation] of string = ('replace', 'merge');
   cJson2PumlFileNameReplace: array [tJson2PumlFileNameReplace] of string = ('<group>', '<detail>', '<option>', '<job>',
     '<file>');
@@ -64,6 +64,7 @@ const
 
   cTrue = 'true';
   cFalse = 'false';
+  cNullValue = '<null>';
 
   cOpenOutputAll = '<all>';
 
@@ -75,7 +76,7 @@ const
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.0.15.67';
+  cCurrentVersion = '2.0.16.68';
 
   JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
     'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];

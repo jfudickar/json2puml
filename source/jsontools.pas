@@ -65,7 +65,8 @@ function GetJsonValue (iJsonObject: TJsonObject; iName: string): TJSONValue;
 
 function JsonLinePrefix (iLevel: Integer): string;
 
-function JsonPropertyNameValue (iPropertyName, iPropertyvalue: string; iWriteEmpty: Boolean = false): string;
+function JsonPropertyNameValue (iPropertyName, iPropertyvalue: string; iWriteEmpty: Boolean = false;
+  iValueQuotes: Boolean = true): string;
 
 procedure PrettyPrintArray (jsonArray: TJsonArray; OutputStrings: TStrings; indent: Integer);
 
@@ -88,7 +89,7 @@ procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPrope
   iLevel: Integer); overload;
 
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName, iPropertyvalue: string; iLevel: Integer;
-  iWriteEmpty: Boolean = false); overload;
+  iWriteEmpty: Boolean = false; iValueQuotes: Boolean = true); overload;
 
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: TJSONValue; iLevel: Integer;
   iWriteEmpty: Boolean = false); overload;
@@ -99,6 +100,11 @@ procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPrope
 function GetJsonObject (iJsonObject: TJsonObject; iName: string): TJsonObject; overload;
 
 function IsJsonSimple (iJsonValue: TJSONValue): Boolean;
+
+function IsJsonArraySimple (iJsonArray: TJsonArray): Boolean;
+
+procedure WriteToJsonValueBoolean (oJsonOutPut: TStrings; iPropertyName, iPropertyvalue: string; iLevel: Integer;
+  iWriteEmpty: Boolean = false);
 
 implementation
 
@@ -494,13 +500,16 @@ begin
     Result := Result + #9;
 end;
 
-function JsonPropertyNameValue (iPropertyName, iPropertyvalue: string; iWriteEmpty: Boolean = false): string;
+function JsonPropertyNameValue (iPropertyName, iPropertyvalue: string; iWriteEmpty: Boolean = false;
+  iValueQuotes: Boolean = true): string;
 begin
   if iWriteEmpty or not iPropertyvalue.IsEmpty then
     if iPropertyvalue.IsEmpty then
       Result := Format ('"%s": null', [iPropertyName])
+    else if iValueQuotes then
+      Result := Format ('"%s": "%s"', [iPropertyName, ClearJsonPropertyValue(iPropertyvalue)])
     else
-      Result := Format ('"%s": "%s"', [iPropertyName, ClearJsonPropertyValue(iPropertyvalue)]);
+      Result := Format ('"%s": %s', [iPropertyName, ClearJsonPropertyValue(iPropertyvalue)]);
 end;
 
 procedure PrettyPrintArray (jsonArray: TJsonArray; OutputStrings: TStrings; indent: Integer);
@@ -593,24 +602,30 @@ end;
 
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: Boolean; iLevel: Integer);
 begin
-  WriteToJsonValue (oJsonOutPut, iPropertyName, BooleanToString(iPropertyvalue), iLevel)
+  WriteToJsonValue (oJsonOutPut, iPropertyName, BooleanToString(iPropertyvalue), iLevel, false, false)
 end;
 
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: Integer;
   iLevel: Integer); overload;
 begin
-  WriteToJsonValue (oJsonOutPut, iPropertyName, iPropertyvalue.toString, iLevel)
+  WriteToJsonValue (oJsonOutPut, iPropertyName, iPropertyvalue.toString, iLevel, false, false)
 end;
 
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName, iPropertyvalue: string; iLevel: Integer;
-  iWriteEmpty: Boolean = false);
+  iWriteEmpty: Boolean = false; iValueQuotes: Boolean = true);
 begin
   if iPropertyName.IsEmpty then
     Exit;
   if not iWriteEmpty and iPropertyvalue.Trim.IsEmpty then
     Exit;
   oJsonOutPut.Add (Format('%s%s,', [JsonLinePrefix(iLevel), JsonPropertyNameValue(iPropertyName, iPropertyvalue,
-    iWriteEmpty)]));
+    iWriteEmpty, iValueQuotes)]));
+end;
+
+procedure WriteToJsonValueBoolean (oJsonOutPut: TStrings; iPropertyName, iPropertyvalue: string; iLevel: Integer;
+  iWriteEmpty: Boolean = false);
+begin
+  WriteToJsonValue (oJsonOutPut, iPropertyName, iPropertyvalue, iLevel, iWriteEmpty, false);
 end;
 
 procedure WriteToJsonValue (oJsonOutPut: TStrings; iPropertyName: string; iPropertyvalue: TJSONValue; iLevel: Integer;
@@ -619,7 +634,12 @@ begin
   if iPropertyName.IsEmpty then
     Exit;
   if Assigned (iPropertyvalue) then
-    oJsonOutPut.Add (Format('%s"%s":%s,', [JsonLinePrefix(iLevel), iPropertyName, iPropertyvalue.toString]))
+    if iPropertyvalue is TJSONNull then
+      if iWriteEmpty then
+        oJsonOutPut.Add (Format('%s"%s":%s,', [JsonLinePrefix(iLevel), iPropertyName, 'null']))
+      else
+    else
+      oJsonOutPut.Add (Format('%s"%s":%s,', [JsonLinePrefix(iLevel), iPropertyName, iPropertyvalue.toString]))
   else if iWriteEmpty then
     oJsonOutPut.Add (Format('%s"%s":%s,', [JsonLinePrefix(iLevel), iPropertyName, 'null']));
 end;
@@ -679,6 +699,19 @@ function IsJsonSimple (iJsonValue: TJSONValue): Boolean;
 begin
   Result := (iJsonValue is TJSONString) or (iJsonValue is TJSONBool) or (iJsonValue is TJSONNumber) or
     (iJsonValue is TJSONNull);
+end;
+
+function IsJsonArraySimple (iJsonArray: TJsonArray): Boolean;
+var
+  i: Integer;
+begin
+  Result := true;
+  for i := 0 to iJsonArray.Count - 1 do
+  begin
+    Result := Result and IsJsonSimple (iJsonArray.Items[i]);
+    if not Result then
+      Exit;
+  end;
 end;
 
 end.
