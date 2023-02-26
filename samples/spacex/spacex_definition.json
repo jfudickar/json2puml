@@ -8,7 +8,7 @@
 			{
 				"option": "compact",
 				"definition": {
-					"continueAfterUnhandledObjects": "false",
+					"continueAfterUnhandledObjects": false,
 					"groupDetailObjectsTogether": null,
 					"hideDuplicateRelations": null,
 					"identifyObjectsByTypeAndIdent": null,
@@ -63,10 +63,12 @@
 							"captionSplitCharacter": null,
 							"captionSplitLength": null,
 							"showAttributes": null,
-							"showCharacteristics": "false",
-							"showFromRelations": "false",
-							"showIfEmpty": "false",
-							"showToRelations": "false",
+							"showCharacteristics": false,
+							"showFromRelations": false,
+							"showIfEmpty": false,
+							"showNullValues": null,
+							"showToRelations": false,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -125,7 +127,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -134,7 +138,7 @@
 			{
 				"option": "full",
 				"definition": {
-					"continueAfterUnhandledObjects": "true",
+					"continueAfterUnhandledObjects": true,
 					"groupDetailObjectsTogether": null,
 					"hideDuplicateRelations": null,
 					"identifyObjectsByTypeAndIdent": null,
@@ -186,9 +190,11 @@
 							"captionSplitLength": null,
 							"showAttributes": null,
 							"showCharacteristics": null,
-							"showFromRelations": "true",
-							"showIfEmpty": "true",
-							"showToRelations": "true",
+							"showFromRelations": true,
+							"showIfEmpty": true,
+							"showNullValues": true,
+							"showToRelations": true,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -258,7 +264,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -266,10 +274,10 @@
 			}
 	],
 	"baseOption": {
-		"continueAfterUnhandledObjects": "true",
-		"groupDetailObjectsTogether": "true",
+		"continueAfterUnhandledObjects": true,
+		"groupDetailObjectsTogether": true,
 		"hideDuplicateRelations": null,
-		"identifyObjectsByTypeAndIdent": "false",
+		"identifyObjectsByTypeAndIdent": false,
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
@@ -371,17 +379,19 @@
 				"objectFilter": [],
 				"iconColor": null,
 				"skinParams": ["BackgroundColor=STRATEGY"],
-				"captionShowIdent": "false",
-				"captionShowTitle": "true",
-				"captionShowType": "true",
+				"captionShowIdent": false,
+				"captionShowTitle": true,
+				"captionShowType": true,
 				"captionSplitCharacter": "_",
-				"captionSplitLength": "0",
-				"showAttributes": "true",
-				"showCharacteristics": "true",
-				"showFromRelations": "false",
-				"showIfEmpty": "false",
-				"showToRelations": "false",
-				"valueSplitLength": "100"
+				"captionSplitLength": 0,
+				"showAttributes": true,
+				"showCharacteristics": true,
+				"showFromRelations": false,
+				"showIfEmpty": false,
+				"showNullValues": false,
+				"showToRelations": false,
+				"sortAttributes": null,
+				"valueSplitLength": 100
 			},
 			"formats":  [
 					{

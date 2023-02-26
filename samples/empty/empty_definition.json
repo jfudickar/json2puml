@@ -7,65 +7,66 @@
 	"options":  [
 	],
 	"baseOption": {
-		"continueAfterUnhandledObjects": "true",
+		"continueAfterUnhandledObjects": true,
 		"groupDetailObjectsTogether": null,
-		"hideDuplicateRelations": "false",
-		"identifyObjectsByTypeAndIdent": "true",
-		"legendShowInfo": "true",
-		"legendShowObjectFormats": "true",
-		"legendShowFileInfos": "true",
-		"outputFormats":["svg"],
+		"hideDuplicateRelations": false,
+		"identifyObjectsByTypeAndIdent": true,
+		"legendShowInfo": true,
+		"legendShowObjectFormats": true,
+		"legendShowFileInfos": true,
 		"attributeProperties":  [
 				"*"
 		],
 		"objectProperties":  [
 				"*"
 		],
+		"objectTypeProperties":  [
+				"type"
+		],
 		"objectTypeRenames":  [
-		],
-		"objectDetailProperties":  [
-		],
-		"groupProperties":  [
 		],
 		"objectIdentifierProperties":  [
 				"id"
-		],
-		"relationshipProperties":  [
-		],
-		"relationshipTypeProperties":  [
 		],
 		"objectTitleProperties":  [
 				"title",
 				"name"
 		],
-		"objectTypeProperties":  [
-				"type"
+		"objectDetailProperties":  [
+		],
+		"relationshipProperties":  [
+		],
+		"relationshipTypeProperties":  [
 		],
 		"relationshipTypeArrowFormats":  [
+		],
+		"groupProperties":  [
+		],
+		"characteristicProperties":  [
 		],
 		"hiddenProperties":  [
 		],
 		"pumlHeaderLines":  [
 				"hide stereotype"
 		],
-		"characteristicProperties":  [
-		],
 		"objectFormats": {
 			"baseFormat": {
 				"objectFilter": [],
 				"iconColor": null,
 				"skinParams": ["BackgroundColor=STRATEGY"],
-				"captionShowIdent": "true",
-				"captionShowTitle": "true",
-				"captionShowType": "true",
+				"captionShowIdent": true,
+				"captionShowTitle": true,
+				"captionShowType": true,
 				"captionSplitCharacter": "_",
-				"captionSplitLength": "0",
-				"showAttributes": "true",
-				"showCharacteristics": "true",
-				"showFromRelations": "true",
-				"showIfEmpty": "true",
-				"showToRelations": "true",
-				"valueSplitLength": "100"
+				"captionSplitLength": 0,
+				"showAttributes": true,
+				"showCharacteristics": true,
+				"showFromRelations": true,
+				"showIfEmpty": true,
+				"showNullValues": null,
+				"showToRelations": true,
+				"sortAttributes": null,
+				"valueSplitLength": 100
 			}
 		}
 	}

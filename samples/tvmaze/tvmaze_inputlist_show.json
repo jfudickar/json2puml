@@ -7,7 +7,7 @@
 					"name": "${id}",
 					"displayName": "Show ID",
 					"description": "Primary id of the Show",
-					"mandatory": "true",
+					"mandatory": true,
 					"regularExpression": null
 				}
 		]
@@ -19,6 +19,7 @@
 	"detail": null,
 	"option": null,
 	"job": null,
+	"jobDescription": "All details around the show \"${name}\"",
 	"outputFormats":["svg"],
 	"outputPath": null,
 	"outputSuffix": null,
@@ -31,23 +32,23 @@
 				"inputFile": "show.json",
 				"curlFileSuffix": "_${id}",
 				"curlBaseUrl": null,
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": "shows/${id}?embed[]=cast&embed[]=nextepisode",
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "show",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 						{
-							"${character}": "_embedded.cast.character.id"
+							"${character}": "_embedded.cast.character.idx"
 						},
 						{
 							"${name}": "name"
 						},
 						{
-							"${person}": "_embedded.cast.person.id"
+							"${person}": "_embedded.cast.person.idx"
 						}
 				]
 			},
@@ -55,14 +56,14 @@
 				"inputFile": "person.json",
 				"curlFileSuffix": "_${person}",
 				"curlBaseUrl": null,
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": "people/${person}",
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "person",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			},
@@ -70,14 +71,14 @@
 				"inputFile": "character.json",
 				"curlFileSuffix": "_${character}",
 				"curlBaseUrl": null,
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": "character/${character}",
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "character",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			}

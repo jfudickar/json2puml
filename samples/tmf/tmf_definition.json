@@ -64,7 +64,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -136,7 +138,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -192,10 +196,12 @@
 							"captionSplitCharacter": null,
 							"captionSplitLength": null,
 							"showAttributes": null,
-							"showCharacteristics": "true",
-							"showFromRelations": "true",
+							"showCharacteristics": true,
+							"showFromRelations": false,
 							"showIfEmpty": null,
-							"showToRelations": "true",
+							"showNullValues": null,
+							"showToRelations": true,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -204,7 +210,7 @@
 			{
 				"option": "full",
 				"definition": {
-					"continueAfterUnhandledObjects": "true",
+					"continueAfterUnhandledObjects": true,
 					"groupDetailObjectsTogether": null,
 					"hideDuplicateRelations": null,
 					"identifyObjectsByTypeAndIdent": null,
@@ -255,10 +261,12 @@
 							"captionSplitCharacter": null,
 							"captionSplitLength": null,
 							"showAttributes": null,
-							"showCharacteristics": "true",
-							"showFromRelations": "true",
-							"showIfEmpty": "true",
-							"showToRelations": "true",
+							"showCharacteristics": true,
+							"showFromRelations": true,
+							"showIfEmpty": true,
+							"showNullValues": null,
+							"showToRelations": true,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -327,10 +335,12 @@
 							"captionSplitCharacter": null,
 							"captionSplitLength": null,
 							"showAttributes": null,
-							"showCharacteristics": "false",
-							"showFromRelations": "false",
+							"showCharacteristics": false,
+							"showFromRelations": false,
 							"showIfEmpty": null,
-							"showToRelations": "false",
+							"showNullValues": null,
+							"showToRelations": false,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -401,7 +411,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -410,7 +422,7 @@
 			{
 				"option": "relations",
 				"definition": {
-					"continueAfterUnhandledObjects": "true",
+					"continueAfterUnhandledObjects": true,
 					"groupDetailObjectsTogether": null,
 					"hideDuplicateRelations": null,
 					"identifyObjectsByTypeAndIdent": null,
@@ -467,10 +479,12 @@
 							"captionSplitCharacter": null,
 							"captionSplitLength": null,
 							"showAttributes": null,
-							"showCharacteristics": "false",
-							"showFromRelations": "true",
-							"showIfEmpty": "true",
-							"showToRelations": "true",
+							"showCharacteristics": false,
+							"showFromRelations": true,
+							"showIfEmpty": true,
+							"showNullValues": null,
+							"showToRelations": true,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -532,10 +546,12 @@
 							"captionSplitCharacter": null,
 							"captionSplitLength": null,
 							"showAttributes": null,
-							"showCharacteristics": "false",
-							"showFromRelations": "false",
+							"showCharacteristics": false,
+							"showFromRelations": false,
 							"showIfEmpty": null,
-							"showToRelations": "false",
+							"showNullValues": null,
+							"showToRelations": false,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -543,13 +559,13 @@
 			}
 	],
 	"baseOption": {
-		"continueAfterUnhandledObjects": "false",
-		"groupDetailObjectsTogether": "false",
-		"hideDuplicateRelations": "true",
-		"identifyObjectsByTypeAndIdent": "false",
-		"legendShowInfo": "true",
-		"legendShowObjectFormats": "true",
-		"legendShowFileInfos": "true",
+		"continueAfterUnhandledObjects": false,
+		"groupDetailObjectsTogether": false,
+		"hideDuplicateRelations": true,
+		"identifyObjectsByTypeAndIdent": false,
+		"legendShowInfo": true,
+		"legendShowObjectFormats": true,
+		"legendShowFileInfos": true,
 		"attributeProperties":  [
 				"characteristic.*",
 				"id",
@@ -583,6 +599,7 @@
 				"productOrderItem",
 				"orderItem",
 				"itemPrice",
+				"productPrice",
 				"productOffering",
 				"agreement",
 				"agreementItem",
@@ -629,7 +646,6 @@
 				"contactMedium.mediumType"
 		],
 		"objectDetailProperties":  [
-				"contactMedium.characteristic",
 				"contactMedium",
 				"totalBalance",
 				"product.productTerm",
@@ -640,6 +656,7 @@
 				"relatedParty",
 				"engagedParty",
 				"relatedEntity",
+				"place",
 				"productRelationship"
 		],
 		"relationshipTypeProperties":  [
@@ -668,57 +685,59 @@
 				"financialaccount",
 				"historyRecord",
 				"productOrder.orderItem",
-				"orderItem.orderItem"
+				"orderItem.orderItem",
+				"relatedParty"
 		],
 		"characteristicProperties":  [
-				{"parentProperty": "metadata", "type": "list", "propertyList": ["name", "value", "metadataType"]},
-				{"parentProperty": "modifyReason", "type": "list", "propertyList": ["name", "action"]},
-				{"parentProperty": "stateDate", "type": "list", "propertyList": ["name", "effectiveDate"]},
-				{"parentProperty": "businessActivity", "type": "list", "propertyList": ["name", "effectiveDate"]},
+				{"parentProperty": "metadata", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "modifyReason", "type": "list", "propertyList": ["name", "action", "*"]},
+				{"parentProperty": "stateDate", "type": "list", "propertyList": ["effectiveDate", "*"]},
+				{"parentProperty": "businessActivity", "type": "list", "propertyList": ["effectiveDate", "name", "*"]},
 				{"parentProperty": "individual.externalReference", "type": "list", "propertyList": ["externalReferenceType", "name", "id"]},
-				"details",
-				"extensions",
-				"size",
-				"interactionDate",
-				"itemDate",
-				"validFor",
+				{"parentProperty": "details", "type": "record"},
+				{"parentProperty": "extensions", "type": "record"},
+				{"parentProperty": "size", "type": "record"},
+				{"parentProperty": "interactionDate", "type": "record"},
+				{"parentProperty": "itemDate", "type": "record"},
+				{"parentProperty": "validFor", "type": "record"},
 				{"parentProperty": "channel", "type": "list", "propertyList": ["name", "id"]},
-				{"parentProperty": "productOfferingCharacteristic", "type": "list", "propertyList": ["name", "value"]},
-				{"parentProperty": "product.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
-				{"parentProperty": "orderItem.characteristic", "type": "list", "propertyList": ["name", "value", "valueType"]},
-				{"parentProperty": "productCharacteristic", "type": "list", "propertyList": ["name", "value"]},
-				{"parentProperty": "customer.characteristic", "type": "list", "propertyList": ["name", "value"]},
-				{"parentProperty": "partyCharacteristic", "type": "list", "propertyList": ["name", "value"]},
-				{"parentProperty": "troubleticket.characteristic", "type": "list", "propertyList": ["name", "value"]},
-				{"parentProperty": "troubleticket.statusChange", "type": "list", "propertyList": ["status", "changeDate"]},
-				{"parentProperty": "note", "type": "list", "propertyList": ["date", "author", "text", "audiance"]},
-				{"parentProperty": "historyChange", "type": "list", "propertyList": ["operation", "path", "oldValue", "newValue"]},
-				"tax*Amount",
-				"exemptAmount",
-				"dutyFreeAmount",
-				"otherName",
-				"duration",
-				"quantity",
-				"amount",
-				"presentationMedia",
-				"format",
-				"cycleSpecification",
-				"periodCoverage",
-				"taxDefinition",
-				"immediatePayOption",
-				"priceOverride",
-				"activitySource",
-				"businessProperties",
-				"elapsedDuration",
-				"remainingDuration",
-				"price",
-				"standalonePrice",
-				"finalPrice",
-				"itemTotalPrice",
-				"orderTotalPrice",
-				"billStructure",
-				"appliedTax",
-				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner"]}
+				{"parentProperty": "productOfferingCharacteristic", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "product.characteristic", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "orderItem.characteristic", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "productCharacteristic", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "customer.characteristic", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "partyCharacteristic", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "troubleticket.characteristic", "type": "list", "propertyList": ["name", "value", "*"]},
+				{"parentProperty": "troubleticket.statusChange", "type": "list", "propertyList": ["changeDate", "status", "*"]},
+				{"parentProperty": "note", "type": "list", "propertyList": ["date", "author", "text", "*"]},
+				{"parentProperty": "historyChange", "type": "list", "propertyList": ["operation", "path", "oldValue", "newValue", "*"]},
+				{"parentProperty": "tax*Amount", "type": "record"},
+				{"parentProperty": "exemptAmount", "type": "record"},
+				{"parentProperty": "dutyFreeAmount", "type": "record"},
+				{"parentProperty": "otherName", "type": "record"},
+				{"parentProperty": "duration", "type": "record"},
+				{"parentProperty": "quantity", "type": "record"},
+				{"parentProperty": "amount", "type": "record"},
+				{"parentProperty": "presentationMedia", "type": "record"},
+				{"parentProperty": "format", "type": "record"},
+				{"parentProperty": "cycleSpecification", "type": "record"},
+				{"parentProperty": "periodCoverage", "type": "record"},
+				{"parentProperty": "taxDefinition", "type": "record"},
+				{"parentProperty": "immediatePayOption", "type": "record"},
+				{"parentProperty": "priceOverride", "type": "record"},
+				{"parentProperty": "activitySource", "type": "record"},
+				{"parentProperty": "businessProperties", "type": "record"},
+				{"parentProperty": "elapsedDuration", "type": "record"},
+				{"parentProperty": "remainingDuration", "type": "record"},
+				{"parentProperty": "price", "type": "record"},
+				{"parentProperty": "standalonePrice", "type": "record"},
+				{"parentProperty": "finalPrice", "type": "record"},
+				{"parentProperty": "itemTotalPrice", "type": "record"},
+				{"parentProperty": "orderTotalPrice", "type": "record"},
+				{"parentProperty": "billStructure", "type": "record"},
+				{"parentProperty": "appliedTax", "type": "record"},
+				{"parentProperty": "contactMedium.characteristic", "type": "record", "propertyList": "-@type"},
+				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner", "*"]}
 		],
 		"hiddenProperties":  [
 				"characteristicMetadata",
@@ -728,7 +747,8 @@
 				"relatedParty.role",
 				"relatedParty.validFor",
 				"relatedParty.@referredType",
-				"originalResource"
+				"originalResource",
+				"appliedTax"
 		],
 		"pumlHeaderLines":  [
 				"hide stereotype",
@@ -743,17 +763,19 @@
 				"objectFilter": [],
 				"iconColor": null,
 				"skinParams": ["BackgroundColor=STRATEGY"],
-				"captionShowIdent": "true",
-				"captionShowTitle": "true",
-				"captionShowType": "true",
+				"captionShowIdent": true,
+				"captionShowTitle": true,
+				"captionShowType": true,
 				"captionSplitCharacter": "_",
-				"captionSplitLength": "20",
-				"showAttributes": "true",
-				"showCharacteristics": "true",
-				"showFromRelations": "false",
-				"showIfEmpty": "false",
-				"showToRelations": "false",
-				"valueSplitLength": null
+				"captionSplitLength": 20,
+				"showAttributes": true,
+				"showCharacteristics": true,
+				"showFromRelations": false,
+				"showIfEmpty": false,
+				"showNullValues": null,
+				"showToRelations": false,
+				"sortAttributes": true,
+				"valueSplitLength": 50
 			},
 			"formats":  [
 					{
@@ -776,6 +798,8 @@
 								"appointment",
 								"calenderEvent",
 								"workorder",
+								"ticketSpec",
+								"workItem",
 								"troubleTicket.historyRecord"
 							],
 							"iconColor": "Cornflowerblue",
@@ -895,7 +919,8 @@
 								"relatedParty",
 								"engagedParty",
 								"organization",
-								"individual"
+								"individual",
+								"workForceIndividual"
 							],
 							"iconColor": "grey",
 							"skinParams": ["BackgroundColor=lightgrey"]

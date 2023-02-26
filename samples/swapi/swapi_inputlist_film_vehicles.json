@@ -7,7 +7,7 @@
 					"name": "${id}",
 					"displayName": "Film ID",
 					"description": "Primary id of the film",
-					"mandatory": "true",
+					"mandatory": true,
 					"regularExpression": null
 				}
 		]
@@ -19,6 +19,7 @@
 	"detail": null,
 	"option": null,
 	"job": null,
+	"jobDescription": null,
 	"outputFormats":["svg"],
 	"outputPath": null,
 	"outputSuffix": null,
@@ -31,19 +32,19 @@
 				"inputFile": "films.json",
 				"curlFileSuffix": "_${id}",
 				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": null,
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "films",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 						{
 							"name": "${starships}",
 							"value": "starships",
-							"maxValues": "99"
+							"maxValues": 99
 						},
 						{
 							"${title}": "title"
@@ -57,14 +58,14 @@
 				"inputFile": "vehicles.json",
 				"curlFileSuffix": "_${vehicles}",
 				"curlBaseUrl": "${vehicles}",
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": null,
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "vehicles",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			},
@@ -72,14 +73,14 @@
 				"inputFile": "starships.json",
 				"curlFileSuffix": "_${starships}",
 				"curlBaseUrl": "${starships}",
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": null,
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "starships",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			}

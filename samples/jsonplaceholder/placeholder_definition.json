@@ -25,29 +25,29 @@
 					},
 					"objectProperties":  [
 					],
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -63,7 +63,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -84,29 +86,29 @@
 					],
 					"objectProperties":  [
 					],
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -121,8 +123,10 @@
 							"showAttributes": null,
 							"showCharacteristics": null,
 							"showFromRelations": null,
-							"showIfEmpty": "true",
+							"showIfEmpty": true,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -131,7 +135,7 @@
 			{
 				"option": "full",
 				"definition": {
-					"continueAfterUnhandledObjects": "true",
+					"continueAfterUnhandledObjects": true,
 					"groupDetailObjectsTogether": null,
 					"hideDuplicateRelations": null,
 					"identifyObjectsByTypeAndIdent": null,
@@ -147,29 +151,29 @@
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -184,8 +188,10 @@
 							"showAttributes": null,
 							"showCharacteristics": null,
 							"showFromRelations": null,
-							"showIfEmpty": "true",
+							"showIfEmpty": true,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -194,7 +200,7 @@
 			{
 				"option": "relations",
 				"definition": {
-					"continueAfterUnhandledObjects": "true",
+					"continueAfterUnhandledObjects": true,
 					"groupDetailObjectsTogether": null,
 					"hideDuplicateRelations": null,
 					"identifyObjectsByTypeAndIdent": null,
@@ -215,29 +221,29 @@
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -253,7 +259,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -279,29 +287,29 @@
 					},
 					"objectProperties":  [
 					],
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -317,7 +325,9 @@
 							"showCharacteristics": null,
 							"showFromRelations": null,
 							"showIfEmpty": null,
+							"showNullValues": null,
 							"showToRelations": null,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -325,10 +335,10 @@
 			}
 	],
 	"baseOption": {
-		"continueAfterUnhandledObjects": "false",
+		"continueAfterUnhandledObjects": false,
 		"groupDetailObjectsTogether": null,
 		"hideDuplicateRelations": null,
-		"identifyObjectsByTypeAndIdent": "true",
+		"identifyObjectsByTypeAndIdent": true,
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
@@ -338,17 +348,21 @@
 		"objectProperties":  [
 				"*"
 		],
+		"objectTypeProperties":  [
+		],
 		"objectTypeRenames":  [
 				"postId=post",
 				"albumId=album",
 				"userId=user"
 		],
-		"objectDetailProperties":  [
-		],
-		"groupProperties":  [
-		],
 		"objectIdentifierProperties":  [
 				"id"
+		],
+		"objectTitleProperties":  [
+				"title",
+				"name"
+		],
+		"objectDetailProperties":  [
 		],
 		"relationshipProperties":  [
 				"postId",
@@ -357,38 +371,36 @@
 		],
 		"relationshipTypeProperties":  [
 		],
-		"objectTitleProperties":  [
-				"title",
-				"name"
-		],
-		"objectTypeProperties":  [
-		],
 		"relationshipTypeArrowFormats":  [
+		],
+		"groupProperties":  [
+		],
+		"characteristicProperties":  [
+				{"parentProperty": "company", "type": "record"},
+				{"parentProperty": "address", "type": "record"}
 		],
 		"hiddenProperties":  [
 		],
 		"pumlHeaderLines":  [
 				"hide stereotype"
 		],
-		"characteristicProperties":  [
-				{"parentProperty": "company", "type": "record"},
-				{"parentProperty": "address", "type": "record"}
-		],
 		"objectFormats": {
 			"baseFormat": {
 				"objectFilter": [],
 				"iconColor": null,
 				"skinParams": ["BackgroundColor=STRATEGY"],
-				"captionShowIdent": "false",
-				"captionShowTitle": "true",
-				"captionShowType": "true",
+				"captionShowIdent": false,
+				"captionShowTitle": true,
+				"captionShowType": true,
 				"captionSplitCharacter": "_",
-				"captionSplitLength": "0",
-				"showAttributes": "true",
-				"showCharacteristics": "true",
-				"showFromRelations": "true",
-				"showIfEmpty": "false",
-				"showToRelations": "true",
+				"captionSplitLength": 0,
+				"showAttributes": true,
+				"showCharacteristics": true,
+				"showFromRelations": true,
+				"showIfEmpty": false,
+				"showNullValues": null,
+				"showToRelations": true,
+				"sortAttributes": null,
 				"valueSplitLength": null
 			},
 			"formats":  [

@@ -1,0 +1,1 @@
+curl -X POST http://localhost:8080/api/json2pumlRequestPng -d @jsonplaceholder_parameter_curl.json -v -o result\jsonplaceholder_reducedparameter_result.png

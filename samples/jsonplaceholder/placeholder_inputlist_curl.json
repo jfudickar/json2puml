@@ -7,18 +7,19 @@
 					"name": "${userid}",
 					"displayName": "UserId",
 					"description": "ID of the user",
-					"mandatory": "true",
+					"mandatory": true,
 					"regularExpression": null
 				}
 		]
 	},
 	"definitionFile": "placeholder_definition.json",
-	"generateDetails": "false",
-	"generateSummary": "true",
+	"generateDetails": false,
+	"generateSummary": true,
 	"group": "${userid}",
 	"detail": null,
 	"option": null,
 	"job": null,
+	"jobDescription": null,
 	"outputFormats":[],
 	"outputPath": null,
 	"outputSuffix": null,
@@ -31,14 +32,14 @@
 				"inputFile": "users.json",
 				"curlFileSuffix": "_${userid}",
 				"curlBaseUrl": null,
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": "/users/${userid}",
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "user",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 						{
 							"${name}": "name"
@@ -49,19 +50,19 @@
 				"inputFile": "albums.json",
 				"curlFileSuffix": "_${userid}",
 				"curlBaseUrl": null,
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": "albums?userId=${userid}",
 				"curlOptions": null,
-				"curlCache": "120",
+				"curlCache": 120,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "album",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 						{
 							"name": "${albumid}",
 							"value": "id",
-							"maxValues": "2"
+							"maxValues": 2
 						}
 				]
 			},
@@ -72,11 +73,11 @@
 				"curlFormatOutput": null,
 				"curlUrl": "photos?albumId=${albumid}",
 				"curlOptions": null,
-				"curlCache": "120",
+				"curlCache": 120,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "photo",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			},
@@ -87,16 +88,16 @@
 				"curlFormatOutput": null,
 				"curlUrl": "posts?userId=${userid}",
 				"curlOptions": null,
-				"curlCache": "120",
+				"curlCache": 120,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "post",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 						{
 							"name": "${postid}",
 							"value": "id",
-							"maxValues": "2"
+							"maxValues": 2
 						}
 				]
 			},
@@ -107,11 +108,11 @@
 				"curlFormatOutput": null,
 				"curlUrl": "comments?postId=${postId}",
 				"curlOptions": null,
-				"curlCache": "120",
+				"curlCache": 120,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "comment",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			},
@@ -122,11 +123,11 @@
 				"curlFormatOutput": null,
 				"curlUrl": "todos?userId=${userid}",
 				"curlOptions": null,
-				"curlCache": "120",
+				"curlCache": 120,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "todo",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			}

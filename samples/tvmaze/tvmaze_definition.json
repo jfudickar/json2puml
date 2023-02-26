@@ -8,7 +8,7 @@
 			{
 				"option": "full",
 				"definition": {
-					"continueAfterUnhandledObjects": "true",
+					"continueAfterUnhandledObjects": true,
 					"groupDetailObjectsTogether": null,
 					"hideDuplicateRelations": null,
 					"identifyObjectsByTypeAndIdent": null,
@@ -24,29 +24,29 @@
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
+					"objectTypeProperties":  [
+					],
 					"objectTypeRenames":  [
 					],
-					"objectDetailProperties":  [
-					],
-					"groupProperties":  [
-					],
 					"objectIdentifierProperties":  [
+					],
+					"objectTitleProperties":  [
+					],
+					"objectDetailProperties":  [
 					],
 					"relationshipProperties":  [
 					],
 					"relationshipTypeProperties":  [
 					],
-					"objectTitleProperties":  [
-					],
-					"objectTypeProperties":  [
-					],
 					"relationshipTypeArrowFormats":  [
+					],
+					"groupProperties":  [
+					],
+					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"characteristicProperties":  [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -60,9 +60,11 @@
 							"captionSplitLength": null,
 							"showAttributes": null,
 							"showCharacteristics": null,
-							"showFromRelations": "true",
-							"showIfEmpty": "true",
-							"showToRelations": "true",
+							"showFromRelations": true,
+							"showIfEmpty": true,
+							"showNullValues": null,
+							"showToRelations": true,
+							"sortAttributes": null,
 							"valueSplitLength": null
 						}
 					}
@@ -70,10 +72,10 @@
 			}
 	],
 	"baseOption": {
-		"continueAfterUnhandledObjects": "true",
+		"continueAfterUnhandledObjects": true,
 		"groupDetailObjectsTogether": null,
 		"hideDuplicateRelations": null,
-		"identifyObjectsByTypeAndIdent": "true",
+		"identifyObjectsByTypeAndIdent": true,
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
@@ -88,35 +90,28 @@
 				"network",
 				{"objectName": "cast","generateWithoutIdentifier": "true"}
 		],
+		"objectTypeProperties":  [
+		],
 		"objectTypeRenames":  [
-		],
-		"objectDetailProperties":  [
-		],
-		"groupProperties":  [
 		],
 		"objectIdentifierProperties":  [
 				"id",
 				"country.code"
 		],
-		"relationshipProperties":  [
-		],
-		"relationshipTypeProperties":  [
-		],
 		"objectTitleProperties":  [
 				"title",
 				"name"
 		],
-		"objectTypeProperties":  [
+		"objectDetailProperties":  [
+		],
+		"relationshipProperties":  [
+		],
+		"relationshipTypeProperties":  [
 		],
 		"relationshipTypeArrowFormats":  [
 		],
-		"hiddenProperties":  [
-				"_links",
-				"resolutions.medium",
-				"image.medium"
-		],
-		"pumlHeaderLines":  [
-				"hide stereotype"
+		"groupProperties":  [
+				"cast"
 		],
 		"characteristicProperties":  [
 				{"parentProperty": "image", "type": "record"},
@@ -126,22 +121,32 @@
 				{"parentProperty": "webChannel", "type": "record"},
 				{"parentProperty": "rating", "type": "record"}
 		],
+		"hiddenProperties":  [
+				"_links",
+				"resolutions.medium",
+				"image.medium"
+		],
+		"pumlHeaderLines":  [
+				"hide stereotype"
+		],
 		"objectFormats": {
 			"baseFormat": {
 				"objectFilter": [],
 				"iconColor": null,
 				"skinParams": ["BackgroundColor=STRATEGY"],
-				"captionShowIdent": "false",
-				"captionShowTitle": "true",
-				"captionShowType": "true",
+				"captionShowIdent": false,
+				"captionShowTitle": true,
+				"captionShowType": true,
 				"captionSplitCharacter": "_",
-				"captionSplitLength": "0",
-				"showAttributes": "true",
-				"showCharacteristics": "true",
-				"showFromRelations": "true",
-				"showIfEmpty": "false",
-				"showToRelations": "false",
-				"valueSplitLength": "100"
+				"captionSplitLength": 0,
+				"showAttributes": true,
+				"showCharacteristics": true,
+				"showFromRelations": true,
+				"showIfEmpty": false,
+				"showNullValues": null,
+				"showToRelations": false,
+				"sortAttributes": null,
+				"valueSplitLength": 100
 			},
 			"formats":  [
 					{

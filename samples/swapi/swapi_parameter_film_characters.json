@@ -1,9 +1,19 @@
 {
-  "inputListFile": "swapi_inputlist_film_characters.json",
-  "generateSummary": "true",
-  "generateDetails": "false",
-  "outputFormats": "svg,log,json,puml,zip",
-  "option": "default",
-  "curlParameter": [
-  ]
+	"definitionFile": null,
+	"detail": null,
+	"group": null,
+	"job": null,
+	"jobDescription": null,
+	"inputListFile": "swapi_inputlist_film_characters.json",
+	"inputFiles":  [
+	],
+	"generateSummary": true,
+	"generateDetails": false,
+	"outputFormats": "svg,log,json,puml,zip",
+	"option": "default",
+	"outputSuffix": null,
+	"curlParameter":  [
+	],
+	"curlAuthenticationParameter":  [
+	]
 }

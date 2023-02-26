@@ -1,3 +1,3 @@
-json2puml /parameterfile:spacex_parameter_launches.json /curlparameter:launch=next
+json2puml /parameterfile:spacex_parameter_launches.json /curlparameter:launch=next /formatdefinitionfiles
 json2puml /parameterfile:spacex_parameter_launches.json /curlparameterfile:spacex_curl_parameter_launches_latest.json
 json2puml /parameterfile:spacex_parameter_launches.json /curlparameter:launch=5eb87cd9ffd86e000604b32a

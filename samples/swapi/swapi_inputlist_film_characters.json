@@ -7,7 +7,7 @@
 					"name": "${id}",
 					"displayName": "Film ID",
 					"description": "Primary id of the film",
-					"mandatory": "true",
+					"mandatory": true,
 					"regularExpression": null
 				}
 		]
@@ -19,6 +19,7 @@
 	"detail": null,
 	"option": null,
 	"job": null,
+	"jobDescription": null,
 	"outputFormats":["svg"],
 	"outputPath": null,
 	"outputSuffix": null,
@@ -31,14 +32,14 @@
 				"inputFile": "films.json",
 				"curlFileSuffix": "_${id}",
 				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": null,
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "films",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 						{
 							"${characters}": "characters"
@@ -52,14 +53,14 @@
 				"inputFile": "characters.json",
 				"curlFileSuffix": "_${characters}",
 				"curlBaseUrl": "${characters}",
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": null,
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "characters",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 						{
 							"${planets}": "homeworld"
@@ -70,14 +71,14 @@
 				"inputFile": "planets.json",
 				"curlFileSuffix": "_${planets}",
 				"curlBaseUrl": "${planets}",
-				"curlFormatOutput": "true",
+				"curlFormatOutput": true,
 				"curlUrl": null,
 				"curlOptions": null,
-				"curlCache": "0",
+				"curlCache": 0,
 				"splitIdentifier": null,
 				"splitInputFile": null,
 				"leadingObject": "planets",
-				"generateOutput": "true",
+				"generateOutput": true,
 				"curlOutputParameter":  [
 				]
 			}

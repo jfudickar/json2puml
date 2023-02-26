@@ -1,17 +1,19 @@
 {
 	"definitionFile": null,
-	"description": null,
 	"detail": null,
 	"group": null,
 	"job": null,
+	"jobDescription": null,
 	"inputListFile": "tvmaze_inputlist_show.json",
 	"inputFiles":  [
 	],
-	"generateSummary": "true",
-	"generateDetails": "false",
+	"generateSummary": true,
+	"generateDetails": false,
 	"outputFormats": "svg,log,json,puml,zip",
 	"option": "default",
 	"outputSuffix": ".<option>",
 	"curlParameter":  [
+	],
+	"curlAuthenticationParameter":  [
 	]
 }
