@@ -1,5 +1,4 @@
-![](documentation/icons/json2puml_icon.png)
-# **json2puml** 
+# **json2puml** 		![](documentation/icons/json2puml_icon.ico)
 
 Make data visible and understandable
 
