@@ -893,7 +893,7 @@ begin
     DirectSearch (iParentPropertyName + '.' + iPropertyName);
   if not found and not iParentObjectType.IsEmpty then
     DirectSearch (iParentObjectType + '.' + iPropertyName);
-  if iUseMatch then
+  if not found and iUseMatch then
   begin
     MatchSearch (iPropertyName);
     if not found and not iParentPropertyName.IsEmpty then

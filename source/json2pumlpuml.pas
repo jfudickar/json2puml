@@ -915,14 +915,22 @@ var
   var
     i: Integer;
     GroupIdent: string;
+    GroupTitle : string;
     ClassIdent: string;
     Color: string;
     ParentObject: tPumlObject;
   begin
     if (iDirection = urdTo) and r.GroupAtObject then
-      GroupIdent := r.ObjectGroupName
+    begin
+      GroupIdent := r.ObjectGroupName;
+      //GroupTitle := r.RelatedObject.ObjectType+' ->\n'+r.ParentUmlObject.ObjectType;
+      GroupTitle := r.ParentUmlObject.ObjectType+' ->\n'+r.RelatedObject.ObjectType;
+    end
     else if (iDirection = urdFrom) and r.GroupAtRelatedObject then
-      GroupIdent := r.RelatedObjectGroupName
+    begin
+      GroupIdent := r.RelatedObjectGroupName;
+      GroupTitle := r.ParentUmlObject.ObjectType+' ->\n'+r.RelatedObject.ObjectType;
+    end
     else
       Exit;
     i := iGroupCountList.IndexOfName (GroupIdent);
@@ -935,7 +943,7 @@ var
       else
         ParentObject := r.RelatedObject;
       // ClassIdent := Format('diamond %s', [GroupIdent]);
-      ClassIdent := Format ('class " " as %s', [GroupIdent]);
+      ClassIdent := Format ('class "%s" as %s', [GroupTitle, GroupIdent]);
       Color := ParentObject.GeneratePumlColorDefinition;
 
       ipuml.add (Format('''generate relation group %s', [ParentObject.ObjectTypeIdent]));

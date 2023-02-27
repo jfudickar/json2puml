@@ -150,10 +150,9 @@ var
   ArrowFormat: string;
   GroupFromCondition, GroupToCondition, ArrowCondition: string;
 begin
-  GroupObjectFrom := Definition.IsGroupProperty (iPumlObject.ObjectType, iHierarchieParentObject.ObjectType, '',
-    GroupFromCondition);
-  GroupObjectTo := Definition.IsGroupProperty (iHierarchieParentObject.ObjectType, iPumlObject.ObjectType, '',
-    GroupToCondition);
+  GroupObjectTo:= Definition.IsGroupProperty (iPumlObject.ObjectType, iHierarchieParentObject.ObjectType, '', GroupFromCondition);
+  //GroupObjectFrom := Definition.IsGroupProperty (iHierarchieParentObject.ObjectType, iPumlObject.ObjectType, '', GroupToCondition);
+  GroupObjectFrom := Definition.IsGroupProperty (iPumlObject.ObjectType, iHierarchieParentObject.ObjectType, '', GroupFromCondition);
   ArrowFormat := Definition.RelationshipTypeArrowFormats.GetFormat (iPumlObject.ObjectType, iRelationshipProperty,
     iRelationshipType, ArrowCondition);
   added := iHierarchieParentObject.addRelationship (iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty,
