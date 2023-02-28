@@ -499,10 +499,12 @@ begin
   AddLine := False;
   Color := GeneratePumlColorDefinition;
   ipuml.add (Format('%s %s {', [GeneratePumlClassName, Color]));
+//  if not ObjectType.IsEmpty then
+//    ipuml.add (Format('<b>%s - %s</b>', [ObjectType, ObjectIdent]))
+//  else
+//    ipuml.add (Format('<b>%s</b>', [ObjectIdent]));
   if not ObjectType.IsEmpty then
-    ipuml.add (Format('<b>%s - %s</b>', [ObjectType, ObjectIdent]))
-  else
-    ipuml.add (Format('<b>%s</b>', [ObjectIdent]));
+    ipuml.add (Format('<b>%s</b>', [ObjectType]));
   if (Values.Count > 0) and FormatDefinition.ShowAttributes then
   begin
     ipuml.add (tPumlHelper.TableLine(['attribute', 'value'], true));
@@ -636,6 +638,14 @@ var
     NewCaptionLengh := NewCaptionLengh + Length (iValue);
   end;
 
+  Function SplitPosition (s : String) : Integer;
+  begin
+    Result := s.Substring (SplitLength).IndexOf (FormatDefinition.CaptionSplitCharacter);
+    if (Result < 0) and (s.Length > round(Splitlength*1.5)) then
+      Result := SplitLength;
+  end;
+
+
   procedure SplitIdent;
   var
     s: string;
@@ -645,7 +655,7 @@ var
     begin
       NewIdent := '';
       s := ObjectIdent;
-      i := s.Substring (SplitLength).IndexOf (FormatDefinition.CaptionSplitCharacter);
+      i := SplitPosition (s);
       while (i >= 0) and (s.Length - i - SplitLength > 5) do
       begin
         if iFormat then
@@ -653,7 +663,7 @@ var
         else
           NewIdent := NewIdent + s.Substring (0, SplitLength + i) + iSeparator + '    ';
         s := s.Substring (SplitLength + i);
-        i := s.Substring (SplitLength).IndexOf (FormatDefinition.CaptionSplitCharacter);
+        i := SplitPosition (s);
       end;
       NewIdent := NewIdent + s;
     end
@@ -1469,6 +1479,8 @@ begin
       i := Value.Substring (0, iSplitLength).LastIndexOf (' ');
       if i < 0 then
         i := Value.IndexOf (' ');
+      if (i < 0) and (Value.Length > Round(iSplitLength*1.5)) then
+        i := iSplitLength;
       if i > 0 then
       begin
         Result := Result + Value.Substring (0, i) + cNewLinePuml;
