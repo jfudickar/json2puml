@@ -71,7 +71,7 @@ type
     function GetIdent: string; virtual; abstract;
     function GetIsFilled: boolean; virtual;
     function GetIsValid: boolean; virtual;
-    function JsonAttributeValue (iPropertyName, iValue: string): string;
+    function JsonAttributeValue(iPropertyName, iValue: string; iValueQuotes: Boolean = true): string;
     function JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;
     function JsonPropertyName (iPropertyName: string): string;
     function MergeValue (iValue, iNewValue: string): string;
@@ -372,12 +372,12 @@ begin
   Result := IsFilled;
 end;
 
-function tJson2PumlBaseObject.JsonAttributeValue (iPropertyName, iValue: string): string;
+function tJson2PumlBaseObject.JsonAttributeValue(iPropertyName, iValue: string; iValueQuotes: Boolean = true): string;
 begin
   Result := '';
   if iPropertyName.IsEmpty or iValue.IsEmpty then
     exit;
-  Result := Format ('%s, ', [JsonPropertyNameValue(iPropertyName, iValue)]);
+  Result := Format ('%s, ', [JsonPropertyNameValue(iPropertyName, iValue, iValueQuotes)]);
 end;
 
 function tJson2PumlBaseObject.JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;

@@ -49,10 +49,13 @@ type
     ParentIsRelationship: Boolean;
     StopRecursion: Boolean;
     Level: Integer;
+    ArrayIndex: Integer;
     ObjectLevel: Integer;
     CharacteristicParentPropertyName: string;
     CharacteristicObject: tPumlCharacteristicObject;
-    procedure Init(iLeadingObject: string);
+    CharacteristicValue: tPumlCharacteristicValue;
+    CharacteristicRecord: tPumlCharacteristicRecord;
+    procedure Init (iLeadingObject: string);
     function GetParentObjectType: string;
     function GetInCharacteristicMode: Boolean;
     function GetCurrentCharacteristicDefinition: tJson2PumlCharacteristicDefinition;
@@ -150,9 +153,11 @@ var
   ArrowFormat: string;
   GroupFromCondition, GroupToCondition, ArrowCondition: string;
 begin
-  GroupObjectTo:= Definition.IsGroupProperty (iPumlObject.ObjectType, iHierarchieParentObject.ObjectType, '', GroupFromCondition);
-  //GroupObjectFrom := Definition.IsGroupProperty (iHierarchieParentObject.ObjectType, iPumlObject.ObjectType, '', GroupToCondition);
-  GroupObjectFrom := Definition.IsGroupProperty (iPumlObject.ObjectType, iHierarchieParentObject.ObjectType, '', GroupFromCondition);
+  GroupObjectTo := Definition.IsGroupProperty (iPumlObject.ObjectType, iHierarchieParentObject.ObjectType, '',
+    GroupFromCondition);
+  // GroupObjectFrom := Definition.IsGroupProperty (iHierarchieParentObject.ObjectType, iPumlObject.ObjectType, '', GroupToCondition);
+  GroupObjectFrom := Definition.IsGroupProperty (iPumlObject.ObjectType, iHierarchieParentObject.ObjectType, '',
+    GroupFromCondition);
   ArrowFormat := Definition.RelationshipTypeArrowFormats.GetFormat (iPumlObject.ObjectType, iRelationshipProperty,
     iRelationshipType, ArrowCondition);
   added := iHierarchieParentObject.addRelationship (iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty,
@@ -213,17 +218,17 @@ var
 begin
   if not Assigned (iJsonArray) then
     Exit;
-  for i := 0 to iJsonArray.Count - 1 do
-  begin
-    SaveRecursionRecord := IncRecursionRecord (iInfo, trpArray);
-    try
-      if iInfo.CurrentCharacteristicType = jctList then
-        iInfo.CharacteristicParentPropertyName :=
-          Format ('%s[%s]', [iInfo.CharacteristicParentPropertyName, (i + 1).ToString.PadLeft((i mod 10) + 1)]);
+  SaveRecursionRecord := IncRecursionRecord (iInfo, trpArray);
+  try
+    for i := 0 to iJsonArray.Count - 1 do
+    begin
+      iInfo.ArrayIndex := i;
+      if iInfo.InCharacteristicMode then
+        iInfo.CharacteristicRecord := iInfo.CharacteristicValue.AddDetailRecord (i);
       ConvertValue (iJsonArray.Items[i], iInfo, trpArray);
-    finally
-      DecRecursionRecord (iInfo, SaveRecursionRecord, trpArray);
     end;
+  finally
+    DecRecursionRecord (iInfo, SaveRecursionRecord, trpArray);
   end;
 end;
 
@@ -435,11 +440,22 @@ begin
       RelationshipType := '';
       RelationshipTypeProperty := '';
     end;
-    if IsCharacteristic and not IsObjectDetail then
-    begin
-      iInfo.CharacteristicParentPropertyName := '';
-      iInfo.CharacteristicObject := iInfo.ParentObject.AddCharacteristic (iInfo.PropertyName, CharacteristicDefinition);
-    end;
+    if not IsObjectDetail then
+      if IsCharacteristic then
+      begin
+        iInfo.CharacteristicParentPropertyName := '';
+        iInfo.CharacteristicObject := iInfo.ParentObject.AddCharacteristic (iInfo.PropertyName,
+          CharacteristicDefinition);
+        iInfo.CharacteristicValue := iInfo.CharacteristicObject;
+        iInfo.CharacteristicRecord := iInfo.CharacteristicValue.AddDetailRecord (iInfo.ArrayIndex);
+      end
+      else if iInfo.InCharacteristicMode then
+      begin
+        // iInfo.CharacteristicValue := iInfo.CharacteristicRecord.AddValue (iInfo.PropertyName, '');
+        // iInfo.CharacteristicRecord := iInfo.CharacteristicValue.AddDetailRecord (iInfo.ArrayIndex);
+        iInfo.CharacteristicParentPropertyName :=
+          string.join ('.', [iInfo.CharacteristicParentPropertyName, iInfo.PropertyName]).TrimLeft (['.']);
+      end;
     if Assigned (PumlObject) then
     begin
       if not ObjectIdent.IsEmpty then
@@ -461,15 +477,13 @@ begin
     iInfo.ParentRelationshipType := RelationshipType;
     iInfo.ParentRelationShipTypeProperty := RelationshipTypeProperty;
     iInfo.ParentIsRelationship := IsRelationShip;
-    if iInfo.InCharacteristicMode and not IsCharacteristic then
-      iInfo.CharacteristicParentPropertyName :=
-        string.join ('.', [iInfo.CharacteristicParentPropertyName, iInfo.PropertyName]).TrimLeft (['.']);
     iInfo.ParentPropertyName := iInfo.PropertyName;
     if Definition.ContinueAfterUnhandledObjects or (iInfo.CurrentCharacteristicType = jctrecord) then
       iInfo.StopRecursion := false
     else
       iInfo.StopRecursion := (not (Assigned(PumlObject) or IsObjectDetail or IsRelationShip) and
         Assigned(iInfo.HierarchieParentObject)) or (iInfo.CurrentCharacteristicType = jctList);
+    iInfo.ArrayIndex := - 1;
     for i := 0 to iJsonObject.Count - 1 do
     begin
       cName := iJsonObject.Pairs[i].JsonString.Value;
@@ -483,8 +497,6 @@ begin
         AddFileLog ('Stop property handling, property [%s.%s] is hidden %s',
           [iInfo.ParentPropertyName, cName, FoundCondition]);
     end;
-    if iInfo.CurrentCharacteristicType = jctList then
-      iInfo.CharacteristicObject.AddRecord;
   finally
     DecRecursionRecord (iInfo, SaveRecursionRecord, trpObject);
   end;
@@ -501,17 +513,62 @@ var
   IsRelationShip: Boolean;
   LogMessage: string;
   FoundCondition: string;
+  ValuePropertyName: string;
+
+  function IsCharacteristicPropertyAllowed (iPropertyName, iParentPropertyName: string;
+    var oFoundCondition: string): Boolean;
+  begin
+    Result := iInfo.CurrentCharacteristicDefinition.IsPropertyAllowed (iPropertyName, iParentPropertyName,
+      oFoundCondition);
+    if Result then
+      AddFileLog ('characteristic property [%s] found %s', [iPropertyName, oFoundCondition])
+    else
+      AddFileLog ('property [%s] not allowed and skipped %s', [iPropertyName, oFoundCondition]);
+  end;
+
 begin
   if not Assigned (iJsonValue) then
     Exit;
+  if iInfo.InCharacteristicMode then
+    if iRecursionParent = trpArray then
+      ValuePropertyName := Format ('[%d]', [iInfo.ArrayIndex])
+    else
+      ValuePropertyName := iInfo.PropertyName
+  else
+    ValuePropertyName := '';
   SaveRecursionRecord := IncRecursionRecord (iInfo, trpValue);
   try
     if iJsonValue is TJSONArray then
-      ConvertArray (iJsonValue as TJSONArray, iInfo)
+    begin
+      if iInfo.InCharacteristicMode then
+      begin
+        if IsCharacteristicPropertyAllowed (ValuePropertyName, iInfo.CharacteristicParentPropertyName, FoundCondition)
+        then
+        begin
+          iInfo.CharacteristicValue := iInfo.CharacteristicRecord.AddValue (ValuePropertyName, '');
+          ConvertArray (iJsonValue as TJSONArray, iInfo);
+        end;
+      end
+      else
+        ConvertArray (iJsonValue as TJSONArray, iInfo);
+    end
     else if iJsonValue is TJsonObject then
     begin
       if not iInfo.StopRecursion then
-        ConvertObject (iJsonValue as TJsonObject, iInfo)
+      begin
+        if iInfo.InCharacteristicMode then
+        begin
+          if IsCharacteristicPropertyAllowed (ValuePropertyName, iInfo.CharacteristicParentPropertyName, FoundCondition)
+          then
+          begin
+            iInfo.CharacteristicValue := iInfo.CharacteristicRecord.AddValue (ValuePropertyName, '');
+            iInfo.CharacteristicRecord := iInfo.CharacteristicValue.AddDetailRecord ( - 1);
+            ConvertObject (iJsonValue as TJsonObject, iInfo)
+          end;
+        end
+        else
+          ConvertObject (iJsonValue as TJsonObject, iInfo)
+      end;
     end
     else if IsJsonSimple (iJsonValue) then
     begin
@@ -546,16 +603,11 @@ begin
         begin
           if iInfo.InCharacteristicMode then
           begin
-            if iInfo.CurrentCharacteristicDefinition.IsPropertyAllowed (iInfo.PropertyName,
-              iInfo.CharacteristicParentPropertyName, FoundCondition) then
+            if IsCharacteristicPropertyAllowed (ValuePropertyName, iInfo.CharacteristicParentPropertyName,
+              FoundCondition) then
             begin
-              iInfo.CharacteristicObject.AddRecordProperty (iInfo.PropertyName, Value,
-                iInfo.CharacteristicParentPropertyName);
-              AddFileLog ('characteristic property [%s] value [%s] found %s',
-                [iInfo.PropertyName, Value, FoundCondition]);
+              iInfo.CharacteristicValue := iInfo.CharacteristicRecord.AddValue (ValuePropertyName, Value);
             end
-            else
-              AddFileLog ('property [%s] not allowed and skipped %s', [iInfo.PropertyName, FoundCondition]);
           end
           else
           begin
@@ -831,7 +883,7 @@ begin
       [InputHandlerRecord.InputFile.OutputFileName])
   else
   begin
-    InfoRec.Init(LeadingObject);
+    InfoRec.Init (LeadingObject);
     ConvertValue (jValue, InfoRec, trpStart);
     GeneratePuml;
     Result := true;
@@ -986,7 +1038,7 @@ begin
   Result := cJson2PumlRecursionParentFunction[self];
 end;
 
-procedure tJson2PumlRecursionRecord.Init(iLeadingObject: string);
+procedure tJson2PumlRecursionRecord.Init (iLeadingObject: string);
 begin
   ParentObject := nil;
   HierarchieParentObject := nil;
@@ -1000,6 +1052,7 @@ begin
   StopRecursion := false;
   Level := 0;
   ObjectLevel := 0;
+  ArrayIndex := - 1;
   CharacteristicParentPropertyName := '';
   CharacteristicObject := nil;
 end;

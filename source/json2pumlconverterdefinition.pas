@@ -170,7 +170,7 @@ type
     procedure SetShowCharacteristicsStr (const Value: string);
     procedure SetShowFromRelationsStr (const Value: string);
     procedure SetShowIfEmptyStr (const Value: string);
-    procedure SetShowNullValuesStr(const Value: string);
+    procedure SetShowNullValuesStr (const Value: string);
     procedure SetShowToRelationsStr (const Value: string);
     procedure SetSkinParams (const Value: tStringList);
   protected
@@ -291,6 +291,7 @@ type
       iWriteEmpty: boolean = false); override;
   published
     function IsPropertyAllowed (iPropertyName, iParentPropertyName: string; var oFoundCondition: string): boolean;
+    procedure SortUsedColumnsByPropertyList (iUsedColumns: tStringList);
     property CharacteristicType: tJson2PumlCharacteristicType read FCharacteristicType write FCharacteristicType
       default jctList;
     property IncludeIndex: boolean read GetIncludeIndex;
@@ -1028,7 +1029,8 @@ begin
 
   WriteToJsonValue (oJsonOutPut, 'continueAfterUnhandledObjects', ContinueAfterUnhandledObjectsStr, Level + 1,
     WriteEmpty, false);
-  WriteToJsonValue (oJsonOutPut, 'groupDetailObjectsTogether', GroupDetailObjectsTogetherStr, Level + 1, WriteEmpty, false);
+  WriteToJsonValue (oJsonOutPut, 'groupDetailObjectsTogether', GroupDetailObjectsTogetherStr, Level + 1,
+    WriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'hideDuplicateRelations', HideDuplicateRelationsStr, Level + 1, WriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'identifyObjectsByTypeAndIdent', IdentifyObjectsByTypeAndIdentStr, Level + 1,
     WriteEmpty, false);
@@ -1452,8 +1454,9 @@ begin
   Result := not CaptionShowIdentStr.IsEmpty or not CaptionShowTitleStr.IsEmpty or not CaptionShowTypeStr.IsEmpty or
     not CaptionSplitCharacter.IsEmpty or not CaptionSplitLengthStr.IsEmpty or not IconColor.IsEmpty or
     not (ObjectFilter.Count > 0) or not ShowAttributesStr.IsEmpty or not ShowCharacteristicsStr.IsEmpty or
-    not ShowIfEmptyStr.IsEmpty or not ShowFromRelationsStr.IsEmpty or not ShowNullValuesStr.IsEmpty or not ShowToRelationsStr.IsEmpty or
-    not SortAttributesStr.IsEmpty or (SkinParams.Count > 0) or not ValueSplitLengthStr.IsEmpty;
+    not ShowIfEmptyStr.IsEmpty or not ShowFromRelationsStr.IsEmpty or not ShowNullValuesStr.IsEmpty or
+    not ShowToRelationsStr.IsEmpty or not SortAttributesStr.IsEmpty or (SkinParams.Count > 0) or
+    not ValueSplitLengthStr.IsEmpty;
 end;
 
 function tJson2PumlSingleFormatDefinition.GetShowNullValues: boolean;
@@ -1567,7 +1570,7 @@ begin
   FShowIfEmptyStr := ValidateBooleanInput (Value);
 end;
 
-procedure tJson2PumlSingleFormatDefinition.SetShowNullValuesStr(const Value: string);
+procedure tJson2PumlSingleFormatDefinition.SetShowNullValuesStr (const Value: string);
 begin
   FShowNullValuesStr := ValidateBooleanInput (Value);
 end;
@@ -2090,6 +2093,24 @@ begin
   FIncludeIndexStr := ValidateBooleanInput (Value);
 end;
 
+procedure tJson2PumlCharacteristicDefinition.SortUsedColumnsByPropertyList (iUsedColumns: tStringList);
+var
+  i: Integer;
+  col: string;
+  j : Integer;
+begin
+  i := 0;
+  for col in PropertyList do
+  begin
+    j := iUsedColumns.IndexOf(col);
+    if j >= 0 then
+    begin
+      iUsedColumns.Move(j, i);
+      inc (i);
+    end;
+  end;
+end;
+
 procedure tJson2PumlCharacteristicDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
   iWriteEmpty: boolean = false);
 var
@@ -2105,7 +2126,7 @@ begin
   else
     Value := JsonAttributeValue ('parentProperty', ParentProperty) + JsonAttributeValue ('type',
       CharacteristicType.ToString) + JsonAttributeValueList ('propertyList', PropertyList) +
-      JsonAttributeValue ('includeIndex', IncludeIndexStr);
+      JsonAttributeValue ('includeIndex', IncludeIndexStr, false);
   if IsRecord then
     Value := Format ('{%s}', [Value.trimRight([',', ' '])])
   else
