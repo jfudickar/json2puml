@@ -1,4 +1,4 @@
-object Json2PumlSingleFileFrame: TJson2PumlSingleFileFrame
+object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
   Left = 0
   Top = 0
   Width = 565

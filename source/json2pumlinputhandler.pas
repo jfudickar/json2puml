@@ -209,7 +209,6 @@ type
     property ApplicationType: tJson2PumlApplicationType read FApplicationType;
     property BaseOutputPath: string read GetBaseOutputPath;
     property CmdLineParameter: tJson2PumlCommandLineParameter read FCmdLineParameter;
-    property ConfigurationFileLines: TStrings read GetConfigurationFileLines write FConfigurationFileLines;
     property ConverterDefinitionGroup: tJson2PumlConverterGroupDefinition read FConverterDefinitionGroup;
     property ConverterInputList: tJson2PumlInputList read FConverterInputList;
     property Count: Integer read GetCount;
@@ -242,6 +241,7 @@ type
     property BeforeCreateAllRecords: TNotifyEvent read FBeforeCreateAllRecords write FBeforeCreateAllRecords;
     property BeforeDeleteAllRecords: TNotifyEvent read FBeforeDeleteAllRecords write FBeforeDeleteAllRecords;
   published
+    property ConfigurationFileLines: TStrings read GetConfigurationFileLines write FConfigurationFileLines;
     property DefinitionLines: TStrings read GetDefinitionLines write FDefinitionLines;
     property GlobalConfiguration: tJson2PumlGlobalDefinition read FGlobalConfiguration;
     property InputListLines: TStrings read GetInputListLines write FInputListLines;

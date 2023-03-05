@@ -280,7 +280,7 @@ begin
   ObjectDefinition := nil;
   IsObjectProperty := false;
   IsObjectDetail := false;
-  IsRelationShip := false;
+  //IsRelationShip := false;
   IsCharacteristic := false;
 
   cName := '';
@@ -478,11 +478,11 @@ begin
     iInfo.ParentRelationShipTypeProperty := RelationshipTypeProperty;
     iInfo.ParentIsRelationship := IsRelationShip;
     iInfo.ParentPropertyName := iInfo.PropertyName;
-    if Definition.ContinueAfterUnhandledObjects or (iInfo.CurrentCharacteristicType = jctrecord) then
+    if Definition.ContinueAfterUnhandledObjects or iInfo.InCharacteristicMode then 
       iInfo.StopRecursion := false
     else
       iInfo.StopRecursion := (not (Assigned(PumlObject) or IsObjectDetail or IsRelationShip) and
-        Assigned(iInfo.HierarchieParentObject)) or (iInfo.CurrentCharacteristicType = jctList);
+        Assigned(iInfo.HierarchieParentObject));
     iInfo.ArrayIndex := - 1;
     for i := 0 to iJsonObject.Count - 1 do
     begin

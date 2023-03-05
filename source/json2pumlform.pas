@@ -26,7 +26,7 @@ unit json2pumlform;
 
 interface
 
-{$DEFINE SYNEDIT}
+{$I json2puml.inc}
 
 uses
 {$IFDEF SYNEDIT}
@@ -38,55 +38,62 @@ uses
   json2pumlframe, json2pumldefinition, Vcl.ActnMenus, Vcl.ActnMan, Vcl.ActnCtrls,
   Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
   Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
+  json2pumlbasedefinition, json2pumlvcltools;
 
 type
-  tSingleFileFrame = class(TObject)
+  tOutputFileFrame = class(TObject)
   private
-    FFrame: TJson2PumlSingleFileFrame;
+    FFrame: TJson2PumlOutputFileFrame;
     FTabSheet: TTabSheet;
   public
     destructor Destroy; override;
-    property Frame: TJson2PumlSingleFileFrame read FFrame write FFrame;
+    property Frame: TJson2PumlOutputFileFrame read FFrame write FFrame;
     property TabSheet: TTabSheet read FTabSheet write FTabSheet;
   end;
 
-  tFrameList = class(tStringList)
-  private
-    function GetFileFrame (Index: Integer): tSingleFileFrame;
-  public
-    property FileFrame[index: Integer]: tSingleFileFrame read GetFileFrame; default;
-  end;
-
   Tjson2pumlMainForm = class(TForm)
+    Action1: TAction;
     ActionMainMenuBar: TActionMainMenuBar;
-    ActionToolBar1: TActionToolBar;
-    ActionToolBar2: TActionToolBar;
-    CurlAuthenticationFileEdit: TEdit;
-    CurlAuthenticationFileLabel: TLabel;
-    CurlAuthenticationFilePanel: TPanel;
-    CurlAuthenticationTabSheet: TTabSheet;
+    ActionToolBar5: TActionToolBar;
     Button1: TButton;
     CommandLineEditPanel: TPanel;
     ConvertAllOpenFilesAction: TAction;
     ConvertCurrentFileAction: TAction;
     CopyCurrentPUMLAction: TAction;
+    CurlAuthenticationFileEdit: TEdit;
+    CurlAuthenticationParameterDataset: TFDMemTable;
+    CurlAuthenticationParameterDataSource: TDataSource;
+    CurlAuthenticationParameterDBGrid: TDBGrid;
+    CurlAuthenticationParameterTabSheet: TTabSheet;
+    CurlAuthenticationTabSheet: TTabSheet;
+    CurlParameterDataSet: TFDMemTable;
+    CurlParameterDataSetName: TStringField;
+    CurlParameterDataSetValue: TStringField;
+    CurlParameterDataSource: TDataSource;
+    CurlParameterDBGrid: TDBGrid;
+    CurlParameterFileEdit: TEdit;
+    CurlParameterFileTabSheet: TTabSheet;
+    CurlParameterPageControl: TPageControl;
+    CurlParameterTabSheet: TTabSheet;
     debugCheckBox: TCheckBox;
-    DefinitionActionToolBar: TActionToolBar;
     definitionfileEdit: TEdit;
     DefinitionFileTabSheet: TTabSheet;
-    DefinitionLabel: TLabel;
-    DefinitionPanel: TPanel;
     detailEdit: TEdit;
     EditCopy1: TEditCopy;
     EditCut1: TEditCut;
     EditPaste1: TEditPaste;
+    ExecutionLogPanel: TPanel;
+    ExecutionLogTabSheet: TTabSheet;
     ExitAction: TAction;
+    FileListPanel: TPanel;
+    FileListTabSheet: TTabSheet;
     FilePageControl: TPageControl;
     formatDefinitionFilesCheckBox: TCheckBox;
     generatedetailsCheckBox: TCheckBox;
     generateoutputdefinitionCheckBox: TCheckBox;
     generatesummaryCheckBox: TCheckBox;
+    GlobalConfigurationFileTabSheet: TTabSheet;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
@@ -94,20 +101,15 @@ type
     GroupBox5: TGroupBox;
     GroupBox6: TGroupBox;
     groupEdit: TEdit;
-    HelpAbout1: TAction;
     identfilterEdit: TEdit;
     ImageList1: TImageList;
     InitialTimer: TTimer;
     inputfileEdit: TEdit;
-    InputlistActionToolBar: TActionToolBar;
     inputlistfileEdit: TEdit;
-    InputlistLabel: TLabel;
-    InputListPanel: TPanel;
     InputListTabSheet: TTabSheet;
     javaruntimeparameterEdit: TEdit;
     javaruntimeparameterLabel: TLabel;
     JsonActionList: TActionList;
-    OutputTabsheet: TTabSheet;
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
@@ -118,7 +120,12 @@ type
     Label16: TLabel;
     Label17: TLabel;
     Label18: TLabel;
+    Label19: TLabel;
     Label2: TLabel;
+    Label20: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -127,98 +134,55 @@ type
     Label8: TLabel;
     Label9: TLabel;
     leadingObjectEdit: TEdit;
+    LoadFileAction: TAction;
+    LogFileDetailPageControl: TPageControl;
     LogTabSheet: TTabSheet;
     MainActionList: TActionList;
     MainActionManager: TActionManager;
     MainActionToolBar: TActionToolBar;
     MainPageControl: TPageControl;
-    OpenCurlAuthenticationAction: TAction;
-    OpenDefinitionAction: TAction;
-    OpenDialog: TOpenTextFileDialog;
-    OpenInputListAction: TAction;
-    OpenOptionFileAction: TAction;
     OpenOutputAllCheckBox: TCheckBox;
     openoutputEdit: TEdit;
-    OpenPNGAction: TAction;
-    OpenSVGAction: TAction;
+    OpenCurrentPNGAction: TAction;
+    OpenCurrentSVGAction: TAction;
     optionComboBox: TComboBox;
     optionfileEdit: TEdit;
-    OptionFileLabel: TLabel;
-    OptionFilePanel: TPanel;
     OptionFileTabSheet: TTabSheet;
     outputformatEdit: TEdit;
     outputpathEdit: TEdit;
+    outputsuffixEdit: TEdit;
+    OutputTabsheet: TTabSheet;
+    parameterFileEdit: TEdit;
+    ParameterFileTabSheet: TTabSheet;
     PlantUmlJarFileEdit: TEdit;
     PlantUmlJarFileLabel: TLabel;
-    RelaoadAndConvertFilesCurlAuthenticationAction: TAction;
     ReloadAndConvertAction: TAction;
-    ReloadDefinitionAction: TAction;
-    ReloadInputListAction: TAction;
-    ReloadOptionFileAction: TAction;
-    SaveCurlAuthenticationAction: TAction;
-    SaveDefinitionAction: TAction;
-    SaveDialog: TSaveTextFileDialog;
-    SaveInputlistAction: TAction;
-    SaveOptionFileAction: TAction;
+    ReloadFileAction: TAction;
+    SaveAsFileAction: TAction;
+    SaveFileAction: TAction;
+    ServiceDefinitionFileResultPanel: TPanel;
+    ServiceInputListFileResult: TTabSheet;
+    ServiceInputListFileResultPanel: TPanel;
+    ServiceResultPage: TTabSheet;
+    ServiceResultPanel: TPanel;
     ShowCurlAuthenticationAction: TAction;
+    ShowCurlParameterAction: TAction;
     ShowDefinitionFileAction: TAction;
+    ShowExecuteAction: TAction;
+    ShowGlobalConfigFile: TAction;
     ShowInputListAction: TAction;
-    ShowOutputFilesAction: TAction;
-    ShowLog: TAction;
     ShowOptionFileAction: TAction;
+    ShowOutputFilesAction: TAction;
+    ShowParameterFileAction: TAction;
     splitIdentifierEdit: TEdit;
     splitInputFileCheckBox: TCheckBox;
     StatusBar: TStatusBar;
-    titlefilterEdit: TEdit;
-    Label19: TLabel;
-    CurlParameterFileEdit: TEdit;
-    Label20: TLabel;
-    CurlParameterFileTabSheet: TTabSheet;
-    RelaoadAndConvertFilesCurlParameterAction: TAction;
-    OpenCurlParameterAction: TAction;
-    SaveCurlParameterAction: TAction;
-    ShowCurlParameterAction: TAction;
-    CurlParameterFilePanel: TPanel;
-    CurlParameterFileLabel: TLabel;
-    ActionToolBar3: TActionToolBar;
-    Label22: TLabel;
-    outputsuffixEdit: TEdit;
-    Label23: TLabel;
-    LogFileDetailPageControl: TPageControl;
-    ExecutionLogTabSheet: TTabSheet;
-    FileListTabSheet: TTabSheet;
-    ExecutionLogPanel: TPanel;
-    FileListPanel: TPanel;
-    ParameterFileTabSheet: TTabSheet;
-    OpenParameterFileAction: TAction;
-    SaveParameterFileAction: TAction;
-    ShowParameterFileAction: TAction;
-    ReloadParameterFileAction: TAction;
-    ParameterFilePanel: TPanel;
-    ParameterFileLabel: TLabel;
-    ActionToolBar4: TActionToolBar;
-    parameterFileEdit: TEdit;
-    Label24: TLabel;
-    ServiceResultPage: TTabSheet;
-    ServiceResultPanel: TPanel;
-    ServiceInputListFileResult: TTabSheet;
-    TabSheet2: TTabSheet;
-    ServiceInputListFileResultPanel: TPanel;
-    ServiceDefinitionFileResultPanel: TPanel;
-    CurlParameterPageControl: TPageControl;
-    CurlParameterTabSheet1: TTabSheet;
-    CurlAuthenticationParameterTabSheet: TTabSheet;
-    CurlParameterDBGrid: TDBGrid;
-    CurlParameterDataSource: TDataSource;
-    CurlAuthenticationParameterDataSource: TDataSource;
-    CurlAuthenticationParameterDBGrid: TDBGrid;
-    CurlParameterDataSet: TFDMemTable;
-    CurlParameterDataSetName: TStringField;
-    CurlParameterDataSetValue: TStringField;
-    CurlAuthenticationParameterDataset: TFDMemTable;
     StringField3: TStringField;
     StringField4: TStringField;
-    procedure ShowParameterFileActionExecute (Sender: TObject);
+    TabSheet2: TTabSheet;
+    titlefilterEdit: TEdit;
+    OpenCurrentJSONAction: TAction;
+    OpenConfigurationFileExternal: TAction;
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
     procedure CopyCurrentPUMLActionExecute (Sender: TObject);
@@ -227,107 +191,99 @@ type
     procedure FormCloseQuery (Sender: TObject; var CanClose: Boolean);
     procedure FormShow (Sender: TObject);
     procedure InitialTimerTimer (Sender: TObject);
-    procedure OpenCurlAuthenticationActionExecute (Sender: TObject);
-    procedure OpenCurlParameterActionExecute (Sender: TObject);
-    procedure OpenDefinitionActionExecute (Sender: TObject);
-    procedure OpenInputListActionExecute (Sender: TObject);
+    procedure LoadFileActionExecute (Sender: TObject);
+    procedure OpenConfigurationFileExternalExecute(Sender: TObject);
+    procedure OpenCurrentJSONActionExecute(Sender: TObject);
     procedure OpenJsonDetailTabSheetExecute (Sender: TObject);
-    procedure OpenOptionFileActionExecute (Sender: TObject);
-    procedure OpenParameterFileActionExecute (Sender: TObject);
-    procedure OpenPNGActionExecute (Sender: TObject);
-    procedure OpenSVGActionExecute (Sender: TObject);
+    procedure OpenCurrentPNGActionExecute (Sender: TObject);
+    procedure OpenCurrentSVGActionExecute (Sender: TObject);
     procedure ReloadAndConvertActionExecute (Sender: TObject);
-    procedure ReloadDefinitionActionExecute (Sender: TObject);
-    procedure ReloadInputListActionExecute (Sender: TObject);
-    procedure ReloadOptionFileActionExecute (Sender: TObject);
-    procedure ReloadParameterFileActionExecute (Sender: TObject);
-    procedure SaveCurlAuthenticationActionExecute (Sender: TObject);
-    procedure SaveCurlParameterActionExecute (Sender: TObject);
-    procedure SaveDefinitionActionExecute (Sender: TObject);
-    procedure SaveInputlistActionExecute (Sender: TObject);
-    procedure SaveOptionFileActionExecute (Sender: TObject);
-    procedure SaveParameterFileActionExecute (Sender: TObject);
+    procedure ReloadFileActionExecute (Sender: TObject);
+    procedure SaveFileActionExecute (Sender: TObject);
+    procedure SaveFileActionUpdate (Sender: TObject);
     procedure ShowCurlAuthenticationActionExecute (Sender: TObject);
     procedure ShowCurlParameterActionExecute (Sender: TObject);
     procedure ShowDefinitionFileActionExecute (Sender: TObject);
+    procedure ShowExecuteActionExecute (Sender: TObject);
     procedure ShowInputListActionExecute (Sender: TObject);
-    procedure ShowOutputFilesActionExecute (Sender: TObject);
-    procedure ShowLogExecute (Sender: TObject);
     procedure ShowOptionFileActionExecute (Sender: TObject);
+    procedure ShowOutputFilesActionExecute (Sender: TObject);
+    procedure ShowParameterFileActionExecute (Sender: TObject);
   private
-    FCurlAuthenticationFileLines: TStrings;
     FConvertCnt: Integer;
+    FCurlAuthenticationFileLines: TStrings;
     FCurlParameterFileLines: TStrings;
     FDefinitionLines: TStrings;
+    FFileListLines: TStrings;
+    FGlobalConfigurationFileLines: TStrings;
     FInputHandler: TJson2PumlInputHandler;
     FInputListLines: TStrings;
     FLogLines: TStrings;
-    FFileListLines: TStrings;
+    fLogMemo: TWinControl;
     FOptionFileLines: TStrings;
     FParameterFileLines: TStrings;
+    FServicedefinitionfileResultLines: TStrings;
+    FServiceinputlistfileResultLines: TStrings;
     FServiceResultLines: TStrings;
     fSynJSONSyn: TSynJSONSyn;
-    fLogMemo: TWinControl;
-    FServiceinputlistfileResultLines: TStrings;
-    FServicedefinitionfileResultLines: TStrings;
+    IntConfigFrame: array [tJson2PumlPage] of TJson2PumlConfigurationFrame;
     procedure AfterCreateAllInputHandlerRecords (Sender: TObject);
-    procedure AfterHandleAllInputHandlerRecords (Sender: TObject);
     procedure AfterCreateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
+    procedure AfterHandleAllInputHandlerRecords (Sender: TObject);
     procedure AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
     procedure BeforeCreateAllInputHandlerRecords (Sender: TObject);
     procedure BeforeDeleteAllInputHandlerRecords (Sender: TObject);
     function CalcTabsheetCaption (iInputHandlerRecord: TJson2PumlInputHandlerRecord): string;
-    procedure CreateSingleFileFrame (iInputHandlerRecord: TJson2PumlInputHandlerRecord);
+    procedure CreateOutputFileFrame (iInputHandlerRecord: TJson2PumlInputHandlerRecord);
+    function GetConfigFrame (Page: tJson2PumlPage): TJson2PumlConfigurationFrame;
     function GetCurrentInputHandlerRecord: TJson2PumlInputHandlerRecord;
+    function GetCurrentPage: tJson2PumlPage;
+    procedure InitFormDefaultLogger;
     procedure InitializeInputHandler;
+    procedure SetCurrentPage (const Value: tJson2PumlPage);
     property CurlAuthenticationFileLines: TStrings read FCurlAuthenticationFileLines write FCurlAuthenticationFileLines;
     property CurlParameterFileLines: TStrings read FCurlParameterFileLines write FCurlParameterFileLines;
     property DefinitionLines: TStrings read FDefinitionLines write FDefinitionLines;
+    property FileListLines: TStrings read FFileListLines write FFileListLines;
+    property GlobalConfigurationFileLines: TStrings read FGlobalConfigurationFileLines
+      write FGlobalConfigurationFileLines;
     property InputListLines: TStrings read FInputListLines write FInputListLines;
     property LogLines: TStrings read FLogLines write FLogLines;
-    property FileListLines: TStrings read FFileListLines write FFileListLines;
     property OptionFileLines: TStrings read FOptionFileLines write FOptionFileLines;
     property ParameterFileLines: TStrings read FParameterFileLines write FParameterFileLines;
-    property ServiceResultLines: TStrings read FServiceResultLines write FServiceResultLines;
-    property ServiceinputlistfileResultLines: TStrings read FServiceinputlistfileResultLines
-      write FServiceinputlistfileResultLines;
     property ServicedefinitionfileResultLines: TStrings read FServicedefinitionfileResultLines
       write FServicedefinitionfileResultLines;
-    procedure InitFormDefaultLogger;
+    property ServiceinputlistfileResultLines: TStrings read FServiceinputlistfileResultLines
+      write FServiceinputlistfileResultLines;
+    property ServiceResultLines: TStrings read FServiceResultLines write FServiceResultLines;
   protected
     procedure BeginConvert;
     procedure CommandLineToForm;
     procedure ConvertAllFrames;
     procedure ConvertCurrentFrame;
+    procedure CreateConfigFrames (iPage: tJson2PumlPage; var oLines: TStrings; iShowAction: TAction;
+      iConfigObjectClass: tJson2PumlBaseObjectClass);
     procedure CreateMemoControls;
     function CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
-      var oMemoLines: TStrings; iUseHighlighter: Boolean): TWinControl;
+      var oMemoLines: TStrings; iUseHighlighter, iReadOnly: Boolean): TWinControl;
     procedure EndConvert;
     procedure FormToCommandline;
-    function GetNewFileName (iFileName: string; var oNewFileName: string): Boolean;
+    function GetConfigFileName (iPage: tJson2PumlPage): string;
     procedure HandleInputParameter;
     function IsConverting: Boolean;
-    procedure OpenDefinitionFile;
-    procedure OpenInputListFile;
-    procedure OpenOptionFile;
-    procedure OpenAuthenticationFile;
-    procedure OpenParameterFile;
-    procedure ReloadDefinitionFIle;
+    procedure LoadConfigFileName (iPage: tJson2PumlPage; iFileName: string);
     procedure ReloadFiles;
-    procedure ReloadInputListFile;
-    procedure ReloadOptionFile;
-    procedure ReloadParameterFile;
-    procedure SaveDefinitionFile;
-    procedure SaveInputListFile;
-    procedure SaveOptionFile;
-    procedure SaveAuthenticationFile;
-    procedure SaveParameterFile;
+    procedure SetConfigFileName (iPage: tJson2PumlPage; iFileName: string);
     procedure SetConverting (Converting: Boolean);
     procedure ShowDefinitionTabsheet;
     procedure ShowInputListTabSheet;
     procedure ShowJsonTabSheet;
     procedure ShowLogTabsheet;
+    function TabSheetByPage (iPage: tJson2PumlPage): TTabSheet;
     procedure UpdateAllInfos;
+    property ConfigFileName[Page: tJson2PumlPage]: string read GetConfigFileName write SetConfigFileName;
+    property ConfigFrame[Page: tJson2PumlPage]: TJson2PumlConfigurationFrame read GetConfigFrame;
+    property CurrentPage: tJson2PumlPage read GetCurrentPage write SetCurrentPage;
   public
     constructor Create (AOwner: TComponent); override;
     destructor Destroy; override;
@@ -336,6 +292,7 @@ type
     procedure GenerateServiceListResults;
     procedure OpenCurrentPNGFile;
     procedure OpenCurrentSVGFile;
+    procedure OpenCurrentJSONFile;
     property CurrentInputHandlerRecord: TJson2PumlInputHandlerRecord read GetCurrentInputHandlerRecord;
     property InputHandler: TJson2PumlInputHandler read FInputHandler;
   end;
@@ -347,7 +304,7 @@ implementation
 
 uses
   json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst, System.UITypes,
-  json2pumlloghandler, Quick.Logger.Provider.StringList, Quick.Logger, json2pumlbasedefinition,
+  json2pumlloghandler, Quick.Logger.Provider.StringList, Quick.Logger,
   json2pumlconverterdefinition;
 
 {$R *.dfm}
@@ -364,46 +321,43 @@ begin
   inherited Destroy;
 end;
 
-procedure Tjson2pumlMainForm.ShowParameterFileActionExecute (Sender: TObject);
-begin
-  MainPageControl.ActivePage := ParameterFileTabSheet;
-end;
-
 procedure Tjson2pumlMainForm.AfterCreateAllInputHandlerRecords (Sender: TObject);
 begin
   LockWindowUpdate (0);
 end;
 
+procedure Tjson2pumlMainForm.AfterCreateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
+begin
+  CreateOutputFileFrame (InputHandlerRecord);
+end;
+
 procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: TObject);
 begin
   FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
-end;
 
-procedure Tjson2pumlMainForm.AfterCreateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
-begin
-  CreateSingleFileFrame (InputHandlerRecord);
 end;
 
 procedure Tjson2pumlMainForm.AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
 var
-  SingleFileFrame: tSingleFileFrame;
+  OutputFileFrame: tOutputFileFrame;
 begin
   if Assigned (InputHandlerRecord.RelatedObject) then
-    SingleFileFrame := tSingleFileFrame (InputHandlerRecord.RelatedObject)
+    OutputFileFrame := tOutputFileFrame (InputHandlerRecord.RelatedObject)
   else
     Exit;
-  SingleFileFrame.TabSheet.Caption := CalcTabsheetCaption (InputHandlerRecord);
-  SingleFileFrame.Frame.InputFileName := InputHandlerRecord.InputFile.OutputFileName;
-  SingleFileFrame.Frame.PNGFileName := InputHandlerRecord.InputFile.Output.PNGFileName;
-  SingleFileFrame.Frame.SVGFileName := InputHandlerRecord.InputFile.Output.SVGFileName;
-  SingleFileFrame.Frame.PUmlFileName := InputHandlerRecord.InputFile.Output.PUmlFileName;
-  SingleFileFrame.Frame.ConverterLogFileName := InputHandlerRecord.InputFile.Output.ConverterLogFileName;
+  OutputFileFrame.TabSheet.Caption := CalcTabsheetCaption (InputHandlerRecord);
+  OutputFileFrame.Frame.InputFileName := InputHandlerRecord.InputFile.OutputFileName;
+  OutputFileFrame.Frame.PNGFileName := InputHandlerRecord.InputFile.Output.PNGFileName;
+  OutputFileFrame.Frame.SVGFileName := InputHandlerRecord.InputFile.Output.SVGFileName;
+  OutputFileFrame.Frame.PUmlFileName := InputHandlerRecord.InputFile.Output.PUmlFileName;
+  OutputFileFrame.Frame.ConverterLogFileName := InputHandlerRecord.InputFile.Output.ConverterLogFileName;
 end;
 
 procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: TObject);
 begin
   LockWindowUpdate (Handle);
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
+  UpdateAllInfos;
 end;
 
 procedure Tjson2pumlMainForm.BeforeDeleteAllInputHandlerRecords (Sender: TObject);
@@ -500,8 +454,8 @@ begin
   titlefilterEdit.Text := InputHandler.CmdLineParameter.TitleFilter;
   generateoutputdefinitionCheckBox.Checked := InputHandler.CmdLineParameter.GenerateOutputDefinition;
   debugCheckBox.Checked := InputHandler.CmdLineParameter.Debug;
-  FillDataset (CurlParameterDataSet,  InputHandler.CmdLineParameter.CurlParameter);
-  FillDataset (CurlAuthenticationParameterDataset,  InputHandler.CmdLineParameter.CurlAuthenticationParameter);
+  FillDataset (CurlParameterDataSet, InputHandler.CmdLineParameter.CurlParameter);
+  FillDataset (CurlAuthenticationParameterDataset, InputHandler.CmdLineParameter.CurlAuthenticationParameter);
 end;
 
 procedure Tjson2pumlMainForm.ConvertAllFrames;
@@ -547,66 +501,106 @@ begin
     Clipboard.AsText := CurrentInputHandlerRecord.PUmlOutput.Text;
 end;
 
+procedure Tjson2pumlMainForm.CreateConfigFrames (iPage: tJson2PumlPage; var oLines: TStrings; iShowAction: TAction;
+  iConfigObjectClass: tJson2PumlBaseObjectClass);
+var
+  Frame: TJson2PumlConfigurationFrame;
+  TabSheet: TTabSheet;
+begin
+  IntConfigFrame[iPage] := nil;
+  TabSheet := TabSheetByPage (iPage);
+  iPage.SetToShowAction (iShowAction);
+  TabSheet.Caption := iPage.TabSheetCaption;
+  if not iPage.IsConfig then
+    Exit;
+  Frame := TJson2PumlConfigurationFrame.Create (TabSheet);
+  Frame.Parent := TabSheet;
+  Frame.Align := alClient;
+  Frame.Page := iPage;
+  Frame.CreateMemos (CreateSingleMemoControl);
+  Frame.ConfigObjectClass := iConfigObjectClass;
+  Frame.OnSetConfigFileName := SetConfigFileName;
+  Frame.OnGetConfigFileName := GetConfigFileName;
+  Frame.OnLoadConfigFileName := LoadConfigFileName;
+  oLines := Frame.Lines;
+  IntConfigFrame[iPage] := Frame;
+end;
+
 procedure Tjson2pumlMainForm.CreateMemoControls;
+var
+  DummyLines: TStrings;
+  Page: tJson2PumlPage;
+  i : Integer;
 begin
 {$IFDEF SYNEDIT}
   fSynJSONSyn := TSynJSONSyn.Create (self);
 {$ENDIF}
-  CreateSingleMemoControl (InputListPanel, 'InputListMemo', InputlistLabel, FInputListLines, True);
-  CreateSingleMemoControl (DefinitionPanel, 'DefinitionMemo', DefinitionLabel, FDefinitionLines, True);
-  CreateSingleMemoControl (OptionFilePanel, 'OptionFileMemo', OptionFileLabel, FOptionFileLines, True);
-  CreateSingleMemoControl (ParameterFilePanel, 'ParameterFileMemo', ParameterFileLabel, FParameterFileLines, True);
-  CreateSingleMemoControl (CurlAuthenticationFilePanel, 'CurlAuthenticationFileMemo', CurlAuthenticationFileLabel,
-    FCurlAuthenticationFileLines, True);
-  CreateSingleMemoControl (CurlParameterFilePanel, 'CurlParameterFileMemo', CurlParameterFileLabel,
-    FCurlParameterFileLines, True);
-  fLogMemo := CreateSingleMemoControl (ExecutionLogPanel, 'ExecutionLogMemo', nil, FLogLines, false);
-  CreateSingleMemoControl (FileListPanel, 'FileListMemo', nil, FFileListLines, True);
-  CreateSingleMemoControl (ServiceResultPanel, 'ServiceResultMemo', nil, FServiceResultLines, True);
-  CreateSingleMemoControl (ServiceInputListFileResultPanel, 'ServiceResultMemo', nil,
-    FServiceinputlistfileResultLines, True);
+  CreateConfigFrames (jpExeute, DummyLines, ShowExecuteAction, nil);
+  CreateConfigFrames (jpOutput, DummyLines, ShowOutputFilesAction, nil);
+  CreateConfigFrames (jpInputList, FInputListLines, ShowInputListAction, tJson2PumlInputList);
+  CreateConfigFrames (jpDefinitionFile, FDefinitionLines, ShowDefinitionFileAction, tJson2PumlConverterGroupDefinition);
+  CreateConfigFrames (jpParameterFile, FParameterFileLines, ShowParameterFileAction, tJson2PumlParameterFileDefinition);
+  CreateConfigFrames (jpOptionFile, FOptionFileLines, ShowOptionFileAction, tJson2PumlConverterDefinition);
+  CreateConfigFrames (jpCurlAuthenticationFile, FCurlAuthenticationFileLines, ShowCurlAuthenticationAction,
+    tJson2PumlCurlAuthenticationList);
+  CreateConfigFrames (jpCurlParameterFile, FCurlParameterFileLines, ShowCurlParameterAction,
+    tJson2PumlCurlParameterList);
+  CreateConfigFrames (jpGlobalConfig, FGlobalConfigurationFileLines, ShowGlobalConfigFile, tJson2PumlGlobalDefinition);
+  i := 0;
+  for page := Low(Page) to High(Page) do
+  begin
+    TabSheetByPage(Page).PageIndex := i;
+    inc(i);
+  end;
+
+
+  fLogMemo := CreateSingleMemoControl (ExecutionLogPanel, 'ExecutionLogMemo', nil, FLogLines, false, True);
+  CreateSingleMemoControl (FileListPanel, 'FileListMemo', nil, FFileListLines, True, True);
+  CreateSingleMemoControl (ServiceResultPanel, 'ServiceResultMemo', nil, FServiceResultLines, True, True);
+  CreateSingleMemoControl (ServiceInputListFileResultPanel, 'ServiceResultMemo', nil, FServiceinputlistfileResultLines,
+    True, True);
   CreateSingleMemoControl (ServiceDefinitionFileResultPanel, 'ServiceResultMemo', nil,
-    FServicedefinitionfileResultLines, True);
+    FServicedefinitionfileResultLines, True, True);
 end;
 
-procedure Tjson2pumlMainForm.CreateSingleFileFrame (iInputHandlerRecord: TJson2PumlInputHandlerRecord);
+procedure Tjson2pumlMainForm.CreateOutputFileFrame (iInputHandlerRecord: TJson2PumlInputHandlerRecord);
 var
-  SingleFileFrame: tSingleFileFrame;
+  OutputFileFrame: tOutputFileFrame;
   Action: TAction;
-  iItem: TActionClientItem;
+  // iItem: TActionClientItem;
 begin
-  SingleFileFrame := tSingleFileFrame.Create;
-  SingleFileFrame.TabSheet := TTabSheet.Create (FilePageControl);
-  SingleFileFrame.TabSheet.PageControl := FilePageControl;
-  SingleFileFrame.TabSheet.BorderWidth := 5;
-  FilePageControl.ActivePage := SingleFileFrame.TabSheet;
-  SingleFileFrame.TabSheet.Caption := CalcTabsheetCaption (iInputHandlerRecord);
-  SingleFileFrame.Frame := TJson2PumlSingleFileFrame.Create (SingleFileFrame.TabSheet);
-  SingleFileFrame.Frame.Parent := SingleFileFrame.TabSheet;
-  SingleFileFrame.Frame.InputFileName := iInputHandlerRecord.InputFile.InputFileName;
-  SingleFileFrame.Frame.InputGroup := iInputHandlerRecord.InputGroup;
-  SingleFileFrame.Frame.PNGFileName := '';
-  SingleFileFrame.Frame.SVGFileName := '';
-  SingleFileFrame.Frame.PUmlFileName := iInputHandlerRecord.InputFile.Output.PUmlFileName;
-  SingleFileFrame.Frame.LeadingObject := iInputHandlerRecord.InputFile.LeadingObject;
-  SingleFileFrame.Frame.Align := alClient;
-  SingleFileFrame.Frame.CreateMemos (CreateSingleMemoControl);
-  Action := TAction.Create (SingleFileFrame.TabSheet);
+  OutputFileFrame := tOutputFileFrame.Create;
+  OutputFileFrame.TabSheet := TTabSheet.Create (FilePageControl);
+  OutputFileFrame.TabSheet.PageControl := FilePageControl;
+  OutputFileFrame.TabSheet.BorderWidth := 5;
+  FilePageControl.ActivePage := OutputFileFrame.TabSheet;
+  OutputFileFrame.TabSheet.Caption := CalcTabsheetCaption (iInputHandlerRecord);
+  OutputFileFrame.Frame := TJson2PumlOutputFileFrame.Create (OutputFileFrame.TabSheet);
+  OutputFileFrame.Frame.Parent := OutputFileFrame.TabSheet;
+  OutputFileFrame.Frame.InputFileName := iInputHandlerRecord.InputFile.InputFileName;
+  OutputFileFrame.Frame.InputGroup := iInputHandlerRecord.InputGroup;
+  OutputFileFrame.Frame.PNGFileName := '';
+  OutputFileFrame.Frame.SVGFileName := '';
+  OutputFileFrame.Frame.PUmlFileName := iInputHandlerRecord.InputFile.Output.PUmlFileName;
+  OutputFileFrame.Frame.LeadingObject := iInputHandlerRecord.InputFile.LeadingObject;
+  OutputFileFrame.Frame.Align := alClient;
+  OutputFileFrame.Frame.CreateMemos (CreateSingleMemoControl);
+  Action := TAction.Create (OutputFileFrame.TabSheet);
   Action.ActionList := JsonActionList;
   Action.Tag := iInputHandlerRecord.Index;
   Action.Caption := ExtractFileName (iInputHandlerRecord.InputFile.InputFileName);
   Action.ShortCut := TextToShortCut (CalcShortCutStr(iInputHandlerRecord.Index));
   Action.OnExecute := OpenJsonDetailTabSheetExecute;
-  iItem := MainActionManager.ActionBars[0].Items[5].Items.add;
-  iItem.Action := Action;
-  iInputHandlerRecord.RelatedObject := SingleFileFrame;
-  iInputHandlerRecord.ConverterLog := SingleFileFrame.Frame.LogList;
-  iInputHandlerRecord.JsonInput := SingleFileFrame.Frame.JsonInput;
-  iInputHandlerRecord.PUmlOutput := SingleFileFrame.Frame.PUmlOutput;
+  // iItem := MainActionManager.ActionBars[0].Items[5].Items.add;
+  // iItem.Action := Action;
+  iInputHandlerRecord.RelatedObject := OutputFileFrame;
+  iInputHandlerRecord.ConverterLog := OutputFileFrame.Frame.LogList;
+  iInputHandlerRecord.JsonInput := OutputFileFrame.Frame.JsonInput;
+  iInputHandlerRecord.PUmlOutput := OutputFileFrame.Frame.PUmlOutput;
 end;
 
 function Tjson2pumlMainForm.CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
-  var oMemoLines: TStrings; iUseHighlighter: Boolean): TWinControl;
+  var oMemoLines: TStrings; iUseHighlighter, iReadOnly: Boolean): TWinControl;
 {$IFDEF SYNEDIT}
 var
   NewEdit: TSynEdit;
@@ -622,7 +616,7 @@ begin
   if iUseHighlighter then
     NewEdit.Highlighter := fSynJSONSyn;
   NewEdit.Lines.Clear;
-  NewEdit.ReadOnly := not iUseHighlighter;
+  NewEdit.ReadOnly := iReadOnly;
   NewEdit.Options := [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoEnhanceHomeKey, eoEnhanceEndKey,
     eoGroupUndo, eoScrollPastEol, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabIndent, eoTabsToSpaces,
     eoTrimTrailingSpaces];
@@ -692,6 +686,7 @@ begin
   InputHandler.BeforeCreateAllRecords := BeforeCreateAllInputHandlerRecords;
   InputHandler.BeforeDeleteAllRecords := BeforeDeleteAllInputHandlerRecords;
   InputHandler.DefinitionLines := DefinitionLines;
+  InputHandler.ConfigurationFileLines := GlobalConfigurationFileLines;
   InputHandler.OptionFileLines := OptionFileLines;
   InputHandler.ParameterFileLines := ParameterFileLines;
   InputHandler.CurlAuthenticationFileLines := CurlAuthenticationFileLines;
@@ -712,18 +707,16 @@ procedure Tjson2pumlMainForm.FormToCommandline;
       Result := cfalse;
   end;
 
-  procedure FillParameterList (iCurlParameter :  tJson2PumlCurlParameterList; iDataset : TDataSet);
+  procedure FillParameterList (iCurlParameter: tJson2PumlCurlParameterList; iDataset: tDataset);
   begin
-  iCurlParameter.Clear;
-  iDataset.First;
-  while not iDataset.Eof do
-  begin
-    iCurlParameter.AddParameter (iDataset.fieldValues['Name'],
-      iDataset.fieldValues['Value']);
-    iDataset.Next;
+    iCurlParameter.Clear;
+    iDataset.First;
+    while not iDataset.Eof do
+    begin
+      iCurlParameter.AddParameter (iDataset.fieldValues['Name'], iDataset.fieldValues['Value']);
+      iDataset.Next;
+    end;
   end;
-  end;
-
 
 begin
   InputHandler.CmdLineParameter.PlantUmlJarFileName := PlantUmlJarFileEdit.Text;
@@ -766,6 +759,36 @@ begin
     InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false);
 end;
 
+function Tjson2pumlMainForm.GetConfigFileName (iPage: tJson2PumlPage): string;
+begin
+  Result := '';
+  if not Assigned (InputHandler) or not Assigned (InputHandler.CmdLineParameter) then
+    Exit;
+  case iPage of
+    // jpExeute: ;
+    jpInputList:
+      Result := InputHandler.CurrentInputListFileName;
+    jpCurlAuthenticationFile:
+      Result := InputHandler.CurrentCurlAuthenticationFileName;
+    jpCurlParameterFile:
+      Result := InputHandler.CmdLineParameter.CurlParameterFileName;
+    jpDefinitionFile:
+      Result := InputHandler.CurrentDefinitionFileName;
+    jpOptionFile:
+      Result := InputHandler.CmdLineParameter.OptionFileName;
+    jpParameterFile:
+      Result := InputHandler.CmdLineParameter.ParameterFileName;
+    jpGlobalConfig:
+      Result := InputHandler.CurrentConfigurationFileName;
+    // jpOutput: ;
+  end;
+end;
+
+function Tjson2pumlMainForm.GetConfigFrame (Page: tJson2PumlPage): TJson2PumlConfigurationFrame;
+begin
+  Result := IntConfigFrame[Page];
+end;
+
 function Tjson2pumlMainForm.GetCurrentInputHandlerRecord: TJson2PumlInputHandlerRecord;
 var
   CurrentRecord: TJson2PumlInputHandlerRecord;
@@ -777,8 +800,8 @@ begin
     for i := 0 to InputHandler.Count - 1 do
     begin
       CurrentRecord := InputHandler[i];
-      if Assigned (CurrentRecord.RelatedObject) and (CurrentRecord.RelatedObject is tSingleFileFrame) then
-        if tSingleFileFrame (CurrentRecord.RelatedObject).TabSheet = FilePageControl.ActivePage then
+      if Assigned (CurrentRecord.RelatedObject) and (CurrentRecord.RelatedObject is tOutputFileFrame) then
+        if tOutputFileFrame (CurrentRecord.RelatedObject).TabSheet = FilePageControl.ActivePage then
         begin
           Result := CurrentRecord;
           Exit;
@@ -787,12 +810,17 @@ begin
   end;
 end;
 
-function Tjson2pumlMainForm.GetNewFileName (iFileName: string; var oNewFileName: string): Boolean;
+function Tjson2pumlMainForm.GetCurrentPage: tJson2PumlPage;
+var
+  p: tJson2PumlPage;
 begin
-  OpenDialog.InitialDir := ExtractFilePath (iFileName);
-  Result := OpenDialog.Execute;
-  if Result then
-    oNewFileName := OpenDialog.FileName;
+  Result := low(p);
+  for p := low(p) to high(p) do
+    if TabSheetByPage (p) = MainPageControl.ActivePage then
+    begin
+      Result := p;
+      Exit;
+    end;
 end;
 
 procedure Tjson2pumlMainForm.HandleInputParameter;
@@ -807,6 +835,19 @@ begin
   ReloadFiles;
   UpdateAllInfos;
   GenerateServiceListResults;
+end;
+
+procedure Tjson2pumlMainForm.InitFormDefaultLogger;
+begin
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, false, false);
+  Logger.Providers.add (GlobalLogStringListProvider);
+  GlobalLogStringListProvider.ShowTimeStamp := True;
+  GlobalLogStringListProvider.ShowEventTypes := True;
+  GlobalLogStringListProvider.LogList := LogLines;
+  GlobalLogStringListProvider.LogLevel := LOG_DEBUG;
+  SetLogProviderEventTypeNames (GlobalLogStringListProvider);
+  GlobalLogStringListProvider.Enabled := True;
+
 end;
 
 procedure Tjson2pumlMainForm.InitializeInputHandler;
@@ -832,9 +873,46 @@ begin
   Result := FConvertCnt > 0;
 end;
 
-procedure Tjson2pumlMainForm.OpenCurlAuthenticationActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.LoadConfigFileName (iPage: tJson2PumlPage; iFileName: string);
 begin
-  OpenAuthenticationFile;
+  if not Assigned (InputHandler) or not Assigned (InputHandler.CmdLineParameter) then
+    Exit;
+  case iPage of
+    // jpExeute: ;
+    jpInputList:
+      InputHandler.LoadInputListFile (iFileName);
+    jpCurlAuthenticationFile:
+      InputHandler.LoadCurlAuthenticationFile (iFileName);
+    jpCurlParameterFile:
+      InputHandler.LoadCurlParameterFile (iFileName);
+    jpDefinitionFile:
+      InputHandler.LoadDefinitionFile (iFileName);
+    jpOptionFile:
+      InputHandler.LoadOptionFile (iFileName);
+    jpParameterFile:
+      InputHandler.LoadParameterFile (iFileName);
+    jpGlobalConfig:
+      InputHandler.LoadConfigurationFile (iFileName);
+    // jpOutput: ;
+  end;
+
+end;
+
+procedure Tjson2pumlMainForm.LoadFileActionExecute (Sender: TObject);
+begin
+  if Assigned (ConfigFrame[CurrentPage]) then
+    ConfigFrame[CurrentPage].OpenFile;
+end;
+
+procedure Tjson2pumlMainForm.OpenConfigurationFileExternalExecute(Sender: TObject);
+begin
+  if Assigned (ConfigFrame[CurrentPage]) then
+    OpenFile(ConfigFrame[CurrentPage].ConfigFileName);
+end;
+
+procedure Tjson2pumlMainForm.OpenCurrentJSONActionExecute(Sender: TObject);
+begin
+  OpenCurrentJsonFile;
 end;
 
 procedure Tjson2pumlMainForm.OpenCurrentPNGFile;
@@ -849,45 +927,6 @@ begin
     OpenFile (CurrentInputHandlerRecord.InputFile.Output.SVGFileName);
 end;
 
-procedure Tjson2pumlMainForm.InitFormDefaultLogger;
-begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, false, false);
-  Logger.Providers.add (GlobalLogStringListProvider);
-  GlobalLogStringListProvider.ShowTimeStamp := True;
-  GlobalLogStringListProvider.ShowEventTypes := True;
-  GlobalLogStringListProvider.LogList := LogLines;
-  GlobalLogStringListProvider.LogLevel := LOG_DEBUG;
-  SetLogProviderEventTypeNames (GlobalLogStringListProvider);
-  GlobalLogStringListProvider.Enabled := True;
-
-end;
-
-procedure Tjson2pumlMainForm.OpenDefinitionActionExecute (Sender: TObject);
-begin
-  OpenDefinitionFile;
-end;
-
-procedure Tjson2pumlMainForm.OpenDefinitionFile;
-var
-  newName: string;
-begin
-  if GetNewFileName (InputHandler.CurrentDefinitionFileName, newName) then
-    InputHandler.LoadDefinitionFile (newName);
-end;
-
-procedure Tjson2pumlMainForm.OpenInputListActionExecute (Sender: TObject);
-begin
-  OpenInputListFile;
-end;
-
-procedure Tjson2pumlMainForm.OpenInputListFile;
-var
-  newName: string;
-begin
-  if GetNewFileName (InputHandler.CurrentInputListFileName, newName) then
-    InputHandler.LoadInputListFile (newName);
-end;
-
 procedure Tjson2pumlMainForm.OpenJsonDetailTabSheetExecute (Sender: TObject);
 var
   CurrentRecord: TJson2PumlInputHandlerRecord;
@@ -897,61 +936,25 @@ begin
     begin
       ShowJsonTabSheet;
       CurrentRecord := InputHandler[TAction(Sender).Tag];
-      if Assigned (CurrentRecord.RelatedObject) and (CurrentRecord.RelatedObject is tSingleFileFrame) then
-        FilePageControl.ActivePage := tSingleFileFrame (CurrentRecord.RelatedObject).TabSheet;
+      if Assigned (CurrentRecord.RelatedObject) and (CurrentRecord.RelatedObject is tOutputFileFrame) then
+        FilePageControl.ActivePage := tOutputFileFrame (CurrentRecord.RelatedObject).TabSheet;
     end;
 end;
 
-procedure Tjson2pumlMainForm.OpenOptionFile;
-var
-  newName: string;
-begin
-  if GetNewFileName (InputHandler.CmdLineParameter.OptionFileName, newName) then
-    InputHandler.LoadOptionFile (newName);
-end;
-
-procedure Tjson2pumlMainForm.OpenAuthenticationFile;
-var
-  newName: string;
-begin
-  if GetNewFileName (InputHandler.CmdLineParameter.CurlAuthenticationFileName, newName) then
-    InputHandler.LoadCurlAuthenticationFile (newName);
-end;
-
-procedure Tjson2pumlMainForm.OpenCurlParameterActionExecute (Sender: TObject);
-var
-  newName: string;
-begin
-  if GetNewFileName (InputHandler.CmdLineParameter.CurlParameterFileName, newName) then
-    InputHandler.LoadCurlParameterFile (newName);
-end;
-
-procedure Tjson2pumlMainForm.OpenParameterFile;
-var
-  newName: string;
-begin
-  if GetNewFileName (InputHandler.CmdLineParameter.ParameterFileName, newName) then
-    InputHandler.LoadParameterFile (newName);
-end;
-
-procedure Tjson2pumlMainForm.OpenOptionFileActionExecute (Sender: TObject);
-begin
-  OpenOptionFile;
-end;
-
-procedure Tjson2pumlMainForm.OpenParameterFileActionExecute (Sender: TObject);
-begin
-  OpenParameterFile;
-end;
-
-procedure Tjson2pumlMainForm.OpenPNGActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.OpenCurrentPNGActionExecute (Sender: TObject);
 begin
   OpenCurrentPNGFile;
 end;
 
-procedure Tjson2pumlMainForm.OpenSVGActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.OpenCurrentSVGActionExecute (Sender: TObject);
 begin
   OpenCurrentSVGFile;
+end;
+
+procedure Tjson2pumlMainForm.OpenCurrentJSONFile;
+begin
+  if Assigned (CurrentInputHandlerRecord) then
+    OpenFile (CurrentInputHandlerRecord.InputFile.OutputFileName);
 end;
 
 procedure Tjson2pumlMainForm.ReloadAndConvertActionExecute (Sender: TObject);
@@ -959,19 +962,10 @@ begin
   HandleInputParameter;
 end;
 
-procedure Tjson2pumlMainForm.ReloadDefinitionActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ReloadFileActionExecute (Sender: TObject);
 begin
-  ReloadDefinitionFIle;
-end;
-
-procedure Tjson2pumlMainForm.ReloadDefinitionFIle;
-begin
-  BeginConvert;
-  try
-    InputHandler.LoadDefinitionFiles;
-  finally
-    EndConvert;
-  end;
+  if Assigned (ConfigFrame[CurrentPage]) then
+    ConfigFrame[CurrentPage].ReloadFile;
 end;
 
 procedure Tjson2pumlMainForm.ReloadFiles;
@@ -984,115 +978,40 @@ begin
   end;
 end;
 
-procedure Tjson2pumlMainForm.ReloadInputListActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.SaveFileActionExecute (Sender: TObject);
 begin
-  ReloadInputListFile;
+  if Assigned (ConfigFrame[CurrentPage]) then
+    ConfigFrame[CurrentPage].SaveFile;
 end;
 
-procedure Tjson2pumlMainForm.ReloadInputListFile;
+procedure Tjson2pumlMainForm.SaveFileActionUpdate (Sender: TObject);
 begin
-  BeginConvert;
-  try
-    InputHandler.LoadInputListFile;
-  finally
-    EndConvert;
+  if Sender is TAction then
+    TAction (Sender).Enabled := Assigned (ConfigFrame[CurrentPage]);
+end;
+
+procedure Tjson2pumlMainForm.SetConfigFileName (iPage: tJson2PumlPage; iFileName: string);
+begin
+  if not Assigned (InputHandler) or not Assigned (InputHandler.CmdLineParameter) then
+    Exit;
+  case iPage of
+    // jpExeute: ;
+    jpInputList:
+      InputHandler.CmdLineParameter.InputListFileName := iFileName;
+    jpCurlAuthenticationFile:
+      InputHandler.CmdLineParameter.CurlAuthenticationFileName := iFileName;
+    jpCurlParameterFile:
+      InputHandler.CmdLineParameter.CurlParameterFileName := iFileName;
+    jpDefinitionFile:
+      InputHandler.CmdLineParameter.DefinitionFileName := iFileName;
+    jpOptionFile:
+      InputHandler.CmdLineParameter.OptionFileName := iFileName;
+    jpParameterFile:
+      InputHandler.CmdLineParameter.ParameterFileName := iFileName;
+    jpGlobalConfig:
+      InputHandler.CmdLineParameter.ConfigurationFileName := iFileName;
+    // jpOutput: ;
   end;
-end;
-
-procedure Tjson2pumlMainForm.ReloadOptionFile;
-begin
-  BeginConvert;
-  try
-    InputHandler.LoadDefinitionFiles;
-  finally
-    EndConvert;
-  end;
-end;
-
-procedure Tjson2pumlMainForm.ReloadParameterFile;
-begin
-  BeginConvert;
-  try
-    InputHandler.LoadParameterFile;
-  finally
-    EndConvert;
-  end;
-end;
-
-procedure Tjson2pumlMainForm.ReloadOptionFileActionExecute (Sender: TObject);
-begin
-  ReloadOptionFile;
-end;
-
-procedure Tjson2pumlMainForm.ReloadParameterFileActionExecute (Sender: TObject);
-begin
-  ReloadParameterFile;
-end;
-
-procedure Tjson2pumlMainForm.SaveCurlAuthenticationActionExecute (Sender: TObject);
-begin
-  SaveAuthenticationFile;
-end;
-
-procedure Tjson2pumlMainForm.SaveDefinitionActionExecute (Sender: TObject);
-begin
-  SaveDefinitionFile;
-end;
-
-procedure Tjson2pumlMainForm.SaveDefinitionFile;
-begin
-  if not InputHandler.ConverterDefinitionGroup.SaveToFile (DefinitionLines, InputHandler.CurrentDefinitionFileName, True)
-  then
-    MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
-end;
-
-procedure Tjson2pumlMainForm.SaveInputlistActionExecute (Sender: TObject);
-begin
-  SaveInputListFile;
-end;
-
-procedure Tjson2pumlMainForm.SaveInputListFile;
-begin
-  if not InputHandler.ConverterInputList.SaveToFile (InputListLines, InputHandler.CurrentInputListFileName, True) then
-    MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
-end;
-
-procedure Tjson2pumlMainForm.SaveOptionFile;
-begin
-  if not InputHandler.OptionFileDefinition.SaveToFile (OptionFileLines, InputHandler.CmdLineParameter.OptionFileName,
-    True) then
-    MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
-end;
-
-procedure Tjson2pumlMainForm.SaveAuthenticationFile;
-begin
-  if not InputHandler.CurlAuthenticationList.SaveToFile (CurlAuthenticationFileLines,
-    InputHandler.CmdLineParameter.CurlAuthenticationFileName, True) then
-    MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
-end;
-
-procedure Tjson2pumlMainForm.SaveCurlParameterActionExecute (Sender: TObject);
-begin
-  if not InputHandler.CurlParameterList.SaveToFile (CurlParameterFileLines,
-    InputHandler.CmdLineParameter.CurlParameterFileName, True) then
-    MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
-end;
-
-procedure Tjson2pumlMainForm.SaveParameterFile;
-begin
-  if not InputHandler.ParameterDefinition.SaveToFile (ParameterFileLines,
-    InputHandler.CmdLineParameter.ParameterFileName, True) then
-    MessageDlg ('Error parsing JSON structure', mtError, [mbOK], 0);
-end;
-
-procedure Tjson2pumlMainForm.SaveOptionFileActionExecute (Sender: TObject);
-begin
-  SaveOptionFile
-end;
-
-procedure Tjson2pumlMainForm.SaveParameterFileActionExecute (Sender: TObject);
-begin
-  SaveParameterFile;
 end;
 
 procedure Tjson2pumlMainForm.SetConverting (Converting: Boolean);
@@ -1107,6 +1026,11 @@ begin
     MainActionList.Actions[i].Enabled := not Converting;
   if not Converting then
     CommandLineToForm;
+end;
+
+procedure Tjson2pumlMainForm.SetCurrentPage (const Value: tJson2PumlPage);
+begin
+  MainPageControl.ActivePage := TabSheetByPage (Value);
 end;
 
 procedure Tjson2pumlMainForm.ShowCurlAuthenticationActionExecute (Sender: TObject);
@@ -1129,6 +1053,11 @@ begin
   MainPageControl.ActivePage := DefinitionFileTabSheet;
 end;
 
+procedure Tjson2pumlMainForm.ShowExecuteActionExecute (Sender: TObject);
+begin
+  ShowLogTabsheet;
+end;
+
 procedure Tjson2pumlMainForm.ShowInputListActionExecute (Sender: TObject);
 begin
   ShowInputListTabSheet;
@@ -1139,19 +1068,9 @@ begin
   MainPageControl.ActivePage := InputListTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowOutputFilesActionExecute (Sender: TObject);
-begin
-  ShowJsonTabSheet;
-end;
-
 procedure Tjson2pumlMainForm.ShowJsonTabSheet;
 begin
   MainPageControl.ActivePage := OutputTabsheet;
-end;
-
-procedure Tjson2pumlMainForm.ShowLogExecute (Sender: TObject);
-begin
-  ShowLogTabsheet;
 end;
 
 procedure Tjson2pumlMainForm.ShowLogTabsheet;
@@ -1164,26 +1083,55 @@ begin
   MainPageControl.ActivePage := OptionFileTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.UpdateAllInfos;
+procedure Tjson2pumlMainForm.ShowOutputFilesActionExecute (Sender: TObject);
 begin
-  ParameterFileLabel.Caption := InputHandler.CmdLineParameter.ParameterFileName;
-  DefinitionLabel.Caption := InputHandler.CurrentDefinitionFileName;
-  InputlistLabel.Caption := InputHandler.CurrentInputListFileName;
-  OptionFileLabel.Caption := InputHandler.CmdLineParameter.OptionFileName;
-  CurlAuthenticationFileLabel.Caption := InputHandler.CmdLineParameter.CurlAuthenticationFileName;
-  CurlParameterFileLabel.Caption := InputHandler.CmdLineParameter.CurlParameterFileName;
+  ShowJsonTabSheet;
 end;
 
-destructor tSingleFileFrame.Destroy;
+procedure Tjson2pumlMainForm.ShowParameterFileActionExecute (Sender: TObject);
+begin
+  MainPageControl.ActivePage := ParameterFileTabSheet;
+end;
+
+function Tjson2pumlMainForm.TabSheetByPage (iPage: tJson2PumlPage): TTabSheet;
+begin
+  case iPage of
+    jpInputList:
+      Result := InputListTabSheet;
+    jpCurlAuthenticationFile:
+      Result := CurlAuthenticationTabSheet;
+    jpCurlParameterFile:
+      Result := CurlParameterFileTabSheet;
+    jpDefinitionFile:
+      Result := DefinitionFileTabSheet;
+    jpOptionFile:
+      Result := OptionFileTabSheet;
+    jpParameterFile:
+      Result := ParameterFileTabSheet;
+    jpOutput:
+      Result := OutputTabsheet;
+    jpGlobalConfig:
+      Result := GlobalConfigurationFileTabSheet;
+    else
+      Result := LogTabSheet;
+  end;
+end;
+
+procedure Tjson2pumlMainForm.UpdateAllInfos;
+var
+  Page: tJson2PumlPage;
+begin
+  for Page := low(Page) to high(Page) do
+    if Page.IsConfig then
+      if Assigned (ConfigFrame[Page]) then
+        ConfigFrame[Page].UpdateInfos;
+end;
+
+destructor tOutputFileFrame.Destroy;
 begin
   FFrame.Free;
   FTabSheet.Free;
   inherited Destroy;
-end;
-
-function tFrameList.GetFileFrame (Index: Integer): tSingleFileFrame;
-begin
-  Result := tSingleFileFrame (Objects[index]);
 end;
 
 end.

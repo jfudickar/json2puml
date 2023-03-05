@@ -2051,6 +2051,8 @@ var
   S: string;
   PropNameCombi: string;
   OnlyNegative: boolean;
+  Negative: boolean;
+  l: Integer;
 begin
   if PropertyList.Count <= 0 then
   begin
@@ -2062,28 +2064,38 @@ begin
     Result := false;
     PropNameCombi := string.Join ('.', [iParentPropertyName, iPropertyName]).TrimLeft (['.']);
     OnlyNegative := true;
-    for S in PropertyList do
+    for l := 0 to 1 do
     begin
-      if S.IsEmpty then
-        continue;
-      OnlyNegative := OnlyNegative and (S.Substring(0, 1) = '-');
-      if MatchesMask (iPropertyName, S) then
+      for S in PropertyList do
       begin
-        oFoundCondition := Format ('propertyList include "%s"', [S]);
+        if S.IsEmpty then
+          continue;
+        Negative := (S.Substring(0, 1) = '-');
+        OnlyNegative := OnlyNegative and Negative;
+        if (l = 0) and Negative then
+        begin
+          if MatchesMask ('-' + iPropertyName, S) then
+          begin
+            oFoundCondition := Format ('propertyList exclude "%s"', [S]);
+            Result := false;
+            exit;
+          end;
+        end
+        else if (l = 1) and not Negative then
+        begin
+          if MatchesMask (iPropertyName, S) then
+          begin
+            oFoundCondition := Format ('propertyList include "%s"', [S]);
+            Result := true;
+            exit;
+          end;
+        end;
+      end;
+      if not Result and OnlyNegative then
+      begin
+        oFoundCondition := 'propertyList contains only exclude';
         Result := true;
-        exit;
       end;
-      if MatchesMask ('-' + iPropertyName, S) then
-      begin
-        oFoundCondition := Format ('propertyList exclude "%s"', [S]);
-        Result := false;
-        exit;
-      end;
-    end;
-    if not Result and OnlyNegative then
-    begin
-      oFoundCondition := 'propertyList contains only exclude';
-      Result := true;
     end;
   end;
 end;
@@ -2097,16 +2109,16 @@ procedure tJson2PumlCharacteristicDefinition.SortUsedColumnsByPropertyList (iUse
 var
   i: Integer;
   col: string;
-  j : Integer;
+  j: Integer;
 begin
   i := 0;
   for col in PropertyList do
   begin
-    j := iUsedColumns.IndexOf(col);
+    j := iUsedColumns.IndexOf (col);
     if j >= 0 then
     begin
-      iUsedColumns.Move(j, i);
-      inc (i);
+      iUsedColumns.Move (j, i);
+      Inc (i);
     end;
   end;
 end;

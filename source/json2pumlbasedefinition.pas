@@ -155,7 +155,6 @@ type
     property Text: string read GetText write SetText;
   end;
 
-  tJson2PumlBaseListClass = class of tJson2PumlBaseList;
 
   tJson2PumlBasePropertyList = class(tJson2PumlBaseList)
   protected
@@ -170,6 +169,7 @@ type
   end;
 
   tJson2PumlBaseObjectClass = class of tJson2PumlBaseObject;
+  tJson2PumlBaseListClass = class of tJson2PumlBaseList;
 
 function OutputFormatsFromString (iOutputFormats: string): tJson2PumlOutputFormats;
 

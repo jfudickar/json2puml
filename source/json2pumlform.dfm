@@ -66,7 +66,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object MainActionToolBar: TActionToolBar
     Left = 0
-    Top = 25
+    Top = 50
     Width = 1351
     Height = 23
     ActionManager = MainActionManager
@@ -108,291 +108,15 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object MainPageControl: TPageControl
     Left = 0
-    Top = 48
+    Top = 73
     Width = 1351
-    Height = 837
-    ActivePage = LogTabSheet
+    Height = 812
+    ActivePage = GlobalConfigurationFileTabSheet
     Align = alClient
     TabOrder = 3
-    object InputListTabSheet: TTabSheet
-      BorderWidth = 5
-      Caption = 'Input List (Ctrl+F1)'
-      ImageIndex = 1
-      object InputListPanel: TPanel
-        Left = 0
-        Top = 0
-        Width = 1333
-        Height = 799
-        Align = alClient
-        BevelEdges = []
-        BevelOuter = bvNone
-        BorderWidth = 2
-        TabOrder = 0
-        object InputlistLabel: TLabel
-          Left = 2
-          Top = 25
-          Width = 1329
-          Height = 13
-          Align = alTop
-          Caption = 'Inputlist'
-        end
-        object InputlistActionToolBar: TActionToolBar
-          Left = 2
-          Top = 2
-          Width = 1329
-          Height = 23
-          ActionManager = MainActionManager
-          AllowHiding = False
-          Caption = 'InputlistActionToolBar'
-          Color = clMenuBar
-          ColorMap.DisabledFontColor = 10461087
-          ColorMap.HighlightColor = clWhite
-          ColorMap.BtnSelectedFont = clBlack
-          ColorMap.UnusedColor = clWhite
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PersistentHotKeys = True
-          Spacing = 5
-        end
-      end
-    end
-    object CurlAuthenticationTabSheet: TTabSheet
-      Caption = 'Curl Authentication File (Ctrl+F2)'
-      ImageIndex = 5
-      object CurlAuthenticationFilePanel: TPanel
-        Left = 0
-        Top = 0
-        Width = 1343
-        Height = 809
-        Align = alClient
-        BevelEdges = []
-        BevelOuter = bvNone
-        BorderWidth = 2
-        TabOrder = 0
-        object CurlAuthenticationFileLabel: TLabel
-          Left = 2
-          Top = 25
-          Width = 1339
-          Height = 13
-          Align = alTop
-          Caption = 'Curl Authentication File'
-        end
-        object ActionToolBar2: TActionToolBar
-          Left = 2
-          Top = 2
-          Width = 1339
-          Height = 23
-          ActionManager = MainActionManager
-          AllowHiding = False
-          Caption = 'InputlistActionToolBar'
-          Color = clMenuBar
-          ColorMap.DisabledFontColor = 10461087
-          ColorMap.HighlightColor = clWhite
-          ColorMap.BtnSelectedFont = clBlack
-          ColorMap.UnusedColor = clWhite
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PersistentHotKeys = True
-          Spacing = 5
-        end
-      end
-    end
-    object CurlParameterFileTabSheet: TTabSheet
-      Caption = 'Curl Parameter File (Ctrl+F3)'
-      ImageIndex = 6
-      object CurlParameterFilePanel: TPanel
-        Left = 0
-        Top = 0
-        Width = 1343
-        Height = 809
-        Align = alClient
-        BevelEdges = []
-        BevelOuter = bvNone
-        BorderWidth = 2
-        TabOrder = 0
-        object CurlParameterFileLabel: TLabel
-          Left = 2
-          Top = 25
-          Width = 1339
-          Height = 13
-          Align = alTop
-          Caption = 'Curl Parameter File'
-        end
-        object ActionToolBar3: TActionToolBar
-          Left = 2
-          Top = 2
-          Width = 1339
-          Height = 23
-          ActionManager = MainActionManager
-          AllowHiding = False
-          Caption = 'InputlistActionToolBar'
-          Color = clMenuBar
-          ColorMap.DisabledFontColor = 10461087
-          ColorMap.HighlightColor = clWhite
-          ColorMap.BtnSelectedFont = clBlack
-          ColorMap.UnusedColor = clWhite
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PersistentHotKeys = True
-          Spacing = 5
-        end
-      end
-    end
-    object DefinitionFileTabSheet: TTabSheet
-      BorderWidth = 5
-      Caption = 'Definition File (Ctrl+F4)'
-      ImageIndex = 2
-      object DefinitionPanel: TPanel
-        Left = 0
-        Top = 0
-        Width = 1333
-        Height = 799
-        Align = alClient
-        BevelEdges = []
-        BorderWidth = 2
-        TabOrder = 0
-        object DefinitionLabel: TLabel
-          Left = 3
-          Top = 26
-          Width = 1327
-          Height = 13
-          Align = alTop
-          Caption = 'Definition'
-          FocusControl = DefinitionPanel
-        end
-        object DefinitionActionToolBar: TActionToolBar
-          Tag = 3
-          Left = 3
-          Top = 3
-          Width = 1327
-          Height = 23
-          ActionManager = MainActionManager
-          AllowHiding = False
-          Caption = 'DefinitionActionToolBar'
-          Color = clMenuBar
-          ColorMap.DisabledFontColor = 10461087
-          ColorMap.HighlightColor = clWhite
-          ColorMap.BtnSelectedFont = clBlack
-          ColorMap.UnusedColor = clWhite
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PersistentHotKeys = True
-          Spacing = 5
-        end
-      end
-    end
-    object OptionFileTabSheet: TTabSheet
-      BorderWidth = 5
-      Caption = 'Option File (Ctrl+F5)'
-      ImageIndex = 4
-      object OptionFilePanel: TPanel
-        Left = 0
-        Top = 0
-        Width = 1333
-        Height = 799
-        Align = alClient
-        BevelEdges = []
-        BorderWidth = 2
-        TabOrder = 0
-        object OptionFileLabel: TLabel
-          Left = 3
-          Top = 26
-          Width = 1327
-          Height = 13
-          Align = alTop
-          Caption = 'Option File'
-          FocusControl = OptionFilePanel
-        end
-        object ActionToolBar1: TActionToolBar
-          Tag = 3
-          Left = 3
-          Top = 3
-          Width = 1327
-          Height = 23
-          ActionManager = MainActionManager
-          AllowHiding = False
-          Caption = 'Option File'
-          Color = clMenuBar
-          ColorMap.DisabledFontColor = 10461087
-          ColorMap.HighlightColor = clWhite
-          ColorMap.BtnSelectedFont = clBlack
-          ColorMap.UnusedColor = clWhite
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PersistentHotKeys = True
-          Spacing = 5
-        end
-      end
-    end
-    object ParameterFileTabSheet: TTabSheet
-      Caption = 'Parameter File (Ctrl+F6)'
-      ImageIndex = 7
-      object ParameterFilePanel: TPanel
-        Left = 0
-        Top = 0
-        Width = 1343
-        Height = 809
-        Align = alClient
-        BevelEdges = []
-        BorderWidth = 2
-        TabOrder = 0
-        object ParameterFileLabel: TLabel
-          Left = 3
-          Top = 26
-          Width = 1337
-          Height = 13
-          Align = alTop
-          Caption = 'Parameter File'
-          FocusControl = ParameterFilePanel
-        end
-        object ActionToolBar4: TActionToolBar
-          Tag = 3
-          Left = 3
-          Top = 3
-          Width = 1337
-          Height = 23
-          ActionManager = MainActionManager
-          AllowHiding = False
-          Caption = 'Option File'
-          Color = clMenuBar
-          ColorMap.DisabledFontColor = 10461087
-          ColorMap.HighlightColor = clWhite
-          ColorMap.BtnSelectedFont = clBlack
-          ColorMap.UnusedColor = clWhite
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clBlack
-          Font.Height = -11
-          Font.Name = 'Tahoma'
-          Font.Style = []
-          ParentFont = False
-          PersistentHotKeys = True
-          Spacing = 5
-        end
-      end
-    end
     object LogTabSheet: TTabSheet
       BorderWidth = 5
-      Caption = 'Log List (Ctrl+F7)'
+      Caption = 'Execute'
       object CommandLineEditPanel: TPanel
         Left = 0
         Top = 0
@@ -649,7 +373,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         end
         object GroupBox4: TGroupBox
           Left = 414
-          Top = 1
+          Top = -5
           Width = 400
           Height = 208
           Caption = 'Output'
@@ -860,9 +584,9 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Top = 217
           Width = 400
           Height = 120
-          ActivePage = CurlParameterTabSheet1
+          ActivePage = CurlAuthenticationParameterTabSheet
           TabOrder = 7
-          object CurlParameterTabSheet1: TTabSheet
+          object CurlParameterTabSheet: TTabSheet
             Caption = '/curlparameter'
             object CurlParameterDBGrid: TDBGrid
               Left = 0
@@ -903,7 +627,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Left = 0
         Top = 345
         Width = 1333
-        Height = 454
+        Height = 429
         ActivePage = ExecutionLogTabSheet
         Align = alClient
         TabOrder = 1
@@ -913,7 +637,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1325
-            Height = 426
+            Height = 401
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -926,7 +650,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1325
-            Height = 426
+            Height = 401
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -939,7 +663,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1325
-            Height = 426
+            Height = 401
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -952,7 +676,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1325
-            Height = 426
+            Height = 401
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -965,7 +689,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1325
-            Height = 426
+            Height = 401
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -975,45 +699,74 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
     object OutputTabsheet: TTabSheet
       BorderWidth = 5
-      Caption = 'Output Files (Ctrl+F8)'
+      Caption = 'Output Files '
       ImageIndex = 3
       object FilePageControl: TPageControl
         Left = 0
         Top = 0
         Width = 1333
-        Height = 799
+        Height = 774
         Align = alClient
         MultiLine = True
         TabOrder = 0
       end
     end
+    object InputListTabSheet: TTabSheet
+      BorderWidth = 5
+      Caption = 'Input List'
+      ImageIndex = 1
+    end
+    object CurlAuthenticationTabSheet: TTabSheet
+      Caption = 'Curl Authentication File'
+      ImageIndex = 5
+    end
+    object CurlParameterFileTabSheet: TTabSheet
+      Caption = 'Curl Parameter File'
+      ImageIndex = 6
+    end
+    object DefinitionFileTabSheet: TTabSheet
+      BorderWidth = 5
+      Caption = 'Definition File'
+      ImageIndex = 2
+    end
+    object OptionFileTabSheet: TTabSheet
+      BorderWidth = 5
+      Caption = 'Option File'
+      ImageIndex = 4
+    end
+    object ParameterFileTabSheet: TTabSheet
+      Caption = 'Parameter File'
+      ImageIndex = 7
+    end
+    object GlobalConfigurationFileTabSheet: TTabSheet
+      Caption = 'Global Configuration File'
+      ImageIndex = 8
+    end
+  end
+  object ActionToolBar5: TActionToolBar
+    Left = 0
+    Top = 25
+    Width = 1351
+    Height = 25
+    ActionManager = MainActionManager
+    Caption = 'EditToolbar'
+    Color = clMenuBar
+    ColorMap.DisabledFontColor = 10461087
+    ColorMap.HighlightColor = clWhite
+    ColorMap.BtnSelectedFont = clBlack
+    ColorMap.UnusedColor = clWhite
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlack
+    Font.Height = -12
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    Spacing = 0
   end
   object MainActionList: TActionList
     Images = ImageList1
     Left = 904
     Top = 600
-    object RelaoadAndConvertFilesCurlParameterAction: TAction
-      Category = 'CurlParameterFile'
-      Caption = 'Reload and convert files'
-      ShortCut = 115
-      OnExecute = ReloadAndConvertActionExecute
-    end
-    object OpenCurlParameterAction: TAction
-      Category = 'CurlParameterFile'
-      Caption = 'Open Curl Authentication File'
-      OnExecute = OpenCurlParameterActionExecute
-    end
-    object SaveCurlParameterAction: TAction
-      Category = 'CurlParameterFile'
-      Caption = 'Save Curl Authentication File'
-      OnExecute = SaveCurlParameterActionExecute
-    end
-    object ShowCurlParameterAction: TAction
-      Category = 'CurlParameterFile'
-      Caption = 'Show Curl Authentication File'
-      ShortCut = 16498
-      OnExecute = ShowCurlParameterActionExecute
-    end
     object EditCut1: TEditCut
       Category = 'Edit'
       Caption = 'Cu&t'
@@ -1035,24 +788,29 @@ object json2pumlMainForm: Tjson2pumlMainForm
       ImageIndex = 2
       ShortCut = 16470
     end
-    object HelpAbout1: TAction
-      Category = 'Help'
-      Caption = '&About...'
-      Hint = 
-        'About|Displays program information, version number, and copyrigh' +
-        't'
+    object ShowCurlParameterAction: TAction
+      Category = 'Show'
+      Caption = 'Show Curl Authentication File'
+      ShortCut = 16498
+      OnExecute = ShowCurlParameterActionExecute
+    end
+    object LoadFileAction: TAction
+      Category = 'Edit'
+      Caption = 'Open configuration file'
+      OnExecute = LoadFileActionExecute
+      OnUpdate = SaveFileActionUpdate
     end
     object ConvertAllOpenFilesAction: TAction
-      Category = 'Definition'
+      Category = 'Execute'
       Caption = 'Convert all open files'
       ImageIndex = 15
       ShortCut = 116
       OnExecute = ConvertAllOpenFilesActionExecute
     end
     object ReloadAndConvertAction: TAction
-      Category = 'Inputlist'
+      Category = 'Execute'
       Caption = 'Reload and convert files'
-      ShortCut = 115
+      ShortCut = 16466
       OnExecute = ReloadAndConvertActionExecute
     end
     object CopyCurrentPUMLAction: TAction
@@ -1061,59 +819,29 @@ object json2pumlMainForm: Tjson2pumlMainForm
       ShortCut = 118
       OnExecute = CopyCurrentPUMLActionExecute
     end
-    object ReloadInputListAction: TAction
-      Category = 'Inputlist'
-      Caption = 'Reload InputList File'
-      OnExecute = ReloadInputListActionExecute
-    end
-    object ReloadDefinitionAction: TAction
-      Category = 'Definition'
-      Caption = 'Reload Definition File'
-      OnExecute = ReloadDefinitionActionExecute
-    end
-    object OpenInputListAction: TAction
-      Category = 'Inputlist'
-      Caption = 'Open InputList File'
-      OnExecute = OpenInputListActionExecute
-    end
-    object OpenDefinitionAction: TAction
-      Category = 'Definition'
-      Caption = 'Open Definition File'
-      OnExecute = OpenDefinitionActionExecute
-    end
-    object SaveInputlistAction: TAction
-      Category = 'Inputlist'
-      Caption = 'Save Inputlist File'
-      OnExecute = SaveInputlistActionExecute
-    end
-    object SaveDefinitionAction: TAction
-      Category = 'Definition'
-      Caption = 'Save Definition File'
-      OnExecute = SaveDefinitionActionExecute
-    end
     object ExitAction: TAction
       Category = 'File'
       Caption = 'Exit'
       ShortCut = 32883
       OnExecute = ExitActionExecute
     end
-    object OpenPNGAction: TAction
+    object OpenCurrentPNGAction: TAction
       Category = 'Output Files'
       Caption = 'Open Current PNG File'
       ShortCut = 119
-      OnExecute = OpenPNGActionExecute
+      OnExecute = OpenCurrentPNGActionExecute
     end
-    object OpenSVGAction: TAction
+    object OpenCurrentSVGAction: TAction
       Category = 'Output Files'
       Caption = 'Open Current SVG File'
       ShortCut = 120
-      OnExecute = OpenSVGActionExecute
+      OnExecute = OpenCurrentSVGActionExecute
     end
-    object ShowLog: TAction
-      Category = 'Log'
-      Caption = 'Show Log'
+    object ShowExecuteAction: TAction
+      Category = 'Show'
+      Caption = 'Show Execute'
       ShortCut = 16502
-      OnExecute = ShowLogExecute
+      OnExecute = ShowExecuteActionExecute
     end
     object ConvertCurrentFileAction: TAction
       Category = 'Output Files'
@@ -1122,86 +850,75 @@ object json2pumlMainForm: Tjson2pumlMainForm
       OnExecute = ConvertCurrentFileActionExecute
     end
     object ShowInputListAction: TAction
-      Category = 'Inputlist'
+      Category = 'Show'
       Caption = 'Show Input List'
       ShortCut = 16496
       OnExecute = ShowInputListActionExecute
     end
     object ShowDefinitionFileAction: TAction
-      Category = 'Definition'
+      Category = 'Show'
       Caption = 'Show Definition File'
       ShortCut = 16499
       OnExecute = ShowDefinitionFileActionExecute
     end
     object ShowOutputFilesAction: TAction
-      Category = 'Output Files'
+      Category = 'Show'
       Caption = 'Show Output Files'
       ShortCut = 16503
       OnExecute = ShowOutputFilesActionExecute
     end
-    object OpenOptionFileAction: TAction
-      Category = 'Option File'
-      Caption = 'Open Option File'
-      OnExecute = OpenOptionFileActionExecute
-    end
-    object SaveOptionFileAction: TAction
-      Category = 'Option File'
-      Caption = 'Save Option File'
-      OnExecute = SaveOptionFileActionExecute
-    end
     object ShowOptionFileAction: TAction
-      Category = 'Option File'
+      Category = 'Show'
       Caption = 'Show Option File'
       ShortCut = 16500
       OnExecute = ShowOptionFileActionExecute
     end
-    object ReloadOptionFileAction: TAction
-      Category = 'Option File'
-      Caption = 'Reload Option File'
-      OnExecute = ReloadOptionFileActionExecute
-    end
-    object RelaoadAndConvertFilesCurlAuthenticationAction: TAction
-      Category = 'CurlAuthenticationFile'
-      Caption = 'Reload and convert files'
-      ShortCut = 115
-      OnExecute = ReloadAndConvertActionExecute
-    end
-    object OpenCurlAuthenticationAction: TAction
-      Category = 'CurlAuthenticationFile'
-      Caption = 'Open Curl Authentication File'
-      OnExecute = OpenCurlAuthenticationActionExecute
-    end
-    object SaveCurlAuthenticationAction: TAction
-      Category = 'CurlAuthenticationFile'
-      Caption = 'Save Curl Authentication File'
-      OnExecute = SaveCurlAuthenticationActionExecute
-    end
     object ShowCurlAuthenticationAction: TAction
-      Category = 'CurlAuthenticationFile'
+      Category = 'Show'
       Caption = 'Show Curl Authentication File'
       ShortCut = 16497
       OnExecute = ShowCurlAuthenticationActionExecute
     end
-    object OpenParameterFileAction: TAction
-      Category = 'Parameter File'
-      Caption = '&Open Parameter File'
-      OnExecute = OpenParameterFileActionExecute
-    end
-    object SaveParameterFileAction: TAction
-      Category = 'Parameter File'
-      Caption = '&Save Parameter File'
-      OnExecute = SaveParameterFileActionExecute
-    end
     object ShowParameterFileAction: TAction
-      Category = 'Parameter File'
+      Category = 'Show'
       Caption = 'Show Parameter File'
       ShortCut = 16501
       OnExecute = ShowParameterFileActionExecute
     end
-    object ReloadParameterFileAction: TAction
-      Category = 'Parameter File'
-      Caption = '&Reload Parameter File'
-      OnExecute = ReloadParameterFileActionExecute
+    object SaveFileAction: TAction
+      Category = 'Edit'
+      Caption = 'Save configuration file'
+      ShortCut = 16467
+      OnExecute = SaveFileActionExecute
+      OnUpdate = SaveFileActionUpdate
+    end
+    object SaveAsFileAction: TAction
+      Category = 'Edit'
+      Caption = 'Save configuration file as'
+      Visible = False
+      OnUpdate = SaveFileActionUpdate
+    end
+    object ReloadFileAction: TAction
+      Category = 'Edit'
+      Caption = 'Reload configuration file'
+      OnExecute = ReloadFileActionExecute
+      OnUpdate = SaveFileActionUpdate
+    end
+    object ShowGlobalConfigFile: TAction
+      Category = 'Show'
+      Caption = 'Show Global Configuration File'
+    end
+    object OpenCurrentJSONAction: TAction
+      Category = 'Output Files'
+      Caption = 'Open Current JSON File'
+      ShortCut = 118
+      OnExecute = OpenCurrentJSONActionExecute
+    end
+    object OpenConfigurationFileExternal: TAction
+      Category = 'Edit'
+      Caption = 'Open configuration file external'
+      OnExecute = OpenConfigurationFileExternalExecute
+      OnUpdate = SaveFileActionUpdate
     end
   end
   object ImageList1: TImageList
@@ -1898,194 +1615,100 @@ object json2pumlMainForm: Tjson2pumlMainForm
           item
             Items = <
               item
-                Action = ShowInputListAction
-                Caption = 'S&how Input List'
-                ShortCut = 16496
+                Action = ShowExecuteAction
+                Caption = 'S&how Execute'
+                ShortCut = 16502
               end
               item
-                Caption = '-'
+                Action = ShowOutputFilesAction
+                Caption = 'Show O&utput Files'
+                ShortCut = 16503
               end
-              item
-                Action = OpenInputListAction
-                Caption = '&Open InputList File'
-              end
-              item
-                Action = SaveInputlistAction
-                Caption = '&Save Inputlist File'
-              end
-              item
-                Action = ReloadInputListAction
-                Caption = 'R&eload InputList File'
-              end
-              item
-                Caption = '-'
-              end
-              item
-                Action = ReloadAndConvertAction
-                Caption = '&Reload and convert files'
-                ShortCut = 115
-              end>
-            Caption = '&Inputlist'
-          end
-          item
-            Items = <
-              item
-                Action = ShowCurlAuthenticationAction
-                Caption = '&Show Curl Authentication File'
-                ShortCut = 16497
-              end
-              item
-                Action = OpenCurlAuthenticationAction
-                Caption = '&Open Curl Authentication File'
-              end
-              item
-                Action = SaveCurlAuthenticationAction
-                Caption = 'S&ave Curl Authentication File'
-              end
-              item
-                Action = RelaoadAndConvertFilesCurlAuthenticationAction
-                Caption = '&Reload and convert files'
-                ShortCut = 115
-              end>
-            Caption = 'Curl &Authentication File'
-          end
-          item
-            Items = <
               item
                 Action = ShowCurlParameterAction
-                Caption = 'S&how Curl Authentication File'
+                Caption = '&Show Curl Authentication File'
                 ShortCut = 16498
               end
               item
-                Action = OpenCurlParameterAction
-                Caption = '&Open Curl Authentication File'
+                Action = ShowInputListAction
+                Caption = 'Sh&ow Input List'
+                ShortCut = 16496
               end
-              item
-                Action = SaveCurlParameterAction
-                Caption = '&Save Curl Authentication File'
-              end
-              item
-                Action = RelaoadAndConvertFilesCurlParameterAction
-                Caption = '&Reload and convert files'
-                ShortCut = 115
-              end>
-            Caption = 'C&urlParameterFile'
-          end
-          item
-            Items = <
               item
                 Action = ShowDefinitionFileAction
-                Caption = 'S&how Definition File'
+                Caption = 'Sho&w Definition File'
                 ShortCut = 16499
               end
               item
-                Caption = '-'
-              end
-              item
-                Action = OpenDefinitionAction
-                Caption = '&Open Definition File'
-              end
-              item
-                Action = SaveDefinitionAction
-                Caption = '&Save Definition File'
-              end
-              item
-                Action = ReloadDefinitionAction
-                Caption = '&Reload Definition File'
-              end
-              item
-                Caption = '-'
-              end
-              item
-                Action = ConvertAllOpenFilesAction
-                Caption = '&Convert all open files'
-                ImageIndex = 15
-                ShortCut = 116
-              end>
-            Caption = '&Definition'
-          end
-          item
-            Items = <
-              item
                 Action = ShowOptionFileAction
-                Caption = 'S&how Option File'
+                Caption = 'Show O&ption File'
                 ShortCut = 16500
               end
               item
-                Caption = '-'
+                Action = ShowCurlAuthenticationAction
+                Caption = 'Show &Curl Authentication File'
+                ShortCut = 16497
               end
-              item
-                Action = OpenOptionFileAction
-                Caption = '&Open Option File'
-              end
-              item
-                Action = SaveOptionFileAction
-                Caption = '&Save Option File'
-              end
-              item
-                Action = ReloadOptionFileAction
-                Caption = '&Reload Option File'
-              end
-              item
-                Caption = '-'
-              end
-              item
-                Action = ConvertAllOpenFilesAction
-                Caption = '&Convert all open files'
-                ImageIndex = 15
-                ShortCut = 116
-              end
-              item
-                Caption = '-'
-              end>
-            Caption = '&Option File'
-          end
-          item
-            Items = <
               item
                 Action = ShowParameterFileAction
-                Caption = 'S&how Parameter File'
+                Caption = 'Show P&arameter File'
                 ShortCut = 16501
               end
               item
-                Caption = '-'
-              end
-              item
-                Action = OpenParameterFileAction
-              end
-              item
-                Action = SaveParameterFileAction
-              end
-              item
-                Action = ReloadParameterFileAction
-              end
-              item
-                Caption = '-'
-              end
-              item
-                Action = ConvertAllOpenFilesAction
-                Caption = '&Convert all open files'
-                ImageIndex = 15
-                ShortCut = 116
+                Action = ShowGlobalConfigFile
+                Caption = 'Show &Global Configuration File'
               end>
-            Caption = '&Parameter File'
+            Caption = '&Show'
           end
           item
             Items = <
               item
-                Action = ShowLog
-                Caption = '&Show Log'
-                ShortCut = 16502
+                Action = EditCut1
+                ImageIndex = 0
+                ShortCut = 16472
+              end
+              item
+                Action = EditCopy1
+                ImageIndex = 1
+                ShortCut = 16451
+              end
+              item
+                Action = EditPaste1
+                ImageIndex = 2
+                ShortCut = 16470
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = LoadFileAction
+                Caption = '&Open configuration file'
+              end
+              item
+                Action = ReloadFileAction
+                Caption = '&Reload configuration file'
+              end
+              item
+                Action = SaveFileAction
+                Caption = '&Save configuration file'
+                ShortCut = 16467
+              end
+              item
+                Visible = False
+                Action = SaveAsFileAction
+                Caption = 'S&ave configuration file as'
+              end
+              item
+                Caption = '-'
+              end
+              item
+                Action = OpenConfigurationFileExternal
+                Caption = 'Op&en configuration file external'
               end>
-            Caption = '&Log List'
+            Caption = '&Edit'
           end
           item
             Items = <
-              item
-                Action = ShowOutputFilesAction
-                Caption = '&Show Output Files'
-                ShortCut = 16503
-              end
               item
                 Caption = '-'
               end
@@ -2103,12 +1726,20 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 ShortCut = 118
               end
               item
-                Action = OpenPNGAction
+                Caption = '-'
+              end
+              item
+                Action = OpenCurrentJSONAction
+                Caption = 'Ope&n Current JSON File'
+                ShortCut = 118
+              end
+              item
+                Action = OpenCurrentPNGAction
                 Caption = 'O&pen Current PNG File'
                 ShortCut = 119
               end
               item
-                Action = OpenSVGAction
+                Action = OpenCurrentSVGAction
                 Caption = 'Op&en Current SVG File'
                 ShortCut = 120
               end>
@@ -2121,7 +1752,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
           item
             Action = ReloadAndConvertAction
             Caption = '&Reload and convert files'
-            ShortCut = 115
+            ShortCut = 16466
           end
           item
             Action = ConvertAllOpenFilesAction
@@ -2148,12 +1779,17 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Caption = '-'
           end
           item
-            Action = OpenPNGAction
+            Action = OpenCurrentJSONAction
+            Caption = 'Open C&urrent JSON File'
+            ShortCut = 118
+          end
+          item
+            Action = OpenCurrentPNGAction
             Caption = 'O&pen Current PNG File'
             ShortCut = 119
           end
           item
-            Action = OpenSVGAction
+            Action = OpenCurrentSVGAction
             Caption = 'Op&en Current SVG File'
             ShortCut = 120
           end>
@@ -2162,60 +1798,22 @@ object json2pumlMainForm: Tjson2pumlMainForm
       item
         Items = <
           item
-            Action = OpenDefinitionAction
-            Caption = '&Open Definition File'
-          end
-          item
-            Action = SaveDefinitionAction
-            Caption = '&Save Definition File'
-          end
-          item
-            Action = ReloadDefinitionAction
-            Caption = '&Reload Definition File'
-          end
-          item
             Caption = '-'
           end>
-        ActionBar = DefinitionActionToolBar
       end
       item
         Items = <
-          item
-            Action = OpenInputListAction
-            Caption = '&Open InputList File'
-          end
-          item
-            Action = SaveInputlistAction
-            Caption = '&Save Inputlist File'
-          end
-          item
-            Action = ReloadInputListAction
-            Caption = 'R&eload InputList File'
-          end
           item
             Caption = '-'
           end
           item
             Action = ReloadAndConvertAction
             Caption = '&Reload and convert files'
-            ShortCut = 115
+            ShortCut = 16466
           end>
-        ActionBar = InputlistActionToolBar
       end
       item
         Items = <
-          item
-            Action = OpenOptionFileAction
-            Caption = '&Open Option File'
-          end
-          item
-            Action = SaveOptionFileAction
-            Caption = '&Save Option File'
-          end
-          item
-            Action = ReloadOptionFileAction
-            Caption = '&Reload Option File'
-          end
           item
             Caption = '-'
           end
@@ -2225,53 +1823,13 @@ object json2pumlMainForm: Tjson2pumlMainForm
             ImageIndex = 15
             ShortCut = 116
           end>
-        ActionBar = ActionToolBar1
+      end
+      item
+      end
+      item
       end
       item
         Items = <
-          item
-            Action = OpenCurlAuthenticationAction
-            Caption = '&Open Curl Authentication File'
-          end
-          item
-            Action = SaveCurlAuthenticationAction
-            Caption = '&Save Curl Authentication File'
-          end
-          item
-            Action = RelaoadAndConvertFilesCurlAuthenticationAction
-            Caption = 'R&eload and convert files'
-            ShortCut = 115
-          end>
-        ActionBar = ActionToolBar2
-      end
-      item
-        Items = <
-          item
-            Action = OpenCurlParameterAction
-            Caption = '&Open Curl Parameter File'
-          end
-          item
-            Action = SaveCurlParameterAction
-            Caption = '&Save Curl Parameter File'
-          end
-          item
-            Action = RelaoadAndConvertFilesCurlParameterAction
-            Caption = '&Reload and convert files'
-            ShortCut = 115
-          end>
-        ActionBar = ActionToolBar3
-      end
-      item
-        Items = <
-          item
-            Action = OpenParameterFileAction
-          end
-          item
-            Action = SaveParameterFileAction
-          end
-          item
-            Action = ReloadParameterFileAction
-          end
           item
             Caption = '-'
           end
@@ -2281,36 +1839,64 @@ object json2pumlMainForm: Tjson2pumlMainForm
             ImageIndex = 15
             ShortCut = 116
           end>
-        ActionBar = ActionToolBar4
+      end
+      item
+        Items = <
+          item
+            Action = EditCut1
+            ImageIndex = 0
+            ShortCut = 16472
+          end
+          item
+            Action = EditCopy1
+            ImageIndex = 1
+            ShortCut = 16451
+          end
+          item
+            Action = EditPaste1
+            ImageIndex = 2
+            ShortCut = 16470
+          end
+          item
+            Caption = '-'
+          end
+          item
+            Action = LoadFileAction
+            Caption = '&Open configuration file'
+          end
+          item
+            Action = SaveFileAction
+            Caption = '&Save configuration file'
+            ShortCut = 16467
+          end
+          item
+            Visible = False
+            Action = SaveAsFileAction
+            Caption = 'S&ave configuration file as'
+          end
+          item
+            Action = ReloadFileAction
+            Caption = '&Reload configuration file'
+          end
+          item
+            Action = OpenConfigurationFileExternal
+            Caption = 'Op&en configuration file external'
+          end>
+        ActionBar = ActionToolBar5
       end>
     LinkedActionLists = <
       item
         ActionList = MainActionList
         Caption = 'MainActionList'
-      end
-      item
-        ActionList = JsonActionList
-        Caption = 'JsonActionList'
       end>
     Left = 904
     Top = 544
     StyleName = 'Platform Default'
-  end
-  object JsonActionList: TActionList
-    Left = 904
-    Top = 656
-  end
-  object OpenDialog: TOpenTextFileDialog
-    Filter = 'JSON Files (*.json)|*.json|All Files (*.*)|*.*'
-    Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofEnableSizing]
-    Left = 420
-    Top = 681
-  end
-  object SaveDialog: TSaveTextFileDialog
-    Filter = 'JSON Files (*.json)|*.json|All Files (*.*)|*.*'
-    Options = [ofOverwritePrompt, ofHideReadOnly, ofPathMustExist, ofEnableSizing]
-    Left = 596
-    Top = 745
+    object Action1: TAction
+      Category = 'File'
+      Caption = 'Save Current File'
+      ShortCut = 16467
+    end
   end
   object CurlParameterDataSource: TDataSource
     DataSet = CurlParameterDataSet
@@ -2357,5 +1943,9 @@ object json2pumlMainForm: Tjson2pumlMainForm
     object StringField4: TStringField
       FieldName = 'Value'
     end
+  end
+  object JsonActionList: TActionList
+    Left = 904
+    Top = 664
   end
 end

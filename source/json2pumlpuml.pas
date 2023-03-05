@@ -255,7 +255,7 @@ type
     procedure AddValues (iValueList: TStringList);
     function CalculateRecordLine: string;
     procedure CalculateTableRow (iUsedColumns, iValueList: TStringList);
-    procedure GeneratePumlAsRecord(ipuml: TStrings; iIncludeHeader: boolean; iSplitLength: Integer);
+    procedure GeneratePumlAsRecord(ipuml: TStrings; iIncludeHeader: boolean; iSplitLength: Integer; iSortLines: Boolean);
     procedure CalculateTableRows (iDefinition: tJson2PumlCharacteristicDefinition;
       iUsedColumns, iTableRows: TStringList);
     function GetEnumerator: tPumlCharacteristicValueEnumerator;
@@ -284,7 +284,7 @@ type
     function GetRecords (Index: Integer): tPumlCharacteristicRecord;
   public
     function AddRecord (iRow: Integer): tPumlCharacteristicRecord;
-    procedure GeneratePumlAsRecord(ipuml: TStrings; iIncludeHeader: boolean; iSplitLength: Integer);
+    procedure GeneratePumlAsRecord(ipuml: TStrings; iIncludeHeader: boolean; iSplitLength: Integer; iSortLines: Boolean);
     procedure GeneratePumlAsList(ipuml: TStrings; iDefinition: tJson2PumlCharacteristicDefinition; iSplitLength: Integer);
     function GetEnumerator: tPumlCharacteristicRecordEnumerator;
     property ParentCharacteristicValue: tPumlCharacteristicValue read GetParentCharacteristicValue;
@@ -302,7 +302,7 @@ type
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     destructor Destroy; override;
-    procedure GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer);
+    procedure GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer; iSortLines: Boolean);
   published
     property Definition: tJson2PumlCharacteristicDefinition read FDefinition write FDefinition;
   end;
@@ -329,7 +329,7 @@ type
       : tPumlCharacteristicObject;
   public
     constructor Create (iParentObject: tBasePumlObject); override;
-    procedure GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer);
+    procedure GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer; iSortLines: Boolean);
     function GetEnumerator: tPumlCharacteristicObjectEnumerator;
     property Characteristic[index: Integer]: tPumlCharacteristicObject read GetCharacteristic; default;
   end;
@@ -612,7 +612,7 @@ begin
     try
       for i := 0 to Attributes.Count - 1 do
         if (i <> idLine) and (i <> NameLine) then
-          Attributes.Value[i].GeneratePumlAsRecord (ipuml, False, FormatDefinition.ValueSplitLength);
+          Attributes.Value[i].GeneratePumlAsRecord (Lines, False, FormatDefinition.ValueSplitLength);
       if FormatDefinition.SortAttributes then
         Lines.Sort;
       ipuml.AddStrings (Lines);
@@ -622,7 +622,7 @@ begin
     AddLine := true;
   end;
   if FormatDefinition.ShowCharacteristics then
-    Characteristics.GeneratePuml (ipuml, AddLine, FormatDefinition.ValueSplitLength);
+    Characteristics.GeneratePuml (ipuml, AddLine, FormatDefinition.ValueSplitLength, FormatDefinition.SortAttributes);
   if FormatDefinition.ShowFromRelations then
     Relations.GeneratePumlObjectDetail (ipuml, urdFrom, AddLine);
   if FormatDefinition.ShowToRelations then
@@ -1142,12 +1142,15 @@ begin
   end;
 end;
 
-procedure tPumlCharacteristicList.GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer);
+procedure tPumlCharacteristicList.GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer;
+    iSortLines: Boolean);
 var
   Characteristic: tPumlCharacteristicObject;
 begin
+  if iSortLines then
+    Self.Sort;
   for Characteristic in Self do
-    Characteristic.GeneratePuml (ipuml, iAddLine, iSplitLength);
+    Characteristic.GeneratePuml (ipuml, iAddLine, iSplitLength, iSortLines);
 end;
 
 function tPumlCharacteristicList.GetCharacteristic (Index: Integer): tPumlCharacteristicObject;
@@ -1555,10 +1558,11 @@ begin
 end;
 
 procedure tPumlCharacteristicRecord.GeneratePumlAsRecord(ipuml: TStrings; iIncludeHeader: boolean; iSplitLength:
-    Integer);
+    Integer; iSortLines: Boolean);
 var
   CharVal: tPumlCharacteristicValue;
   IncludeParent: boolean;
+  Lines : TStringList;
 begin
   IncludeParent := IncludeParentColumn;
   if iIncludeHeader then
@@ -1569,8 +1573,16 @@ begin
     else
       ipuml.add (tPumlHelper.TableLine(['attribute', 'value'], true));
   end;
+  Lines := tStringList.Create;
+  try
   for CharVal in Self do
-    CharVal.GeneratePumlAsRecord (ipuml, IncludeParent, iSplitLength);
+    CharVal.GeneratePumlAsRecord (Lines, IncludeParent, iSplitLength);
+    if iSortLines then
+      Lines.Sort;
+    ipuml.AddStrings(Lines);
+  finally
+    Lines.free;
+  end;
 end;
 
 function tPumlCharacteristicRecord.GetAttribute: string;
@@ -1707,7 +1719,8 @@ begin
     UsedProperties.add (iName);
 end;
 
-procedure tPumlCharacteristicObject.GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer);
+procedure tPumlCharacteristicObject.GeneratePuml(ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer;
+    iSortLines: Boolean);
 // var
 // CharRec: tPumlCharacteristicRecord;
 // Columns: TStringList;
@@ -1722,7 +1735,7 @@ begin
     ipuml.add ('---');
   iAddLine := true;
   if Definition.CharacteristicType = jctRecord then
-    DetailRecords.GeneratePumlAsRecord (ipuml, true, iSplitLength)
+    DetailRecords.GeneratePumlAsRecord (ipuml, true, iSplitLength, iSortLines)
   else
     DetailRecords.GeneratePumlAsList (ipuml, Definition, iSplitLength);
 
@@ -1955,7 +1968,7 @@ procedure tPumlCharacteristicValue.GeneratePumlAsRecord(ipuml: TStrings; iInclud
     Integer);
 begin
   if DetailRecords.Count > 0 then
-    DetailRecords.GeneratePumlAsRecord (ipuml, False, iSplitLength)
+    DetailRecords.GeneratePumlAsRecord (ipuml, False, iSplitLength, false)
   else
     ipuml.add (CalculateRecordLine(iIncludeParent, iSplitLength));
 end;
@@ -2041,12 +2054,12 @@ begin
 end;
 
 procedure tPumlCharacteristicRecordList.GeneratePumlAsRecord(ipuml: TStrings; iIncludeHeader: boolean; iSplitLength:
-    Integer);
+    Integer; iSortLines: Boolean);
 var
   CharRec: tPumlCharacteristicRecord;
 begin
   for CharRec in Self do
-    CharRec.GeneratePumlAsRecord (ipuml, iIncludeHeader, iSplitLength);
+    CharRec.GeneratePumlAsRecord (ipuml, iIncludeHeader, iSplitLength, iSortLines);
 end;
 
 procedure tPumlCharacteristicRecordList.GeneratePumlAsList(ipuml: TStrings; iDefinition:

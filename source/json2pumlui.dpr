@@ -31,13 +31,15 @@ uses
   json2pumltools in 'json2pumltools.pas',
   json2pumlpuml in 'json2pumlpuml.pas',
   json2pumlform in 'json2pumlform.pas' {json2pumlMainForm},
-  json2pumlframe in 'json2pumlframe.pas' {Json2PumlSingleFileFrame: TFrame},
+  json2pumlframe in 'json2pumlframe.pas' {Json2PumlOutputFileFrame: TFrame},
   json2pumlconst in 'json2pumlconst.pas',
   jsontools in 'jsontools.pas',
   json2pumlinputhandler in 'json2pumlinputhandler.pas',
   json2pumlconverterdefinition in 'json2pumlconverterdefinition.pas',
   json2pumlbasedefinition in 'json2pumlbasedefinition.pas',
-  json2pumlloghandler in 'json2pumlloghandler.pas';
+  json2pumlloghandler in 'json2pumlloghandler.pas',
+  json2pumlconfigframe in 'json2pumlconfigframe.pas' {Json2PumlConfigurationFrame: TFrame},
+  json2pumlvcltools in 'json2pumlvcltools.pas';
 
 {$R *.res}
 

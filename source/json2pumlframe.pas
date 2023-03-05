@@ -26,20 +26,17 @@ unit json2pumlframe;
 
 interface
 
-{$DEFINE SVGICONIMAGE}
+{$I json2puml.inc}
 
 uses
   {$IFDEF SVGICONIMAGE}
   SVGIconImage,
   {$ENDIF}
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, json2pumlvcltools;
 
 type
-  TJson2PumlSingleFileFrameCreateMemoEvent = function(iParentControl: TWinControl; iName: string; iLabel: TLabel;
-    var oMemoLines: TStrings; iUseHighlighter: Boolean) :TWinControl of object;
-
-  TJson2PumlSingleFileFrame = class(TFrame)
+  TJson2PumlOutputFileFrame = class(TFrame)
     BottomPanel: TPanel;
     InputLabel: TLabel;
     InputPanel: TPanel;
@@ -88,7 +85,7 @@ type
     procedure SetConverterLogFileName(const Value: string);
     procedure SetSVGFileName (const Value: string);
   public
-    procedure CreateMemos (iCreateMemoProc: TJson2PumlSingleFileFrameCreateMemoEvent);
+    procedure CreateMemos (iCreateMemoProc: TJson2PumlCreateMemoEvent);
     property InputFileName: string read FInputFileName write SetInputFileName;
     property InputGroup: string read FInputGroup write SetInputGroup;
     property JsonInput: TStrings read GetJsonInput write SetJsonInput;
@@ -107,13 +104,13 @@ uses Vcl.Imaging.pngimage;
 
 {$R *.dfm}
 
-procedure TJson2PumlSingleFileFrame.CreateMemos (iCreateMemoProc: TJson2PumlSingleFileFrameCreateMemoEvent);
+procedure TJson2PumlOutputFileFrame.CreateMemos (iCreateMemoProc: TJson2PumlCreateMemoEvent);
 begin
   if Assigned (iCreateMemoProc) then
   begin
-    iCreateMemoProc (InputPanel, 'InputMemo', InputLabel, FJsonInput, true);
-    iCreateMemoProc (PumlTabSheet, 'PUmlMemo', nil, FPUmlOutput, false);
-    iCreateMemoProc (LogFileTabSheet, 'LogFileMemo', nil, FLogList, false);
+    iCreateMemoProc (InputPanel, 'InputMemo', InputLabel, FJsonInput, true, true);
+    iCreateMemoProc (PumlTabSheet, 'PUmlMemo', nil, FPUmlOutput, false, true);
+    iCreateMemoProc (LogFileTabSheet, 'LogFileMemo', nil, FLogList, false, true);
   end;
 
   {$IFDEF SVGICONIMAGE}
@@ -129,49 +126,49 @@ begin
 
 end;
 
-function TJson2PumlSingleFileFrame.GetJsonInput: TStrings;
+function TJson2PumlOutputFileFrame.GetJsonInput: TStrings;
 begin
   Result := FJsonInput;
 end;
 
-function TJson2PumlSingleFileFrame.GetLeadingObject: string;
+function TJson2PumlOutputFileFrame.GetLeadingObject: string;
 begin
   Result := LeadingObjectEdit.Text;
 end;
 
-function TJson2PumlSingleFileFrame.GetPUmlOutput: TStrings;
+function TJson2PumlOutputFileFrame.GetPUmlOutput: TStrings;
 begin
   Result := FPUmlOutput;
 end;
 
-function TJson2PumlSingleFileFrame.GetLogList: TStrings;
+function TJson2PumlOutputFileFrame.GetLogList: TStrings;
 begin
   Result := FLogList;
 end;
 
-procedure TJson2PumlSingleFileFrame.SetInputFileName (const Value: string);
+procedure TJson2PumlOutputFileFrame.SetInputFileName (const Value: string);
 begin
   FInputFileName := Value;
   InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
 end;
 
-procedure TJson2PumlSingleFileFrame.SetInputGroup (const Value: string);
+procedure TJson2PumlOutputFileFrame.SetInputGroup (const Value: string);
 begin
   FInputGroup := Value;
   InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
 end;
 
-procedure TJson2PumlSingleFileFrame.SetJsonInput (const Value: TStrings);
+procedure TJson2PumlOutputFileFrame.SetJsonInput (const Value: TStrings);
 begin
   FJsonInput.Assign (Value);
 end;
 
-procedure TJson2PumlSingleFileFrame.SetLeadingObject (const Value: string);
+procedure TJson2PumlOutputFileFrame.SetLeadingObject (const Value: string);
 begin
   LeadingObjectEdit.Text := Value;
 end;
 
-procedure TJson2PumlSingleFileFrame.SetPNGFileName (const Value: string);
+procedure TJson2PumlOutputFileFrame.SetPNGFileName (const Value: string);
 var
   png: TPNGImage;
 begin
@@ -195,29 +192,29 @@ begin
   end;
 end;
 
-procedure TJson2PumlSingleFileFrame.SetPUmlFileName (const Value: string);
+procedure TJson2PumlOutputFileFrame.SetPUmlFileName (const Value: string);
 begin
   FPUmlFileName := Value;
   PUMLFileNameEdit.Text := Value;
 end;
 
-procedure TJson2PumlSingleFileFrame.SetPUmlOutput (const Value: TStrings);
+procedure TJson2PumlOutputFileFrame.SetPUmlOutput (const Value: TStrings);
 begin
   FPUmlOutput.Assign (Value);
 end;
 
-procedure TJson2PumlSingleFileFrame.SetLogList (const Value: TStrings);
+procedure TJson2PumlOutputFileFrame.SetLogList (const Value: TStrings);
 begin
   FLogList.Assign (Value);
 end;
 
-procedure TJson2PumlSingleFileFrame.SetConverterLogFileName(const Value: string);
+procedure TJson2PumlOutputFileFrame.SetConverterLogFileName(const Value: string);
 begin
   FConverterLogFileName := Value;
   LogFileNameEdit.Text := Value;
 end;
 
-procedure TJson2PumlSingleFileFrame.SetSVGFileName (const Value: string);
+procedure TJson2PumlOutputFileFrame.SetSVGFileName (const Value: string);
 begin
   if FileExists (Value) then
     FSVGFileName := Value
