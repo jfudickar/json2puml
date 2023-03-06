@@ -29,9 +29,9 @@ The generated outcome can look like this image of an SpaceX launch sample:
 ![](documentation/images/spacex_launch/spacex_launch_latest.default.svg)
 
 # How to start
-A short introduction can be found here ![json2puml introduction](documentation/json2puml%20introduction.pdf)
-A full documentation can be found here ![json2puml documentation](documentation/json2puml%20documentation.pdf) in the documentation folder.
-Sample files for different public api's can be found in the ![samples](samples) folder.
+* A short introduction can be found here ![json2puml introduction](documentation/json2puml%20introduction.pdf).
+* A full documentation can be found here ![json2puml documentation](documentation/json2puml%20documentation.pdf) in the documentation folder.
+* Sample files for different public api's can be found in the ![samples](samples) folder.
 
 
 # License
