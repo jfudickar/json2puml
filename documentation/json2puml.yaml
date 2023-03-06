@@ -152,6 +152,10 @@ components:
           type: string
           description: Optional regular expression which could be used by a UI to validate the curl parameters
           example: 10[0-9]{10}
+        defaultValue:
+          type: string
+          description: Default value of the parameter
+          example: 101234512345
       required:
         - name
     DefinitionFileResponse:

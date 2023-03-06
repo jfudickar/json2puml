@@ -29,6 +29,7 @@ class InputlistDescriptionCurlParameter {
     description : String
     mandatory : Boolean
     regularExpression : String
+    defaultValue : String
 }
 
 class InputlistFile  <<Pivot>> {

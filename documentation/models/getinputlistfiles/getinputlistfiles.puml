@@ -21,7 +21,8 @@ class CurlParameter{
    displayName : String
    description : String
    mandatory : Boolean
-   RegularExpression : String
+   regularExpression : String
+   defaultValue : String
 }
 
 class InputListFile {
