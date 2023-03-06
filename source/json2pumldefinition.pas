@@ -342,6 +342,7 @@ type
 
   tJson2PumlFileDescriptionParameterDefinition = class(tJson2PumlBaseObject)
   private
+    FDefaultValue: string;
     FDescription: string;
     FDisplayName: string;
     FMandatory: boolean;
@@ -355,6 +356,7 @@ type
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
   published
+    property DefaultValue: string read FDefaultValue write FDefaultValue;
     property Description: string read FDescription write FDescription;
     property DisplayName: string read FDisplayName write FDisplayName;
     property Mandatory: boolean read FMandatory write FMandatory;
@@ -709,7 +711,7 @@ type
     procedure AddParameter (iParameterList: tJson2PumlCurlParameterList; iNameFilter: string = ''); overload;
     function GetEnumerator: tJson2PumlCurlParameterEnumerator;
     procedure GetParameterNameList (ioNameList: tStringList; const iValueString: string);
-    function ParameterValueCount (iParameterName: string): Integer;
+    function ParameterNameCount(iParameterName: string): Integer;
     function ReplaceParameterValues (iValueString: string): string;
     function ReplaceParameterValuesFileName (iFileName: string): string;
     property Parameter[index: Integer]: tJson2PumlCurlParameterDefinition read GetParameter; default;
@@ -941,7 +943,7 @@ begin
         [CurlParameter.name, CurlParameter.Value, ValueList.Count]);
       for i := 0 to ValueList.Count - 1 do
       begin
-        if (CurlParameter.MaxValues > 0) and (iCurlParameterList.ParameterValueCount(CurlParameter.name) >=
+        if (CurlParameter.MaxValues > 0) and (iCurlParameterList.ParameterNameCount(CurlParameter.name) >=
           CurlParameter.MaxValues) then
           GlobalLoghandler.Info ('      Parameter "%s"(%d) : Value "%s" skipped', [CurlParameter.name, i, ValueList[i]])
         else if iCurlParameterList.AddParameter (CurlParameter.name, ValueList[i]) then
@@ -2884,7 +2886,7 @@ begin
   end;
 end;
 
-function tJson2PumlCurlParameterList.ParameterValueCount (iParameterName: string): Integer;
+function tJson2PumlCurlParameterList.ParameterNameCount(iParameterName: string): Integer;
 var
   Parameter: tJson2PumlCurlParameterDefinition;
 begin
@@ -3513,6 +3515,7 @@ begin
   DisplayName := GetJsonStringValue (Definition, 'displayName');
   Mandatory := GetJsonStringValueBoolean (Definition, 'mandatory', false);
   RegularExpression := GetJsonStringValue (Definition, 'regularExpression');
+  DefaultValue := GetJsonStringValue (Definition, 'defaultValue');
   Result := IsValid;
 end;
 
@@ -3525,6 +3528,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'description', Description, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'mandatory', Mandatory, iLevel + 1);
   WriteToJsonValue (oJsonOutPut, 'regularExpression', RegularExpression, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'defaultValue', DefaultValue, iLevel + 1, iWriteEmpty);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 

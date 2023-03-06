@@ -76,7 +76,7 @@ const
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.0.19.71';
+  cCurrentVersion = '2.0.20.72';
 
   JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
     'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];

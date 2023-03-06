@@ -1301,6 +1301,8 @@ begin
 end;
 
 procedure TJson2PumlInputHandler.ParseDefintions;
+var
+  Parameter : tJson2PumlFileDescriptionParameterDefinition;
 begin
   ClearAllRecords;
   if DefinitionLines.Count > 0 then
@@ -1325,6 +1327,10 @@ begin
   CurlParameterList.AddParameter (ParameterDefinition.CurlParameter);
   CurlAuthenticationList.AdditionalCurlParameter.AddParameter (CmdLineParameter.CurlAuthenticationParameter);
   CurlAuthenticationList.AdditionalCurlParameter.AddParameter (ParameterDefinition.CurlAuthenticationParameter);
+  for Parameter in ConverterInputList.Description.CurlParameterList do
+    if not Parameter.DefaultValue.IsEmpty then
+      if CurlParameterList.ParameterNameCount(Parameter.Name) <= 0 then
+        CurlParameterList.AddParameter(Parameter.name, Parameter.DefaultValue);
 end;
 
 procedure TJson2PumlInputHandler.ParseInputListFile;

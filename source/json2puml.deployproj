@@ -3,10 +3,40 @@
     <ProjectExtensions>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
-    <PropertyGroup>
-        <DeviceId Condition="'$(Platform)'=='iOSDevice64'"/>
-        <DeviceId Condition="'$(Platform)'=='iOSSimARM64'"/>
-    </PropertyGroup>
+    <PropertyGroup/>
+    <ItemGroup Condition="'$(Platform)'=='Win64'">
+        <DeployFile Include="..\documentation\icons\json2puml_icon.png" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>json2puml\Assets\</RemoteDir>
+            <RemoteName>Logo44x44.png</RemoteName>
+            <DeployClass>UWP_DelphiLogo44</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+        </DeployFile>
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)'=='Linux64'">
+        <DeployFile Include="Linux64\Release\json2puml" Condition="'$(Config)'=='Release'">
+            <RemoteDir>json2puml\</RemoteDir>
+            <RemoteName>json2puml</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+        <DeployFile Include="Linux64\Debug\json2puml" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>json2puml\</RemoteDir>
+            <RemoteName>json2puml</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>1</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
+    </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='OSX64'"/>
     <ItemGroup Condition="'$(Platform)'=='Win32'">
         <DeployFile Include="..\documentation\icons\json2puml_icon.png" Condition="'$(Config)'=='Debug'">
@@ -20,29 +50,4 @@
         </DeployFile>
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)'=='OSXARM64'"/>
-    <ItemGroup Condition="'$(Platform)'=='Win64'">
-        <DeployFile Include="..\documentation\icons\json2puml_icon.png" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>json2puml\Assets\</RemoteDir>
-            <RemoteName>Logo44x44.png</RemoteName>
-            <DeployClass>UWP_DelphiLogo44</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-        </DeployFile>
-    </ItemGroup>
-    <ItemGroup Condition="'$(Platform)'=='Linux64'">
-        <DeployFile Include="Linux64\Debug\json2puml" Condition="'$(Config)'=='Debug'">
-            <RemoteDir>json2puml\</RemoteDir>
-            <RemoteName>json2puml</RemoteName>
-            <DeployClass>ProjectOutput</DeployClass>
-            <Operation>1</Operation>
-            <LocalCommand/>
-            <RemoteCommand/>
-            <Overwrite>True</Overwrite>
-            <Required>True</Required>
-        </DeployFile>
-    </ItemGroup>
-    <ItemGroup Condition="'$(Platform)'=='iOSDevice64'"/>
-    <ItemGroup Condition="'$(Platform)'=='iOSSimARM64'"/>
 </Project>

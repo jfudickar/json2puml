@@ -187,8 +187,7 @@ begin
       end
       else
       begin
-        Context.Response.StatusCode := HTTP_STATUS.BadRequest;
-        RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
@@ -196,7 +195,7 @@ begin
       begin
         GlobalLoghandler.Error (e.Message);
         GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
+        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
       end;
     end;
   finally
@@ -231,12 +230,12 @@ begin
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
-          RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+          RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
       end
       else
       begin
         Context.Response.StatusCode := HTTP_STATUS.BadRequest;
-        RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
@@ -244,7 +243,7 @@ begin
       begin
         GlobalLoghandler.Error (e.Message);
         GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
+        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
       end;
     end;
   finally
@@ -279,12 +278,12 @@ begin
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
-          RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+          RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
       end
       else
       begin
         Context.Response.StatusCode := HTTP_STATUS.BadRequest;
-        RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
@@ -292,7 +291,7 @@ begin
       begin
         GlobalLoghandler.Error (e.Message);
         GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
+        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
       end;
     end;
   finally
@@ -324,12 +323,12 @@ begin
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
-          RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+          RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
       end
       else
       begin
         Context.Response.StatusCode := HTTP_STATUS.BadRequest;
-        RenderStatusMessage (HTTP_STATUS.BadRequest, GlobalLoghandler.ErrorWarningList.Text);
+        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
@@ -337,7 +336,7 @@ begin
       begin
         GlobalLoghandler.Error (e.Message);
         GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
+        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
       end;
     end;
   finally
