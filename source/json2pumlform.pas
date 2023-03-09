@@ -405,6 +405,8 @@ end;
 procedure Tjson2pumlMainForm.CommandLineToForm;
 
   procedure setCheckBox (iCheckBox: TCheckBox; iValue: string);
+  var
+    I: Integer;
   begin
     if iValue.IsEmpty then
       iCheckBox.State := cbGrayed
@@ -416,6 +418,7 @@ procedure Tjson2pumlMainForm.CommandLineToForm;
   var
     Parameter: tJson2PumlCurlParameterDefinition;
   begin
+    iDataset.Active := True;
     while iDataset.RecordCount > 0 do
       iDataset.Delete;
     for Parameter in iCurlParameter do

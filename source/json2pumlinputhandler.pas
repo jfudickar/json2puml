@@ -506,6 +506,7 @@ begin
     Filename := Filename + Suffix;
   Filename := CurlParameterList.ReplaceParameterValues (Filename);
   Filename := Filename + tpath.ExtensionSeparatorChar + FileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
+  FileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment(FileName);
   Filename := ReplaceInvalidFileNameChars (Filename);
   Result := Filename;
 end;
@@ -527,6 +528,7 @@ begin
   Result := CurrentFullOutputPath;
   Result := ReplaceFileNameVariables (Result, iSourceFileName, Option);
   Result := CurlParameterList.ReplaceParameterValues (Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
   Result := ReplaceInvalidPathChars (Result);
   Result := PathCombine (Result, Filename);
 end;
@@ -575,6 +577,7 @@ begin
     Result := Result.SubString (0, i - 1);
   Result := ReplaceFileNameVariables (Result, '', CurrentOption);
   Result := CurlParameterList.ReplaceParameterValues (Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
   Result := ReplaceInvalidPathChars (Result);
 end;
 
@@ -1003,6 +1006,7 @@ begin
     Result := Result.TrimLeft (tpath.DirectorySeparatorChar);
   end;
   Result := CurlParameterList.ReplaceParameterValues (Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
 end;
 
 function TJson2PumlInputHandler.GetCurrentOutputSuffix: string;

@@ -1909,7 +1909,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Top = 536
   end
   object CurlParameterDataSet: TFDMemTable
-    Active = True
+    FieldDefs = <>
+    IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -1917,17 +1918,23 @@ object json2pumlMainForm: Tjson2pumlMainForm
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
+    StoreDefs = True
     Left = 88
     Top = 609
     object CurlParameterDataSetName: TStringField
+      DisplayWidth = 20
       FieldName = 'Name'
+      Size = 200
     end
     object CurlParameterDataSetValue: TStringField
+      DisplayWidth = 50
       FieldName = 'Value'
+      Size = 1000
     end
   end
   object CurlAuthenticationParameterDataset: TFDMemTable
-    Active = True
+    FieldDefs = <>
+    IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]
     FetchOptions.Mode = fmAll
     ResourceOptions.AssignedValues = [rvSilentMode]
@@ -1935,13 +1942,18 @@ object json2pumlMainForm: Tjson2pumlMainForm
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 216
+    StoreDefs = True
+    Left = 248
     Top = 617
     object StringField3: TStringField
+      DisplayWidth = 20
       FieldName = 'Name'
+      Size = 200
     end
     object StringField4: TStringField
+      DisplayWidth = 50
       FieldName = 'Value'
+      Size = 1000
     end
   end
   object JsonActionList: TActionList

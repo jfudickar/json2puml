@@ -88,7 +88,6 @@ type
     function ReadFromJson (iJson, iFileName: string): boolean; overload; virtual;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; overload; virtual;
     function ReadFromJsonFile (iFileName: string): boolean; virtual;
-    function ReplaceValueFromEnvironment (iValue: string): string;
     function SaveToFile (iJsonLines: TStrings; iFileName: string; iWriteEmpty: boolean = false): boolean;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); virtual;
@@ -453,41 +452,6 @@ begin
   finally
     Lines.Free;
   end;
-end;
-
-function tJson2PumlBaseObject.ReplaceValueFromEnvironment (iValue: string): string;
-var
-  Value: string;
-  S, v: string;
-  i: Integer;
-begin
-  S := iValue;
-  Value := '';
-  while not S.IsEmpty do
-  begin
-    i := S.IndexOf ('${');
-    if i < 0 then
-    begin
-      Value := Value + S;
-      break;
-    end;
-    Value := S.Substring (0, i);
-    S := S.Substring (i);
-    i := S.IndexOf ('}');
-    if i < 0 then
-    begin
-      Value := Value + S;
-      break;
-    end;
-    v := S.Substring (2, i - 2);
-    v := GetEnvironmentVariable (v);
-    if v.IsEmpty then
-      Value := Value + S.Substring (0, i + 1)
-    else
-      Value := Value + v;
-    S := S.Substring (i + 1);
-  end;
-  Result := Value;
 end;
 
 function tJson2PumlBaseObject.SaveToFile (iJsonLines: TStrings; iFileName: string;

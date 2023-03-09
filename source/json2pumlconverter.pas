@@ -280,7 +280,7 @@ begin
   ObjectDefinition := nil;
   IsObjectProperty := false;
   IsObjectDetail := false;
-  //IsRelationShip := false;
+  // IsRelationShip := false;
   IsCharacteristic := false;
 
   cName := '';
@@ -478,7 +478,7 @@ begin
     iInfo.ParentRelationShipTypeProperty := RelationshipTypeProperty;
     iInfo.ParentIsRelationship := IsRelationShip;
     iInfo.ParentPropertyName := iInfo.PropertyName;
-    if Definition.ContinueAfterUnhandledObjects or iInfo.InCharacteristicMode then 
+    if Definition.ContinueAfterUnhandledObjects or iInfo.InCharacteristicMode then
       iInfo.StopRecursion := false
     else
       iInfo.StopRecursion := (not (Assigned(PumlObject) or IsObjectDetail or IsRelationShip) and
@@ -949,8 +949,8 @@ begin
     else
       vAdd := true;
     Puml.Add (tPumlHelper.TableLine(['<b>Job description'.PadRight(FileLength + 50)]));
-    Puml.Add (tPumlHelper.TableLine([InputHandler.CurlParameterList.ReplaceParameterValues
-      (InputHandler.CurrentJobDescription)]));
+    Puml.Add (tPumlHelper.TableLine([TCurlUtils.ReplaceCurlVariablesFromEnvironment
+      (InputHandler.CurlParameterList.ReplaceParameterValues(InputHandler.CurrentJobDescription))]));
   end;
   if Definition.LegendShowObjectFormats then
   begin

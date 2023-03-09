@@ -56,6 +56,8 @@ type
       const iOutputFile: string; iExecuteEvaluation: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
       iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
       var oProtocolCurlCommand: string): Boolean;
+    class function ReplaceCurlVariablesFromEnvironment(iValue: string): string;
+    class function CleanUnusedCurlVariables(iValue: string): string;
   end;
 
 function FileCount (iFileFilter: string): Integer;
@@ -128,7 +130,7 @@ uses
 {$IFDEF MSWINDOWS} Winapi.Windows, Winapi.ShellAPI, VCL.Forms, {$ENDIF}
   System.Generics.Collections, System.IOUtils,
   System.Math, System.DateUtils, System.NetEncoding, json2pumlbasedefinition,
-  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults;
+  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression;
 
 {$IFDEF MSWINDOWS}
 
@@ -601,6 +603,7 @@ begin
     Result := iCurlDetailParameterList.ReplaceParameterValues (Result);
   if Assigned (iCurlParameterList) then
     Result := iCurlParameterList.ReplaceParameterValues (Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
 end;
 
 class function TCurlUtils.CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
@@ -634,6 +637,7 @@ begin
     Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
   if Assigned (iCurlParameterList) then
     Command := iCurlParameterList.ReplaceParameterValues (Command);
+  Command := ReplaceCurlVariablesFromEnvironment(Command);
   if iIncludeWriteOut then
     Command := Format ('%s --write-out "%s" ',
       [Command, '\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}']);
@@ -730,6 +734,8 @@ begin
     ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues (ExecuteEvaluation);
   if Assigned (iCurlParameterList) then
     ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues (ExecuteEvaluation);
+  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment(ExecuteEvaluation);
+  ExecuteEvaluation := CleanUnusedCurlVariables(ExecuteEvaluation);
   try
     if not CheckEvaluation (ExecuteEvaluation) then
     begin
@@ -804,6 +810,70 @@ begin
     GlobalLoghandler.Warn ('Fetching from "%s" for "%s" FAILED (%d ms) : [%s]',
       [Url, iOutputFile, MillisecondsBetween(Now, StartTime), vErrorMessage]);
   end;
+end;
+
+class function TCurlUtils.ReplaceCurlVariablesFromEnvironment(iValue: string): string;
+var
+  Value: string;
+  S, v: string;
+  i: Integer;
+begin
+  S := iValue;
+  Value := '';
+  while not S.IsEmpty do
+  begin
+    i := S.IndexOf ('${');
+    if i < 0 then
+    begin
+      Value := Value + S;
+      break;
+    end;
+    Value := S.Substring (0, i);
+    S := S.Substring (i);
+    i := S.IndexOf ('}');
+    if i < 0 then
+    begin
+      Value := Value + S;
+      break;
+    end;
+    v := S.Substring (2, i - 2);
+    v := GetEnvironmentVariable (v);
+    if v.IsEmpty then
+      Value := Value + S.Substring (0, i + 1)
+    else
+      Value := Value + v;
+    S := S.Substring (i + 1);
+  end;
+  Result := Value;
+end;
+
+class function TCurlUtils.CleanUnusedCurlVariables(iValue: string): string;
+var
+  Value: string;
+  S, v: string;
+  i: Integer;
+begin
+  S := iValue;
+  Value := '';
+  while not S.IsEmpty do
+  begin
+    i := S.IndexOf ('${');
+    if i < 0 then
+    begin
+      Value := Value + S;
+      break;
+    end;
+    Value := S.Substring (0, i);
+    S := S.Substring (i);
+    i := S.IndexOf ('}');
+    if i < 0 then
+    begin
+      Value := Value + S;
+      break;
+    end;
+    S := S.Substring (i + 1);
+  end;
+  Result := Value;
 end;
 
 procedure GenerateDirectory (const iDirectory: string);

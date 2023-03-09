@@ -900,11 +900,12 @@ procedure tJson2PumlInputFileDefinition.ExpandFileNameWithCurlParameter (iCurlPa
 begin
   if Assigned (iCurlParameterList) then
     OutputFileName := iCurlParameterList.ReplaceParameterValuesFileName (OutputFileName);
+  OutputFileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (OutputFileName);
 end;
 
 function tJson2PumlInputFileDefinition.GetCurlBaseUrlDecoded: string;
 begin
-  Result := ReplaceValueFromEnvironment (CurlBaseUrl);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (CurlBaseUrl);
 end;
 
 function tJson2PumlInputFileDefinition.GetCurlFormatOutput: boolean;
@@ -1015,7 +1016,7 @@ begin
   Options := [string.Join(' ', [CurlOptions, string.Join(' ', iOptions)]).Trim];
   ExpandFileNameWithCurlParameter (iExecuteCurlParameterList);
   ExpandFileNameWithCurlParameter (ioResultCurlParameterList);
-  Result := tCurlUtils.Execute (BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim], Options, OutputFileName, CurlExecuteEvaluation,
+  Result := TCurlUtils.Execute (BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim], Options, OutputFileName, CurlExecuteEvaluation,
     iCurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache, Command);
   CurlCommand := Command;
   if Result then
@@ -1445,6 +1446,7 @@ begin
       else
         FileName := CurlParameterList.ReplaceParameterValuesFileName
           (GetFileNameExpanded(InputFile.InputFileNameExpanded));
+      FileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (FileName);
       NewPath := ExtractFilePath (FileName);
       if findfirst (FileName, faAnyFile, searchResult) = 0 then
       begin
@@ -1638,7 +1640,7 @@ end;
 
 function tJson2PumlInputList.GetCurlBaseUrlDecoded: string;
 begin
-  Result := ReplaceValueFromEnvironment (CurlBaseUrl);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (CurlBaseUrl);
 end;
 
 function tJson2PumlInputList.GetDefinitionFileNameExpanded: string;
@@ -2620,7 +2622,7 @@ end;
 
 function tJson2PumlCurlAuthenticationDefinition.GetBaseUrlDecoded: string;
 begin
-  Result := ReplaceValueFromEnvironment (BaseUrl);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (BaseUrl);
 end;
 
 function tJson2PumlCurlAuthenticationDefinition.GetIdent: string;
@@ -2729,7 +2731,7 @@ end;
 
 function tJson2PumlCurlParameterDefinition.GetValueDecoded: string;
 begin
-  Result := ReplaceValueFromEnvironment (Value);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
 end;
 
 function tJson2PumlCurlParameterDefinition.GetIdent: string;
