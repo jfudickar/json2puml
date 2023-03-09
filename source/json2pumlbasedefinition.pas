@@ -743,8 +743,10 @@ begin
   ListValueObject := CreateListValueObject;
   if Assigned (ListValueObject) then
   begin
-    ListValueObject.ReadFromJson (iJsonValue, '');
-    AddBaseObject (ListValueObject);
+    if ListValueObject.ReadFromJson (iJsonValue, '') then
+      AddBaseObject (ListValueObject)
+    else
+     ListValueObject.Free;
   end
   else if iJsonValue is TJSONString then
   begin

@@ -6,6 +6,7 @@
 		"traceid",
 		"x-b3-traceid"
 	],
+	"defaultDefinitionFileName": null,
 	"definitionFileSearchFolder": [
 		"e:\\Delphi\\Projects\\json2puml\\definition\\",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\tmf\\*definition*.json",
@@ -22,5 +23,5 @@
 	"javaRuntimeParameter": null,
 	"logFileOutputPath": "e:\\Delphi\\Projects\\json2puml\\runtime\\logs\\",
 	"plantUmlJarFileName": null,
-	"servicePort": "9090"
+	"servicePort": "8080"
 }

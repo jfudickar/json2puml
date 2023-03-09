@@ -51,9 +51,11 @@ type
       iIncludeWriteOut: Boolean): string;
     class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
       var oErrorMessage: string): Boolean;
-    class function Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const iOutputFile: string;
-        iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList, iCurlParameterList:
-        tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
+    class function CheckEvaluation (iExecuteEvaluation: string): Boolean;
+    class function Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+      const iOutputFile: string; iExecuteEvaluation: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
+      var oProtocolCurlCommand: string): Boolean;
   end;
 
 function FileCount (iFileFilter: string): Integer;
@@ -126,7 +128,7 @@ uses
 {$IFDEF MSWINDOWS} Winapi.Windows, Winapi.ShellAPI, VCL.Forms, {$ENDIF}
   System.Generics.Collections, System.IOUtils,
   System.Math, System.DateUtils, System.NetEncoding, json2pumlbasedefinition,
-  json2pumlconverterdefinition;
+  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults;
 
 {$IFDEF MSWINDOWS}
 
@@ -639,6 +641,23 @@ begin
   Result := Command;
 end;
 
+class function TCurlUtils.CheckEvaluation (iExecuteEvaluation: string): Boolean;
+var
+  BindExpr: TBindingExpressionDefault;
+begin
+  Result := true;
+  if iExecuteEvaluation.Trim.isEmpty then
+    Exit;
+  BindExpr := TBindingExpressionDefault.Create;
+  try
+    BindExpr.Source := iExecuteEvaluation;
+    BindExpr.recompile;
+    Result := BindExpr.Evaluate.GetValue.toString.ToLower = 'true';
+  finally
+    BindExpr.Free;
+  end;
+end;
+
 class function TCurlUtils.GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
   var oErrorMessage: string): Boolean;
 var
@@ -686,9 +705,10 @@ begin
   Result := oErrorMessage.isEmpty;
 end;
 
-class function TCurlUtils.Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const
-    iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList,
-    iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
+class function TCurlUtils.Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+  const iOutputFile: string; iExecuteEvaluation: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
+  var oProtocolCurlCommand: string): Boolean;
 var
   Url: string;
   Command: string;
@@ -697,6 +717,7 @@ var
   StartTime: tDateTime;
   vErrorMessage: string;
   vCommandOutPut, vCommandErrors: TStringList;
+  ExecuteEvaluation: string;
 
 begin
 
@@ -704,14 +725,41 @@ begin
   if iOutputFile.Trim.isEmpty then
     Exit;
 
+  ExecuteEvaluation := iExecuteEvaluation;
+  if Assigned (iCurlDetailParameterList) then
+    ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues (ExecuteEvaluation);
+  if Assigned (iCurlParameterList) then
+    ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues (ExecuteEvaluation);
+  try
+    if not CheckEvaluation (ExecuteEvaluation) then
+    begin
+      GlobalLoghandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
+        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
+      Exit;
+    end
+    else if not iExecuteEvaluation.Trim.IsEmpty then
+      GlobalLoghandler.debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
+        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
+  except
+    on e: exception do
+      GlobalLoghandler.Error ('curl file %s skipped - Exception "%s" raised when validating [%s]',
+        [iOutputFile, e.Message]);
+  end;
+
   Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
   if Url.Trim.isEmpty then
+  begin
+    GlobalLoghandler.Warn ('curl file %s skipped - url not defined.', [iOutputFile]);
     Exit;
+  end;
 
   oProtocolCurlCommand := CalculateCommand (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlParameterList,
     iCurlDetailParameterList, true);
   if oProtocolCurlCommand.isEmpty then
+  begin
+    GlobalLoghandler.Warn ('curl file %s skipped - unable to generate curl command .', [iOutputFile]);
     Exit;
+  end;
   oProtocolCurlCommand := Format ('%s %s', ['curl', oProtocolCurlCommand]);
 
   Command := CalculateCommandExecute (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlAuthenticationList,
