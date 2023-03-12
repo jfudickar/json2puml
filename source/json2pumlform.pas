@@ -192,8 +192,8 @@ type
     procedure FormShow (Sender: TObject);
     procedure InitialTimerTimer (Sender: TObject);
     procedure LoadFileActionExecute (Sender: TObject);
-    procedure OpenConfigurationFileExternalExecute(Sender: TObject);
-    procedure OpenCurrentJSONActionExecute(Sender: TObject);
+    procedure OpenConfigurationFileExternalExecute (Sender: TObject);
+    procedure OpenCurrentJSONActionExecute (Sender: TObject);
     procedure OpenJsonDetailTabSheetExecute (Sender: TObject);
     procedure OpenCurrentPNGActionExecute (Sender: TObject);
     procedure OpenCurrentSVGActionExecute (Sender: TObject);
@@ -240,6 +240,7 @@ type
     function GetCurrentPage: tJson2PumlPage;
     procedure InitFormDefaultLogger;
     procedure InitializeInputHandler;
+    procedure HandleNotifyChange (Sender: TObject);
     procedure SetCurrentPage (const Value: tJson2PumlPage);
     property CurlAuthenticationFileLines: TStrings read FCurlAuthenticationFileLines write FCurlAuthenticationFileLines;
     property CurlParameterFileLines: TStrings read FCurlParameterFileLines write FCurlParameterFileLines;
@@ -334,7 +335,6 @@ end;
 procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: TObject);
 begin
   FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
-
 end;
 
 procedure Tjson2pumlMainForm.AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
@@ -405,8 +405,6 @@ end;
 procedure Tjson2pumlMainForm.CommandLineToForm;
 
   procedure setCheckBox (iCheckBox: TCheckBox; iValue: string);
-  var
-    I: Integer;
   begin
     if iValue.IsEmpty then
       iCheckBox.State := cbGrayed
@@ -533,7 +531,7 @@ procedure Tjson2pumlMainForm.CreateMemoControls;
 var
   DummyLines: TStrings;
   Page: tJson2PumlPage;
-  i : Integer;
+  i: Integer;
 begin
 {$IFDEF SYNEDIT}
   fSynJSONSyn := TSynJSONSyn.Create (self);
@@ -550,12 +548,11 @@ begin
     tJson2PumlCurlParameterList);
   CreateConfigFrames (jpGlobalConfig, FGlobalConfigurationFileLines, ShowGlobalConfigFile, tJson2PumlGlobalDefinition);
   i := 0;
-  for page := Low(Page) to High(Page) do
+  for Page := low(Page) to high(Page) do
   begin
-    TabSheetByPage(Page).PageIndex := i;
-    inc(i);
+    TabSheetByPage (Page).PageIndex := i;
+    Inc (i);
   end;
-
 
   fLogMemo := CreateSingleMemoControl (ExecutionLogPanel, 'ExecutionLogMemo', nil, FLogLines, false, True);
   CreateSingleMemoControl (FileListPanel, 'FileListMemo', nil, FFileListLines, True, True);
@@ -688,6 +685,7 @@ begin
   InputHandler.AfterHandleAllRecords := AfterHandleAllInputHandlerRecords;
   InputHandler.BeforeCreateAllRecords := BeforeCreateAllInputHandlerRecords;
   InputHandler.BeforeDeleteAllRecords := BeforeDeleteAllInputHandlerRecords;
+  InputHandler.OnNotifyChange := HandleNotifyChange;
   InputHandler.DefinitionLines := DefinitionLines;
   InputHandler.ConfigurationFileLines := GlobalConfigurationFileLines;
   InputHandler.OptionFileLines := OptionFileLines;
@@ -842,7 +840,7 @@ end;
 
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;
 begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, false, false);
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false);
   Logger.Providers.add (GlobalLogStringListProvider);
   GlobalLogStringListProvider.ShowTimeStamp := True;
   GlobalLogStringListProvider.ShowEventTypes := True;
@@ -907,15 +905,15 @@ begin
     ConfigFrame[CurrentPage].OpenFile;
 end;
 
-procedure Tjson2pumlMainForm.OpenConfigurationFileExternalExecute(Sender: TObject);
+procedure Tjson2pumlMainForm.OpenConfigurationFileExternalExecute (Sender: TObject);
 begin
   if Assigned (ConfigFrame[CurrentPage]) then
-    OpenFile(ConfigFrame[CurrentPage].ConfigFileName);
+    OpenFile (ConfigFrame[CurrentPage].ConfigFileName);
 end;
 
-procedure Tjson2pumlMainForm.OpenCurrentJSONActionExecute(Sender: TObject);
+procedure Tjson2pumlMainForm.OpenCurrentJSONActionExecute (Sender: TObject);
 begin
-  OpenCurrentJsonFile;
+  OpenCurrentJSONFile;
 end;
 
 procedure Tjson2pumlMainForm.OpenCurrentPNGFile;
@@ -1135,6 +1133,14 @@ begin
   FFrame.Free;
   FTabSheet.Free;
   inherited Destroy;
+end;
+
+procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: TObject);
+begin
+{$IFDEF SYNEDIT}
+  if Assigned (fLogMemo) then
+    TSynEdit (fLogMemo).CaretY := TSynEdit (fLogMemo).Lines.Count + 1;
+{$ENDIF}
 end;
 
 end.

@@ -111,6 +111,7 @@ type
     FIntOptionFileLines: TStrings;
     FIntParameterFileLines: TStrings;
     FIntServerResultLines: TStrings;
+    FOnNotifyChange: TNotifyEvent;
     FOptionFileDefinition: tJson2PumlConverterDefinition;
     FOptionFileLines: TStrings;
     FParameterDefinition: tJson2PumlParameterFileDefinition;
@@ -149,6 +150,7 @@ type
     function GetOptionFileLines: TStrings;
     function GetParameterFileLines: TStrings;
     function GetServerResultLines: TStrings;
+    procedure SetOnNotifyChange (const Value: TNotifyEvent);
   protected
     procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
@@ -234,6 +236,7 @@ type
     property CurrentSummaryFileName: string read GetCurrentSummaryFileName;
     property DefinedOption: string read GetDefinedOption;
     property HandlerRecord[index: Integer]: TJson2PumlInputHandlerRecord read GetHandlerRecord; default;
+    property OnNotifyChange: TNotifyEvent read FOnNotifyChange write SetOnNotifyChange;
     property AfterCreateAllRecords: TNotifyEvent read FAfterCreateAllRecords write FAfterCreateAllRecords;
     property AfterCreateRecord: TJson2PumlInputHandlerRecordEvent read FAfterCreateRecord write FAfterCreateRecord;
     property AfterHandleAllRecords: TNotifyEvent read FAfterHandleAllRecords write FAfterHandleAllRecords;
@@ -506,7 +509,7 @@ begin
     Filename := Filename + Suffix;
   Filename := CurlParameterList.ReplaceParameterValues (Filename);
   Filename := Filename + tpath.ExtensionSeparatorChar + FileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
-  FileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment(FileName);
+  Filename := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Filename);
   Filename := ReplaceInvalidFileNameChars (Filename);
   Result := Filename;
 end;
@@ -528,7 +531,7 @@ begin
   Result := CurrentFullOutputPath;
   Result := ReplaceFileNameVariables (Result, iSourceFileName, Option);
   Result := CurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
   Result := ReplaceInvalidPathChars (Result);
   Result := PathCombine (Result, Filename);
 end;
@@ -577,7 +580,7 @@ begin
     Result := Result.SubString (0, i - 1);
   Result := ReplaceFileNameVariables (Result, '', CurrentOption);
   Result := CurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
   Result := ReplaceInvalidPathChars (Result);
 end;
 
@@ -635,6 +638,8 @@ begin
         if i <> iIndex then
           Continue;
       SingleRecord := self[i];
+      if Assigned (OnNotifyChange) then
+        OnNotifyChange (self);
 
       SingleRecord.ConverterLog.Clear;
       OutputFormats := GetCurrentOutputFormats;
@@ -711,7 +716,8 @@ begin
   finally
     Converter.Free;
   end;
-
+  if Assigned (OnNotifyChange) then
+    OnNotifyChange (self);
 end;
 
 procedure TJson2PumlInputHandler.CreateAllRecords;
@@ -1006,7 +1012,7 @@ begin
     Result := Result.TrimLeft (tpath.DirectorySeparatorChar);
   end;
   Result := CurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
 end;
 
 function TJson2PumlInputHandler.GetCurrentOutputSuffix: string;
@@ -1306,7 +1312,7 @@ end;
 
 procedure TJson2PumlInputHandler.ParseDefintions;
 var
-  Parameter : tJson2PumlFileDescriptionParameterDefinition;
+  Parameter: tJson2PumlFileDescriptionParameterDefinition;
 begin
   ClearAllRecords;
   if DefinitionLines.Count > 0 then
@@ -1333,8 +1339,8 @@ begin
   CurlAuthenticationList.AdditionalCurlParameter.AddParameter (ParameterDefinition.CurlAuthenticationParameter);
   for Parameter in ConverterInputList.Description.CurlParameterList do
     if not Parameter.DefaultValue.IsEmpty then
-      if CurlParameterList.ParameterNameCount(Parameter.Name) <= 0 then
-        CurlParameterList.AddParameter(Parameter.name, Parameter.DefaultValue);
+      if CurlParameterList.ParameterNameCount (Parameter.Name) <= 0 then
+        CurlParameterList.AddParameter (Parameter.Name, Parameter.DefaultValue);
 end;
 
 procedure TJson2PumlInputHandler.ParseInputListFile;
@@ -1457,6 +1463,12 @@ begin
     RecreateAllRecords;
 end;
 
+procedure TJson2PumlInputHandler.SetOnNotifyChange (const Value: TNotifyEvent);
+begin
+  FOnNotifyChange := Value;
+  ConverterInputList.OnNotifyChange := Value;
+end;
+
 function TJson2PumlInputHandler.ValidateCurrentOptions: Boolean;
 
   procedure log (iName, iValue: string);
@@ -1491,11 +1503,11 @@ begin
   if CurlParameterList.Count > 0 then
     GlobalLoghandler.Info ('Curl Parameter');
   for CurlParameter in CurlParameterList do
-    log ('  '+CurlParameter.name, CurlParameter.Value);
+    log ('  ' + CurlParameter.Name, CurlParameter.Value);
   if CurlAuthenticationList.AdditionalCurlParameter.Count > 0 then
     GlobalLoghandler.Info ('Curl Authentication Parameter');
   for CurlParameter in CurlAuthenticationList.AdditionalCurlParameter do
-    log ('  '+CurlParameter.name, '****');
+    log ('  ' + CurlParameter.Name, '****');
   GlobalLoghandler.Info ('');
 end;
 

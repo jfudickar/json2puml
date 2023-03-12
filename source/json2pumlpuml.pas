@@ -98,7 +98,7 @@ type
     function IndexOf (S: string): Integer;
     function IndexOfName (S: string): Integer;
     procedure Sort;
-    procedure UpdateRedundant; virtual;
+    procedure UpdateRedundant; override;
     property Count: Integer read GetCount;
     property Duplicates: TDuplicates read GetDuplicates write SetDuplicates;
     property FilledCount: Integer read GetFilledCount;
@@ -1449,6 +1449,7 @@ procedure tBasePumlStringList.UpdateRedundant;
 var
   i: Integer;
 begin
+  Inherited UpdateRedundant;
   for i := 0 to Count - 1 do
     if Assigned (Objects[i]) then
       if (Objects[i] is tBasePumlObject) then

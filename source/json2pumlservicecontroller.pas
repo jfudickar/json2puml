@@ -357,7 +357,7 @@ var
   I: Integer;
 
 begin
-  GlobalLoghandler.Info ('%s started from %s', [Context.Request.PathInfo, Context.Request.ClientIp]);
+  GlobalLoghandler.Trace ('%s started', [Context.Request.PathInfo]);
   if Context.Request.RawWebRequest is TIdHTTPAppRequest then
   begin
     for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do

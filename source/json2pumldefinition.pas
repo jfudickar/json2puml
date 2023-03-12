@@ -445,6 +445,7 @@ type
     FJobDescription: string;
     FJobname: string;
     FOnCalculateOutputFileName: TJson2PumlCalculateOutputFilenameEvent;
+    FOnNotifyChange: TNotifyEvent;
     FOption: string;
     FOutputFormats: tJson2PumlOutputFormats;
     FOutputFormatStr: string;
@@ -515,6 +516,7 @@ type
     property ExistsCount: Integer read GetExistsCount;
     property FileListFileName: string read FFileListFileName write FFileListFileName;
     property InputFile[index: Integer]: tJson2PumlInputFileDefinition read GetInputFile; default;
+    property OnNotifyChange: TNotifyEvent read FOnNotifyChange write FOnNotifyChange;
     property OutputFormats: tJson2PumlOutputFormats read FOutputFormats;
     property OutputPathExpanded: string read GetOutputPathExpanded;
     property SummaryInputFile: tJson2PumlInputFileDefinition read GetSummaryInputFile;
@@ -1426,6 +1428,8 @@ var
 begin
   for InputFile in self do
   begin
+    if Assigned(OnNotifyChange) then
+      OnNotifyChange(Self);
     if not InputFile.IsOriginal then
       Continue;
     if ExpandInputListCurlFile (InputFile) then

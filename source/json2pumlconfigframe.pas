@@ -70,6 +70,9 @@ type
 
 implementation
 
+uses
+  System.UITypes;
+
 {$R *.dfm}
 
 constructor TJson2PumlConfigurationFrame.Create (AOwner: TComponent);

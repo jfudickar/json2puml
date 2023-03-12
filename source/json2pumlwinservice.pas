@@ -60,7 +60,7 @@ end;
 
 procedure TJ2PWinService.ServiceCreate(Sender: TObject);
 begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, true, false);
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, false);
   GlobalLogHandler.Info('Service Created');
   GlobalConfigurationDefinition.LogConfiguration;
   if WebRequestHandler <> nil then

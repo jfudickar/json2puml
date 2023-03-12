@@ -56,8 +56,8 @@ type
       const iOutputFile: string; iExecuteEvaluation: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
       iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
       var oProtocolCurlCommand: string): Boolean;
-    class function ReplaceCurlVariablesFromEnvironment(iValue: string): string;
-    class function CleanUnusedCurlVariables(iValue: string): string;
+    class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
+    class function CleanUnusedCurlVariables (iValue: string): string;
   end;
 
 function FileCount (iFileFilter: string): Integer;
@@ -603,7 +603,7 @@ begin
     Result := iCurlDetailParameterList.ReplaceParameterValues (Result);
   if Assigned (iCurlParameterList) then
     Result := iCurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
 end;
 
 class function TCurlUtils.CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
@@ -637,7 +637,7 @@ begin
     Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
   if Assigned (iCurlParameterList) then
     Command := iCurlParameterList.ReplaceParameterValues (Command);
-  Command := ReplaceCurlVariablesFromEnvironment(Command);
+  Command := ReplaceCurlVariablesFromEnvironment (Command);
   if iIncludeWriteOut then
     Command := Format ('%s --write-out "%s" ',
       [Command, '\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}']);
@@ -734,8 +734,8 @@ begin
     ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues (ExecuteEvaluation);
   if Assigned (iCurlParameterList) then
     ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues (ExecuteEvaluation);
-  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment(ExecuteEvaluation);
-  ExecuteEvaluation := CleanUnusedCurlVariables(ExecuteEvaluation);
+  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment (ExecuteEvaluation);
+  ExecuteEvaluation := CleanUnusedCurlVariables (ExecuteEvaluation);
   try
     if not CheckEvaluation (ExecuteEvaluation) then
     begin
@@ -743,7 +743,7 @@ begin
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
       Exit;
     end
-    else if not iExecuteEvaluation.Trim.IsEmpty then
+    else if not iExecuteEvaluation.Trim.isEmpty then
       GlobalLoghandler.debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
   except
@@ -812,66 +812,66 @@ begin
   end;
 end;
 
-class function TCurlUtils.ReplaceCurlVariablesFromEnvironment(iValue: string): string;
+class function TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue: string): string;
 var
   Value: string;
-  S, v: string;
+  s, v: string;
   i: Integer;
 begin
-  S := iValue;
+  s := iValue;
   Value := '';
-  while not S.IsEmpty do
+  while not s.isEmpty do
   begin
-    i := S.IndexOf ('${');
+    i := s.IndexOf ('${');
     if i < 0 then
     begin
-      Value := Value + S;
-      break;
+      Value := Value + s;
+      Break;
     end;
-    Value := S.Substring (0, i);
-    S := S.Substring (i);
-    i := S.IndexOf ('}');
+    Value := s.Substring (0, i);
+    s := s.Substring (i);
+    i := s.IndexOf ('}');
     if i < 0 then
     begin
-      Value := Value + S;
-      break;
+      Value := Value + s;
+      Break;
     end;
-    v := S.Substring (2, i - 2);
+    v := s.Substring (2, i - 2);
     v := GetEnvironmentVariable (v);
-    if v.IsEmpty then
-      Value := Value + S.Substring (0, i + 1)
+    if v.isEmpty then
+      Value := Value + s.Substring (0, i + 1)
     else
       Value := Value + v;
-    S := S.Substring (i + 1);
+    s := s.Substring (i + 1);
   end;
   Result := Value;
 end;
 
-class function TCurlUtils.CleanUnusedCurlVariables(iValue: string): string;
+class function TCurlUtils.CleanUnusedCurlVariables (iValue: string): string;
 var
   Value: string;
-  S, v: string;
+  s: string;
   i: Integer;
 begin
-  S := iValue;
+  s := iValue;
   Value := '';
-  while not S.IsEmpty do
+  while not s.isEmpty do
   begin
-    i := S.IndexOf ('${');
+    i := s.IndexOf ('${');
     if i < 0 then
     begin
-      Value := Value + S;
-      break;
+      Value := Value + s;
+      Break;
     end;
-    Value := S.Substring (0, i);
-    S := S.Substring (i);
-    i := S.IndexOf ('}');
+    Value := s.Substring (0, i);
+    s := s.Substring (i);
+    i := s.IndexOf ('}');
     if i < 0 then
     begin
-      Value := Value + S;
-      break;
+      Value := Value + s;
+      Break;
     end;
-    S := S.Substring (i + 1);
+    s := s.Substring (i + 1);
   end;
   Result := Value;
 end;
