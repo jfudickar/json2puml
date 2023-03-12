@@ -27,6 +27,8 @@ You can find further details around **plantuml** here : https://plantuml.com/en/
 
 The generated outcome can look like this image of an SpaceX launch sample:
 ![](documentation/images/spacex_launch/spacex_launch_latest.compact.svg)
+This image is based on the following json data
+![](documentation/images/spacex_launch/spacex_launch_latest.json.png)
 
 # How to start
 * A short introduction can be found here: ![json2puml introduction](documentation/json2puml%20introduction.pdf).
