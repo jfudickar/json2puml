@@ -57,9 +57,8 @@ Source: "..\source\Linux64\Release\json2puml"; DestDir: "{app}\docker\src\json2p
 Source: "..\source\Linux64\Release\json2pumlservice"; DestDir: "{app}\docker\src\json2puml\bin\"; Flags: ignoreversion; Components: Docker
 Source: "..\documentation\json2puml documentation.pdf"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
 Source: "..\documentation\json2puml introduction.pdf"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
-Source: "..\documentation\release-notes.txt"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
+Source: "..\documentation\changelog.md"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
 Source: "..\documentation\json2puml.yaml"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
-Source: "..\documentation\*.md"; DestDir: "{app}\documentation"; Flags: ignoreversion; Components: Documentation
 
 Source: "{tmp}\{#plantumljarfile}"; DestDir: "{app}\plantuml"; Flags: external; Tasks: downloadPlantUml
 
@@ -77,7 +76,7 @@ Source: "..\samples\tmf\tmf-productdetail.json"; DestDir: "{app}\samples\tmf"; C
 Source: "..\samples\tmf\*.md"; DestDir: "{app}\samples\tmf"; Components: Samples
 Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\service\*.json"; DestDir: "{app}\samples\service"; Components: Samples
-Source: "..\samples\service\*.cmd"; DestDir: "{app}\samples\service"; Components: Samples; Excludes: "*vm.cmd" 
+Source: "..\samples\service\*.cmd"; DestDir: "{app}\samples\service"; Components: Samples; Excludes: "*vm.cmd"
 Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
 Source: "..\samples\tvmaze\*.json"; DestDir: "{app}\samples\tvmaze"; Components: Samples
 Source: "..\samples\tvmaze\*.cmd"; DestDir: "{app}\samples\tvmaze"; Components: Samples
