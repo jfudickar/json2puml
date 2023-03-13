@@ -5,9 +5,9 @@
 #define MyAppVersion GetVersionNumbersString("..\source\Win64\Release\json2puml.exe")
 #define MyAppPublisher "Jens Fudickar"
 #define MyAppExeName "json2puml.exe"
-#define plantumljarversion "1.2023.2"
-#define plantumljarlink "https://github.com/plantuml/plantuml/releases/download/v1.2023.2/" 
-#define plantumljarfile "plantuml-1.2023.2.jar"
+#define plantumljarversion "1.2023.4"
+#define plantumljarlink "https://github.com/plantuml/plantuml/releases/download/v1.2023.4/" 
+#define plantumljarfile "plantuml-1.2023.4.jar"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
