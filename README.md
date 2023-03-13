@@ -10,11 +10,14 @@ Make data visible and understandable
  * **json2puml** is free to use for everyone.
 
 # How can it be used
- * **json2puml** is available as
-	 * Windows command line utility
-	 * Windows base microservice
-	 * Linux command line utility  (standalone and as a docker container)
-	 * Linux based microservice (standalone and as a docker container)
+**json2puml** is available as
+* Windows command line utility
+* Windows base microservice
+* Linux command line utility (*) (standalone and as a docker container) 
+* Linux based microservice (*) (standalone and as a docker container)
+
+(*) Linux is officially supported for Intel 64-bit and Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, RedHat Enterprise Linux (version 8), and WSL2 (Windows Subsystem for Linux). Other editions should work also, but they are not officially tested.
+
 
 # How it's working
 **json2puml** is based on three different steps:
@@ -35,6 +38,8 @@ This image is based on the following json data
 * A full documentation can be found here: ![json2puml documentation](documentation/json2puml%20documentation.pdf).
 * Sample files for different public api's can be found in the ![samples](samples) folder.
 
+# What has been changed?
+Have a look into the ![change log](documentation/changelog.md).
 
 # License
 **json2puml** is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
