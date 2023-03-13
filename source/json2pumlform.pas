@@ -39,7 +39,7 @@ uses
   Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
   Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
-  json2pumlbasedefinition, json2pumlvcltools;
+  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar;
 
 type
   tOutputFileFrame = class(TObject)
@@ -183,6 +183,7 @@ type
     titlefilterEdit: TEdit;
     OpenCurrentJSONAction: TAction;
     OpenConfigurationFileExternal: TAction;
+    Taskbar: TTaskbar;
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
     procedure CopyCurrentPUMLActionExecute (Sender: TObject);
@@ -240,7 +241,7 @@ type
     function GetCurrentPage: tJson2PumlPage;
     procedure InitFormDefaultLogger;
     procedure InitializeInputHandler;
-    procedure HandleNotifyChange (Sender: TObject);
+    procedure HandleNotifyChange(Sender: TObject; ProgressValue, ProgressMaxValue : Integer);
     procedure SetCurrentPage (const Value: tJson2PumlPage);
     property CurlAuthenticationFileLines: TStrings read FCurlAuthenticationFileLines write FCurlAuthenticationFileLines;
     property CurlParameterFileLines: TStrings read FCurlParameterFileLines write FCurlParameterFileLines;
@@ -335,6 +336,7 @@ end;
 procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: TObject);
 begin
   FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
+  TaskBar.ProgressState := TTaskBarProgressState.None;
 end;
 
 procedure Tjson2pumlMainForm.AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
@@ -357,6 +359,7 @@ procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: TObject
 begin
   LockWindowUpdate (Handle);
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
+  TaskBar.ProgressState := TTaskBarProgressState.Normal;
   UpdateAllInfos;
 end;
 
@@ -1135,12 +1138,15 @@ begin
   inherited Destroy;
 end;
 
-procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: TObject);
+procedure Tjson2pumlMainForm.HandleNotifyChange(Sender: TObject; ProgressValue, ProgressMaxValue : Integer);
 begin
 {$IFDEF SYNEDIT}
   if Assigned (fLogMemo) then
     TSynEdit (fLogMemo).CaretY := TSynEdit (fLogMemo).Lines.Count + 1;
 {$ENDIF}
+  Application.ProcessMessages;
+  Taskbar.ProgressValue := ProgressValue;
+  Taskbar.ProgressMaxValue := ProgressMaxValue;
 end;
 
 end.

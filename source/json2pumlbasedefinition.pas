@@ -29,9 +29,9 @@ interface
 uses System.JSON, System.Classes, json2pumlconst;
 
 type
-  TJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
+  tJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
     : string of object;
-
+  tJson2PumlNotifyChangeEvent = procedure(Sender : TObject; ProgressValue, ProgressMaxValue : Integer) of object;
   tJson2PumlOutputFormatHelper = record helper for tJson2PumlOutputFormat
     function FileExtension (iLeadingSeparator: boolean = false): string;
     procedure FromString (aValue: string);

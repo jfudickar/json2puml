@@ -111,7 +111,7 @@ type
     FIntOptionFileLines: TStrings;
     FIntParameterFileLines: TStrings;
     FIntServerResultLines: TStrings;
-    FOnNotifyChange: TNotifyEvent;
+    FOnNotifyChange: tJson2PumlNotifyChangeEvent;
     FOptionFileDefinition: tJson2PumlConverterDefinition;
     FOptionFileLines: TStrings;
     FParameterDefinition: tJson2PumlParameterFileDefinition;
@@ -150,7 +150,7 @@ type
     function GetOptionFileLines: TStrings;
     function GetParameterFileLines: TStrings;
     function GetServerResultLines: TStrings;
-    procedure SetOnNotifyChange (const Value: TNotifyEvent);
+    procedure SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);
   protected
     procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
@@ -236,7 +236,7 @@ type
     property CurrentSummaryFileName: string read GetCurrentSummaryFileName;
     property DefinedOption: string read GetDefinedOption;
     property HandlerRecord[index: Integer]: TJson2PumlInputHandlerRecord read GetHandlerRecord; default;
-    property OnNotifyChange: TNotifyEvent read FOnNotifyChange write SetOnNotifyChange;
+    property OnNotifyChange: tJson2PumlNotifyChangeEvent read FOnNotifyChange write SetOnNotifyChange;
     property AfterCreateAllRecords: TNotifyEvent read FAfterCreateAllRecords write FAfterCreateAllRecords;
     property AfterCreateRecord: TJson2PumlInputHandlerRecordEvent read FAfterCreateRecord write FAfterCreateRecord;
     property AfterHandleAllRecords: TNotifyEvent read FAfterHandleAllRecords write FAfterHandleAllRecords;
@@ -634,12 +634,12 @@ begin
     Converter.InputHandler := self;
     for i := 0 to HandlerRecordList.Count - 1 do
     begin
+      if Assigned (OnNotifyChange) then
+        OnNotifyChange (self, i+1, HandlerRecordList.Count);
       if (iIndex >= 0) and (iIndex < HandlerRecordList.Count) then
         if i <> iIndex then
           Continue;
       SingleRecord := self[i];
-      if Assigned (OnNotifyChange) then
-        OnNotifyChange (self);
 
       SingleRecord.ConverterLog.Clear;
       OutputFormats := GetCurrentOutputFormats;
@@ -717,7 +717,7 @@ begin
     Converter.Free;
   end;
   if Assigned (OnNotifyChange) then
-    OnNotifyChange (self);
+    OnNotifyChange (self,0,0);
 end;
 
 procedure TJson2PumlInputHandler.CreateAllRecords;
@@ -1463,7 +1463,7 @@ begin
     RecreateAllRecords;
 end;
 
-procedure TJson2PumlInputHandler.SetOnNotifyChange (const Value: TNotifyEvent);
+procedure TJson2PumlInputHandler.SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);
 begin
   FOnNotifyChange := Value;
   ConverterInputList.OnNotifyChange := Value;

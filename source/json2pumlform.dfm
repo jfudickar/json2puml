@@ -1960,4 +1960,10 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Left = 904
     Top = 664
   end
+  object Taskbar: TTaskbar
+    TaskBarButtons = <>
+    TabProperties = []
+    Left = 664
+    Top = 456
+  end
 end

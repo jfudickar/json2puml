@@ -124,8 +124,9 @@ begin
   GlobalLogFileProvider.FileName :=
     ExpandFileName (tPath.Combine(iLogFilePath, ChangeFileExt(ExtractFileName(ParamStr(0)), '.log')));
   GlobalLogFileProvider.DailyRotate := True;
-  GlobalLogFileProvider.MaxFileSizeInMB := 10;
-  GlobalLogFileProvider.MaxRotateFiles := 50;
+  GlobalLogFileProvider.DailyRotateFileDateFormat := 'yyyymmdd';
+  GlobalLogFileProvider.MaxFileSizeInMB := 50;
+  GlobalLogFileProvider.MaxRotateFiles := 20;
   GlobalLogFileProvider.AutoFlush := true;
   GlobalLogFileProvider.LogLevel := LOG_DEBUG;
   GlobalLogFileProvider.TimePrecission := True;
