@@ -316,8 +316,6 @@
 				"name"
 		],
 		"objectDetailProperties":  [
-				"xrocket.engines",
-				"xrocket.*stage",
 				"dragon",
 				"composite_fairing"
 		],
@@ -364,15 +362,14 @@
 				"links",
 				"engines",
 				"rocket.*stage",
-				"xfirst_stage",
-				"xsecond_stage",
 				{"parentProperty": "payload_weights", "type": "list", "propertyList": ["name", "kg", "lb"]}
 		],
 		"hiddenProperties":  [
 				"*.launches"
 		],
 		"pumlHeaderLines":  [
-				"hide stereotype"
+				"hide stereotype",
+				"hide empty member"
 		],
 		"objectFormats": {
 			"baseFormat": {

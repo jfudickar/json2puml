@@ -769,6 +769,7 @@
 		],
 		"pumlHeaderLines":  [
 				"hide stereotype",
+				"hide empty member",
 				"'left to right direction",
 				"'skinparam linetype polyline",
 				"'skinparam linetype ortho",
