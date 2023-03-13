@@ -6,4 +6,4 @@ This folder contains different to document the solution
 - models\ : Plantuml definitions for the datamodel and dataflow pictures used in the documentation
 - json2puml documentation.docx + pdf : Overall documentation of **Json2Puml**
 - json2puml introduction.pptx + pdf : Introduction Presentation of **Json2Puml**
-- release-notes.txt : Release notes document
+- changelog.md : Change Log
