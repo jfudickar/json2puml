@@ -74,6 +74,7 @@ class SingleListFile {
     ---
     curlBaseUrl : String
     curlUrl : String
+    curlExecuteEvaluation : String
     curlFileSuffix : String
     curlFormatOutput : Boolean
 	curlCache : Integer
