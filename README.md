@@ -3,7 +3,7 @@
 Make data visible and understandable
 
 # One Solution for multiple needs
- * **json2puml** is a command line tool to convert JSON data into PlantUML based diagrams.
+ * **json2puml** allows to convert JSON data into PlantUML based diagrams.
  * **json2puml** has an understanding of how data is structured (in TMF) and simplifies and visualises the outcome.
  * **json2puml** has the possibility to combine the JSON results of multiple API calls into one result set.
  * **json2puml** is highly configurable to generate outcomes in different detailed levels.
