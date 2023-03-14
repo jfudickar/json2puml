@@ -16,7 +16,7 @@ Make data visible and understandable
 * Linux command line utility (*) (standalone and as a docker container) 
 * Linux based microservice (*) (standalone and as a docker container)
 
-(*) Linux is officially supported for Intel 64-bit and Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, RedHat Enterprise Linux (version 8), and WSL2 (Windows Subsystem for Linux). Other editions should work also, but they are not officially tested.
+(*) Linux is officially supported for x86 64-bit and Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, RedHat Enterprise Linux (version 8), and WSL2 (Windows Subsystem for Linux). Other editions should work also, but they are not officially tested.
 
 
 # How it's working
