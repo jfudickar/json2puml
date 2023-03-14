@@ -3,7 +3,7 @@
 Make data visible and understandable
 
 # One Solution for multiple needs
- * **json2puml** is a command line tool developed to generate PlantUML files based JSON files.
+ * **json2puml** allows to convert JSON data into PlantUML based diagrams.
  * **json2puml** has an understanding of how data is structured (in TMF) and simplifies and visualises the outcome.
  * **json2puml** has the possibility to combine the JSON results of multiple API calls into one result set.
  * **json2puml** is highly configurable to generate outcomes in different detailed levels.
@@ -16,7 +16,7 @@ Make data visible and understandable
 * Linux command line utility (*) (standalone and as a docker container) 
 * Linux based microservice (*) (standalone and as a docker container)
 
-(*) Linux is officially supported for Intel 64-bit and Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, RedHat Enterprise Linux (version 8), and WSL2 (Windows Subsystem for Linux). Other editions should work also, but they are not officially tested.
+(*) Linux is officially supported for x86 64-bit and Ubuntu 20.04 LTS, Ubuntu 18.04 LTS, RedHat Enterprise Linux (version 8), and WSL2 (Windows Subsystem for Linux). Other editions should work also, but they are not officially tested.
 
 
 # How it's working
