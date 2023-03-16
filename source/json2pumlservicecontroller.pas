@@ -352,9 +352,9 @@ begin
 end;
 
 procedure TJson2PumlController.LogRequestStart (iContext: TWebContext);
-var
-  Name: string;
-  I: Integer;
+//var
+//  Name: string;
+//  I: Integer;
 
 begin
   GlobalLoghandler.Trace ('%s started', [Context.Request.PathInfo]);
