@@ -1,3 +1,11 @@
+# **json2puml v2.1.2.77** - 16.03.2023
+## All Editions 
+### Changed Feature
+- Fixed handling of replacing curl variables with environment variables (which could lead to invalid target file names of the curl operations and invalid urls)
+## Service Application
+### Changed Feature
+- HTTP header and body are no longer protocolled to reduce the risk of protocolling critical data (e.g. curl authentication parameter)
+
 # **json2puml v2.1.1.76** - 13.03.2023
 ## All Editions 
 ### Changed Feature
