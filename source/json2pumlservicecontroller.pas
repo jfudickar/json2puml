@@ -358,16 +358,18 @@ var
 
 begin
   GlobalLoghandler.Trace ('%s started', [Context.Request.PathInfo]);
-  if Context.Request.RawWebRequest is TIdHTTPAppRequest then
-  begin
-    for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do
-    begin
-      name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
-      GlobalLoghandler.Info ('Header %s : %s', [name, Context.Request.Headers[name]]);
-    end;
-    if not Context.Request.Body.IsEmpty then
-      GlobalLoghandler.Info ('Body : %s ', [Context.Request.Body]);
-  end;
+// Deactivated because of critical data which can be in header or body (e.g. Curl Authentication Parameter)
+// Should only be activated if realy needed for testing
+//  if Context.Request.RawWebRequest is TIdHTTPAppRequest then
+//  begin
+//    for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do
+//    begin
+//      name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
+//      GlobalLoghandler.Debug  ('Header %s : %s', [name, Context.Request.Headers[name]]);
+//    end;
+//    if not Context.Request.Body.IsEmpty then
+//      GlobalLoghandler.Debug ('Body : %s ', [Context.Request.Body]);
+//  end;
 end;
 
 end.
