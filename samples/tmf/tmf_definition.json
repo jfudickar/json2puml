@@ -46,7 +46,8 @@
 					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
-							"contact*"
+							"contact*",
+							"metadata*"
 					],
 					"pumlHeaderLines":  [
 					],
@@ -121,6 +122,7 @@
 					"characteristicProperties":  [
 					],
 					"hiddenProperties":  [
+							"metadata*"
 					],
 					"pumlHeaderLines":  [
 					],
@@ -636,7 +638,8 @@
 				"telephone=contactMedium",
 				"postalAddress=contactMedium",
 				"originalaccount=account",
-				"customerEntity=customer"
+				"customerEntity=customer",
+				"billingAccountExtended=billingAccount"
 		],
 		"objectIdentifierProperties":  [
 				"id",
