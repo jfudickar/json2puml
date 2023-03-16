@@ -828,7 +828,7 @@ begin
       Value := Value + s;
       Break;
     end;
-    Value := s.Substring (0, i);
+    Value := Value + s.Substring (0, i);
     s := s.Substring (i);
     i := s.IndexOf ('}');
     if i < 0 then
@@ -837,7 +837,7 @@ begin
       Break;
     end;
     v := s.Substring (2, i - 2);
-    v := GetEnvironmentVariable (v);
+    v := GetEnvironmentVariable (v.trim);
     if v.isEmpty then
       Value := Value + s.Substring (0, i + 1)
     else
@@ -863,7 +863,7 @@ begin
       Value := Value + s;
       Break;
     end;
-    Value := s.Substring (0, i);
+    Value := Value + s.Substring (0, i);
     s := s.Substring (i);
     i := s.IndexOf ('}');
     if i < 0 then
