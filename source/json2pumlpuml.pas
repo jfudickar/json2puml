@@ -1062,7 +1062,7 @@ var
           'to ' + r.PropertyName))
       else
         ipuml.add (tPumlHelper.RelationLine(GroupIdent, r.ArrowFormat, r.RelatedObject.PlantUmlIdent,
-          'from ' + r.ParentUmlObject.ObjectType));
+          Format ('from\n%s.%s', [r.ParentUmlObject.ObjectType, r.PropertyName])));
       iGroupCountList.ValueFromIndex[i] := (iGroupCountList.ValueFromIndex[i].ToInteger + 1).ToString;
       ipuml.add (Format('%s %s', [ClassIdent, Color]));
     end;
