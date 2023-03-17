@@ -749,7 +749,7 @@ begin
   except
     on e: exception do
       GlobalLoghandler.Error ('curl file %s skipped - Exception "%s" raised when validating [%s]',
-        [iOutputFile, e.Message]);
+        [iOutputFile, e.Message, iExecuteEvaluation]);
   end;
 
   Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
