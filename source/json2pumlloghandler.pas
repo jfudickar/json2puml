@@ -72,7 +72,8 @@ implementation
 
 uses
   System.SysUtils, Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
-  Quick.Logger.Provider.StringList;
+  Quick.Logger.Provider.StringList, Quick.Logger.ExceptionHook, Quick.Logger.RuntimeErrorHook,
+  Quick.Logger.UnhandledExceptionHook;
 
 var
   IntGlobalLogHandler: TJson2PumlLogHandler;
