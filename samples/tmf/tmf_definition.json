@@ -620,7 +620,9 @@
 				"document",
 				"billsummary",
 				"billsummaryItem",
-				"subscription"
+				"subscription",
+				"PartyPrivacyProfile",
+				"partyPrivacyProfileSpecification"
 		],
 		"objectTypeProperties":  [
 				"refType",
@@ -704,7 +706,8 @@
 				"BillSummary",
 				"Document",
 				"CustomerBill",
-				"bankAccountDebit"
+				"bankAccountDebit",
+				"partyPrivacyProfile.*"
 		],
 		"characteristicProperties":  [
 				{"parentProperty": "metadata", "type": "list", "propertyList": ["name", "value", "*"]},
@@ -750,6 +753,7 @@
 				"billStructure",
 				"appliedTax",
 				"billingPeriod",
+				{"parentProperty": "languageAbility", "type": "list"},
 				{"parentProperty": "billsummaryItem", "type": "list"},
 				{"parentProperty": "totalAmount", "type": "list"},
 				{"parentProperty": "taxItem", "type": "list"},
@@ -945,6 +949,14 @@
 							],
 							"iconColor": "grey",
 							"skinParams": ["BackgroundColor=lightgrey"]
+						}
+					},
+					{
+						"formatName": "privacy",
+						"definition": {
+							"objectFilter": ["PartyPrivacyProfile*"],
+							"iconColor": "lightslategrey",
+							"skinParams": ["BackgroundColor=lightsteelblue"]
 						}
 					}
 			]

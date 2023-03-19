@@ -1,3 +1,10 @@
+# **json2puml v2.1.3.78** - 19.03.2023
+## All Editions 
+### Changed Feature
+- Fixed exception when protocoling an exception which came up when exectuing the curl file evaluation
+- Added the propertyName to the relationship from the group object to the to-object
+- Additional log handler to protocol exceptions
+
 # **json2puml v2.1.2.77** - 16.03.2023
 ## All Editions 
 ### Changed Feature
