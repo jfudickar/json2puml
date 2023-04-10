@@ -1,3 +1,9 @@
+# **json2puml v2.1.4.79** - 10.04.2023
+## All Editions 
+### Changed Feature
+- Fixed defect [Configuration Parameter "javaRuntimeParameter" not working #1](https://github.com/jfudickar/json2puml/issues/1)
+- Fixed defect [Commandlineparameter /outputformat is not correctly reflected in log messages #2](https://github.com/jfudickar/json2puml/issues/2)
+
 # **json2puml v2.1.3.78** - 19.03.2023
 ## All Editions 
 ### Changed Feature

@@ -20,7 +20,7 @@
 		"e:\\Delphi\\Projects\\json2puml\\samples\\swapi\\*inputlist*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\tvmaze\\*inputlist*.json"
 	],
-	"javaRuntimeParameter": null,
+	"javaRuntimeParameter": "-DPLANTUML_LIMIT_SIZE=8192",
 	"logFileOutputPath": "e:\\Delphi\\Projects\\json2puml\\runtime\\logs\\",
 	"plantUmlJarFileName": null,
 	"servicePort": "8080"

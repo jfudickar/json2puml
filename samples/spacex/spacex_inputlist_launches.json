@@ -21,7 +21,7 @@
 	"option": null,
 	"job": null,
 	"jobDescription": null,
-	"outputFormats":["svg"],
+	"outputFormats": "svg",
 	"outputPath": null,
 	"outputSuffix": ".<option>",
 	"curlBaseUrl": "https://api.spacexdata.com/",
