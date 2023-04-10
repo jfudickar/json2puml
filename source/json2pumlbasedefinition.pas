@@ -31,7 +31,8 @@ uses System.JSON, System.Classes, json2pumlconst;
 type
   tJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
     : string of object;
-  tJson2PumlNotifyChangeEvent = procedure(Sender : TObject; ProgressValue, ProgressMaxValue : Integer) of object;
+  tJson2PumlNotifyChangeEvent = procedure(Sender: TObject; ProgressValue, ProgressMaxValue: Integer) of object;
+
   tJson2PumlOutputFormatHelper = record helper for tJson2PumlOutputFormat
     function FileExtension (iLeadingSeparator: boolean = false): string;
     procedure FromString (aValue: string);
@@ -71,7 +72,7 @@ type
     function GetIdent: string; virtual; abstract;
     function GetIsFilled: boolean; virtual;
     function GetIsValid: boolean; virtual;
-    function JsonAttributeValue(iPropertyName, iValue: string; iValueQuotes: Boolean = true): string;
+    function JsonAttributeValue (iPropertyName, iValue: string; iValueQuotes: boolean = true): string;
     function JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;
     function JsonPropertyName (iPropertyName: string): string;
     function MergeValue (iValue, iNewValue: string): string;
@@ -154,7 +155,6 @@ type
     property Text: string read GetText write SetText;
   end;
 
-
   tJson2PumlBasePropertyList = class(tJson2PumlBaseList)
   protected
     function GetIsValid: boolean; override;
@@ -170,43 +170,10 @@ type
   tJson2PumlBaseObjectClass = class of tJson2PumlBaseObject;
   tJson2PumlBaseListClass = class of tJson2PumlBaseList;
 
-function OutputFormatsFromString (iOutputFormats: string): tJson2PumlOutputFormats;
-
-function OutputFormatsToString (iOutputFormats: tJson2PumlOutputFormats): string;
-
 implementation
 
 uses
   System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks, System.Generics.Collections;
-
-function OutputFormatsFromString (iOutputFormats: string): tJson2PumlOutputFormats;
-var
-  TempList: TStringList;
-var
-  f: tJson2PumlOutputFormat;
-begin
-  TempList := TStringList.Create;
-  try
-    TempList.Text := iOutputFormats.ToLower;
-    Result := [];
-    for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
-    begin
-      if TempList.IndexOf (cJson2PumlOutputFormat[f]) >= 0 then
-        Result := Result + [f];
-    end;
-  finally
-    TempList.Free;
-  end;
-end;
-
-function OutputFormatsToString (iOutputFormats: tJson2PumlOutputFormats): string;
-var
-  f: tJson2PumlOutputFormat;
-begin
-  Result := '';
-  for f in iOutputFormats do
-    Result := Format ('%s"%s",', [Result, f.ToString]);
-end;
 
 function tJson2PumlOutputFormatHelper.FileExtension (iLeadingSeparator: boolean = false): string;
 begin
@@ -292,7 +259,7 @@ var
   f: tJson2PumlOutputFormat;
 begin
   S := '';
-  for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
+  for f in self do
     if (not iPumlOutputOnly or f.IsPumlOutput) then
       S := string.Join (',', [S, f.ToString]);
   Result := S.TrimLeft ([',']);
@@ -371,7 +338,7 @@ begin
   Result := IsFilled;
 end;
 
-function tJson2PumlBaseObject.JsonAttributeValue(iPropertyName, iValue: string; iValueQuotes: Boolean = true): string;
+function tJson2PumlBaseObject.JsonAttributeValue (iPropertyName, iValue: string; iValueQuotes: boolean = true): string;
 begin
   Result := '';
   if iPropertyName.IsEmpty or iValue.IsEmpty then
@@ -710,7 +677,7 @@ begin
     if ListValueObject.ReadFromJson (iJsonValue, '') then
       AddBaseObject (ListValueObject)
     else
-     ListValueObject.Free;
+      ListValueObject.Free;
   end
   else if iJsonValue is TJSONString then
   begin

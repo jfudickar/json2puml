@@ -1427,12 +1427,12 @@ var
   Curr: Integer;
 
 begin
-  Curr:= 0;
+  Curr := 0;
   for InputFile in self do
   begin
     Inc (Curr);
-    if Assigned(OnNotifyChange) then
-      OnNotifyChange(Self, Curr, Count);
+    if Assigned (OnNotifyChange) then
+      OnNotifyChange (self, Curr, Count);
     if not InputFile.IsOriginal then
       Continue;
     if ExpandInputListCurlFile (InputFile) then
@@ -1769,8 +1769,8 @@ end;
 
 procedure tJson2PumlInputList.SetOutputFormatStr (const Value: string);
 begin
-  FOutputFormatStr := Value;
-  FOutputFormats.FromString (Value, true, true);
+  FOutputFormats.FromString (Value, false, true);
+  FOutputFormatStr := FOutputFormats.ToString(false);
 end;
 
 procedure tJson2PumlInputList.SetOutputPath (const Value: string);
@@ -1798,9 +1798,8 @@ begin
   WriteToJsonValue (oJsonOutPut, 'option', Option, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'job', Jobname, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'jobDescription', JobDescription, iLevel + 1, iWriteEmpty);
-  S := OutputFormatsToString (OutputFormats);
-  if not S.IsEmpty or iWriteEmpty then
-    oJsonOutPut.Add (Format('%s"%s":[%s],', [JsonLinePrefix(iLevel + 1), 'outputFormats', S.TrimRight([','])]));
+  OutputFormatStr := OutputFormats.ToString (false);
+  WriteToJsonValue (oJsonOutPut, 'outputFormats', OutputFormatStr, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputPath', OutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputSuffix', OutputSuffix, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlBaseUrl', CurlBaseUrl, iLevel + 1, iWriteEmpty);
@@ -3239,8 +3238,8 @@ end;
 
 procedure tJson2PumlParameterFileDefinition.SetOutputFormatStr (const Value: string);
 begin
-  FOutputFormatStr := Value;
   FOutputFormats.FromString (Value, false, true);
+  FOutputFormatStr := FOutputFormats.ToString (false);
 end;
 
 procedure tJson2PumlParameterFileDefinition.SetOutputSuffix (const Value: string);
@@ -3269,6 +3268,7 @@ begin
   InputFiles.WriteToJson (oJsonOutPut, 'inputFiles', iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'generateSummary', GenerateSummaryStr, iLevel + 1, iWriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'generateDetails', GenerateDetailsStr, iLevel + 1, iWriteEmpty, false);
+  OutputFormatStr := OutputFormats.ToString (false);
   WriteToJsonValue (oJsonOutPut, 'outputFormats', OutputFormatStr, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'option', Option, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputSuffix', OutputSuffix, iLevel + 1, iWriteEmpty);
