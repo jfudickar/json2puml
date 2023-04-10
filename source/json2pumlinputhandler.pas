@@ -944,7 +944,7 @@ end;
 
 function TJson2PumlInputHandler.GetCurrentJavaRuntimeParameter: string;
 begin
-  if CmdLineParameter.JavaRuntimeParameter.IsEmpty then
+  if not CmdLineParameter.JavaRuntimeParameter.IsEmpty then
     Result := CmdLineParameter.JavaRuntimeParameter
   else
     Result := GlobalConfiguration.JavaRuntimeParameter;
