@@ -99,10 +99,14 @@ UseRelativePaths=True
 ;Filename: "{app}\documentation\release-notes.txt"; Flags: nowait postinstall unchecked shellexec skipifsilent; Description: "Show Release Notes"
 Filename: "{app}\documentation\json2puml introduction.pdf"; Flags: nowait postinstall unchecked shellexec skipifsilent; Description: "Show Introduction"
 Filename: "{app}\documentation\json2puml documentation.pdf"; Flags: nowait postinstall unchecked shellexec skipifsilent; Description: "Show Documentation"
+Filename: "{app}\bin\json2puml.exe"; Parameters: "/generatedefaultconfiguration"; WorkingDir: "{app}\bin"
 
 [Dirs]
 Name: "{app}\bin"
 Name: "{app}\bin\linux"; Components: Linux
+Name: "{app}\definition"; 
+Name: "{app}\log"; 
+Name: "{app}\output";                                               
 Name: "{app}\documentation"; Components: Documentation
 Name: "{app}\plantuml"; Tasks: downloadPlantUml
 Name: "{app}\samples"; Components: Samples
@@ -119,7 +123,7 @@ Name: "{app}\docker"; Components: Docker
 Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "PlantUmlJarFile"; ValueData: "{app}\plantuml\{#plantumljarfile}"; Flags: uninsdeletevalue; Tasks: downloadPlantUml
 Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "Json2PumlDefinitionFile"; Flags: uninsdeletevalue createvalueifdoesntexist
 Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "Json2PumlCurlAuthenticationFile"; Flags: uninsdeletevalue createvalueifdoesntexist
-Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "Json2PumlConfigurationFile"; Flags: uninsdeletevalue createvalueifdoesntexist
+Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "Json2PumlConfigurationFile"; ValueData: "{app}\bin\json2pumlconfiguration.json"; Flags: uninsdeletevalue createvalueifdoesntexist
 
 [Tasks]
 Name: "envPath"; Description: "Add bin directory to PATH variable"
