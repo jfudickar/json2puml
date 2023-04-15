@@ -123,6 +123,7 @@ type
     function GetBaseOutputPath: string;
     function GetCount: Integer;
     function GetCurlParameterFileLines: TStrings;
+    function GetCurrentApplicationVersion: string;
     function GetCurrentConfigurationFileName: string;
     function GetCurrentCurlAuthenticationFileName: string;
     function GetCurrentDefinitionFileName: string;
@@ -139,6 +140,8 @@ type
     function GetCurrentOutputSuffix: string;
     function GetCurrentPlantUmlJarFileName: string;
     function GetCurrentSummaryFileName: string;
+    function GetCurrentCurlUserAgentInformation: string;
+    function GetCurrentCurlTraceIdHeader: string;
     function GetDefinedOption: string;
     function GetDefinitionLines: TStrings;
     function GetGenerateDetails: Boolean;
@@ -187,6 +190,7 @@ type
     destructor Destroy; override;
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     procedure BeginConvert;
+    function CalculateCurlAdditionalRuntimeOptions: string;
     function CalculateRuntimeJarFile: string;
     function CalculateSummaryPath: string;
     function CleanSummaryPath (iFileName: string): string;
@@ -219,6 +223,7 @@ type
     property CurlAuthenticationList: tJson2PumlCurlAuthenticationList read FCurlAuthenticationList;
     property CurlParameterFileLines: TStrings read GetCurlParameterFileLines write FCurlParameterFileLines;
     property CurlParameterList: tJson2PumlCurlParameterList read FCurlParameterList;
+    property CurrentApplicationVersion: string read GetCurrentApplicationVersion;
     property CurrentConfigurationFileName: string read GetCurrentConfigurationFileName;
     property CurrentConverterDefinition: tJson2PumlConverterDefinition read FCurrentConverterDefinition;
     property CurrentCurlAuthenticationFileName: string read GetCurrentCurlAuthenticationFileName;
@@ -234,6 +239,8 @@ type
     property CurrentOutputSuffix: string read GetCurrentOutputSuffix;
     property CurrentPlantUmlJarFileName: string read GetCurrentPlantUmlJarFileName;
     property CurrentSummaryFileName: string read GetCurrentSummaryFileName;
+    property CurrentCurlUserAgentInformation: string read GetCurrentCurlUserAgentInformation;
+    property CurrentCurlTraceIdHeader: string read GetCurrentCurlTraceIdHeader;
     property DefinedOption: string read GetDefinedOption;
     property HandlerRecord[index: Integer]: TJson2PumlInputHandlerRecord read GetHandlerRecord; default;
     property OnNotifyChange: tJson2PumlNotifyChangeEvent read FOnNotifyChange write SetOnNotifyChange;
@@ -467,6 +474,26 @@ begin
   end;
 end;
 
+function TJson2PumlInputHandler.CalculateCurlAdditionalRuntimeOptions: string;
+
+  function CalculateCurlTraceIdHeader: string;
+  var id : TGUID;
+  begin
+    Result:= '';
+    if CurrentCurlTraceIdHeader.IsEmpty then
+      Exit;
+    if CmdLineParameter.CurlPassThroughHeader.IndexOf(Format('"%s:', [CurrentCurlTraceIdHeader])) >= 0 then
+      Exit;
+    if CreateGUID(id) <> 0 then
+      Exit;
+    Result := TCurlUtils.CalculateHeaderParameter(CurrentCurlTraceIdHeader, GUIDToString(id));
+  end;
+
+begin
+  Result := TCurlUtils.CombineParameter ([CmdLineParameter.CurlPassThroughHeader,
+    TCurlUtils.CalculateUserAgentParameter(CurrentCurlUserAgentInformation), CalculateCurlTraceIdHeader]);
+end;
+
 procedure TJson2PumlInputHandler.CalculateCurrentConverterDefinition;
 begin
   if OptionFileDefinition.IsFilled then
@@ -635,7 +662,7 @@ begin
     for i := 0 to HandlerRecordList.Count - 1 do
     begin
       if Assigned (OnNotifyChange) then
-        OnNotifyChange (self, i+1, HandlerRecordList.Count);
+        OnNotifyChange (self, i + 1, HandlerRecordList.Count);
       if (iIndex >= 0) and (iIndex < HandlerRecordList.Count) then
         if i <> iIndex then
           Continue;
@@ -717,7 +744,7 @@ begin
     Converter.Free;
   end;
   if Assigned (OnNotifyChange) then
-    OnNotifyChange (self,0,0);
+    OnNotifyChange (self, 0, 0);
 end;
 
 procedure TJson2PumlInputHandler.CreateAllRecords;
@@ -731,7 +758,7 @@ begin
   try
     if Assigned (BeforeCreateAllRecords) then
       BeforeCreateAllRecords (self);
-    ConverterInputList.CurlPassThroughHeader := CmdLineParameter.CurlPassThroughHeader;
+    ConverterInputList.curlAdditionalRuntimeOptions := CalculateCurlAdditionalRuntimeOptions;
     ConverterInputList.ExpandInputList;
     GenSummary := CurrentGenerateSummary;
     GenDetails := CurrentGenerateDetails;
@@ -862,6 +889,11 @@ begin
     Result := FCurlParameterFileLines
   else
     Result := FIntCurlParameterFileLines;
+end;
+
+function TJson2PumlInputHandler.GetCurrentApplicationVersion: string;
+begin
+  Result := Format ('%s v%s', [ApplicationType.ApplicationName, cCurrentVersion]);
 end;
 
 function TJson2PumlInputHandler.GetCurrentConfigurationFileName: string;
@@ -1043,6 +1075,24 @@ begin
     Result := ConverterInputList.SummaryFileName;
   if Result.IsEmpty then
     Result := 'summary';
+end;
+
+function TJson2PumlInputHandler.GetCurrentCurlUserAgentInformation: string;
+begin
+  if not ConverterInputList.CurlUserAgentInformation.IsEmpty then
+    Result := ConverterInputList.CurlUserAgentInformation
+  else if not GlobalConfigurationDefinition.CurlUserAgentInformation.IsEmpty then
+    Result := GlobalConfigurationDefinition.CurlUserAgentInformation
+  else
+    Result := Format ('%s - %s', [CurrentApplicationVersion, ExtractFileName(CurrentInputListFileName)]).Trim;
+end;
+
+function TJson2PumlInputHandler.GetCurrentCurlTraceIdHeader: string;
+begin
+  if not ConverterInputList.CurlTraceIdHeader.IsEmpty then
+    Result := ConverterInputList.CurlTraceIdHeader
+  else
+    Result := GlobalConfigurationDefinition.CurlTraceIdHeader;
 end;
 
 function TJson2PumlInputHandler.GetDefinedOption: string;

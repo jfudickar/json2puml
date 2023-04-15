@@ -43,6 +43,10 @@ type
     function ToString: string;
   end;
 
+  tJson2PumlApplicationTypeHelper = record helper for tJson2PumlApplicationType
+    function ApplicationName: string;
+  end;
+
   tJson2PumlOutputFormatsHelper = record helper for tJson2PumlOutputFormats
     procedure FromString (aValue: string; iPumlOutputOnly: boolean; iSupportOutPutAll: boolean);
     function ToString (iPumlOutputOnly: boolean): string;
@@ -898,6 +902,11 @@ end;
 function tJson2PumlFileNameReplaceHelper.ToString: string;
 begin
   Result := cJson2PumlFileNameReplace[self];
+end;
+
+function tJson2PumlApplicationTypeHelper.ApplicationName: string;
+begin
+  Result := cJson2PumlApplicationTypeName[self];
 end;
 
 end.

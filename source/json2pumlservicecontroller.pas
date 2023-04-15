@@ -98,7 +98,7 @@ var
   procedure AddHeader (iName, iValue: string);
   begin
     if not iName.IsEmpty and not iValue.IsEmpty then
-      Result := Format ('%s  --header "%s: %s"', [Result, iName, iValue]).Trim;
+      Result := TCurlUtils.CombineParameter([Result, TCurlUtils.CalculateHeaderParameter(iName, iValue)]);
   end;
 
 begin

@@ -155,6 +155,8 @@ type
     FBaseOutputPath: string;
     FCurlAuthenticationFileName: string;
     FCurlPassThroughHeader: tStringList;
+    FCurlTraceIdHeader: string;
+    FCurlUserAgentInformation: string;
     FDefinitionFileSearchFolder: tStringList;
     FDefaultDefinitionFileName: string;
     FInputListFileSearchFolder: tStringList;
@@ -181,6 +183,8 @@ type
     property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
     property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
     property CurlPassThroughHeader: tStringList read FCurlPassThroughHeader;
+    property CurlTraceIdHeader: string read FCurlTraceIdHeader write FCurlTraceIdHeader;
+    property CurlUserAgentInformation: string read FCurlUserAgentInformation write FCurlUserAgentInformation;
     property DefinitionFileSearchFolder: tStringList read FDefinitionFileSearchFolder;
     property DefaultDefinitionFileName: string read FDefaultDefinitionFileName write FDefaultDefinitionFileName;
     property InputListFileSearchFolder: tStringList read FInputListFileSearchFolder;
@@ -433,8 +437,10 @@ type
     FCurlBaseUrl: string;
     FCurlOptions: string;
     FCurlParameterList: tJson2PumlCurlParameterList;
-    FCurlPassThroughHeader: string;
+    FcurlAdditionalRuntimeOptions: string;
+    FCurlTraceIdHeader: string;
     FCurlUrlAddon: string;
+    FCurlUserAgentInformation: string;
     FDefinitionFileName: string;
     FDetail: string;
     FDescription: tJson2PumlInputListDescriptionDefinition;
@@ -510,7 +516,7 @@ type
     property CurlAuthenticationList: tJson2PumlCurlAuthenticationList read FCurlAuthenticationList
       write FCurlAuthenticationList;
     property CurlParameterList: tJson2PumlCurlParameterList read FCurlParameterList write SetCurlParameterList;
-    property CurlPassThroughHeader: string read FCurlPassThroughHeader write FCurlPassThroughHeader;
+    property curlAdditionalRuntimeOptions: string read FcurlAdditionalRuntimeOptions write FcurlAdditionalRuntimeOptions;
     property DefinitionFileNameExpanded: string read GetDefinitionFileNameExpanded;
     property ExecuteCount: Integer read GetExecuteCount;
     property ExistsCount: Integer read GetExistsCount;
@@ -524,7 +530,9 @@ type
   published
     property CurlBaseUrl: string read FCurlBaseUrl write FCurlBaseUrl;
     property CurlOptions: string read FCurlOptions write FCurlOptions;
+    property CurlTraceIdHeader: string read FCurlTraceIdHeader write FCurlTraceIdHeader;
     property CurlUrlAddon: string read FCurlUrlAddon write FCurlUrlAddon;
+    property CurlUserAgentInformation: string read FCurlUserAgentInformation write FCurlUserAgentInformation;
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
     property Description: tJson2PumlInputListDescriptionDefinition read FDescription;
     property Detail: string read FDetail write FDetail;
@@ -1512,7 +1520,7 @@ begin
       begin
         SaveFileName := iCurrentInputFile.OutputFileName;
         Generated := iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon,
-          [CurlOptions, CurlPassThroughHeader], CurlParameterMatrix.RowParameterList[i], CurlParameterList,
+          [CurlOptions, curlAdditionalRuntimeOptions], CurlParameterMatrix.RowParameterList[i], CurlParameterList,
           CurlAuthenticationList);
         AddInputFileCurl (iCurrentInputFile.InputFileName, iCurrentInputFile.OutputFileName,
           iCurrentInputFile.LeadingObject, iCurrentInputFile.SplitInputFileStr, iCurrentInputFile.SplitIdentifier,
@@ -1756,6 +1764,9 @@ begin
   CurlBaseUrl := GetJsonStringValue (Definition, 'curlBaseUrl');
   CurlUrlAddon := GetJsonStringValue (Definition, 'curlUrlAddon');
   CurlOptions := GetJsonStringValue (Definition, 'curlOptions');
+  CurlUserAgentInformation := GetJsonStringValue (Definition, 'curlUserAgentInformation', CurlUserAgentInformation);
+  CurlTraceIdHeader := GetJsonStringValue (Definition, 'curlTraceIdHeader', CurlTraceIdHeader);
+
   GenerateDetailsStr := GetJsonStringValueBoolean (Definition, 'generateDetails', '');
   GenerateSummaryStr := GetJsonStringValueBoolean (Definition, 'generateSummary', '');
   SummaryFileName := GetJsonStringValue (Definition, 'summaryFile');
@@ -1770,7 +1781,7 @@ end;
 procedure tJson2PumlInputList.SetOutputFormatStr (const Value: string);
 begin
   FOutputFormats.FromString (Value, false, true);
-  FOutputFormatStr := FOutputFormats.ToString(false);
+  FOutputFormatStr := FOutputFormats.ToString (false);
 end;
 
 procedure tJson2PumlInputList.SetOutputPath (const Value: string);
@@ -1785,8 +1796,6 @@ end;
 
 procedure tJson2PumlInputList.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
   iWriteEmpty: boolean = false);
-var
-  S: string;
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   Description.WriteToJson (oJsonOutPut, 'description', iLevel + 1, iWriteEmpty);
@@ -1805,6 +1814,8 @@ begin
   WriteToJsonValue (oJsonOutPut, 'curlBaseUrl', CurlBaseUrl, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlUrlAddon', CurlUrlAddon, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlOptions', CurlOptions, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'curlUserAgentInformation', CurlUserAgentInformation, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'curlTraceIdHeader', CurlTraceIdHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'summaryFile', SummaryFileName, iLevel + 1, iWriteEmpty);
   inherited WriteToJson (oJsonOutPut, 'input', iLevel + 1, iWriteEmpty);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
@@ -2404,6 +2415,9 @@ begin
   InputListFileSearchFolder.Clear;
   DefaultDefinitionFileName := '';
   CurlAuthenticationFileName := '';
+  CurlUserAgentInformation := '';
+  CurlTraceIdHeader := '';
+  CurlPassThroughHeader.Clear;
 end;
 
 function tJson2PumlGlobalDefinition.FindDefinitionFile (iFileName: string): string;
@@ -2478,6 +2492,8 @@ begin
   GlobalLoghandler.Info ('Global Configuration (%s)', [SourceFileName]);
   GlobalLoghandler.Info ('  %-30s: %s', ['baseOutputPath', BaseOutputPath]);
   GlobalLoghandler.Info ('  %-30s: %s', ['curlAuthenticationFileName', CurlAuthenticationFileName]);
+  GlobalLoghandler.Info ('  %-30s: %s', ['CurlUserAgentInformation', CurlUserAgentInformation]);
+  GlobalLoghandler.Info ('  %-30s: %s', ['CurlTraceIdHeader', CurlTraceIdHeader]);
   GlobalLoghandler.Info ('  %-30s: ', ['curlPassThroughHeader']);
   for i := 0 to CurlPassThroughHeader.Count - 1 do
     GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), CurlPassThroughHeader[i]]);
@@ -2510,6 +2526,9 @@ begin
     CurlAuthenticationFileName);
   DefaultDefinitionFileName := GetJsonStringValue (DefinitionRecord, 'defaultDefinitionFileName',
     DefaultDefinitionFileName);
+  CurlUserAgentInformation := GetJsonStringValue (DefinitionRecord, 'curlUserAgentInformation',
+    CurlUserAgentInformation);
+  CurlTraceIdHeader := GetJsonStringValue (DefinitionRecord, 'curlTraceIdHeader', CurlTraceIdHeader);
   GetJsonStringValueList (DefinitionFileSearchFolder, DefinitionRecord, 'definitionFileSearchFolder');
   GetJsonStringValueList (InputListFileSearchFolder, DefinitionRecord, 'inputListFileSearchFolder');
   JavaRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'javaRuntimeParameter', PlantUmlJarFileName);
@@ -2529,6 +2548,8 @@ begin
   WriteToJsonValue (oJsonOutPut, 'outputPath', OutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlAuthenticationFileName', CurlAuthenticationFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlPassThroughHeader', CurlPassThroughHeader, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'curlUserAgentInformation', CurlUserAgentInformation, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'curlTraceIdHeader', CurlTraceIdHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'defaultDefinitionFileName', DefaultDefinitionFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'definitionFileSearchFolder', DefinitionFileSearchFolder, iLevel + 1, false,
     iWriteEmpty);

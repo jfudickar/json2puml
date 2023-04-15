@@ -45,10 +45,16 @@ type
       iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList; iIncludeWriteOut: Boolean): string;
     class function FullUrl (const iBaseUrl: string; const iUrlParts: array of string;
       iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+    class function CalculateParameter (const iParameterName, iParameterValue: string; iQuoteValue: Boolean): string;
+    class function CalculateUrlParameter (const iUrl: string): string;
+    class function CalculateOutputParameter (const iOutput: string): string;
+    class function CalculateWriteOutParameter (const iWriteout: string): string;
   public
     class function CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
       const iOutputFile: string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
       iIncludeWriteOut: Boolean): string;
+    class function CalculateHeaderParameter (const iHeaderName: string; iHeaderValue: string): string;
+    class function CalculateUserAgentParameter (const iUserAgent: string): string;
     class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
       var oErrorMessage: string): Boolean;
     class function CheckEvaluation (iExecuteEvaluation: string): Boolean;
@@ -58,6 +64,7 @@ type
       var oProtocolCurlCommand: string): Boolean;
     class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
     class function CleanUnusedCurlVariables (iValue: string): string;
+    class function CombineParameter (iParameter: array of string): string;
   end;
 
 function FileCount (iFileFilter: string): Integer;
@@ -628,21 +635,61 @@ begin
   if Url.isEmpty then
     Exit;
 
-  Command := Format ('--url "%s" %s', [Url, string.Join(' ', iOptions).Trim]);
+  Command := CombineParameter ([CalculateUrlParameter(Url), CombineParameter(iOptions),
+    CalculateOutputParameter(iOutputFile)]);
+  if iIncludeWriteOut then
+    Command := CombineParameter
+      ([Command, CalculateWriteOutParameter
+      ('\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}')]);
+
   if Assigned (iCurlAuthenticationList) then
     Command := iCurlAuthenticationList.ReplaceParameterValues (iBaseUrl, Command);
-  Command := Format ('%s --output "%s"', [Command, iOutputFile]);
-
   if Assigned (iCurlDetailParameterList) then
     Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
   if Assigned (iCurlParameterList) then
     Command := iCurlParameterList.ReplaceParameterValues (Command);
   Command := ReplaceCurlVariablesFromEnvironment (Command);
-  if iIncludeWriteOut then
-    Command := Format ('%s --write-out "%s" ',
-      [Command, '\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}']);
 
   Result := Command;
+end;
+
+class function TCurlUtils.CalculateParameter (const iParameterName, iParameterValue: string;
+  iQuoteValue: Boolean): string;
+begin
+  if iQuoteValue then
+    Result := Format ('--%s "%s"', [iParameterName, iParameterValue])
+  else
+    Result := Format ('--%s %s', [iParameterName, iParameterValue]);
+end;
+
+class function TCurlUtils.CalculateUrlParameter (const iUrl: string): string;
+begin
+  Result := CalculateParameter ('url', iUrl, true);
+end;
+
+class function TCurlUtils.CalculateOutputParameter (const iOutput: string): string;
+begin
+  Result := CalculateParameter ('output', iOutput, true);
+end;
+
+class function TCurlUtils.CalculateUserAgentParameter (const iUserAgent: string): string;
+begin
+  Result := CalculateParameter ('user-agent', iUserAgent, true);
+end;
+
+class function TCurlUtils.CalculateHeaderParameter (const iHeaderName: string; iHeaderValue: string): string;
+begin
+  Result := CalculateParameter ('header', Format('%s: %s', [iHeaderName, iHeaderValue]), true);
+end;
+
+class function TCurlUtils.CalculateWriteOutParameter (const iWriteout: string): string;
+begin
+  Result := CalculateParameter ('write-out', iWriteout, true);
+end;
+
+class function TCurlUtils.CombineParameter (iParameter: array of string): string;
+begin
+  Result := string.Join (' ', iParameter).Trim;
 end;
 
 class function TCurlUtils.CheckEvaluation (iExecuteEvaluation: string): Boolean;
@@ -837,7 +884,7 @@ begin
       Break;
     end;
     v := s.Substring (2, i - 2);
-    v := GetEnvironmentVariable (v.trim);
+    v := GetEnvironmentVariable (v.Trim);
     if v.isEmpty then
       Value := Value + s.Substring (0, i + 1)
     else

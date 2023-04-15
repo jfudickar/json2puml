@@ -53,6 +53,7 @@ const
     '<file>');
   cUmlRelationDirection: array [tUmlRelationDirection] of string = ('To', 'From');
 
+
   cDefaultDefinitionFile = 'json2pumldefinition.json';
   cDefinitionFileRegistry = 'Json2PumlDefinitionFile';
   cConfigurationFileRegistry = 'Json2PumlConfigurationFile';
@@ -77,6 +78,10 @@ const
   cNewLinePuml = '\n';
 
   cCurrentVersion = '2.1.4.79';
+
+  cApplicationName = 'json2puml';
+
+  cJson2PumlApplicationTypeName: array [tJson2PumlApplicationType] of string = (cApplicationName+' command line', cApplicationName+' service', cApplicationName+' ui');
 
   JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
     'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];
