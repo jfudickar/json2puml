@@ -6,6 +6,8 @@
 		"traceid",
 		"x-b3-traceid"
 	],
+	"curlUserAgentInformation": null,
+	"curlTraceIdHeader": "traceid",
 	"defaultDefinitionFileName": null,
 	"definitionFileSearchFolder": [
 		"e:\\Delphi\\Projects\\json2puml\\definition\\",
@@ -23,5 +25,5 @@
 	"javaRuntimeParameter": "-DPLANTUML_LIMIT_SIZE=8192",
 	"logFileOutputPath": "e:\\Delphi\\Projects\\json2puml\\runtime\\logs\\",
 	"plantUmlJarFileName": null,
-	"servicePort": "8080"
+	"servicePort": 8080
 }

@@ -1,3 +1,14 @@
+# **json2puml v2.1.5.80** - 16.04.2023
+## All Editions 
+### New Feature
+- Added a command line parameter /generatedefaultconfiguration
+  This option generates default configuration files in the current folder of executable, when they are not already existing.
+  This is used to fix the issue [Windows installation program should install a default configuration file if no configuration file is defined]( https://github.com/jfudickar/json2puml/issues/3)
+- New configuration parameter curlUserAgentInformation:
+Calling the curl command now the curl paramter --user-agent is used. Either with the value of the configuration or with a default value
+- New configuration parameter curlTraceIdHeader: When this parameter is used a request header is added to the curl command --header <curlTraceIdHeader>: "<GeneratedUUID>"
+- Setup program call the command line version with the parameter /generatedefaultconfiguration to generate the default configuration files.
+
 # **json2puml v2.1.4.79** - 10.04.2023
 ## All Editions 
 ### Changed Feature
