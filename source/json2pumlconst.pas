@@ -59,7 +59,7 @@ const
   cConfigurationFileRegistry = 'Json2PumlConfigurationFile';
   cDefaultConfigurationFile = 'json2pumlconfiguration.json';
   cDefaultCurlAuthenticationFile = 'json2pumlcurlauthentication.json';
-  cDefaultCurlParameterFile = 'json2pumlcurlauthentication.json';
+  cDefaultCurlParameterFile = 'json2pumlcurlparameter.json';
   cCurlAuthenticationFileRegistry = 'Json2PumlCurlAuthenticationFile';
   cPlantUmlJarFileRegistry = 'PlantUmlJarFile';
 
@@ -77,7 +77,7 @@ const
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.1.4.79';
+  cCurrentVersion = '2.1.5.80';
 
   cApplicationName = 'json2puml';
 

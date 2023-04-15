@@ -516,7 +516,8 @@ type
     property CurlAuthenticationList: tJson2PumlCurlAuthenticationList read FCurlAuthenticationList
       write FCurlAuthenticationList;
     property CurlParameterList: tJson2PumlCurlParameterList read FCurlParameterList write SetCurlParameterList;
-    property curlAdditionalRuntimeOptions: string read FcurlAdditionalRuntimeOptions write FcurlAdditionalRuntimeOptions;
+    property curlAdditionalRuntimeOptions: string read FcurlAdditionalRuntimeOptions
+      write FcurlAdditionalRuntimeOptions;
     property DefinitionFileNameExpanded: string read GetDefinitionFileNameExpanded;
     property ExecuteCount: Integer read GetExecuteCount;
     property ExistsCount: Integer read GetExistsCount;
@@ -568,6 +569,7 @@ type
     FDetail: string;
     FFailed: boolean;
     FFormatDefinitionFiles: boolean;
+    FGenerateDefaultConfiguration: boolean;
     FGenerateDetailsStr: string;
     FGenerateOutputDefinition: boolean;
     FGenerateSummaryStr: string;
@@ -606,6 +608,7 @@ type
   strict protected
   protected
     function ExistsSingleInputParameter (iParameterName: string): boolean;
+    procedure HandleGenerateDefaultConfiguration;
     procedure LogParameterValue (iParameterName: string; iParameterValue: boolean; iAllways: boolean = false); overload;
     procedure LogParameterValue (iParameterName: string; iParameterValue: string = ''; iParameterDetail: string = '';
       iAllways: boolean = false); overload;
@@ -626,6 +629,8 @@ type
     property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
     property CurlPassThroughHeader: string read FCurlPassThroughHeader write FCurlPassThroughHeader;
+    property GenerateDefaultConfiguration: boolean read FGenerateDefaultConfiguration
+      write FGenerateDefaultConfiguration;
     property GenerateSummary: boolean read GetGenerateSummary;
     property InputFilterList: tJson2PumlFilterList read FInputFilterList;
     property OpenOutputs: tJson2PumlOutputFormats read FOpenOutputs;
@@ -2008,6 +2013,74 @@ begin
   Result := StringToBoolean (SplitInputFileStr, false);
 end;
 
+procedure tJson2PumlCommandLineParameter.HandleGenerateDefaultConfiguration;
+var
+  DefaultConfigurationFile: string;
+  BasePath: string;
+  DefaultConfiguration: tJson2PumlGlobalDefinition;
+  DefaultCurlAuthentication: tJson2PumlCurlAuthenticationDefinition;
+
+  procedure CheckSamples (iBasePath, iDetailPath: string);
+  begin
+    if DirectoryExists (TPath.Combine(iBasePath, iDetailPath)) then
+    begin
+      DefaultConfiguration.DefinitionFileSearchFolder.Add (TPath.Combine(TPath.Combine(iBasePath, iDetailPath),
+        '*definition*.json'));
+      DefaultConfiguration.InputListFileSearchFolder.Add (TPath.Combine(TPath.Combine(iBasePath, iDetailPath),
+        '*inputlist*.json'));
+    end;
+  end;
+
+begin
+  DefaultConfigurationFile := TPath.Combine (ExtractFilePath(ParamStr(0)), cDefaultConfigurationFile);
+  if not FileExists (DefaultConfigurationFile) then
+  begin
+    DefaultConfiguration := tJson2PumlGlobalDefinition.Create;
+    try
+      DefaultConfiguration.CurlAuthenticationFileName := TPath.Combine (ExtractFilePath(ParamStr(0)),
+        cDefaultCurlAuthenticationFile);
+      BasePath := ExtractFilePath (ParamStr(0)).TrimRight ([TPath.DirectorySeparatorChar]);
+      if ExtractFileName (BasePath) = 'bin' then
+        BasePath := ExtractFilePath (BasePath);
+      DefaultConfiguration.BaseOutputPath := TPath.Combine (BasePath, 'output');
+      DefaultConfiguration.LogFileOutputPath := TPath.Combine (BasePath, 'log');
+      DefaultConfiguration.CurlTraceIdHeader := 'traceid';
+      DefaultConfiguration.JavaRuntimeParameter := '-DPLANTUML_LIMIT_SIZE=8192';
+      DefaultConfiguration.OutputPath := '<job>\\<group>\\<file>';
+      if DirectoryExists (TPath.Combine(BasePath, 'definition')) then
+        DefaultConfiguration.DefinitionFileSearchFolder.Add (TPath.Combine(BasePath, 'definition'));
+      if DirectoryExists (TPath.Combine(BasePath, 'samples')) then
+      begin
+        CheckSamples (TPath.Combine(BasePath, 'samples'), 'jsonplaceholder');
+        CheckSamples (TPath.Combine(BasePath, 'samples'), 'spacex');
+        CheckSamples (TPath.Combine(BasePath, 'samples'), 'swapi');
+        CheckSamples (TPath.Combine(BasePath, 'samples'), 'tmf');
+        CheckSamples (TPath.Combine(BasePath, 'samples'), 'tvmaze');
+      end;
+      DefaultConfiguration.WriteToJsonFile (DefaultConfigurationFile, true);
+      GlobalLoghandler.Info ('Default configuration file %s generated', [DefaultConfigurationFile]);
+    finally
+      DefaultConfiguration.Free;
+    end;
+  end
+  else
+    GlobalLoghandler.Info ('Default configuration file %s exists, generation skipped', [DefaultConfigurationFile]);
+  DefaultConfigurationFile := TPath.Combine (ExtractFilePath(ParamStr(0)), cDefaultCurlAuthenticationFile);
+  if not FileExists (DefaultConfigurationFile) then
+  begin
+    DefaultCurlAuthentication := tJson2PumlCurlAuthenticationDefinition.Create;
+    try
+      DefaultCurlAuthentication.WriteToJsonFile (DefaultConfigurationFile, true);
+      GlobalLoghandler.Info ('Default curl authentication file %s generated', [DefaultConfigurationFile]);
+    finally
+      DefaultCurlAuthentication.Free;
+    end;
+  end
+  else
+    GlobalLoghandler.Info ('Default curl authentication file %s exists, generation skipped',
+      [DefaultConfigurationFile]);
+end;
+
 procedure tJson2PumlCommandLineParameter.LogLineWrapped (iParameter, iDescription: string;
   iParameterLength: Integer = 50; iLineLength: Integer = 110);
 var
@@ -2181,12 +2254,15 @@ begin
   if OpenOutputsStr.IsEmpty and ExistsSingleInputParameter ('openOutput') then
     OpenOutputsStr := cOpenOutputAll;
   Debug := ExistsSingleInputParameter ('debug');
+  GenerateDefaultConfiguration := ExistsSingleInputParameter ('generatedefaultconfiguration');
   GenerateOutputDefinition := ExistsSingleInputParameter ('generateoutputdefinition');
   IdentFilter := ReadSingleInputParameter ('identfilter');
   TitleFilter := ReadSingleInputParameter ('titlefilter');
   FormatDefinitionFiles := ExistsSingleInputParameter ('formatdefinitionfiles');
   SummaryFileName := ReadSingleInputParameter ('summaryfile');
   ReadCurlParameter;
+  if GenerateDefaultConfiguration then
+    HandleGenerateDefaultConfiguration;
 end;
 
 function tJson2PumlCommandLineParameter.ReadSingleInputParameter (iParameterName: string): string;
@@ -2380,6 +2456,8 @@ begin
   WriteHelpLine;
   WriteHelpLine ('generateoutputdefinition',
     'Flag to define if the merged generator definition should be stored in the output folder.');
+  WriteHelpLine ('generatedefaultconfiguration',
+    'Flag to define that a default configuration file should be generated.');
   WriteHelpLine ('debug', 'Flag to define that a converter log file should be generated parallel to the puml file');
   WriteHelpLine;
   WriteHelpLine ('jobdescription',
