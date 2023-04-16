@@ -15,6 +15,8 @@ class GlobalConfiguration <<Pivot>>{
 	outputPath : String
    curlAuthenticationFileName : String
    curlPassThroughHeader : Array of String
+   curlTraceIdHeader : String
+   curlUserAgentInformation : String
    defaultDefinitionFileName : String
    definitionFileSearchFolder : Array of String
    inputListFileSearchFolder : Array of String
