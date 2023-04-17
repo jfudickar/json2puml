@@ -477,16 +477,18 @@ end;
 function TJson2PumlInputHandler.CalculateCurlAdditionalRuntimeOptions: string;
 
   function CalculateCurlTraceIdHeader: string;
-  var id : TGUID;
+  var
+    id: TGUID;
   begin
-    Result:= '';
+    Result := '';
     if CurrentCurlTraceIdHeader.IsEmpty then
       Exit;
-    if CmdLineParameter.CurlPassThroughHeader.IndexOf(Format('"%s:', [CurrentCurlTraceIdHeader])) >= 0 then
+    if CmdLineParameter.CurlPassThroughHeader.IndexOf (Format('"%s:', [CurrentCurlTraceIdHeader])) >= 0 then
       Exit;
-    if CreateGUID(id) <> 0 then
+    if CreateGUID (id) <> 0 then
       Exit;
-    Result := TCurlUtils.CalculateHeaderParameter(CurrentCurlTraceIdHeader, GUIDToString(id));
+    Result := TCurlUtils.CalculateHeaderParameter (CurrentCurlTraceIdHeader, GUIDToString(id).ToLower.Replace('{', '',
+      [rfReplaceAll]).Replace('}', '', [rfReplaceAll]).Replace('-', '', [rfReplaceAll]));
   end;
 
 begin
@@ -1494,15 +1496,15 @@ end;
 
 function TJson2PumlInputHandler.ReplaceFileNameVariables (iReplace, iFileName, iOption: string): string;
 begin
-  Result := iReplace.replace (jfnrGroup.ToString, CurrentGroup, [rfIgnoreCase, rfReplaceAll])
-    .replace (jfnrOption.ToString, iOption, [rfIgnoreCase, rfReplaceAll]).replace (jfnrDetail.ToString, CurrentDetail,
-    [rfIgnoreCase, rfReplaceAll]).replace (jfnrFile.ToString, tpath.GetFileNameWithoutExtension(iFileName),
-    [rfIgnoreCase, rfReplaceAll]).replace (jfnrJob.ToString, CurrentJobName, [rfIgnoreCase, rfReplaceAll]);
+  Result := iReplace.Replace (jfnrGroup.ToString, CurrentGroup, [rfIgnoreCase, rfReplaceAll])
+    .Replace (jfnrOption.ToString, iOption, [rfIgnoreCase, rfReplaceAll]).Replace (jfnrDetail.ToString, CurrentDetail,
+    [rfIgnoreCase, rfReplaceAll]).Replace (jfnrFile.ToString, tpath.GetFileNameWithoutExtension(iFileName),
+    [rfIgnoreCase, rfReplaceAll]).Replace (jfnrJob.ToString, CurrentJobName, [rfIgnoreCase, rfReplaceAll]);
   while Result.IndexOf (tpath.DirectorySeparatorChar + tpath.DirectorySeparatorChar) >= 0 do
-    Result := Result.replace (tpath.DirectorySeparatorChar + tpath.DirectorySeparatorChar,
+    Result := Result.Replace (tpath.DirectorySeparatorChar + tpath.DirectorySeparatorChar,
       tpath.DirectorySeparatorChar);
   while Result.IndexOf (tpath.ExtensionSeparatorChar + tpath.ExtensionSeparatorChar) >= 0 do
-    Result := Result.replace (tpath.ExtensionSeparatorChar + tpath.ExtensionSeparatorChar,
+    Result := Result.Replace (tpath.ExtensionSeparatorChar + tpath.ExtensionSeparatorChar,
       tpath.ExtensionSeparatorChar);
   Result := Result.TrimRight (tpath.DirectorySeparatorChar);
 end;
