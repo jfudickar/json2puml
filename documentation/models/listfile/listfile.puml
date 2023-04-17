@@ -54,6 +54,7 @@ class InputlistFile  <<Pivot>> {
   curlBaseUrl : String
   curlUrlAddon : String 
   curlOptions : String
+  curlSpanIdHeader : String
   curlTraceIdHeader : String
   curlUserAgentInformation : String
   --

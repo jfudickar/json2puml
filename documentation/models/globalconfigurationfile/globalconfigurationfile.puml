@@ -11,10 +11,11 @@ skinparam class {
 }
 
 class GlobalConfiguration <<Pivot>>{
-	baseOutputPath : String
-	outputPath : String
+   baseOutputPath : String
+   outputPath : String
    curlAuthenticationFileName : String
    curlPassThroughHeader : Array of String
+   curlSpanIdHeader : String
    curlTraceIdHeader : String
    curlUserAgentInformation : String
    defaultDefinitionFileName : String
