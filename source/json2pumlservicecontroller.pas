@@ -94,19 +94,34 @@ end;
 function TJson2PumlController.GetCurlTracePassThroughHeader (iContext: TWebContext): string;
 var
   s, v: string;
+  List: tstringlist;
 
   procedure AddHeader (iName, iValue: string);
   begin
     if not iName.IsEmpty and not iValue.IsEmpty then
-      Result := TCurlUtils.CombineParameter([Result, TCurlUtils.CalculateHeaderParameter(iName, iValue)]);
+      if List.IndexOf (iName.Trim.ToLower) < 0 then
+      begin
+        Result := TCurlUtils.CombineParameter ([Result, TCurlUtils.CalculateHeaderParameter(iName, iValue)]);
+        List.Add (iName.Trim.ToLower);
+      end;
   end;
 
 begin
   Result := '';
-  for s in GlobalConfigurationDefinition.CurlPassThroughHeader do
-  begin
-    v := iContext.Request.Headers[s];
-    AddHeader (s, v);
+  List := tstringlist.Create;
+  try
+    for s in GlobalConfigurationDefinition.CurlPassThroughHeader do
+    begin
+      v := iContext.Request.Headers[s];
+      AddHeader (s, v);
+    end;
+    if not GlobalConfigurationDefinition.CurlTraceIdHeader.IsEmpty then
+    begin
+      v := iContext.Request.Headers[GlobalConfigurationDefinition.CurlTraceIdHeader];
+      AddHeader (GlobalConfigurationDefinition.CurlTraceIdHeader, v);
+    end;
+  finally
+    List.Free;
   end;
 end;
 
@@ -352,24 +367,24 @@ begin
 end;
 
 procedure TJson2PumlController.LogRequestStart (iContext: TWebContext);
-//var
-//  Name: string;
-//  I: Integer;
+// var
+// Name: string;
+// I: Integer;
 
 begin
   GlobalLoghandler.Trace ('%s started', [Context.Request.PathInfo]);
-// Deactivated because of critical data which can be in header or body (e.g. Curl Authentication Parameter)
-// Should only be activated if realy needed for testing
-//  if Context.Request.RawWebRequest is TIdHTTPAppRequest then
-//  begin
-//    for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do
-//    begin
-//      name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
-//      GlobalLoghandler.Debug  ('Header %s : %s', [name, Context.Request.Headers[name]]);
-//    end;
-//    if not Context.Request.Body.IsEmpty then
-//      GlobalLoghandler.Debug ('Body : %s ', [Context.Request.Body]);
-//  end;
+  // Deactivated because of critical data which can be in header or body (e.g. Curl Authentication Parameter)
+  // Should only be activated if realy needed for testing
+  // if Context.Request.RawWebRequest is TIdHTTPAppRequest then
+  // begin
+  // for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do
+  // begin
+  // name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
+  // GlobalLoghandler.Debug  ('Header %s : %s', [name, Context.Request.Headers[name]]);
+  // end;
+  // if not Context.Request.Body.IsEmpty then
+  // GlobalLoghandler.Debug ('Body : %s ', [Context.Request.Body]);
+  // end;
 end;
 
 end.

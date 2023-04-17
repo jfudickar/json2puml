@@ -155,16 +155,19 @@ type
     FBaseOutputPath: string;
     FCurlAuthenticationFileName: string;
     FCurlPassThroughHeader: tStringList;
+    FCurlSpanIdHeader: string;
     FCurlTraceIdHeader: string;
     FCurlUserAgentInformation: string;
-    FDefinitionFileSearchFolder: tStringList;
     FDefaultDefinitionFileName: string;
+    FDefinitionFileSearchFolder: tStringList;
     FInputListFileSearchFolder: tStringList;
     FJavaRuntimeParameter: string;
     FLogFileOutputPath: string;
     FOutputPath: string;
     FPlantUmlJarFileName: string;
     FServicePort: Integer;
+    procedure SetCurlSpanIdHeader(const Value: string);
+    procedure SetCurlTraceIdHeader(const Value: string);
   protected
     function GetIdent: string; override;
   public
@@ -183,10 +186,11 @@ type
     property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
     property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
     property CurlPassThroughHeader: tStringList read FCurlPassThroughHeader;
-    property CurlTraceIdHeader: string read FCurlTraceIdHeader write FCurlTraceIdHeader;
+    property CurlSpanIdHeader: string read FCurlSpanIdHeader write SetCurlSpanIdHeader;
+    property CurlTraceIdHeader: string read FCurlTraceIdHeader write SetCurlTraceIdHeader;
     property CurlUserAgentInformation: string read FCurlUserAgentInformation write FCurlUserAgentInformation;
-    property DefinitionFileSearchFolder: tStringList read FDefinitionFileSearchFolder;
     property DefaultDefinitionFileName: string read FDefaultDefinitionFileName write FDefaultDefinitionFileName;
+    property DefinitionFileSearchFolder: tStringList read FDefinitionFileSearchFolder;
     property InputListFileSearchFolder: tStringList read FInputListFileSearchFolder;
     property JavaRuntimeParameter: string read FJavaRuntimeParameter write FJavaRuntimeParameter;
     property LogFileOutputPath: string read FLogFileOutputPath write FLogFileOutputPath;
@@ -438,6 +442,7 @@ type
     FCurlOptions: string;
     FCurlParameterList: tJson2PumlCurlParameterList;
     FcurlAdditionalRuntimeOptions: string;
+    FCurlSpanIdHeader: string;
     FCurlTraceIdHeader: string;
     FCurlUrlAddon: string;
     FCurlUserAgentInformation: string;
@@ -469,6 +474,8 @@ type
     function GetOutputPathExpanded: string;
     function GetSummaryInputFile: tJson2PumlInputFileDefinition;
     procedure SetCurlParameterList (const Value: tJson2PumlCurlParameterList);
+    procedure SetCurlSpanIdHeader(const Value: string);
+    procedure SetCurlTraceIdHeader(const Value: string);
     procedure SetOutputFormatStr (const Value: string);
     procedure SetOutputPath (const Value: string);
     procedure SetOutputSuffix (const Value: string);
@@ -531,7 +538,8 @@ type
   published
     property CurlBaseUrl: string read FCurlBaseUrl write FCurlBaseUrl;
     property CurlOptions: string read FCurlOptions write FCurlOptions;
-    property CurlTraceIdHeader: string read FCurlTraceIdHeader write FCurlTraceIdHeader;
+    property CurlSpanIdHeader: string read FCurlSpanIdHeader write SetCurlSpanIdHeader;
+    property CurlTraceIdHeader: string read FCurlTraceIdHeader write SetCurlTraceIdHeader;
     property CurlUrlAddon: string read FCurlUrlAddon write FCurlUrlAddon;
     property CurlUserAgentInformation: string read FCurlUserAgentInformation write FCurlUserAgentInformation;
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
@@ -1771,6 +1779,7 @@ begin
   CurlOptions := GetJsonStringValue (Definition, 'curlOptions');
   CurlUserAgentInformation := GetJsonStringValue (Definition, 'curlUserAgentInformation', CurlUserAgentInformation);
   CurlTraceIdHeader := GetJsonStringValue (Definition, 'curlTraceIdHeader', CurlTraceIdHeader);
+  CurlSpanIdHeader := GetJsonStringValue (Definition, 'curlSpanIdHeader', CurlSpanIdHeader);
 
   GenerateDetailsStr := GetJsonStringValueBoolean (Definition, 'generateDetails', '');
   GenerateSummaryStr := GetJsonStringValueBoolean (Definition, 'generateSummary', '');
@@ -1781,6 +1790,16 @@ end;
 procedure tJson2PumlInputList.SetCurlParameterList (const Value: tJson2PumlCurlParameterList);
 begin
   FCurlParameterList := Value;
+end;
+
+procedure tJson2PumlInputList.SetCurlSpanIdHeader(const Value: string);
+begin
+  FCurlSpanIdHeader := Value.ToLower.Trim;
+end;
+
+procedure tJson2PumlInputList.SetCurlTraceIdHeader(const Value: string);
+begin
+  FCurlTraceIdHeader := Value.ToLower.Trim;
 end;
 
 procedure tJson2PumlInputList.SetOutputFormatStr (const Value: string);
@@ -1820,6 +1839,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'curlUrlAddon', CurlUrlAddon, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlOptions', CurlOptions, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlUserAgentInformation', CurlUserAgentInformation, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'curlSpanIdHeader', CurlSpanIdHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlTraceIdHeader', CurlTraceIdHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'summaryFile', SummaryFileName, iLevel + 1, iWriteEmpty);
   inherited WriteToJson (oJsonOutPut, 'input', iLevel + 1, iWriteEmpty);
@@ -2044,7 +2064,8 @@ begin
         BasePath := ExtractFilePath (BasePath);
       DefaultConfiguration.BaseOutputPath := TPath.Combine (BasePath, 'output');
       DefaultConfiguration.LogFileOutputPath := TPath.Combine (BasePath, 'log');
-      DefaultConfiguration.CurlTraceIdHeader := 'traceid';
+      DefaultConfiguration.CurlSpanIdHeader := 'X-B3-SpanId';
+      DefaultConfiguration.CurlTraceIdHeader := 'X-B3-TraceId';
       DefaultConfiguration.JavaRuntimeParameter := '-DPLANTUML_LIMIT_SIZE=8192';
       DefaultConfiguration.OutputPath := '<job>\\<group>\\<file>';
       if DirectoryExists (TPath.Combine(BasePath, 'definition')) then
@@ -2494,6 +2515,7 @@ begin
   DefaultDefinitionFileName := '';
   CurlAuthenticationFileName := '';
   CurlUserAgentInformation := '';
+  CurlSpanIdHeader := '';
   CurlTraceIdHeader := '';
   CurlPassThroughHeader.Clear;
 end;
@@ -2571,6 +2593,7 @@ begin
   GlobalLoghandler.Info ('  %-30s: %s', ['baseOutputPath', BaseOutputPath]);
   GlobalLoghandler.Info ('  %-30s: %s', ['curlAuthenticationFileName', CurlAuthenticationFileName]);
   GlobalLoghandler.Info ('  %-30s: %s', ['CurlUserAgentInformation', CurlUserAgentInformation]);
+  GlobalLoghandler.Info ('  %-30s: %s', ['CurlSpanIdHeader', CurlSpanIdHeader]);
   GlobalLoghandler.Info ('  %-30s: %s', ['CurlTraceIdHeader', CurlTraceIdHeader]);
   GlobalLoghandler.Info ('  %-30s: ', ['curlPassThroughHeader']);
   for i := 0 to CurlPassThroughHeader.Count - 1 do
@@ -2606,6 +2629,7 @@ begin
     DefaultDefinitionFileName);
   CurlUserAgentInformation := GetJsonStringValue (DefinitionRecord, 'curlUserAgentInformation',
     CurlUserAgentInformation);
+  CurlSpanIdHeader := GetJsonStringValue (DefinitionRecord, 'curlSpanIdHeader', CurlSpanIdHeader);
   CurlTraceIdHeader := GetJsonStringValue (DefinitionRecord, 'curlTraceIdHeader', CurlTraceIdHeader);
   GetJsonStringValueList (DefinitionFileSearchFolder, DefinitionRecord, 'definitionFileSearchFolder');
   GetJsonStringValueList (InputListFileSearchFolder, DefinitionRecord, 'inputListFileSearchFolder');
@@ -2615,7 +2639,18 @@ begin
   BaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', BaseOutputPath);
   OutputPath := GetJsonStringValue (DefinitionRecord, 'outputPath', BaseOutputPath);
   GetJsonStringValueList (CurlPassThroughHeader, DefinitionRecord, 'curlPassThroughHeader');
+  CurlPassThroughHeader.Text := CurlPassThroughHeader.Text.ToLower;
   ServicePort := GetJsonStringValueInteger (DefinitionRecord, 'servicePort', ServicePort);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetCurlSpanIdHeader(const Value: string);
+begin
+  FCurlSpanIdHeader := Value.ToLower.Trim;
+end;
+
+procedure tJson2PumlGlobalDefinition.SetCurlTraceIdHeader(const Value: string);
+begin
+  FCurlTraceIdHeader := Value.ToLower.Trim;
 end;
 
 procedure tJson2PumlGlobalDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -2627,6 +2662,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'curlAuthenticationFileName', CurlAuthenticationFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlPassThroughHeader', CurlPassThroughHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlUserAgentInformation', CurlUserAgentInformation, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'curlSpanIdHeader', CurlSpanIdHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlTraceIdHeader', CurlTraceIdHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'defaultDefinitionFileName', DefaultDefinitionFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'definitionFileSearchFolder', DefinitionFileSearchFolder, iLevel + 1, false,
