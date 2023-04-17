@@ -2608,7 +2608,7 @@ begin
     GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), InputListFileSearchFolder[i]]);
   GlobalLoghandler.Info ('  %-30s: %s', ['javaRuntimeParameter', JavaRuntimeParameter]);
   GlobalLoghandler.Info ('  %-30s: %s', ['logFileOutputPath', LogFileOutputPath]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['putputPath', OutputPath]);
+  GlobalLoghandler.Info ('  %-30s: %s', ['outputPath', OutputPath]);
   GlobalLoghandler.Info ('  %-30s: %s', ['plantUmlJarFileName', PlantUmlJarFileName]);
   GlobalLoghandler.Info ('  %-30s: %d', ['servicePort', ServicePort]);
 end;
