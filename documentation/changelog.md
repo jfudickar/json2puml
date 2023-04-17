@@ -1,3 +1,13 @@
+# **json2puml v2.1.6.81** - 17.04.2023
+## All Editions 
+### New Feature
+- New configuration parameter curlSpanIdHeader: When this parameter is used a request header is added to the curl command --header <curlSpanIdHeader>: "<GeneratedUUID>"
+
+### Changed Feature
+- Improved handling of opentelemetry trace id handling.
+- Generated UUID's now only contain numbers and lowercase characters
+- Installation uses now PlantUml v1.2023.5
+
 # **json2puml v2.1.5.80** - 16.04.2023
 ## All Editions 
 ### New Feature

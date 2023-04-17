@@ -1,1 +1,1 @@
-curl -X POST http://localhost:8080/api/json2pumlRequest -d @jsonplaceholder_parameter_curl.json -v -o result\jsonplaceholder_reducedparameter_result.json
+curl -X POST http://localhost:8080/api/json2pumlRequest -d @jsonplaceholder_parameter_curl.json -v -o result\jsonplaceholder_reducedparameter_result.json --header "X-B3-TraceId: 1234567890abcdef1234567890abcdef"

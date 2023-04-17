@@ -4,10 +4,11 @@
 	"curlAuthenticationFileName": "e:\\Delphi\\Projects\\json2puml\\configuration\\json2pumlcurlauthentication.json",
 	"curlPassThroughHeader": [
 		"traceid",
-		"x-b3-traceid"
+		"X-b3-traceid"
 	],
 	"curlUserAgentInformation": null,
-	"curlTraceIdHeader": "traceid",
+	"curlSpanIdHeader": "X-B3-SpanId",
+	"curlTraceIdHeader": "X-B3-TraceId",
 	"defaultDefinitionFileName": null,
 	"definitionFileSearchFolder": [
 		"e:\\Delphi\\Projects\\json2puml\\definition\\",
