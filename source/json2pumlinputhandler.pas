@@ -482,6 +482,7 @@ function TJson2PumlInputHandler.CalculateCurlAdditionalRuntimeOptions: string;
   var
     id: TGUID;
   begin
+    CreateGUID(id);
     Result := GUIDToString (id).ToLower.Replace ('{', '', [rfReplaceAll]).Replace ('}', '', [rfReplaceAll])
       .Replace ('-', '', [rfReplaceAll]);
   end;
