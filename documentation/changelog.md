@@ -1,3 +1,10 @@
+# **json2puml v2.1.7.82** - 24.04.2023
+## All Editions 
+### Changed Feature
+- Handled exception are now written to the logfile only in Debug Mode
+- Fixed generation of uuid for OpenTelemetry Trace/Span 
+- Installation uses now PlantUml v1.2023.6
+
 # **json2puml v2.1.6.81** - 17.04.2023
 ## All Editions 
 ### New Feature
