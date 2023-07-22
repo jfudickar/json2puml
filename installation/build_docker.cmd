@@ -9,10 +9,13 @@ copy ..\source\linux64\release\json2puml*. docker\src\json2puml\bin
 rmdir /s /q docker\logs
 rmdir /s /q docker\output
 del docker\.gitignore /s
+del docker\.dockerignore /s
 del docker\*.log /s
 del docker\*.url /s
-cd output
-tar -c -f json2puml.docker.%ver%.tar ..\docker\* 
+cd docker
+tar -c -f ..\output\json2puml.docker.%ver%.tar * 
+cd ..\output
 zip json2puml.docker.%ver%.tar.zip json2puml.docker.%ver%.tar
 cd ..
+
 
