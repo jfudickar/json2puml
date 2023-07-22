@@ -843,7 +843,7 @@ end;
 
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;
 begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false);
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false, not FindCmdLineSwitch(cNoLogFiles));
   Logger.Providers.add (GlobalLogStringListProvider);
   GlobalLogStringListProvider.ShowTimeStamp := True;
   GlobalLogStringListProvider.ShowEventTypes := True;

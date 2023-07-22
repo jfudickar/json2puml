@@ -67,7 +67,7 @@ end;
 constructor tJson2PumlCommandlineHandler.Create;
 begin
   inherited Create;
-  InitDefaultLogger(GlobalConfigurationDefinition.LogFileOutputPath, jatConsole, true);
+  InitDefaultLogger(GlobalConfigurationDefinition.LogFileOutputPath, jatConsole, true, not FindCmdLineSwitch(cNoLogFiles));
   FInputHandler := TJson2PumlInputHandler.Create (jatConsole);
   FInputHandler.AfterUpdateRecord := AfterUpdateInputHandlerRecord;
   FInputHandler.AfterCreateAllRecords := AfterCreateAllInputHandlerRecords;

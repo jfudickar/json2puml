@@ -73,11 +73,13 @@ const
 
   cDefaultJsonFileFilter = '*.json';
 
+  cNoLogFiles = 'nologfiles';
+
   cLinuxHome = '~';
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.1.7.82';
+  cCurrentVersion = '2.1.8.83';
 
   cApplicationName = 'json2puml';
 

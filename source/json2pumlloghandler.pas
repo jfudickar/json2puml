@@ -62,7 +62,7 @@ type
   end;
 
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
-  iAllowsConsole: boolean);
+  iAllowsConsole, iAllowsLogFile: boolean);
 
 procedure SetLogProviderEventTypeNames (iProvider: TLogProviderBase);
 
@@ -103,14 +103,25 @@ begin
 end;
 
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
-  iAllowsConsole: boolean);
+  iAllowsConsole, iAllowsLogFile: boolean);
+
+  procedure SetCustomFormat (iLogProvider: TLogProviderBase);
+  begin
+    iLogProvider.CustomMsgOutput := True;
+    iLogProvider.CustomFormatOutput := '%{DATETIME} - (%{THREADID}) - [%{LEVEL}] : %{MESSAGE}';
+    iLogProvider.IncludedInfo := GlobalLogFileProvider.IncludedInfo + [iiThreadId, iiProcessId];
+  end;
+
 begin
+
   if iApplicationType <> jatUI then
   begin
     GlobalLogConsoleProvider.Enabled := (iApplicationType = jatConsole) or iAllowsConsole;
     if GlobalLogConsoleProvider.Enabled then
       Logger.Providers.Add (GlobalLogConsoleProvider);
-    if (iApplicationType = jatService)  then
+    if (iApplicationType = jatService) then
+      SetCustomFormat (GlobalLogConsoleProvider);
+    if (iApplicationType = jatService) and iAllowsLogFile then
       GlobalLogConsoleProvider.LogLevel := LOG_TRACE - [etInfo] + [etError]
     else
       GlobalLogConsoleProvider.LogLevel := LOG_DEBUG;
@@ -118,34 +129,33 @@ begin
     SetLogProviderEventTypeNames (GlobalLogConsoleProvider);
   end;
 
-  if not TDirectory.Exists (iLogFilePath) and not (iLogFilePath.IsEmpty) then
-    TDirectory.CreateDirectory (iLogFilePath);
-
-  // Configure file provider options
-  Logger.Providers.Add (GlobalLogFileProvider);
-  GlobalLogFileProvider.FileName :=
-    ExpandFileName (tPath.Combine(iLogFilePath, ChangeFileExt(ExtractFileName(ParamStr(0)), '.log')));
-  GlobalLogFileProvider.DailyRotate := True;
-  GlobalLogFileProvider.DailyRotateFileDateFormat := 'yyyymmdd';
-  GlobalLogFileProvider.MaxFileSizeInMB := 50;
-  GlobalLogFileProvider.MaxRotateFiles := 20;
-  GlobalLogFileProvider.AutoFlush := true;
-  GlobalLogFileProvider.LogLevel := LOG_DEBUG;
-  GlobalLogFileProvider.TimePrecission := True;
-  if iApplicationType = jatService then
+  if iAllowsLogFile then
   begin
-    GlobalLogFileProvider.CustomMsgOutput := True;
-    GlobalLogFileProvider.CustomFormatOutput := '%{DATETIME} - (%{THREADID}) - [%{LEVEL}] : %{MESSAGE}';
-    GlobalLogFileProvider.IncludedInfo := GlobalLogFileProvider.IncludedInfo + [iiThreadId, iiProcessId];
-  end;
-  SetLogProviderEventTypeNames (GlobalLogFileProvider);
-  GlobalLogFileProvider.Enabled := True;
+    if not TDirectory.Exists (iLogFilePath) and not (iLogFilePath.IsEmpty) then
+      TDirectory.CreateDirectory (iLogFilePath);
 
-  // Log loggger status
-  if GlobalLogFileProvider.Enabled then
-    Log ('File Log Provider activated (%s)', [GlobalLogFileProvider.FileName], etInfo)
-  else
-    Log ('File Log Provider not activated (%s)', [GlobalLogFileProvider.FileName], etError);
+    // Configure file provider options
+    Logger.Providers.Add (GlobalLogFileProvider);
+    GlobalLogFileProvider.FileName :=
+      ExpandFileName (tPath.Combine(iLogFilePath, ChangeFileExt(ExtractFileName(ParamStr(0)), '.log')));
+    GlobalLogFileProvider.DailyRotate := True;
+    GlobalLogFileProvider.DailyRotateFileDateFormat := 'yyyymmdd';
+    GlobalLogFileProvider.MaxFileSizeInMB := 50;
+    GlobalLogFileProvider.MaxRotateFiles := 20;
+    GlobalLogFileProvider.AutoFlush := True;
+    GlobalLogFileProvider.LogLevel := LOG_DEBUG;
+    GlobalLogFileProvider.TimePrecission := True;
+    if iApplicationType = jatService then
+      SetCustomFormat (GlobalLogFileProvider);
+    SetLogProviderEventTypeNames (GlobalLogFileProvider);
+    GlobalLogFileProvider.Enabled := True;
+
+    // Log loggger status
+    if GlobalLogFileProvider.Enabled then
+      Log ('File Log Provider activated (%s)', [GlobalLogFileProvider.FileName], etInfo)
+    else
+      Log ('File Log Provider not activated (%s)', [GlobalLogFileProvider.FileName], etError);
+  end;
   if GlobalLogConsoleProvider.Enabled then
     Log ('Console Log Provider activate', etInfo);
 end;

@@ -589,6 +589,7 @@ type
     FJavaRuntimeParameter: string;
     FJobname: string;
     FLeadingObject: string;
+    FNoLogFiles: boolean;
     FOpenOutputs: tJson2PumlOutputFormats;
     FOpenOutputsStr: string;
     FOption: string;
@@ -672,6 +673,7 @@ type
     property JavaRuntimeParameter: string read FJavaRuntimeParameter write FJavaRuntimeParameter;
     property Jobname: string read FJobname write FJobname;
     property LeadingObject: string read FLeadingObject write FLeadingObject;
+    property NoLogFiles: boolean read FNoLogFiles write FNoLogFiles;
     property OpenOutputsStr: string read FOpenOutputsStr write SetOpenOutputsStr;
     property Option: string read FOption write FOption;
     property OptionFileName: string read FOptionFileName write FOptionFileName;
@@ -2275,6 +2277,7 @@ begin
   if OpenOutputsStr.IsEmpty and ExistsSingleInputParameter ('openOutput') then
     OpenOutputsStr := cOpenOutputAll;
   Debug := ExistsSingleInputParameter ('debug');
+  NoLogFiles := ExistsSingleInputParameter (cNoLogFiles);
   GenerateDefaultConfiguration := ExistsSingleInputParameter ('generatedefaultconfiguration');
   GenerateOutputDefinition := ExistsSingleInputParameter ('generateoutputdefinition');
   IdentFilter := ReadSingleInputParameter ('identfilter');
@@ -2480,6 +2483,7 @@ begin
   WriteHelpLine ('generatedefaultconfiguration',
     'Flag to define that a default configuration file should be generated.');
   WriteHelpLine ('debug', 'Flag to define that a converter log file should be generated parallel to the puml file');
+  WriteHelpLine (cNoLogFiles, 'Flag to define that no log files should be generated');
   WriteHelpLine;
   WriteHelpLine ('jobdescription',
     'Job description of the generated result. This information will be put into the legend of the image.');

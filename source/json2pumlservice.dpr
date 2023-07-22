@@ -56,7 +56,7 @@ procedure RunServer (APort: Integer);
 var
   LServer: TIdHTTPWebBrokerBridge;
 begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, true);
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, true, not FindCmdLineSwitch(cNoLogFiles));
   GlobalLogHandler.Trace ('** JSON2PUML Server ** ' + FileVersion);
   GlobalConfigurationDefinition.LogConfiguration;
   LServer := TIdHTTPWebBrokerBridge.Create (nil);
