@@ -1,3 +1,12 @@
+# **json2puml v2.1.8.83** - 22.07.2023
+## All Editions 
+### New Feature
+- New command line parameter -nologfiles added which allows to hide the generation of log files
+
+### Changed Feature
+- Docker installation tar file build improved to easy the unpack using command line
+- Installation uses now PlantUml v1.2023.10
+
 # **json2puml v2.1.7.82** - 24.04.2023
 ## All Editions 
 ### Changed Feature
