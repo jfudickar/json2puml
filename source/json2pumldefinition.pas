@@ -166,8 +166,11 @@ type
     FOutputPath: string;
     FPlantUmlJarFileName: string;
     FServicePort: Integer;
+    FServicePortStr: String;
+    function GetServicePort: Integer;
     procedure SetCurlSpanIdHeader(const Value: string);
     procedure SetCurlTraceIdHeader(const Value: string);
+    procedure SetServicePortStr(const Value: String);
   protected
     function GetIdent: string; override;
   public
@@ -196,7 +199,8 @@ type
     property LogFileOutputPath: string read FLogFileOutputPath write FLogFileOutputPath;
     property OutputPath: string read FOutputPath write FOutputPath;
     property PlantUmlJarFileName: string read FPlantUmlJarFileName write FPlantUmlJarFileName;
-    property ServicePort: Integer read FServicePort write FServicePort;
+    property ServicePort: Integer read GetServicePort;
+    property ServicePortStr: String read FServicePortStr write SetServicePortStr;
   end;
 
   TJson2PumlFileDetailRecord = class(tPersistent)
@@ -2499,8 +2503,8 @@ begin
   FDefinitionFileSearchFolder := tStringList.Create ();
   FDefinitionFileSearchFolder.Delimiter := ';';
   FDefinitionFileSearchFolder.StrictDelimiter := true;
-  FServicePort := 8080;
   FCurlPassThroughHeader := tStringList.Create ();
+  ServicePortStr := cDefaultServicePort.ToString;
 end;
 
 destructor tJson2PumlGlobalDefinition.Destroy;
@@ -2589,6 +2593,11 @@ begin
   Result := '';
 end;
 
+function tJson2PumlGlobalDefinition.GetServicePort: Integer;
+begin
+  Result := FServicePort;
+end;
+
 procedure tJson2PumlGlobalDefinition.LogConfiguration;
 var
   i: Integer;
@@ -2614,7 +2623,7 @@ begin
   GlobalLoghandler.Info ('  %-30s: %s', ['logFileOutputPath', LogFileOutputPath]);
   GlobalLoghandler.Info ('  %-30s: %s', ['outputPath', OutputPath]);
   GlobalLoghandler.Info ('  %-30s: %s', ['plantUmlJarFileName', PlantUmlJarFileName]);
-  GlobalLoghandler.Info ('  %-30s: %d', ['servicePort', ServicePort]);
+  GlobalLoghandler.Info ('  %-30s: %s / %d', ['servicePortStr', ServicePortStr, ServicePort]);
 end;
 
 function tJson2PumlGlobalDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
@@ -2644,7 +2653,7 @@ begin
   OutputPath := GetJsonStringValue (DefinitionRecord, 'outputPath', BaseOutputPath);
   GetJsonStringValueList (CurlPassThroughHeader, DefinitionRecord, 'curlPassThroughHeader');
   CurlPassThroughHeader.Text := CurlPassThroughHeader.Text.ToLower;
-  ServicePort := GetJsonStringValueInteger (DefinitionRecord, 'servicePort', ServicePort);
+  ServicePortStr := GetJsonStringValue (DefinitionRecord, 'servicePort', ServicePortStr);
 end;
 
 procedure tJson2PumlGlobalDefinition.SetCurlSpanIdHeader(const Value: string);
@@ -2655,6 +2664,14 @@ end;
 procedure tJson2PumlGlobalDefinition.SetCurlTraceIdHeader(const Value: string);
 begin
   FCurlTraceIdHeader := Value.ToLower.Trim;
+end;
+
+procedure tJson2PumlGlobalDefinition.SetServicePortStr(const Value: String);
+var ValueStr: String;
+begin
+  FServicePortStr := Value;
+  ValueStr := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value);
+  FServicePort := StringToInteger(ValueStr, cDefaultServicePort)
 end;
 
 procedure tJson2PumlGlobalDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -2676,7 +2693,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'javaRuntimeParameter', JavaRuntimeParameter, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'logFileOutputPath', LogFileOutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'plantUmlJarFileName', PlantUmlJarFileName, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'servicePort', ServicePort, iLevel + 1);
+  WriteToJsonValue (oJsonOutPut, 'servicePort', ServicePortStr, iLevel + 1);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 

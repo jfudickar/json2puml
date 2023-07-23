@@ -83,6 +83,8 @@ const
 
   cApplicationName = 'json2puml';
 
+  cDefaultServicePort = 8080;
+
   cJson2PumlApplicationTypeName: array [tJson2PumlApplicationType] of string = (cApplicationName+' command line', cApplicationName+' service', cApplicationName+' ui');
 
   JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
