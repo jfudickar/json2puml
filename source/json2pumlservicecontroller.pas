@@ -39,7 +39,7 @@ type
     function GetCurlTracePassThroughHeader (iContext: TWebContext): string;
     procedure OnBeforeAction (Context: TWebContext; const AActionName: string; var Handled: Boolean); override;
     procedure OnAfterAction (Context: TWebContext; const AActionName: string); override;
-    procedure GetFileListResponse (iFileList: tstringlist; iInputList: Boolean);
+    procedure GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
     procedure GetServiceInformationResponse;
     procedure LogRequestStart (iContext: TWebContext);
     procedure LogRequestEnd (iContext: TWebContext);
@@ -98,7 +98,7 @@ end;
 function TJson2PumlController.GetCurlTracePassThroughHeader (iContext: TWebContext): string;
 var
   s, v: string;
-  List: tstringlist;
+  List: TStringList;
 
   procedure AddHeader (iName, iValue: string);
   begin
@@ -112,7 +112,7 @@ var
 
 begin
   Result := '';
-  List := tstringlist.Create;
+  List := TStringList.Create;
   try
     for s in GlobalConfigurationDefinition.CurlPassThroughHeader do
     begin
@@ -134,12 +134,12 @@ begin
   GetFileListResponse (GlobalConfigurationDefinition.DefinitionFileSearchFolder, false);
 end;
 
-procedure TJson2PumlController.GetFileListResponse (iFileList: tstringlist; iInputList: Boolean);
+procedure TJson2PumlController.GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
 var
-  jsonOutput: tstringlist;
+  jsonOutput: TStringList;
 begin
   LogRequestStart (Context);
-  jsonOutput := tstringlist.Create;
+  jsonOutput := TStringList.Create;
   try
     try
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
@@ -172,17 +172,35 @@ end;
 
 procedure TJson2PumlController.GetServiceInformationResponse;
 var
-  jsonOutput: tstringlist;
+  jsonOutput: TStringList;
+  InputHandler: TJson2PumlInputHandler;
+  InfoList: TStringList;
 begin
   LogRequestStart (Context);
-  jsonOutput := tstringlist.Create;
+  InputHandler := TJson2PumlInputHandler.Create (jatService);
+
+  InfoList := TStringList.Create;
+
+  jsonOutput := TStringList.Create;
   try
     try
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-      WriteObjectStartToJson (JsonOutPut, 0, '');
-      WriteToJsonValue (JsonOutPut, 'Service', 'JSON2PUML' + FileVersion, 1, true);
-      WriteToJsonValue (JsonOutPut, 'Service Information', TCurlUtils.ReplaceCurlVariablesFromEnvironment(GlobalConfigurationDefinition.AdditionalServiceInformation), 1, false);
-      WriteObjectEndToJson(JsonOutPut, 0);
+      WriteObjectStartToJson (jsonOutput, 0, '');
+      WriteToJsonValue (jsonOutput, 'service', Format('json2puml %s (%s)', [FileVersion, ApplicationCompileVersion]
+        ), 1, true);
+      InfoList.Text := TCurlUtils.ReplaceCurlVariablesFromEnvironment
+        (GlobalConfigurationDefinition.AdditionalServiceInformation);
+      WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
+      InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile);
+      WriteToJsonValue (jsonOutput, 'plantUmlInformation', InfoList, 1, false, false);
+
+      GlobalConfigurationDefinition.FindFilesInFolderList (InfoList,
+        GlobalConfigurationDefinition.DefinitionFileSearchFolder);
+      WriteToJsonValue (jsonOutput, 'definitionFiles', InfoList, 1, false, false);
+      GlobalConfigurationDefinition.FindFilesInFolderList (InfoList,
+        GlobalConfigurationDefinition.InputListFileSearchFolder);
+      WriteToJsonValue (jsonOutput, 'inputlistFiles', InfoList, 1, false, false);
+      WriteObjectEndToJson (jsonOutput, 0);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
     except
@@ -195,6 +213,8 @@ begin
     end;
   finally
     jsonOutput.Free;
+    InputHandler.Free;
+    InfoList.Free;
   end;
   LogRequestEnd (Context);
 end;

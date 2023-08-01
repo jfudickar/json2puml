@@ -152,6 +152,7 @@ type
 
   tJson2PumlGlobalDefinition = class(tJson2PumlBaseObject)
   private
+    FAdditionalServiceInformation: string;
     FBaseOutputPath: string;
     FCurlAuthenticationFileName: string;
     FCurlPassThroughHeader: tStringList;
@@ -185,6 +186,7 @@ type
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
   published
+    property AdditionalServiceInformation: string read FAdditionalServiceInformation write FAdditionalServiceInformation;
     property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
     property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
     property CurlPassThroughHeader: tStringList read FCurlPassThroughHeader;
@@ -2667,6 +2669,7 @@ begin
   LogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', PlantUmlJarFileName);
   PlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', PlantUmlJarFileName);
   BaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', BaseOutputPath);
+  AdditionalServiceInformation := GetJsonStringValue (DefinitionRecord, 'additionalServiceInformation', AdditionalServiceInformation);
   OutputPath := GetJsonStringValue (DefinitionRecord, 'outputPath', BaseOutputPath);
   GetJsonStringValueList (CurlPassThroughHeader, DefinitionRecord, 'curlPassThroughHeader');
   CurlPassThroughHeader.Text := CurlPassThroughHeader.Text.ToLower;
@@ -2693,6 +2696,7 @@ procedure tJson2PumlGlobalDefinition.WriteToJson (oJsonOutPut: TStrings; iProper
   iWriteEmpty: boolean = false);
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
+  WriteToJsonValue (oJsonOutPut, 'additionalServiceInformation', AdditionalServiceInformation, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'baseOutputPath', BaseOutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputPath', OutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlAuthenticationFileName', CurlAuthenticationFileName, iLevel + 1, iWriteEmpty);

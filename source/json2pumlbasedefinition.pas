@@ -78,13 +78,8 @@ type
     function GetIsValid: boolean; virtual;
     function JsonAttributeValue (iPropertyName, iValue: string; iValueQuotes: boolean = true): string;
     function JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;
-    function JsonPropertyName (iPropertyName: string): string;
     function MergeValue (iValue, iNewValue: string): string;
     procedure SetSourceFileName (const Value: string); virtual;
-    procedure WriteArrayEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
-    procedure WriteArrayStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
-    procedure WriteObjectEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
-    procedure WriteObjectStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
   public
     constructor Create; virtual;
     procedure Assign (Source: tPersistent); override;
@@ -127,7 +122,6 @@ type
     function CreateListValueObject: tJson2PumlBaseObject; virtual;
     function GetIdent: string; override;
     function GetIsFilled: boolean; override;
-    function JsonPropertyName (iPropertyName: string): string;
     procedure ReadListValueFromJson (iJsonValue: TJSONValue); virtual;
     procedure SetSourceFileName (const Value: string); override;
     property BaseObject[index: Integer]: tJson2PumlBaseObject read GetBaseObject;
@@ -164,8 +158,6 @@ type
     function GetIsValid: boolean; override;
     function IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, iConfigurationPropertyName: string;
       var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
-    procedure WriteObjectEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
-    procedure WriteObjectStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
   public
     constructor Create; override;
     function BuildFoundCondition (iConfigurationPropertyName, iConfiguredValue, iInputValue: string): string;
@@ -367,14 +359,6 @@ begin
   end;
 end;
 
-function tJson2PumlBaseObject.JsonPropertyName (iPropertyName: string): string;
-begin
-  if not iPropertyName.IsEmpty then
-    Result := Format ('"%s": ', [iPropertyName])
-  else
-    Result := '';
-end;
-
 function tJson2PumlBaseObject.MergeValue (iValue, iNewValue: string): string;
 begin
   if not iNewValue.IsEmpty then
@@ -442,35 +426,6 @@ procedure tJson2PumlBaseObject.SetSourceFileName (const Value: string);
 begin
   FSourceFileName := Value;
   FSourceFileNamePath := ExtractFilePath (FSourceFileName);
-end;
-
-procedure tJson2PumlBaseObject.WriteArrayEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
-begin
-  ClearLastLineComma (oJsonOutPut);
-  oJsonOutPut.Add (Format('%s],', [JsonLinePrefix(iLevel)]));
-  if iLevel <= 0 then
-    ClearLastLineComma (oJsonOutPut);
-end;
-
-procedure tJson2PumlBaseObject.WriteArrayStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
-begin
-  if (iLevel > 0) or not iPropertyName.IsEmpty then
-    oJsonOutPut.Add (Format('%s%s [', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName)]))
-  else
-    oJsonOutPut.Add ('[');
-end;
-
-procedure tJson2PumlBaseObject.WriteObjectEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
-begin
-  ClearLastLineComma (oJsonOutPut);
-  oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(iLevel)]));
-  if iLevel <= 0 then
-    ClearLastLineComma (oJsonOutPut);
-end;
-
-procedure tJson2PumlBaseObject.WriteObjectStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
-begin
-  oJsonOutPut.Add (Format('%s%s{', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName)]));
 end;
 
 procedure tJson2PumlBaseObject.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -626,14 +581,6 @@ end;
 function tJson2PumlBaseList.IndexOfName (S: string): Integer;
 begin
   Result := ItemList.IndexOfName (S);
-end;
-
-function tJson2PumlBaseList.JsonPropertyName (iPropertyName: string): string;
-begin
-  if not iPropertyName.IsEmpty then
-    Result := Format ('"%s":', [iPropertyName])
-  else
-    Result := '';
 end;
 
 function tJson2PumlBaseList.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
@@ -869,20 +816,6 @@ begin
         if not Result then
           exit;
       end;
-end;
-
-procedure tJson2PumlBasePropertyList.WriteObjectEndToJson (oJsonOutPut: TStrings; iLevel: Integer);
-begin
-  ClearLastLineComma (oJsonOutPut);
-  oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(iLevel)]));
-  if iLevel <= 0 then
-    ClearLastLineComma (oJsonOutPut);
-end;
-
-procedure tJson2PumlBasePropertyList.WriteObjectStartToJson (oJsonOutPut: TStrings; iLevel: Integer;
-  iPropertyName: string);
-begin
-  oJsonOutPut.Add (Format('%s%s{', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName)]));
 end;
 
 procedure tJson2PumlFileNameReplaceHelper.FromString (aValue: string);

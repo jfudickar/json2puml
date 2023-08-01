@@ -33,58 +33,62 @@ uses System.Classes, System.SysUtils, json2pumldefinition,
 {$ENDIF}
   json2pumlloghandler, json2pumlconst, System.Zip;
 
-procedure AddFileToZipFile(iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
+procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
 
-function ClearPropertyValue(iValue: string): string;
+function ApplicationCompileVersion: string;
 
-function ConvertFileToBase64(iFileName: string): string;
+function ClearPropertyValue (iValue: string): string;
 
-function ExecuteCommand(const iCommand: WideString; const iCommandInfo: string): Boolean; overload;
+function ConvertFileToBase64 (iFileName: string): string;
 
-function ExecuteCommand(const iCommand: WideString; const iCommandInfo: string; oCommandOutPut, oCommandErrors:
-    TStringList): Boolean; overload;
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean; overload;
 
-function FileContent(iFileName: string): string;
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
+  oCommandOutPut, oCommandErrors: TStringList): Boolean; overload;
 
-function FileCount(iFileFilter: string): Integer;
+function FileContent (iFileName: string): string;
+
+function FileCount (iFileFilter: string): Integer;
 
 function FileDescription: string;
 
 function FileVersion: string;
 
-procedure GenerateDirectory(const iDirectory: string);
+procedure GenerateDirectory (const iDirectory: string);
 
-procedure GenerateFileDirectory(iFileName: string);
+procedure GenerateFileDirectory (iFileName: string);
 
-function GenerateOutputFromPuml(iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string; iFormat:
-    tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
+function GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
+  iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
 
-function GenerateOutputsFromPuml(iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string; iOutputFormats,
-    iOpenOutputs: tJson2PumlOutputFormats): Boolean;
+function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
+  iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
 
-function GetServiceFileListResponse(oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
+function GetPlantUmlVersion (iPlantUmlJarFile: string): string;
 
-function GetVersionInfo(AIdent: string): string;
+function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
 
-function IsLinuxHomeBasedPath(iPath: string): Boolean;
+function GetVersionInfo (AIdent: string): string;
 
-function IsRelativePath(iPath: string): Boolean;
+function IsLinuxHomeBasedPath (iPath: string): Boolean;
+
+function IsRelativePath (iPath: string): Boolean;
 
 function LegalCopyright: string;
 
-procedure OpenFile(iFileName: string);
+procedure OpenFile (iFileName: string);
 
-function PathCombine(const Path1, Path2: string): string;
+function PathCombine (const Path1, Path2: string): string;
 
-function PathCombineIfRelative(iBasePath, iPath: string): string;
+function PathCombineIfRelative (iBasePath, iPath: string): string;
 
 function ProductVersion: string;
 
-function ReplaceInvalidFileNameChars(const iFileName: string; const iReplaceWith: Char = '_'): string;
+function ReplaceInvalidFileNameChars (const iFileName: string; const iReplaceWith: Char = '_'): string;
 
-function ReplaceInvalidPathChars(const iPathName: string; const iReplaceWith: Char = '_'): string;
+function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: Char = '_'): string;
 
-function ValidateOutputSuffix(iOutputSuffix: string): string;
+function ValidateOutputSuffix (iOutputSuffix: string): string;
 
 type
   TCurlUtils = class
@@ -142,7 +146,34 @@ uses
   System.Math, System.DateUtils, System.NetEncoding, json2pumlbasedefinition,
   json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression, jsontools;
 
-{$IFDEF MSWINDOWS}
+function ApplicationCompileVersion: string;
+begin
+{$IFDEF WIN64}
+  Result := 'Windows 64Bit';
+{$ELSEIF WIN32}
+  Result := 'Windows 32Bit';
+{$ELSEIF IOS64}
+  Result := 'iOS 64Bit';
+{$ELSEIF IOS}
+  Result := 'iOS';
+{$ELSEIF OSX64}
+  Result := 'MacOS 64Bit';
+{$ELSEIF OSX}
+  Result := 'MacOS';
+{$ELSEIF LINUX64}
+  Result := 'Linux 64Bit';
+{$ELSE}
+  Result := 'Linux 32Bit';
+{$ENDIF}
+{$IFDEF CPUX64}
+  Result := Result + ' x86';
+{$ELSEIF CPUARM}
+  Result := Result + ' ARM';
+{$ENDIF}
+{$IFDEF DEBUG}
+  Result := Result + ' Debug';
+{$ENDIF}
+end;
 
 procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
 begin
@@ -172,6 +203,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
 var
   buffer: array [0 .. 2400] of AnsiChar;
@@ -311,6 +343,12 @@ begin
     CloseHandle (PipeErrorsWrite);
   end;
 end;
+{$ELSE}
+function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
+begin
+  Result := TLinuxUtils.RunCommandLine (iCommand, oCommandOutPut);
+end;
+{$ENDIF}
 
 function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean;
 var
@@ -467,6 +505,24 @@ begin
         f in iOpenOutputs);
 end;
 
+function GetPlantUmlVersion (iPlantUmlJarFile: string): string;
+var
+  Command: string;
+  vCommandOutPut, vCommandErrors: TStringList;
+begin
+  vCommandOutPut:= TStringList.Create;
+  vCommandErrors:= TStringList.Create;
+  try
+    Command := Format ('java -jar "%s" -version', [iPlantUmlJarFile]);
+    ExecuteCommand (Command, Command,vCommandOutPut, vCommandErrors);
+    Result := vCommandOutPut.Text;
+  finally
+    vCommandOutPut.Free;
+    vCommandErrors.Free;
+  end;
+
+end;
+
 function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
 var
   s: string;
@@ -505,6 +561,7 @@ begin
   end;
 end;
 
+{$IFDEF MSWINDOWS}
 function GetVersionInfo (AIdent: string): string;
 
 type
@@ -562,6 +619,8 @@ begin
     FreeAndNil (RM);
   end;
 end;
+{$ENDIF}
+
 
 function IsLinuxHomeBasedPath (iPath: string): Boolean;
 begin
@@ -585,11 +644,13 @@ begin
   Result := GetVersionInfo ('LegalCopyright');
 end;
 
+{$IFDEF MSWINDOWS}
 procedure OpenFile (iFileName: string);
 begin
   if FileExists (iFileName) then
     ShellExecute (0, nil, PChar(iFileName), nil, nil, SW_RESTORE);
 end;
+{$ENDIF}
 
 function PathCombine (const Path1, Path2: string): string;
 begin
@@ -651,6 +712,7 @@ begin
       Result := '.' + Result;
 end;
 
+{$IFDEF MSWINDOWS}
 {$ELSE}
 
 class function TLinuxUtils.RunCommandLine (ACommand: string; var ResultList: TStringList): Boolean;
@@ -716,11 +778,6 @@ begin
     if Result then
       Break;
   end;
-end;
-
-function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
-begin
-  Result := TLinuxUtils.RunCommandLine (iCommand, oCommandOutPut);
 end;
 
 function GetVersionInfo (AIdent: string): string;
