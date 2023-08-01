@@ -34,3 +34,6 @@ java -jar ..\..\plantuml\plantuml.jar 	getinputlistfiles\getinputlistfiles.puml 
 java -jar ..\..\plantuml\plantuml.jar 	json2pumlrequest\json2pumlrequest.puml -png
 java -jar ..\..\plantuml\plantuml.jar 	json2pumlrequest\json2pumlrequest.puml -svg
 
+java -jar ..\..\plantuml\plantuml.jar 	getserviceinformation\getserviceinformation.puml -png
+java -jar ..\..\plantuml\plantuml.jar 	getserviceinformation\getserviceinformation.puml -svg
+

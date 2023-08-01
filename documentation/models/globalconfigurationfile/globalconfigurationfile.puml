@@ -11,6 +11,7 @@ skinparam class {
 }
 
 class GlobalConfiguration <<Pivot>>{
+   additionalServiceInformation : String
    baseOutputPath : String
    outputPath : String
    curlAuthenticationFileName : String

@@ -1,3 +1,12 @@
+# **json2puml v2.2.0.84** - 01.08.2023
+## All Editions 
+### New Feature
+- New command line parameter -serviceport added which allows to override the configured port used by the service application 
+- The globalconfiguration.serviceport can now be defined via environment variable using the curl variable format in the config file
+- New api operation get /serviceinformation which returns generic information’s about the service and how it is configured
+- New globalconfiguration.additionalServiceInformation paramter. 
+  This can be used to define the additionalServiceInformation informations in the get /serviceinformation result 
+
 # **json2puml v2.1.8.83** - 22.07.2023
 ## All Editions 
 ### New Feature

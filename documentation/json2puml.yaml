@@ -9,10 +9,23 @@ info:
 
   contact:
     email: jens.fudickar@oratool.de
-  version: '1.0'
+  version: '1.1'
 servers:
-  - url: https://api.server.test/v1
+  - url: https://api.server.test/v1/api
 paths:
+  /serviceinformation:
+    get:
+      description: 'Returns a set of informations about the service application and the current configuration'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ServiceInformationResponse'
   /definitionfile:
     get:
       description: 'Returns a list of all available definition files'
@@ -105,14 +118,42 @@ paths:
                 format: binary
 components:
   schemas:
-    InputListFileResponse:
+    ServiceInformationResponse:
       type: object
-      description: Definition of a file which will be returned by get /inputlistfile or get /definitionfile
+      description: Various informations about the service and the configuration
       properties:
-        name:
+        service:
           type: string
           example: simplelistfile
           description: Name of the listfile which can be used in the POST /json2pumlRequest parameters
+        additionalServiceInformation:
+          type: array
+          items:
+            type : string
+          description: Optional additional informations which can be configured in the global configuraion file
+        plantUmlInformation:
+          type: array
+          items:
+            type : string
+          description: Output of the plantuml -version call of the configured plantuml jar file
+        definitionFiles:
+          type: array
+          items:
+            type : string
+          description: List of all definition files configured for the system
+        inoutlistFiles:
+          type: array
+          items:
+            type : string
+          description: List of all inputlist files configured for the system
+    InputListFileResponse:
+      type: object
+      description: Definition of a input list file which will be returned by get /inputlistfile 
+      properties:
+        name:
+          type: string
+          example: son2puml v2.1.8.83 (Windows 64Bit x86 Debug)
+          description: Name, version number and executable detail informations of the service application
         displayName:
           type: string
           example: Json Placeholder Input List File using Curl
