@@ -167,7 +167,6 @@ type
     FPlantUmlJarFileName: string;
     FServicePort: Integer;
     FServicePortStr: String;
-    function GetServicePort: Integer;
     procedure SetCurlSpanIdHeader(const Value: string);
     procedure SetCurlTraceIdHeader(const Value: string);
     procedure SetServicePortStr(const Value: String);
@@ -199,7 +198,7 @@ type
     property LogFileOutputPath: string read FLogFileOutputPath write FLogFileOutputPath;
     property OutputPath: string read FOutputPath write FOutputPath;
     property PlantUmlJarFileName: string read FPlantUmlJarFileName write FPlantUmlJarFileName;
-    property ServicePort: Integer read GetServicePort;
+    property ServicePort: Integer read FServicePort;
     property ServicePortStr: String read FServicePortStr write SetServicePortStr;
   end;
 
@@ -606,6 +605,8 @@ type
     FParameterFileName: string;
     FPlantUmlJarFileName: string;
     FPlantUmlJarFileNameEnvironment: string;
+    FServicePort: Integer;
+    FServicePortStr: string;
     FSplitIdentifier: string;
     FSplitInputFileStr: string;
     FSummaryFileName: string;
@@ -617,6 +618,7 @@ type
     procedure SetOpenOutputsStr (const Value: string);
     procedure SetOutputFormatStr (const Value: string);
     procedure SetOutputSuffix (const Value: string);
+    procedure SetServicePortStr(const Value: string);
     procedure SetTitleFilter (const Value: string);
   strict protected
   protected
@@ -648,6 +650,7 @@ type
     property InputFilterList: tJson2PumlFilterList read FInputFilterList;
     property OpenOutputs: tJson2PumlOutputFormats read FOpenOutputs;
     property OutputFormats: tJson2PumlOutputFormats read FOutputFormats;
+    property ServicePort: Integer read FServicePort;
     property SplitInputFile: boolean read GetSplitInputFile;
   published
     property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
@@ -689,6 +692,7 @@ type
     property PlantUmlJarFileName: string read FPlantUmlJarFileName write FPlantUmlJarFileName;
     property PlantUmlJarFileNameEnvironment: string read FPlantUmlJarFileNameEnvironment
       write FPlantUmlJarFileNameEnvironment;
+    property ServicePortStr: string read FServicePortStr write SetServicePortStr;
     property SplitIdentifier: string read FSplitIdentifier write FSplitIdentifier;
     property SplitInputFileStr: string read FSplitInputFileStr write FSplitInputFileStr;
     property SummaryFileName: string read FSummaryFileName write FSummaryFileName;
@@ -816,6 +820,7 @@ type
 
 function GlobalConfigurationDefinition: tJson2PumlGlobalDefinition;
 function GlobalFileDeleteHandler: tJson2PumlFileDeleteHandler;
+function GlobalCommandLineParameter: tJson2PumlCommandLineParameter;
 
 implementation
 
@@ -827,21 +832,29 @@ uses
 var
   IntGlobalConfiguration: tJson2PumlGlobalDefinition;
   IntGlobalFileDeleteHandler: tJson2PumlFileDeleteHandler;
+  IntGlobalCommandLineParameter: tJson2PumlCommandLineParameter;
 
 function GlobalConfigurationDefinition: tJson2PumlGlobalDefinition;
 begin
   Result := IntGlobalConfiguration;
 end;
 
+function GlobalCommandLineParameter: tJson2PumlCommandLineParameter;
+begin
+  Result := IntGlobalCommandLineParameter;
+end;
+
 procedure InitializationGlobalVariables;
 var
   S: string;
 begin
-  FindCmdLineSwitch ('configurationfile', S);
-  S := S.TrimLeft (['=', ':']);
+  IntGlobalCommandLineParameter := tJson2PumlCommandLineParameter.Create;
+  GlobalCommandLineParameter.ReadInputParameter;
+
+  s := GlobalCommandLineParameter.ConfigurationFileName;
   if (not S.IsEmpty) and FileExists (S) then
   else
-    S := GetEnvironmentVariable (cConfigurationFileRegistry);
+    S := GlobalCommandLineParameter.ConfigurationFileNameEnvironment;
 
   IntGlobalConfiguration := tJson2PumlGlobalDefinition.Create;
   if (not S.IsEmpty) and FileExists (S) then
@@ -851,6 +864,7 @@ end;
 
 procedure FinalizationGlobalVariables;
 begin
+  IntGlobalCommandLineParameter.Free;
   IntGlobalConfiguration.Free;
   IntGlobalFileDeleteHandler.Free;
 end;
@@ -2263,6 +2277,7 @@ begin
   PlantUmlJarFileName := ReadSingleInputParameterFile ('PlantUmlJarfile');
   PlantUmlJarFileNameEnvironment := ReadSingleInputParameterEnvironment (cPlantUmlJarFileRegistry);
   JavaRuntimeParameter := ReadSingleInputParameter ('JavaRuntimeParameter');
+  ServicePortStr := ReadSingleInputParameter ('serviceport');
   LeadingObject := ReadSingleInputParameter ('LeadingObject');
   SplitInputFileStr := ReadSingleInputParameter ('splitinputfile');
   SplitIdentifier := ReadSingleInputParameter ('splitidentifier');
@@ -2361,6 +2376,12 @@ begin
   FOutputSuffix := ValidateOutputSuffix (Value);
 end;
 
+procedure tJson2PumlCommandLineParameter.SetServicePortStr(const Value: string);
+begin
+  FServicePortStr := Value;
+  FServicePort := StringToInteger(TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), -1);
+end;
+
 procedure tJson2PumlCommandLineParameter.SetTitleFilter (const Value: string);
 begin
   FTitleFilter := Value;
@@ -2415,6 +2436,7 @@ begin
   WriteHelpLine;
   WriteHelpLine ('configurationfile:<file>', 'Global base configuration of json2puml. Overwrites the "' +
     cConfigurationFileRegistry + '" environment parameter.');
+  WriteHelpLine ('serviceport:<portnumber>', 'Port the service application is listening. Overwrites the global configuration parameter.');
   WriteHelpLine ('parameterfile:<file>',
     'ParameterFileName which contains a set of command line parameters in one file');
   WriteHelpLine ('definitionfile:<file>', 'DefinitionFileName which contains the configuration of the mapper');
@@ -2593,11 +2615,6 @@ begin
   Result := '';
 end;
 
-function tJson2PumlGlobalDefinition.GetServicePort: Integer;
-begin
-  Result := FServicePort;
-end;
-
 procedure tJson2PumlGlobalDefinition.LogConfiguration;
 var
   i: Integer;
@@ -2667,11 +2684,9 @@ begin
 end;
 
 procedure tJson2PumlGlobalDefinition.SetServicePortStr(const Value: String);
-var ValueStr: String;
 begin
   FServicePortStr := Value;
-  ValueStr := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value);
-  FServicePort := StringToInteger(ValueStr, cDefaultServicePort)
+  FServicePort := StringToInteger(TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), cDefaultServicePort)
 end;
 
 procedure tJson2PumlGlobalDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;

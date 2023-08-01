@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 program json2pumlservice;
 
@@ -56,7 +56,8 @@ procedure RunServer (APort: Integer);
 var
   LServer: TIdHTTPWebBrokerBridge;
 begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, true, not FindCmdLineSwitch(cNoLogFiles));
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, true,
+    not FindCmdLineSwitch(cNoLogFiles));
   GlobalLogHandler.Trace ('** JSON2PUML Server ** ' + FileVersion);
   GlobalConfigurationDefinition.LogConfiguration;
   LServer := TIdHTTPWebBrokerBridge.Create (nil);
@@ -86,16 +87,19 @@ begin
 end;
 
 begin
-  ReportMemoryLeaksOnShutdown := true;
+  ReportMemoryLeaksOnShutdown := False;
   IsMultiThread := true;
   try
     if WebRequestHandler <> nil then
       WebRequestHandler.WebModuleClass := Json2PumlWebModuleClass;
     WebRequestHandlerProc.MaxConnections := 1024;
-    RunServer (GlobalConfigurationDefinition.ServicePort);
+    if GlobalCommandLineParameter.ServicePort > 0 then
+      RunServer (GlobalCommandLineParameter.ServicePort)
+    else
+      RunServer (GlobalConfigurationDefinition.ServicePort);
   except
     on E: Exception do
-      GlobalLogHandler.Error('%s: %s', [E.ClassName, E.Message]);
+      GlobalLogHandler.Error ('%s: %s', [E.ClassName, E.Message]);
   end;
 
 end.
