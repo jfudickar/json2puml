@@ -588,7 +588,10 @@ end;
 function StringToInteger (iValue: string; iDefault: Integer): Integer;
 begin
   try
-    Result := iValue.ToInteger;
+    if iValue.Trim.IsEmpty then
+      Result := iDefault
+    else
+      Result := iValue.ToInteger;
   except
     on e: exception do
       Result := iDefault;
