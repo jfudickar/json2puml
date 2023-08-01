@@ -33,9 +33,58 @@ uses System.Classes, System.SysUtils, json2pumldefinition,
 {$ENDIF}
   json2pumlloghandler, json2pumlconst, System.Zip;
 
-procedure ClearLastLineComma (oJsonOutPut: TStrings);
+procedure AddFileToZipFile(iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
 
-function ClearPropertyValue (iValue: string): string;
+function ClearPropertyValue(iValue: string): string;
+
+function ConvertFileToBase64(iFileName: string): string;
+
+function ExecuteCommand(const iCommand: WideString; const iCommandInfo: string): Boolean; overload;
+
+function ExecuteCommand(const iCommand: WideString; const iCommandInfo: string; oCommandOutPut, oCommandErrors:
+    TStringList): Boolean; overload;
+
+function FileContent(iFileName: string): string;
+
+function FileCount(iFileFilter: string): Integer;
+
+function FileDescription: string;
+
+function FileVersion: string;
+
+procedure GenerateDirectory(const iDirectory: string);
+
+procedure GenerateFileDirectory(iFileName: string);
+
+function GenerateOutputFromPuml(iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string; iFormat:
+    tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
+
+function GenerateOutputsFromPuml(iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string; iOutputFormats,
+    iOpenOutputs: tJson2PumlOutputFormats): Boolean;
+
+function GetServiceFileListResponse(oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
+
+function GetVersionInfo(AIdent: string): string;
+
+function IsLinuxHomeBasedPath(iPath: string): Boolean;
+
+function IsRelativePath(iPath: string): Boolean;
+
+function LegalCopyright: string;
+
+procedure OpenFile(iFileName: string);
+
+function PathCombine(const Path1, Path2: string): string;
+
+function PathCombineIfRelative(iBasePath, iPath: string): string;
+
+function ProductVersion: string;
+
+function ReplaceInvalidFileNameChars(const iFileName: string; const iReplaceWith: Char = '_'): string;
+
+function ReplaceInvalidPathChars(const iPathName: string; const iReplaceWith: Char = '_'): string;
+
+function ValidateOutputSuffix(iOutputSuffix: string): string;
 
 type
   TCurlUtils = class
@@ -67,52 +116,6 @@ type
     class function CombineParameter (iParameter: array of string): string;
   end;
 
-function FileCount (iFileFilter: string): Integer;
-
-function FileDescription: string;
-
-function FileVersion: string;
-
-function GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
-
-function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
-
-function LegalCopyright: string;
-
-procedure OpenFile (iFileName: string);
-
-function ProductVersion: string;
-
-function ReplaceInvalidFileNameChars (const iFileName: string; const iReplaceWith: Char = '_'): string;
-
-function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: Char = '_'): string;
-
-function ConvertFileToBase64 (iFileName: string): string;
-
-function FileContent (iFileName: string): string;
-
-function ValidateOutputSuffix (iOutputSuffix: string): string;
-
-function PathCombine (const Path1, Path2: string): string;
-
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
-  oCommandOutPut, oCommandErrors: TStringList): Boolean; overload;
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean; overload;
-
-procedure GenerateDirectory (const iDirectory: string);
-
-procedure GenerateFileDirectory (iFileName: string);
-
-function IsLinuxHomeBasedPath (iPath: string): Boolean;
-function IsRelativePath (iPath: string): Boolean;
-function PathCombineIfRelative (iBasePath, iPath: string): string;
-
-function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
-
-procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
-
 {$IFDEF LINUX}
 
 type
@@ -137,9 +140,37 @@ uses
 {$IFDEF MSWINDOWS} Winapi.Windows, Winapi.ShellAPI, VCL.Forms, {$ENDIF}
   System.Generics.Collections, System.IOUtils,
   System.Math, System.DateUtils, System.NetEncoding, json2pumlbasedefinition,
-  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression;
+  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression, jsontools;
 
 {$IFDEF MSWINDOWS}
+
+procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
+begin
+  if FileExists (iFileName) then
+    iZipFile.Add (iFileName, iFileName.replace(iRemoveDirectory, '').TrimLeft(tPath.DirectorySeparatorChar));
+end;
+
+function ClearPropertyValue (iValue: string): string;
+begin
+  Result := iValue.TrimRight ([' ', #10, #13, #9]).replace ('\', '\\').replace ('"', '\"').replace (#13#10, #10)
+    .replace (#13, #10).replace (#10, '\n');
+end;
+
+function ConvertFileToBase64 (iFileName: string): string;
+var
+  MemStream: TMemoryStream;
+  Base64: TBase64Encoding;
+begin
+  MemStream := TMemoryStream.Create;
+  Base64 := TBase64Encoding.Create (0);
+  try
+    MemStream.LoadFromFile (iFileName);
+    Result := Base64.EncodeBytesToString (MemStream.Memory, MemStream.size);
+  finally
+    MemStream.Free;
+    Base64.Free;
+  end;
+end;
 
 function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
 var
@@ -281,6 +312,199 @@ begin
   end;
 end;
 
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean;
+var
+  vCommandOutPut, vCommandErrors: TStringList;
+begin
+  vCommandOutPut := TStringList.Create;
+  vCommandErrors := TStringList.Create;
+  try
+    Result := ExecuteCommand (iCommand, iCommandInfo, vCommandOutPut, vCommandErrors);
+  finally
+    vCommandOutPut.Free;
+    vCommandErrors.Free;
+  end;
+end;
+
+function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
+  oCommandOutPut, oCommandErrors: TStringList): Boolean;
+var
+  s: string;
+begin
+  oCommandOutPut.clear;
+  oCommandErrors.clear;
+  GlobalLoghandler.Info ('Execute %s', [iCommandInfo]);
+  Result := ExecuteCommandInternal (iCommand, oCommandOutPut, oCommandErrors);
+  if oCommandOutPut.Count > 0 then
+  begin
+    GlobalLoghandler.Info ('  StdOut');
+    for s in oCommandOutPut do
+      GlobalLoghandler.Info ('    %s', [s]);
+  end;
+  if oCommandErrors.Count > 0 then
+  begin
+    GlobalLoghandler.Info ('  ErrOut');
+    for s in oCommandErrors do
+      GlobalLoghandler.Info ('    %s', [s]);
+  end;
+end;
+
+function FileContent (iFileName: string): string;
+var
+  Lines: TStringList;
+begin
+  Result := '';
+  if not FileExists (iFileName) then
+    Exit;
+  Lines := TStringList.Create;
+  try
+    Lines.LoadFromFile (iFileName);
+    Result := Lines.Text;
+  finally
+    Lines.Free;
+  end;
+end;
+
+function FileCount (iFileFilter: string): Integer;
+var
+  c: Integer;
+  searchResult: TSearchRec;
+begin
+  if iFileFilter.isEmpty then
+    Result := 0
+  else
+  begin
+    c := 0;
+    if findfirst (iFileFilter, faAnyFile, searchResult) = 0 then
+    begin
+      repeat
+        Inc (c);
+      until FindNext (searchResult) <> 0;
+      System.SysUtils.FindClose (searchResult);
+    end;
+    Result := c;
+  end;
+end;
+
+function FileDescription: string;
+begin
+  Result := GetVersionInfo ('FileDescription');
+end;
+
+function FileVersion: string;
+begin
+{$IFDEF MSWINDOWS}
+  Result := 'v' + GetVersionInfo ('FileVersion');
+{$ELSE}
+  Result := 'v' + cCurrentVersion;
+{$ENDIF}
+end;
+
+procedure GenerateDirectory (const iDirectory: string);
+begin
+  try
+    ForceDirectories (iDirectory);
+  except
+    on e: exception do
+      GlobalLoghandler.Error ('Error creating directory : %s', [iDirectory]);
+  end;
+end;
+
+procedure GenerateFileDirectory (iFileName: string);
+begin
+  GenerateDirectory (ExtractFilePath(iFileName));
+end;
+
+function GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
+  iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
+var
+  Command: string;
+  DestinationFile: string;
+begin
+  Result := False;
+  if not FileExists (iPlantUmlFile) then
+    Exit;
+  if not iFormat.IsPumlOutput then
+    Exit;
+  if iPlantUmlJarFile.isEmpty then
+    Exit;
+  if not FileExists (iPlantUmlJarFile) then
+  begin
+    GlobalLoghandler.Error ('PlantUML Jar File "%s" not found!', [iPlantUmlJarFile]);
+    Exit;
+  end;
+  DestinationFile := tPath.ChangeExtension (iPlantUmlFile, iFormat.FileExtension);
+  GenerateFileDirectory (DestinationFile);
+
+  if FileExists (DestinationFile) then
+    tFile.Delete (DestinationFile);
+
+  Command := Format ('java %s -jar "%s" "%s" %s', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile, iPlantUmlFile,
+    iFormat.PumlGenerateFlag]);
+
+  Result := ExecuteCommand (Command, Command);
+  if Result then
+  begin
+    GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
+
+    Result := FileExists (DestinationFile);
+    if Result and iOpenAfter then
+      OpenFile (DestinationFile);
+  end
+  else
+    GlobalLoghandler.Error ('Generation of %s for %s FAILED.', [iFormat.toString, iPlantUmlFile]);
+end;
+
+function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
+  iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
+var
+  f: tJson2PumlOutputFormat;
+begin
+  Result := true;
+  for f in iOutputFormats do
+    if f.IsPumlOutput then
+      Result := Result and GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, f,
+        f in iOpenOutputs);
+end;
+
+function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
+var
+  s: string;
+  FileList: TStringList;
+  ConfigFile: tJson2PumlBaseObject;
+begin
+  Result := 0;
+  oJsonOutPut.clear;
+  FileList := TStringList.Create;
+  GlobalConfigurationDefinition.FindFilesInFolderList (FileList, iFolderList);
+  WriteArrayStartToJson (oJsonOutPut, 0, '');
+  try
+    for s in FileList do
+    begin
+      if iInputList then
+        ConfigFile := tJson2PumlInputList.Create
+      else
+        ConfigFile := tJson2PumlConverterGroupDefinition.Create;
+      try
+        ConfigFile.ReadFromJsonFile (s);
+        if ConfigFile.IsValid then
+        begin
+          if iInputList then
+            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False)
+          else
+            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False);
+          Inc (Result);
+        end;
+      finally
+        ConfigFile.Free;
+      end;
+    end;
+    WriteArrayEndToJson (oJsonOutPut, 0);
+  finally
+    FileList.Free;
+  end;
+end;
+
 function GetVersionInfo (AIdent: string): string;
 
 type
@@ -339,10 +563,92 @@ begin
   end;
 end;
 
+function IsLinuxHomeBasedPath (iPath: string): Boolean;
+begin
+{$IFDEF LINUX}
+  Result := iPath.StartsWith (cLinuxHome);
+{$ELSE}
+  Result := False;
+{$ENDIF}
+end;
+
+function IsRelativePath (iPath: string): Boolean;
+begin
+  if IsLinuxHomeBasedPath (iPath) then
+    Result := False
+  else
+    Result := tPath.IsRelativePath (iPath);
+end;
+
+function LegalCopyright: string;
+begin
+  Result := GetVersionInfo ('LegalCopyright');
+end;
+
 procedure OpenFile (iFileName: string);
 begin
   if FileExists (iFileName) then
     ShellExecute (0, nil, PChar(iFileName), nil, nil, SW_RESTORE);
+end;
+
+function PathCombine (const Path1, Path2: string): string;
+begin
+  if not Path1.isEmpty then
+    Result := Path1.TrimRight (tPath.DirectorySeparatorChar) + tPath.DirectorySeparatorChar
+  else
+    Result := '';
+  Result := Result + Path2.TrimLeft (tPath.DirectorySeparatorChar);
+  Result := Result.TrimRight (tPath.DirectorySeparatorChar);
+end;
+
+function PathCombineIfRelative (iBasePath, iPath: string): string;
+begin
+  if IsLinuxHomeBasedPath (iPath) then
+    Result := ExpandFileName (iPath)
+  else if tPath.IsRelativePath (iPath) then
+    Result := PathCombine (iBasePath, iPath)
+  else
+    Result := iPath;
+end;
+
+function ProductVersion: string;
+begin
+  Result := 'v' + GetVersionInfo ('ProductVersion');
+end;
+
+function ReplaceInvalidFileNameChars (const iFileName: string; const iReplaceWith: Char = '_'): string;
+var
+  i: Integer;
+begin
+  Result := iFileName.Trim;
+  while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
+    Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
+      tPath.ExtensionSeparatorChar);
+  for i := low(Result) to high(Result) do
+    if not tPath.IsValidFileNameChar (Result[i]) then
+      Result[i] := iReplaceWith;
+end;
+
+function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: Char = '_'): string;
+var
+  i: Integer;
+begin
+  Result := iPathName.Trim;
+  for i := low(Result) to high(Result) do
+    if not tPath.IsValidPathChar (Result[i]) then
+      Result[i] := iReplaceWith;
+end;
+
+function ValidateOutputSuffix (iOutputSuffix: string): string;
+begin
+  Result := iOutputSuffix.Trim;
+  if not Result.isEmpty then
+    if CharInSet (Result[1], ['_', '-', '.']) then
+      if Result.Substring (1).Trim.isEmpty then
+        Result := ''
+      else
+    else
+      Result := '.' + Result;
 end;
 
 {$ELSE}
@@ -427,180 +733,6 @@ begin
 end;
 
 {$ENDIF}
-
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
-  oCommandOutPut, oCommandErrors: TStringList): Boolean;
-var
-  s: string;
-begin
-  oCommandOutPut.clear;
-  oCommandErrors.clear;
-  GlobalLoghandler.Info ('Execute %s', [iCommandInfo]);
-  Result := ExecuteCommandInternal (iCommand, oCommandOutPut, oCommandErrors);
-  if oCommandOutPut.Count > 0 then
-  begin
-    GlobalLoghandler.Info ('  StdOut');
-    for s in oCommandOutPut do
-      GlobalLoghandler.Info ('    %s', [s]);
-  end;
-  if oCommandErrors.Count > 0 then
-  begin
-    GlobalLoghandler.Info ('  ErrOut');
-    for s in oCommandErrors do
-      GlobalLoghandler.Info ('    %s', [s]);
-  end;
-end;
-
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean;
-var
-  vCommandOutPut, vCommandErrors: TStringList;
-begin
-  vCommandOutPut := TStringList.Create;
-  vCommandErrors := TStringList.Create;
-  try
-    Result := ExecuteCommand (iCommand, iCommandInfo, vCommandOutPut, vCommandErrors);
-  finally
-    vCommandOutPut.Free;
-    vCommandErrors.Free;
-  end;
-end;
-
-procedure ClearLastLineComma (oJsonOutPut: TStrings);
-var
-  s: string;
-begin
-  if oJsonOutPut.Count < 0 then
-    Exit;
-  s := oJsonOutPut[oJsonOutPut.Count - 1].TrimRight;
-  if s.Substring (s.Length - 1) = ',' then
-    oJsonOutPut[oJsonOutPut.Count - 1] := s.Substring (0, s.Length - 1);
-end;
-
-function ClearPropertyValue (iValue: string): string;
-begin
-  Result := iValue.TrimRight ([' ', #10, #13, #9]).replace ('\', '\\').replace ('"', '\"').replace (#13#10, #10)
-    .replace (#13, #10).replace (#10, '\n');
-end;
-
-function FileCount (iFileFilter: string): Integer;
-var
-  c: Integer;
-  searchResult: TSearchRec;
-begin
-  if iFileFilter.isEmpty then
-    Result := 0
-  else
-  begin
-    c := 0;
-    if findfirst (iFileFilter, faAnyFile, searchResult) = 0 then
-    begin
-      repeat
-        Inc (c);
-      until FindNext (searchResult) <> 0;
-      System.SysUtils.FindClose (searchResult);
-    end;
-    Result := c;
-  end;
-end;
-
-function FileDescription: string;
-begin
-  Result := GetVersionInfo ('FileDescription');
-end;
-
-function FileVersion: string;
-begin
-{$IFDEF MSWINDOWS}
-  Result := 'v' + GetVersionInfo ('FileVersion');
-{$ELSE}
-  Result := 'v' + cCurrentVersion;
-{$ENDIF}
-end;
-
-function GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
-var
-  Command: string;
-  DestinationFile: string;
-begin
-  Result := False;
-  if not FileExists (iPlantUmlFile) then
-    Exit;
-  if not iFormat.IsPumlOutput then
-    Exit;
-  if iPlantUmlJarFile.isEmpty then
-    Exit;
-  if not FileExists (iPlantUmlJarFile) then
-  begin
-    GlobalLoghandler.Error ('PlantUML Jar File "%s" not found!', [iPlantUmlJarFile]);
-    Exit;
-  end;
-  DestinationFile := tPath.ChangeExtension (iPlantUmlFile, iFormat.FileExtension);
-  GenerateFileDirectory (DestinationFile);
-
-  if FileExists (DestinationFile) then
-    tFile.Delete (DestinationFile);
-
-  Command := Format ('java %s -jar "%s" "%s" %s', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile, iPlantUmlFile,
-    iFormat.PumlGenerateFlag]);
-
-  Result := ExecuteCommand (Command, Command);
-  if Result then
-  begin
-    GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
-
-    Result := FileExists (DestinationFile);
-    if Result and iOpenAfter then
-      OpenFile (DestinationFile);
-  end
-  else
-    GlobalLoghandler.Error ('Generation of %s for %s FAILED.', [iFormat.toString, iPlantUmlFile]);
-end;
-
-function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
-var
-  f: tJson2PumlOutputFormat;
-begin
-  Result := true;
-  for f in iOutputFormats do
-    if f.IsPumlOutput then
-      Result := Result and GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, f,
-        f in iOpenOutputs);
-end;
-
-function LegalCopyright: string;
-begin
-  Result := GetVersionInfo ('LegalCopyright');
-end;
-
-function ProductVersion: string;
-begin
-  Result := 'v' + GetVersionInfo ('ProductVersion');
-end;
-
-function ReplaceInvalidFileNameChars (const iFileName: string; const iReplaceWith: Char = '_'): string;
-var
-  i: Integer;
-begin
-  Result := iFileName.Trim;
-  while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
-    Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
-      tPath.ExtensionSeparatorChar);
-  for i := low(Result) to high(Result) do
-    if not tPath.IsValidFileNameChar (Result[i]) then
-      Result[i] := iReplaceWith;
-end;
-
-function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: Char = '_'): string;
-var
-  i: Integer;
-begin
-  Result := iPathName.Trim;
-  for i := low(Result) to high(Result) do
-    if not tPath.IsValidPathChar (Result[i]) then
-      Result[i] := iReplaceWith;
-end;
 
 class function TCurlUtils.FullUrl (const iBaseUrl: string; const iUrlParts: array of string;
   iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
@@ -923,147 +1055,7 @@ begin
   Result := Value;
 end;
 
-procedure GenerateDirectory (const iDirectory: string);
-begin
-  try
-    ForceDirectories (iDirectory);
-  except
-    on e: exception do
-      GlobalLoghandler.Error ('Error creating directory : %s', [iDirectory]);
-  end;
-end;
-
-procedure GenerateFileDirectory (iFileName: string);
-begin
-  GenerateDirectory (ExtractFilePath(iFileName));
-end;
-
-function ConvertFileToBase64 (iFileName: string): string;
-var
-  MemStream: TMemoryStream;
-  Base64: TBase64Encoding;
-begin
-  MemStream := TMemoryStream.Create;
-  Base64 := TBase64Encoding.Create (0);
-  try
-    MemStream.LoadFromFile (iFileName);
-    Result := Base64.EncodeBytesToString (MemStream.Memory, MemStream.size);
-  finally
-    MemStream.Free;
-    Base64.Free;
-  end;
-end;
-
-function FileContent (iFileName: string): string;
-var
-  Lines: TStringList;
-begin
-  Result := '';
-  if not FileExists (iFileName) then
-    Exit;
-  Lines := TStringList.Create;
-  try
-    Lines.LoadFromFile (iFileName);
-    Result := Lines.Text;
-  finally
-    Lines.Free;
-  end;
-end;
-
-function ValidateOutputSuffix (iOutputSuffix: string): string;
-begin
-  Result := iOutputSuffix.Trim;
-  if not Result.isEmpty then
-    if CharInSet (Result[1], ['_', '-', '.']) then
-      if Result.Substring (1).Trim.isEmpty then
-        Result := ''
-      else
-    else
-      Result := '.' + Result;
-end;
-
-function PathCombine (const Path1, Path2: string): string;
-begin
-  if not Path1.isEmpty then
-    Result := Path1.TrimRight (tPath.DirectorySeparatorChar) + tPath.DirectorySeparatorChar
-  else
-    Result := '';
-  Result := Result + Path2.TrimLeft (tPath.DirectorySeparatorChar);
-  Result := Result.TrimRight (tPath.DirectorySeparatorChar);
-end;
-
-function PathCombineIfRelative (iBasePath, iPath: string): string;
-begin
-  if IsLinuxHomeBasedPath (iPath) then
-    Result := ExpandFileName (iPath)
-  else if tPath.IsRelativePath (iPath) then
-    Result := PathCombine (iBasePath, iPath)
-  else
-    Result := iPath;
-end;
-
-function IsRelativePath (iPath: string): Boolean;
-begin
-  if IsLinuxHomeBasedPath (iPath) then
-    Result := False
-  else
-    Result := tPath.IsRelativePath (iPath);
-end;
-
-function IsLinuxHomeBasedPath (iPath: string): Boolean;
-begin
-{$IFDEF LINUX}
-  Result := iPath.StartsWith (cLinuxHome);
-{$ELSE}
-  Result := False;
-{$ENDIF}
-end;
-
 type
   tAccessJson2PumlGlobalDefinition = class(tJson2PumlGlobalDefinition);
-
-function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
-var
-  s: string;
-  FileList: TStringList;
-  ConfigFile: tJson2PumlBaseObject;
-begin
-  Result := 0;
-  oJsonOutPut.clear;
-  FileList := TStringList.Create;
-  GlobalConfigurationDefinition.FindFilesInFolderList (FileList, iFolderList);
-  tAccessJson2PumlGlobalDefinition (GlobalConfigurationDefinition).WriteArrayStartToJson (oJsonOutPut, 0, '');
-  try
-    for s in FileList do
-    begin
-      if iInputList then
-        ConfigFile := tJson2PumlInputList.Create
-      else
-        ConfigFile := tJson2PumlConverterGroupDefinition.Create;
-      try
-        ConfigFile.ReadFromJsonFile (s);
-        if ConfigFile.IsValid then
-        begin
-          if iInputList then
-            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False)
-          else
-            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False);
-          Inc (Result);
-        end;
-      finally
-        ConfigFile.Free;
-      end;
-    end;
-    tAccessJson2PumlGlobalDefinition (GlobalConfigurationDefinition).WriteArrayEndToJson (oJsonOutPut, 0);
-  finally
-    FileList.Free;
-  end;
-end;
-
-procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
-begin
-  if FileExists (iFileName) then
-    iZipFile.Add (iFileName, iFileName.replace(iRemoveDirectory, '').TrimLeft(tPath.DirectorySeparatorChar));
-end;
 
 end.

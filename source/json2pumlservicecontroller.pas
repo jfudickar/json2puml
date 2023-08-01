@@ -40,6 +40,7 @@ type
     procedure OnBeforeAction (Context: TWebContext; const AActionName: string; var Handled: Boolean); override;
     procedure OnAfterAction (Context: TWebContext; const AActionName: string); override;
     procedure GetFileListResponse (iFileList: tstringlist; iInputList: Boolean);
+    procedure GetServiceInformationResponse;
     procedure LogRequestStart (iContext: TWebContext);
     procedure LogRequestEnd (iContext: TWebContext);
   public
@@ -53,6 +54,9 @@ type
     [MVCPath('/definitionfile')]
     [MVCHTTPMethod([httpGET])]
     procedure GetDefinitionFiles;
+    [MVCPath('/serviceinformation')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetServiceInformation;
 
     [MVCPath('/json2pumlRequestSvg')]
     [MVCHTTPMethod([httpPOST])]
@@ -159,6 +163,40 @@ end;
 procedure TJson2PumlController.GetInputListFile;
 begin
   GetFileListResponse (GlobalConfigurationDefinition.InputListFileSearchFolder, true);
+end;
+
+procedure TJson2PumlController.GetServiceInformation;
+begin
+  GetServiceInformationResponse;
+end;
+
+procedure TJson2PumlController.GetServiceInformationResponse;
+var
+  jsonOutput: tstringlist;
+begin
+  LogRequestStart (Context);
+  jsonOutput := tstringlist.Create;
+  try
+    try
+      Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+      WriteObjectStartToJson (JsonOutPut, 0, '');
+      WriteToJsonValue (JsonOutPut, 'Service', 'JSON2PUML' + FileVersion, 1, true);
+      WriteToJsonValue (JsonOutPut, 'Service Information', TCurlUtils.ReplaceCurlVariablesFromEnvironment(GlobalConfigurationDefinition.AdditionalServiceInformation), 1, false);
+      WriteObjectEndToJson(JsonOutPut, 0);
+      Render (jsonOutput.Text);
+      Context.Response.StatusCode := HTTP_STATUS.OK;
+    except
+      on e: exception do
+      begin
+        GlobalLoghandler.Error (e.Message);
+        GlobalLoghandler.Error (e.StackTrace);
+        RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
+      end;
+    end;
+  finally
+    jsonOutput.Free;
+  end;
+  LogRequestEnd (Context);
 end;
 
 procedure TJson2PumlController.Index;

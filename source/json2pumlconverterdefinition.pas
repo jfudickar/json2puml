@@ -1052,15 +1052,15 @@ begin
   HiddenProperties.WriteToJson (oJsonOutPut, 'hiddenProperties', Level + 1, WriteEmpty);
   PUMLHeaderLines.WriteToJson (oJsonOutPut, 'pumlHeaderLines', Level + 1, WriteEmpty);
   ObjectFormats.WriteToJson (oJsonOutPut, 'objectFormats', Level + 1, WriteEmpty);
-  ClearLastLineComma (oJsonOutPut);
+  ClearJsonLastLineComma (oJsonOutPut);
   oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(Level)]));
   if not OptionName.IsEmpty then
   begin
-    ClearLastLineComma (oJsonOutPut);
+    ClearJsonLastLineComma (oJsonOutPut);
     oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(iLevel)]));
   end;
   if iLevel <= 0 then
-    ClearLastLineComma (oJsonOutPut);
+    ClearJsonLastLineComma (oJsonOutPut);
 end;
 
 constructor tJson2PumlOperationPropertyList.Create;
@@ -1623,15 +1623,15 @@ begin
   WriteToJsonValue (oJsonOutPut, 'showToRelations', ShowToRelationsStr, Level + 1, iWriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'sortAttributes', SortAttributesStr, Level + 1, iWriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'valueSplitLength', ValueSplitLengthStr, Level + 1, iWriteEmpty, false);
-  ClearLastLineComma (oJsonOutPut);
+  ClearJsonLastLineComma (oJsonOutPut);
   oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(Level)]));
   if not FormatName.IsEmpty then
   begin
-    ClearLastLineComma (oJsonOutPut);
+    ClearJsonLastLineComma (oJsonOutPut);
     oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(iLevel)]));
   end;
   if iLevel <= 0 then
-    ClearLastLineComma (oJsonOutPut);
+    ClearJsonLastLineComma (oJsonOutPut);
 end;
 
 constructor tJson2PumlFormatDefinitionEnumerator.Create (ACharacteristicList: tJson2PumlFormatDefinitionList);
