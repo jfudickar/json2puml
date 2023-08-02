@@ -37,8 +37,6 @@ procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: str
 
 function ApplicationCompileVersion: string;
 
-function ClearPropertyValue (iValue: string): string;
-
 function ConvertFileToBase64 (iFileName: string): string;
 
 function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean; overload;
@@ -150,20 +148,12 @@ function ApplicationCompileVersion: string;
 begin
 {$IFDEF WIN64}
   Result := 'Windows 64Bit';
-{$ELSEIF WIN32}
+{$ENDIF}
+{$IFDEF WIN32}
   Result := 'Windows 32Bit';
-{$ELSEIF IOS64}
-  Result := 'iOS 64Bit';
-{$ELSEIF IOS}
-  Result := 'iOS';
-{$ELSEIF OSX64}
-  Result := 'MacOS 64Bit';
-{$ELSEIF OSX}
-  Result := 'MacOS';
-{$ELSEIF LINUX64}
+{$ENDIF}
+{$IFDEF LINUX64}
   Result := 'Linux 64Bit';
-{$ELSE}
-  Result := 'Linux 32Bit';
 {$ENDIF}
 {$IFDEF CPUX64}
   Result := Result + ' x86';
@@ -179,12 +169,6 @@ procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: str
 begin
   if FileExists (iFileName) then
     iZipFile.Add (iFileName, iFileName.replace(iRemoveDirectory, '').TrimLeft(tPath.DirectorySeparatorChar));
-end;
-
-function ClearPropertyValue (iValue: string): string;
-begin
-  Result := iValue.TrimRight ([' ', #10, #13, #9]).replace ('\', '\\').replace ('"', '\"').replace (#13#10, #10)
-    .replace (#13, #10).replace (#10, '\n');
 end;
 
 function ConvertFileToBase64 (iFileName: string): string;
@@ -204,6 +188,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
+
 function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
 var
   buffer: array [0 .. 2400] of AnsiChar;
@@ -344,6 +329,7 @@ begin
   end;
 end;
 {$ELSE}
+
 function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
 begin
   Result := TLinuxUtils.RunCommandLine (iCommand, oCommandOutPut);
@@ -510,15 +496,22 @@ var
   Command: string;
   vCommandOutPut, vCommandErrors: TStringList;
 begin
-  vCommandOutPut:= TStringList.Create;
-  vCommandErrors:= TStringList.Create;
-  try
-    Command := Format ('java -jar "%s" -version', [iPlantUmlJarFile]);
-    ExecuteCommand (Command, Command,vCommandOutPut, vCommandErrors);
-    Result := vCommandOutPut.Text;
-  finally
-    vCommandOutPut.Free;
-    vCommandErrors.Free;
+  if iPlantUmlJarFile.isEmpty then
+    Result := 'PlantUml jar file not defined'
+  else if not FileExists (iPlantUmlJarFile) then
+    Result := Format ('defined PlantUml jar file (%s) not existing', [iPlantUmlJarFile])
+  else
+  begin
+    vCommandOutPut := TStringList.Create;
+    vCommandErrors := TStringList.Create;
+    try
+      Command := Format ('java -jar "%s" -version', [iPlantUmlJarFile]);
+      ExecuteCommand (Command, Command, vCommandOutPut, vCommandErrors);
+      Result := vCommandOutPut.Text;
+    finally
+      vCommandOutPut.Free;
+      vCommandErrors.Free;
+    end;
   end;
 
 end;
@@ -562,6 +555,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
+
 function GetVersionInfo (AIdent: string): string;
 
 type
@@ -621,7 +615,6 @@ begin
 end;
 {$ENDIF}
 
-
 function IsLinuxHomeBasedPath (iPath: string): Boolean;
 begin
 {$IFDEF LINUX}
@@ -645,6 +638,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
+
 procedure OpenFile (iFileName: string);
 begin
   if FileExists (iFileName) then

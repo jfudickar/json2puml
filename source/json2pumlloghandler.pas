@@ -109,7 +109,7 @@ procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlA
   begin
     iLogProvider.CustomMsgOutput := True;
     iLogProvider.CustomFormatOutput := '%{DATETIME} - (%{THREADID}) - [%{LEVEL}] : %{MESSAGE}';
-    iLogProvider.IncludedInfo := GlobalLogFileProvider.IncludedInfo + [iiThreadId, iiProcessId];
+    iLogProvider.IncludedInfo := iLogProvider.IncludedInfo + [iiThreadId, iiProcessId];
   end;
 
 begin

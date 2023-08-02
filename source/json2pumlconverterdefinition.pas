@@ -2132,7 +2132,7 @@ begin
   IsRecord := true;
   if (CharacteristicType = jctRecord) and (not IncludeIndex) and (PropertyList.Count <= 0) then
   begin
-    Value := ClearPropertyValue (ParentProperty);
+    Value := ClearJsonPropertyValue (ParentProperty);
     IsRecord := false;
   end
   else
@@ -2165,7 +2165,7 @@ procedure tJson2PumlObjectDefinition.WriteToJson (oJsonOutPut: TStrings; iProper
 begin
   if not GenerateWithoutIdentifier then
     oJsonOutPut.Add (Format('%s%s"%s",', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName),
-      ClearPropertyValue(ObjectName)]))
+      ClearJsonPropertyValue(ObjectName)]))
   else
     oJsonOutPut.Add (Format('%s%s{%s,%s},', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName),
       JsonPropertyNameValue('objectName', ObjectName), JsonPropertyNameValue('generateWithoutIdentifier',
@@ -2430,7 +2430,7 @@ var
   begin
     if iWriteEmpty or not iValue.IsEmpty then
     begin
-      S := JsonPropertyNameValue (iName, ClearPropertyValue(iValue));
+      S := JsonPropertyNameValue (iName, ClearJsonPropertyValue(iValue));
       if l.IsEmpty then
         l := S
       else
@@ -2441,7 +2441,7 @@ var
 begin
   if ChildPropertyName.IsEmpty and NextValueSeparator.IsEmpty then
     oJsonOutPut.Add (Format('%s%s"%s",', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName),
-      ClearPropertyValue(PropertyName)]))
+      ClearJsonPropertyValue(PropertyName)]))
   else
   begin
     l := '';

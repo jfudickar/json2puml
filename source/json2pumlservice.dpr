@@ -59,6 +59,7 @@ begin
   InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, true,
     not FindCmdLineSwitch(cNoLogFiles));
   GlobalLogHandler.Trace ('** JSON2PUML Server ** ' + FileVersion);
+  GlobalCommandLineParameter.ReadInputParameter;
   GlobalConfigurationDefinition.LogConfiguration;
   LServer := TIdHTTPWebBrokerBridge.Create (nil);
   try

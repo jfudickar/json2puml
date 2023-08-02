@@ -704,7 +704,7 @@ begin
     BaseObject[iIndex].WriteToJson (oJsonOutPut, iPropertyName, iLevel + 1, iWriteEmpty)
   else
     oJsonOutPut.Add (Format('%s%s"%s",', [JsonLinePrefix(iLevel + 1), JsonPropertyName(iPropertyName),
-      ClearPropertyValue(self[iIndex])]));
+      ClearJsonPropertyValue(self[iIndex])]));
 end;
 
 constructor tJson2PumlBasePropertyList.Create;

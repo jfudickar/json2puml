@@ -167,10 +167,10 @@ type
     FOutputPath: string;
     FPlantUmlJarFileName: string;
     FServicePort: Integer;
-    FServicePortStr: String;
-    procedure SetCurlSpanIdHeader(const Value: string);
-    procedure SetCurlTraceIdHeader(const Value: string);
-    procedure SetServicePortStr(const Value: String);
+    FServicePortStr: string;
+    procedure SetCurlSpanIdHeader (const Value: string);
+    procedure SetCurlTraceIdHeader (const Value: string);
+    procedure SetServicePortStr (const Value: string);
   protected
     function GetIdent: string; override;
   public
@@ -186,7 +186,8 @@ type
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
   published
-    property AdditionalServiceInformation: string read FAdditionalServiceInformation write FAdditionalServiceInformation;
+    property AdditionalServiceInformation: string read FAdditionalServiceInformation
+      write FAdditionalServiceInformation;
     property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
     property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
     property CurlPassThroughHeader: tStringList read FCurlPassThroughHeader;
@@ -201,7 +202,7 @@ type
     property OutputPath: string read FOutputPath write FOutputPath;
     property PlantUmlJarFileName: string read FPlantUmlJarFileName write FPlantUmlJarFileName;
     property ServicePort: Integer read FServicePort;
-    property ServicePortStr: String read FServicePortStr write SetServicePortStr;
+    property ServicePortStr: string read FServicePortStr write SetServicePortStr;
   end;
 
   TJson2PumlFileDetailRecord = class(tPersistent)
@@ -479,8 +480,8 @@ type
     function GetOutputPathExpanded: string;
     function GetSummaryInputFile: tJson2PumlInputFileDefinition;
     procedure SetCurlParameterList (const Value: tJson2PumlCurlParameterList);
-    procedure SetCurlSpanIdHeader(const Value: string);
-    procedure SetCurlTraceIdHeader(const Value: string);
+    procedure SetCurlSpanIdHeader (const Value: string);
+    procedure SetCurlTraceIdHeader (const Value: string);
     procedure SetOutputFormatStr (const Value: string);
     procedure SetOutputPath (const Value: string);
     procedure SetOutputSuffix (const Value: string);
@@ -620,7 +621,7 @@ type
     procedure SetOpenOutputsStr (const Value: string);
     procedure SetOutputFormatStr (const Value: string);
     procedure SetOutputSuffix (const Value: string);
-    procedure SetServicePortStr(const Value: string);
+    procedure SetServicePortStr (const Value: string);
     procedure SetTitleFilter (const Value: string);
   strict protected
   protected
@@ -637,6 +638,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    function CommandLineParameterStr (iIncludeProgram: boolean): string;
     procedure LogLineWrapped (iParameter, iDescription: string; iParameterLength: Integer = 50;
       iLineLength: Integer = 110);
     procedure ReadInputParameter;
@@ -853,7 +855,7 @@ begin
   IntGlobalCommandLineParameter := tJson2PumlCommandLineParameter.Create;
   GlobalCommandLineParameter.ReadInputParameter;
 
-  s := GlobalCommandLineParameter.ConfigurationFileName;
+  S := GlobalCommandLineParameter.ConfigurationFileName;
   if (not S.IsEmpty) and FileExists (S) then
   else
     S := GlobalCommandLineParameter.ConfigurationFileNameEnvironment;
@@ -1814,12 +1816,12 @@ begin
   FCurlParameterList := Value;
 end;
 
-procedure tJson2PumlInputList.SetCurlSpanIdHeader(const Value: string);
+procedure tJson2PumlInputList.SetCurlSpanIdHeader (const Value: string);
 begin
   FCurlSpanIdHeader := Value.ToLower.Trim;
 end;
 
-procedure tJson2PumlInputList.SetCurlTraceIdHeader(const Value: string);
+procedure tJson2PumlInputList.SetCurlTraceIdHeader (const Value: string);
 begin
   FCurlTraceIdHeader := Value.ToLower.Trim;
 end;
@@ -2256,13 +2258,8 @@ begin
 end;
 
 procedure tJson2PumlCommandLineParameter.ReadInputParameter;
-var
-  S: string;
-  i: Integer;
 begin
-  for i := 1 to ParamCount do
-    S := S + ParamStr (i) + ' ';
-  GlobalLoghandler.Info ('Current command line parameters: (%s)', [S]);
+  GlobalLoghandler.Info ('Current command line parameters: (%s)', [CommandLineParameterStr(false)]);
   // for i := 1 to ParamCount do
   // GlobalLoghandler.Debug ('  [%d]: %s', [i, ParamStr(i)]);
   ConfigurationFileName := ReadSingleInputParameterFile ('configurationfile');
@@ -2378,10 +2375,10 @@ begin
   FOutputSuffix := ValidateOutputSuffix (Value);
 end;
 
-procedure tJson2PumlCommandLineParameter.SetServicePortStr(const Value: string);
+procedure tJson2PumlCommandLineParameter.SetServicePortStr (const Value: string);
 begin
   FServicePortStr := Value;
-  FServicePort := StringToInteger(TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), -1);
+  FServicePort := StringToInteger (TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), - 1);
 end;
 
 procedure tJson2PumlCommandLineParameter.SetTitleFilter (const Value: string);
@@ -2438,7 +2435,8 @@ begin
   WriteHelpLine;
   WriteHelpLine ('configurationfile:<file>', 'Global base configuration of json2puml. Overwrites the "' +
     cConfigurationFileRegistry + '" environment parameter.');
-  WriteHelpLine ('serviceport:<portnumber>', 'Port the service application is listening. Overwrites the global configuration parameter.');
+  WriteHelpLine ('serviceport:<portnumber>',
+    'Port the service application is listening. Overwrites the global configuration parameter.');
   WriteHelpLine ('parameterfile:<file>',
     'ParameterFileName which contains a set of command line parameters in one file');
   WriteHelpLine ('definitionfile:<file>', 'DefinitionFileName which contains the configuration of the mapper');
@@ -2516,6 +2514,19 @@ begin
   WriteHelpLine ('jobdescription',
     'Job description of the generated result. This information will be put into the legend of the image.');
   WriteHelpLine;
+end;
+
+function tJson2PumlCommandLineParameter.CommandLineParameterStr (iIncludeProgram: boolean): string;
+var
+  i: Integer;
+begin
+  if iIncludeProgram then
+    Result := ParamStr (0) + ' '
+  else
+    Result := '';
+  for i := 1 to ParamCount do
+    Result := Result + ParamStr (i) + ' ';
+  Result := Result.Trim;
 end;
 
 constructor tJson2PumlGlobalDefinition.Create;
@@ -2669,27 +2680,28 @@ begin
   LogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', PlantUmlJarFileName);
   PlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', PlantUmlJarFileName);
   BaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', BaseOutputPath);
-  AdditionalServiceInformation := GetJsonStringValue (DefinitionRecord, 'additionalServiceInformation', AdditionalServiceInformation);
+  AdditionalServiceInformation := GetJsonStringValue (DefinitionRecord, 'additionalServiceInformation',
+    AdditionalServiceInformation);
   OutputPath := GetJsonStringValue (DefinitionRecord, 'outputPath', BaseOutputPath);
   GetJsonStringValueList (CurlPassThroughHeader, DefinitionRecord, 'curlPassThroughHeader');
   CurlPassThroughHeader.Text := CurlPassThroughHeader.Text.ToLower;
   ServicePortStr := GetJsonStringValue (DefinitionRecord, 'servicePort', ServicePortStr);
 end;
 
-procedure tJson2PumlGlobalDefinition.SetCurlSpanIdHeader(const Value: string);
+procedure tJson2PumlGlobalDefinition.SetCurlSpanIdHeader (const Value: string);
 begin
   FCurlSpanIdHeader := Value.ToLower.Trim;
 end;
 
-procedure tJson2PumlGlobalDefinition.SetCurlTraceIdHeader(const Value: string);
+procedure tJson2PumlGlobalDefinition.SetCurlTraceIdHeader (const Value: string);
 begin
   FCurlTraceIdHeader := Value.ToLower.Trim;
 end;
 
-procedure tJson2PumlGlobalDefinition.SetServicePortStr(const Value: String);
+procedure tJson2PumlGlobalDefinition.SetServicePortStr (const Value: string);
 begin
   FServicePortStr := Value;
-  FServicePort := StringToInteger(TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), cDefaultServicePort)
+  FServicePort := StringToInteger (TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), cDefaultServicePort)
 end;
 
 procedure tJson2PumlGlobalDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;

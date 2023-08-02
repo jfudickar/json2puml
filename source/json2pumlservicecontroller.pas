@@ -184,21 +184,29 @@ begin
   jsonOutput := TStringList.Create;
   try
     try
+      InputHandler.CmdLineParameter.ReadInputParameter;
+      InputHandler.BeginLoadFile;
+      try
+        InputHandler.LoadConfigurationFile;
+      finally
+        InputHandler.EndLoadFile(False);
+      end;
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
       WriteObjectStartToJson (jsonOutput, 0, '');
       WriteToJsonValue (jsonOutput, 'service', Format('json2puml %s (%s)', [FileVersion, ApplicationCompileVersion]
         ), 1, true);
       InfoList.Text := TCurlUtils.ReplaceCurlVariablesFromEnvironment
-        (GlobalConfigurationDefinition.AdditionalServiceInformation);
+        (InputHandler.GlobalConfiguration.AdditionalServiceInformation.Replace('\n', #13#10));
       WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
       InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile);
+      WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true), 1, false);
       WriteToJsonValue (jsonOutput, 'plantUmlInformation', InfoList, 1, false, false);
 
-      GlobalConfigurationDefinition.FindFilesInFolderList (InfoList,
-        GlobalConfigurationDefinition.DefinitionFileSearchFolder);
+      InputHandler.GlobalConfiguration.FindFilesInFolderList (InfoList,
+        InputHandler.GlobalConfiguration.DefinitionFileSearchFolder);
       WriteToJsonValue (jsonOutput, 'definitionFiles', InfoList, 1, false, false);
-      GlobalConfigurationDefinition.FindFilesInFolderList (InfoList,
-        GlobalConfigurationDefinition.InputListFileSearchFolder);
+      InputHandler.GlobalConfiguration.FindFilesInFolderList (InfoList,
+        InputHandler.GlobalConfiguration.InputListFileSearchFolder);
       WriteToJsonValue (jsonOutput, 'inputlistFiles', InfoList, 1, false, false);
       WriteObjectEndToJson (jsonOutput, 0);
       Render (jsonOutput.Text);

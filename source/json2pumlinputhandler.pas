@@ -91,7 +91,7 @@ type
     FBeforeDeleteAllRecords: TNotifyEvent;
     FCmdLineParameter: tJson2PumlCommandLineParameter;
     FConfigurationFileLines: TStrings;
-    FConvertCnt: Integer;
+    FLoadFileCnt: Integer;
     FConverterDefinitionGroup: tJson2PumlConverterGroupDefinition;
     FConverterInputList: tJson2PumlInputList;
     FCurlAuthenticationFileLines: TStrings;
@@ -179,7 +179,7 @@ type
     procedure ReformatFile (iFileName: string; iClass: tJson2PumlBaseListClass); overload;
     procedure ReformatFile (iFileName: string; iClass: tJson2PumlBaseObjectClass); overload;
     function ReplaceFileNameVariables (iReplace, iFileName, iOption: string): string;
-    procedure SetConverting (Converting: Boolean);
+    procedure SetFileLoading(iLoading, iAutoStartConvert: Boolean);
     property CurrentDetail: string read GetCurrentDetail;
     property GenerateDetails: Boolean read GetGenerateDetails;
     property GenerateDetailsStr: string read GetGenerateDetailsStr;
@@ -190,7 +190,7 @@ type
     constructor Create (iApplicationType: tJson2PumlApplicationType);
     destructor Destroy; override;
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
-    procedure BeginConvert;
+    procedure BeginLoadFile;
     function CalculateCurlAdditionalRuntimeOptions: string;
     function CalculateRuntimeJarFile: string;
     function CalculateSummaryPath: string;
@@ -198,7 +198,7 @@ type
     procedure Clear;
     procedure ConvertAllRecords (iIndex: Integer = - 1);
     procedure DeleteGeneratedFiles;
-    procedure EndConvert;
+    procedure EndLoadFile(iAutoStartConvert: boolean = true);
     procedure GenerateSummaryZipFile;
     function GetConfigurationFileLines: TStrings;
     function GetCurlAuthenticationFileLines: TStrings;
@@ -400,12 +400,12 @@ begin
   ConverterInputList.AddGeneratedFilesToDeleteHandler (ioDeleteHandler);
 end;
 
-procedure TJson2PumlInputHandler.BeginConvert;
+procedure TJson2PumlInputHandler.BeginLoadFile;
 begin
-  Inc (FConvertCnt);
-  if FConvertCnt = 1 then
+  Inc (FLoadFileCnt);
+  if FLoadFileCnt = 1 then
   begin
-    SetConverting (true);
+    SetFileLoading (true,false);
     GlobalLoghandler.Clear;
   end;
 end;
@@ -482,7 +482,7 @@ function TJson2PumlInputHandler.CalculateCurlAdditionalRuntimeOptions: string;
   var
     id: TGUID;
   begin
-    CreateGUID(id);
+    CreateGUID (id);
     Result := GUIDToString (id).ToLower.Replace ('{', '', [rfReplaceAll]).Replace ('}', '', [rfReplaceAll])
       .Replace ('-', '', [rfReplaceAll]);
   end;
@@ -596,14 +596,18 @@ begin
       3:
         JarFile := cDefaultPlantumljarFile;
     end;
+    if JarFile.IsEmpty then
+      Continue;
     if FileExists (JarFile) then
     begin
       Result := JarFile;
       Exit;
-    end;
+    end
+    else
+      GlobalLoghandler.Warn ('PlantUML Jar file ("%s") not found!', [JarFile]);
   end;
   Result := '';
-  GlobalLoghandler.Error ('PlantUML Jar Files not found!');
+  GlobalLoghandler.Error ('No configured PlantUML jar files found!');
 end;
 
 function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
@@ -851,11 +855,11 @@ begin
   ConverterInputList.DeleteGeneratedFiles (BaseOutputPath);
 end;
 
-procedure TJson2PumlInputHandler.EndConvert;
+procedure TJson2PumlInputHandler.EndLoadFile(iAutoStartConvert: boolean = true);
 begin
-  Dec (FConvertCnt);
-  if FConvertCnt = 0 then
-    SetConverting (false);
+  Dec (FLoadFileCnt);
+  if FLoadFileCnt = 0 then
+    SetFileLoading (false, iAutoStartConvert);
 end;
 
 procedure TJson2PumlInputHandler.GenerateSummaryZipFile;
@@ -1221,7 +1225,7 @@ end;
 
 function TJson2PumlInputHandler.IsConverting: Boolean;
 begin
-  Result := FConvertCnt > 0;
+  Result := FLoadFileCnt > 0;
 end;
 
 function TJson2PumlInputHandler.LoadConfigurationFile (iFileName: string = ''): Boolean;
@@ -1257,7 +1261,7 @@ begin
     CmdLineParameter.DefinitionFileName := iFileName;
   if CurrentDefinitionFileName.IsEmpty then
   begin
-    GlobalLoghandler.Error ('Definition file not defined');
+    GlobalLoghandler.Debug('Definition file not defined');
     Exit;
   end;
   Filename := GlobalConfiguration.FindDefinitionFile (CurrentDefinitionFileName);
@@ -1273,7 +1277,7 @@ end;
 
 procedure TJson2PumlInputHandler.LoadDefinitionFiles;
 begin
-  BeginConvert;
+  BeginLoadFile;
   try
     GlobalLoghandler.Info ('Load configuration files');
     LoadConfigurationFile ();
@@ -1285,7 +1289,7 @@ begin
     LoadDefinitionFile ();
     LoadOptionFile ();
   finally
-    EndConvert;
+    EndLoadFile;
   end;
 end;
 
@@ -1300,7 +1304,7 @@ begin
   if iFileName.IsEmpty then
     Exit;
   Filename := ExpandFileName (iFileName);
-  BeginConvert;
+  BeginLoadFile;
   try
     if FileExists (Filename) then
     begin
@@ -1323,7 +1327,7 @@ begin
     if Assigned (iParseProcedure) then
       iParseProcedure;
   finally
-    EndConvert; // Trigger the recalculation
+    EndLoadFile; // Trigger the recalculation
   end;
 end;
 
@@ -1331,11 +1335,11 @@ function TJson2PumlInputHandler.LoadInputFile (iFileName: string = ''): Boolean;
 begin
   if not iFileName.IsEmpty then
     CmdLineParameter.InputFileName := iFileName;
-  BeginConvert;
+  BeginLoadFile;
   try
     Result := true;
   finally
-    EndConvert; // Trigger the recalculation
+    EndLoadFile; // Trigger the recalculation
   end;
 end;
 
@@ -1533,10 +1537,11 @@ begin
   Result := Result.TrimRight (tpath.DirectorySeparatorChar);
 end;
 
-procedure TJson2PumlInputHandler.SetConverting (Converting: Boolean);
+procedure TJson2PumlInputHandler.SetFileLoading(iLoading, iAutoStartConvert: Boolean);
 begin
-  if not Converting then
-    RecreateAllRecords;
+  if not iLoading then
+    if iAutoStartConvert then
+      RecreateAllRecords;
 end;
 
 procedure TJson2PumlInputHandler.SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);

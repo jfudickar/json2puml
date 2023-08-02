@@ -1,5 +1,5 @@
 {
-	"additionalServiceInformation": "Additional Info",
+	"additionalServiceInformation": "Additional Info\\nSecond Line",
 	"baseOutputPath": "e:\\Delphi\\Projects\\json2puml\\runtime\\output\\",
 	"outputPath": "<job>\\<group>\\<file>",
 	"curlAuthenticationFileName": "e:\\Delphi\\Projects\\json2puml\\configuration\\json2pumlcurlauthentication.json",
