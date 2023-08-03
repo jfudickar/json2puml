@@ -79,7 +79,7 @@ const
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.2.2.86';
+  cCurrentVersion = '2.2.3.87';
 
   cApplicationName = 'json2puml';
 

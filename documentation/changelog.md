@@ -1,3 +1,9 @@
+# **json2puml v2.2.3.87** - 03.08.2023
+## All Editions 
+### Changed Feature
+- Fixed protocol handling of command line parameters
+- For calculating the Plantuml information shown in the get /serviceinformation now also the globalconfiguration.javaRuntimeParameter will be used
+
 # **json2puml v2.2.2.86** - 03.08.2023
 ## All Editions 
 ### New  Feature
