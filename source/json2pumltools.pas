@@ -62,7 +62,7 @@ function GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimePa
 function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
   iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
 
-function GetPlantUmlVersion (iPlantUmlJarFile: string): string;
+function GetPlantUmlVersion(iPlantUmlJarFile, iJavaRuntimeParameter: string): string;
 
 function GetServiceFileListResponse (oJsonOutPut: TStrings; iFolderList: TStringList; iInputList: Boolean): Integer;
 
@@ -491,7 +491,7 @@ begin
         f in iOpenOutputs);
 end;
 
-function GetPlantUmlVersion (iPlantUmlJarFile: string): string;
+function GetPlantUmlVersion(iPlantUmlJarFile, iJavaRuntimeParameter: string): string;
 var
   Command: string;
   vCommandOutPut, vCommandErrors: TStringList;
@@ -505,7 +505,7 @@ begin
     vCommandOutPut := TStringList.Create;
     vCommandErrors := TStringList.Create;
     try
-      Command := Format ('java -jar "%s" -version', [iPlantUmlJarFile]);
+      Command := Format ('java %s -jar "%s" -version', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile.trim]);
       ExecuteCommand (Command, Command, vCommandOutPut, vCommandErrors);
       Result := vCommandOutPut.Text;
     finally

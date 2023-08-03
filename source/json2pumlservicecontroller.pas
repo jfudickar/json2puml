@@ -206,9 +206,9 @@ begin
       InfoList.Text := TCurlUtils.ReplaceCurlVariablesFromEnvironment
         (InputHandler.GlobalConfiguration.AdditionalServiceInformation.Replace('\n', #13#10));
       WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
-      InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile);
       WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true),
         1, false);
+      InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile, InputHandler.CurrentJavaRuntimeParameter);
       WriteToJsonValue (jsonOutput, 'plantUmlInformation', InfoList, 1, false, false);
       InputHandler.GlobalConfiguration.GenerateLogConfiguration (InfoList);
       WriteToJsonValue (jsonOutput, 'globalConfiguration', InfoList, 1, false, false);
