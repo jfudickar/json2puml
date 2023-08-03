@@ -2645,8 +2645,6 @@ begin
 end;
 
 procedure tJson2PumlGlobalDefinition.GenerateLogConfiguration (iLogList: tStringList);
-var
-  i: Integer;
 
   procedure AddLine (iName, iValue: string);
   var
