@@ -2040,7 +2040,7 @@ function tJson2PumlCommandLineParameter.ExistsSingleInputParameter (iParameterNa
 begin
   Result := FindCmdLineSwitch (iParameterName);
   if Result then
-    LogParameterValue (iParameterName);
+    LogParameterValue (iParameterName, result);
 end;
 
 function tJson2PumlCommandLineParameter.GetGenerateDetails: boolean;
