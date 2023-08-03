@@ -43,6 +43,7 @@ type
     procedure GetServiceInformationResponse;
     procedure LogRequestStart (iContext: TWebContext);
     procedure LogRequestEnd (iContext: TWebContext);
+    function ServerInformation: string;
   public
     [MVCPath]
     [MVCHTTPMethod([httpGET])]
@@ -57,6 +58,9 @@ type
     [MVCPath('/serviceinformation')]
     [MVCHTTPMethod([httpGET])]
     procedure GetServiceInformation;
+    [MVCPath('/heartbeat')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetHeartbeat;
 
     [MVCPath('/json2pumlRequestSvg')]
     [MVCHTTPMethod([httpPOST])]
@@ -160,6 +164,11 @@ begin
   LogRequestEnd (Context);
 end;
 
+procedure TJson2PumlController.GetHeartbeat;
+begin
+  Render (ServerInformation);
+end;
+
 procedure TJson2PumlController.GetInputListFile;
 begin
   GetFileListResponse (GlobalConfigurationDefinition.InputListFileSearchFolder, true);
@@ -189,18 +198,20 @@ begin
       try
         InputHandler.LoadConfigurationFile;
       finally
-        InputHandler.EndLoadFile(False);
+        InputHandler.EndLoadFile (false);
       end;
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
       WriteObjectStartToJson (jsonOutput, 0, '');
-      WriteToJsonValue (jsonOutput, 'service', Format('json2puml %s (%s)', [FileVersion, ApplicationCompileVersion]
-        ), 1, true);
+      WriteToJsonValue (jsonOutput, 'service', ServerInformation, 1, true);
       InfoList.Text := TCurlUtils.ReplaceCurlVariablesFromEnvironment
         (InputHandler.GlobalConfiguration.AdditionalServiceInformation.Replace('\n', #13#10));
       WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
       InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile);
-      WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true), 1, false);
+      WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true),
+        1, false);
       WriteToJsonValue (jsonOutput, 'plantUmlInformation', InfoList, 1, false, false);
+      InputHandler.GlobalConfiguration.GenerateLogConfiguration (InfoList);
+      WriteToJsonValue (jsonOutput, 'globalConfiguration', InfoList, 1, false, false);
 
       InputHandler.GlobalConfiguration.FindFilesInFolderList (InfoList,
         InputHandler.GlobalConfiguration.DefinitionFileSearchFolder);
@@ -229,8 +240,7 @@ end;
 
 procedure TJson2PumlController.Index;
 begin
-  // use Context property to access to the HTTP request and response
-  Render ('** JSON2PUML Server ** ' + FileVersion);
+  Render (ServerInformation);
 end;
 
 procedure TJson2PumlController.OnAfterAction (Context: TWebContext; const AActionName: string);
@@ -451,6 +461,11 @@ begin
   // if not Context.Request.Body.IsEmpty then
   // GlobalLoghandler.Debug ('Body : %s ', [Context.Request.Body]);
   // end;
+end;
+
+function TJson2PumlController.ServerInformation: string;
+begin
+  Result := Format ('json2puml server %s (%s)', [FileVersion, ApplicationCompileVersion]);
 end;
 
 end.

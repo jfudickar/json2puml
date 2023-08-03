@@ -1,10 +1,16 @@
+# **json2puml v2.2.2.86** - 03.08.2023
+## All Editions 
+### New  Feature
+- New api operation get /heartbeat which returns service version information
+### Changed Feature
+- Additional information into the get /serviceinformation result set
+
 # **json2puml v2.2.1.85** - 02.08.2023
 ## All Editions 
 ### Changed Feature
 - Optimized protocol handling
 - Additional information into the get /serviceinformation result set
 - Improved handling of fetching data for the get /serviceinformation result set
-
 
 # **json2puml v2.2.0.84** - 01.08.2023
 ## All Editions 

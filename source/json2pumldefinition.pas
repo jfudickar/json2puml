@@ -182,6 +182,7 @@ type
     procedure FindFilesInFolderList (ioFileList, iFolderList: tStringList; iFilter: string = '');
     function FindInputListFile (iFileName: string): string;
     procedure LogConfiguration;
+    procedure GenerateLogConfiguration (iLogList: tStringList);
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
@@ -2630,30 +2631,73 @@ end;
 
 procedure tJson2PumlGlobalDefinition.LogConfiguration;
 var
-  i: Integer;
+  S: string;
+  LogList: tStringList;
 begin
-  GlobalLoghandler.Info ('Global Configuration (%s)', [SourceFileName]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['baseOutputPath', BaseOutputPath]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['curlAuthenticationFileName', CurlAuthenticationFileName]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['CurlUserAgentInformation', CurlUserAgentInformation]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['CurlSpanIdHeader', CurlSpanIdHeader]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['CurlTraceIdHeader', CurlTraceIdHeader]);
-  GlobalLoghandler.Info ('  %-30s: ', ['curlPassThroughHeader']);
-  for i := 0 to CurlPassThroughHeader.Count - 1 do
-    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), CurlPassThroughHeader[i]]);
-  GlobalLoghandler.Info ('  %-30s: ', ['InputListFileSearchFolder']);
-  GlobalLoghandler.Info ('  %-30s: %s', ['defaultDefinitionFileName', DefaultDefinitionFileName]);
-  GlobalLoghandler.Info ('  %-30s: ', ['definitionFileSearchFolder']);
-  for i := 0 to DefinitionFileSearchFolder.Count - 1 do
-    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), DefinitionFileSearchFolder[i]]);
-  GlobalLoghandler.Info ('  %-30s: ', ['inputListFileSearchFolder']);
-  for i := 0 to InputListFileSearchFolder.Count - 1 do
-    GlobalLoghandler.Info ('  %-30s: %s', [Format('  [%d]', [i + 1]), InputListFileSearchFolder[i]]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['javaRuntimeParameter', JavaRuntimeParameter]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['logFileOutputPath', LogFileOutputPath]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['outputPath', OutputPath]);
-  GlobalLoghandler.Info ('  %-30s: %s', ['plantUmlJarFileName', PlantUmlJarFileName]);
-  GlobalLoghandler.Info ('  %-30s: %s / %d', ['servicePortStr', ServicePortStr, ServicePort]);
+  LogList := tStringList.Create;
+  try
+    GenerateLogConfiguration (LogList);
+    for S in LogList do
+      GlobalLoghandler.Info (S);
+  finally
+    LogList.Free;
+  end;
+end;
+
+procedure tJson2PumlGlobalDefinition.GenerateLogConfiguration (iLogList: tStringList);
+var
+  i: Integer;
+
+  procedure AddLine (iName, iValue: string);
+  var
+    envValue: string;
+  begin
+    if iValue.IsEmpty then
+      iLogList.Add (Format('  %-30s: %s', [iName, 'null']))
+    else
+    begin
+      envValue := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
+      if iValue <> envValue then
+        iLogList.Add (Format('  %-30s: %s (%s)', [iName, iValue, envValue]))
+      else
+        iLogList.Add (Format('  %-30s: %s', [iName, iValue]));
+    end;
+  end;
+  procedure AddLineInt (iName: string; iCount: Integer);
+  begin
+    if iCount <= 0 then
+      iLogList.Add (Format('  %-30s: %s', [iName, 'null']))
+    else
+      iLogList.Add (Format('  %-30s: %d', [iName, iCount]));
+  end;
+
+  procedure AddList (iName: string; iList: tStringList);
+  var
+    i: Integer;
+  begin
+    AddLineInt (iName, iList.Count);
+    for i := 0 to iList.Count - 1 do
+      AddLine (Format('  [%d]', [i + 1]), iList[i]);
+  end;
+
+begin
+  iLogList.Clear;
+  iLogList.Add (Format('Global Configuration (%s)', [SourceFileName]));
+  AddLine ('additionalServiceInformation', AdditionalServiceInformation);
+  AddLine ('baseOutputPath', BaseOutputPath);
+  AddLine ('curlAuthenticationFileName', CurlAuthenticationFileName);
+  AddLine ('CurlUserAgentInformation', CurlUserAgentInformation);
+  AddLine ('CurlSpanIdHeader', CurlSpanIdHeader);
+  AddLine ('CurlTraceIdHeader', CurlTraceIdHeader);
+  AddList ('curlPassThroughHeader', CurlPassThroughHeader);
+  AddLine ('defaultDefinitionFileName', DefaultDefinitionFileName);
+  AddList ('definitionFileSearchFolder', DefinitionFileSearchFolder);
+  AddList ('inputListFileSearchFolder', InputListFileSearchFolder);
+  AddLine ('javaRuntimeParameter', JavaRuntimeParameter);
+  AddLine ('logFileOutputPath', LogFileOutputPath);
+  AddLine ('outputPath', OutputPath);
+  AddLine ('plantUmlJarFileName', PlantUmlJarFileName);
+  iLogList.Add (Format('  %-30s: %s / %d', ['servicePortStr', ServicePortStr, ServicePort]));
 end;
 
 function tJson2PumlGlobalDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
