@@ -113,28 +113,27 @@ procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlA
   end;
 
 begin
-
-  if iApplicationType <> jatUI then
+  GlobalLogConsoleProvider.Enabled := iApplicationType <> jatUI;
+  if GlobalLogConsoleProvider.Enabled then
   begin
-    GlobalLogConsoleProvider.Enabled := (iApplicationType = jatConsole) or iAllowsConsole;
-    if GlobalLogConsoleProvider.Enabled then
-      Logger.Providers.Add (GlobalLogConsoleProvider);
-    if (iApplicationType = jatService) then
-      SetCustomFormat (GlobalLogConsoleProvider);
+    Logger.Providers.Add (GlobalLogConsoleProvider);
     if (iApplicationType = jatService) and iAllowsLogFile then
       GlobalLogConsoleProvider.LogLevel := LOG_TRACE - [etInfo] + [etError]
     else
       GlobalLogConsoleProvider.LogLevel := LOG_DEBUG;
+    GlobalLogConsoleProvider.TimePrecission := True;
     GlobalLogConsoleProvider.ShowEventColors := True;
+    if (iApplicationType = jatService) then
+      SetCustomFormat (GlobalLogConsoleProvider);
     SetLogProviderEventTypeNames (GlobalLogConsoleProvider);
   end;
 
-  if iAllowsLogFile then
+  GlobalLogFileProvider.Enabled := iAllowsLogFile;
+  if GlobalLogFileProvider.Enabled then
   begin
     if not TDirectory.Exists (iLogFilePath) and not (iLogFilePath.IsEmpty) then
       TDirectory.CreateDirectory (iLogFilePath);
 
-    // Configure file provider options
     Logger.Providers.Add (GlobalLogFileProvider);
     GlobalLogFileProvider.FileName :=
       ExpandFileName (tPath.Combine(iLogFilePath, ChangeFileExt(ExtractFileName(ParamStr(0)), '.log')));
@@ -148,14 +147,12 @@ begin
     if iApplicationType = jatService then
       SetCustomFormat (GlobalLogFileProvider);
     SetLogProviderEventTypeNames (GlobalLogFileProvider);
-    GlobalLogFileProvider.Enabled := True;
-
-    // Log loggger status
-    if GlobalLogFileProvider.Enabled then
-      Log ('File Log Provider activated (%s)', [GlobalLogFileProvider.FileName], etInfo)
-    else
-      Log ('File Log Provider not activated (%s)', [GlobalLogFileProvider.FileName], etError);
   end;
+  // Log loggger status
+  if GlobalLogFileProvider.Enabled then
+    Log ('File Log Provider activated (%s)', [GlobalLogFileProvider.FileName], etInfo)
+  else
+    Log ('File Log Provider not activated (%s)', [GlobalLogFileProvider.FileName], etInfo);
   if GlobalLogConsoleProvider.Enabled then
     Log ('Console Log Provider activate', etInfo);
 end;
