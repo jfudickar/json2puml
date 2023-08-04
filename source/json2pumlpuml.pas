@@ -1885,9 +1885,9 @@ end;
 class function tPumlHelper.TableColumn (iValue: string; iHeader: boolean = False): string;
 begin
   if iHeader then
-    Result := Format ('= %s %s', [iValue, TableColumnSeparator])
+    Result := Format ('= %s %s', [iValue.Replace('\n', '\n '), TableColumnSeparator])
   else
-    Result := Format (' %s %s', [iValue, TableColumnSeparator]);
+    Result := Format (' %s %s', [iValue.Replace('\n', '\n '), TableColumnSeparator]);
 end;
 
 class function tPumlHelper.TableColumnSeparator: string;
@@ -1905,7 +1905,7 @@ begin
   Result := TableColumnSeparator;
   for i := 0 to high(iColumns) do
     Result := Result + TableColumn ('%s', iHeader);
-  Result := Format (Result, iColumns);
+  Result := Format (Result, iColumns).Replace('\n', '\n ');
 end;
 
 class function tPumlHelper.TableLine (iColumns: TStringList; iHeader: boolean = False;

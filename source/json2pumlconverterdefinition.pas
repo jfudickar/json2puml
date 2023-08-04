@@ -2287,8 +2287,10 @@ var
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'name', ExtractFileName(SourceFileName), iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'displayName', Description.DisplayName, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'description', Description.Description, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'displayName', TCurlUtils.ReplaceCurlVariablesFromEnvironment(Description.DisplayName),
+    iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'description', TCurlUtils.ReplaceCurlVariablesFromEnvironment(Description.Description),
+    iLevel + 1, iWriteEmpty);
   OptionsSl := tStringList.Create;
   try
     for i := 0 to OptionList.Count - 1 do

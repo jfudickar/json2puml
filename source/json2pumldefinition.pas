@@ -640,6 +640,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function CommandLineParameterStr (iIncludeProgram: boolean): string;
+    procedure GenerateLogParameters (iLogList: tStringList);
     procedure LogLineWrapped (iParameter, iDescription: string; iParameterLength: Integer = 50;
       iLineLength: Integer = 110);
     procedure ReadInputParameter;
@@ -1977,8 +1978,10 @@ var
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'name', ExtractFileName(SourceFileName), iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'displayName', Description.DisplayName, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'description', Description.Description, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'displayName', TCurlUtils.ReplaceCurlVariablesFromEnvironment(Description.DisplayName),
+    iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'description', TCurlUtils.ReplaceCurlVariablesFromEnvironment(Description.Description),
+    iLevel + 1, iWriteEmpty);
   if not DefinitionFileName.IsEmpty then
   begin
     FileName := GlobalConfigurationDefinition.FindFileInFolderList (DefinitionFileName,
@@ -2040,7 +2043,7 @@ function tJson2PumlCommandLineParameter.ExistsSingleInputParameter (iParameterNa
 begin
   Result := FindCmdLineSwitch (iParameterName);
   if Result then
-    LogParameterValue (iParameterName, result);
+    LogParameterValue (iParameterName, Result);
 end;
 
 function tJson2PumlCommandLineParameter.GetGenerateDetails: boolean;
@@ -2192,11 +2195,8 @@ procedure tJson2PumlCommandLineParameter.LogParameterValue (iParameterName: stri
 begin
   if iParameterValue.IsEmpty and iParameterDetail.IsEmpty and not iAllways then
     exit;
-{$IFDEF MSWINDOWS}
-  GlobalLoghandler.InfoParameter ('/', iParameterName.ToLower, (iParameterValue.Trim + ' ' + iParameterDetail).Trim);
-{$ELSE}
-  GlobalLoghandler.InfoParameter ('-', iParameterName.ToLower, (iParameterValue.Trim + ' ' + iParameterDetail).Trim);
-{$ENDIF}
+  GlobalLoghandler.InfoParameter (cCmdLinePrefix, iParameterName.ToLower,
+    (iParameterValue.Trim + ' ' + iParameterDetail).Trim);
 end;
 
 procedure tJson2PumlCommandLineParameter.ReadCurlParameter;
@@ -2401,7 +2401,7 @@ begin
     LogParameterValue (iParameterName, ioParameterValue);
   if (not ioParameterValue.IsEmpty) and (Fc <= 0) then
   begin
-    GlobalLoghandler.Warn ('/%s File "%s" does not exist', [iParameterName.ToLower.Trim.PadRight(29),
+    GlobalLoghandler.Warn ('%s%s File "%s" does not exist', [cCmdLinePrefix, iParameterName.ToLower.Trim.PadRight(29),
       ioParameterValue.Trim]);
     ioParameterValue := '';
   end;
@@ -2413,11 +2413,7 @@ begin
   if iParameter.IsEmpty then
     GlobalLoghandler.Info ('')
   else
-{$IFDEF MSWINDOWS}
-    LogLineWrapped ('/' + iParameter.ToLower, iDescription, iParameterLength, iLineLength)
-{$ELSE}
-      LogLineWrapped('-' + iParameter.ToLower, iDescription, iParameterLength, iLineLength)
-{$ENDIF}
+    LogLineWrapped (cCmdLinePrefix + iParameter.ToLower, iDescription, iParameterLength, iLineLength);
 end;
 
 procedure tJson2PumlCommandLineParameter.WriteHelpScreen;
@@ -2528,6 +2524,72 @@ begin
   for i := 1 to ParamCount do
     Result := Result + ParamStr (i) + ' ';
   Result := Result.Trim;
+end;
+
+procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStringList);
+
+  procedure AddLine (iName, iValue: string);
+  var
+    envValue: string;
+  begin
+    if not iValue.IsEmpty then
+    begin
+      envValue := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
+      if iValue <> envValue then
+        iLogList.Add (Format('  %s%-30s: %s (%s)', [cCmdLinePrefix, iName.ToLower, iValue, envValue]))
+      else
+        iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, iValue]));
+    end;
+  end;
+  procedure AddLineBool (iName: string; iValue: boolean);
+  var
+    envValue: string;
+  begin
+    if iValue then
+      iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, cTrue]));
+  end;
+
+begin
+  iLogList.Clear;
+  iLogList.Add ('Command Line Parameter ');
+  AddLine ('BaseOutputPath', BaseOutputPath);
+  AddLine ('ConfigurationFileName', ConfigurationFileName);
+  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileName);
+  AddLine ('CurlParameterFileName', CurlParameterFileName);
+  AddLineBool ('Debug', Debug);
+  AddLine ('DefinitionFileName', DefinitionFileName);
+  AddLine ('JobDescription', JobDescription);
+  AddLine ('Detail', Detail);
+  AddLineBool ('FormatDefinitionFiles', FormatDefinitionFiles);
+  AddLineBool ('GenerateDetails', GenerateDetails);
+  AddLineBool ('GenerateOutputDefinition', GenerateOutputDefinition);
+  AddLineBool ('GenerateSummary', GenerateSummary);
+  AddLine ('Group', Group);
+  AddLine ('IdentFilter', IdentFilter);
+  AddLine ('InputFileName', InputFileName);
+  AddLine ('InputListFileName', InputListFileName);
+  AddLine ('JavaRuntimeParameter', JavaRuntimeParameter);
+  AddLine ('Jobname', Jobname);
+  AddLine ('LeadingObject', LeadingObject);
+  AddLineBool ('NoLogFiles', NoLogFiles);
+  AddLine ('OpenOutputs', OpenOutputsStr);
+  AddLine ('Option', Option);
+  AddLine ('OptionFileName', OptionFileName);
+  AddLine ('OutputFormat', OutputFormatStr);
+  AddLine ('OutputPath', OutputPath);
+  AddLine ('OutputSuffix', OutputSuffix);
+  AddLine ('ParameterFileName', ParameterFileName);
+  AddLine ('PlantUmlJarFileName', PlantUmlJarFileName);
+  AddLine ('ServicePort', ServicePortStr);
+  AddLine ('SplitIdentifier', SplitIdentifier);
+  AddLine ('SplitInputFile', SplitInputFileStr);
+  AddLine ('SummaryFileName', SummaryFileName);
+  AddLine ('TitleFilter', TitleFilter);
+  iLogList.Add ('Environment Parameter ');
+  AddLine ('ConfigurationFileName', ConfigurationFileNameEnvironment);
+  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileNameEnvironment);
+  AddLine ('DefinitionFileName', DefinitionFileNameEnvironment);
+  AddLine ('PlantUmlJarFileName', PlantUmlJarFileNameEnvironment);
 end;
 
 constructor tJson2PumlGlobalDefinition.Create;

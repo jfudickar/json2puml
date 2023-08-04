@@ -79,7 +79,14 @@ const
 
   cNewLinePuml = '\n';
 
-  cCurrentVersion = '2.2.3.87';
+{$IFDEF MSWINDOWS}
+  cCmdLinePrefix = '/';
+{$ELSE}
+  cCmdLinePrefix = '-';
+{$ENDIF}
+
+
+  cCurrentVersion = '2.2.4.88';
 
   cApplicationName = 'json2puml';
 

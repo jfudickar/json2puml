@@ -1,8 +1,17 @@
+# **json2puml v2.2.4.88** - 04.08.2023
+## All Editions 
+### New Feature
+- The displayName and descrition property of the inputlistfile and the definitionfile are now supporting the text replacement of environment variables
+### Changed Feature
+- Additional information into the get /serviceinformation result set
+- Fixed plantuml generation for table fields when the content contains a \n for a fixed newline
+
 # **json2puml v2.2.3.87** - 03.08.2023
 ## All Editions 
 ### Changed Feature
-- Fixed protocol handling of command line parameters
+- Fixed protocol handling of boolean command line parameters
 - For calculating the Plantuml information shown in the get /serviceinformation now also the globalconfiguration.javaRuntimeParameter will be used
+- Improved/fixed initialisation of the logger classes
 
 # **json2puml v2.2.2.86** - 03.08.2023
 ## All Editions 

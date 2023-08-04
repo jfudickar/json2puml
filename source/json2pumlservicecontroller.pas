@@ -208,6 +208,8 @@ begin
       WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
       WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true),
         1, false);
+      InputHandler.CmdLineParameter.GenerateLogParameters(InfoList);
+      WriteToJsonValue (jsonOutput, 'commandLineParameter', InfoList, 1, false, false);
       InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile, InputHandler.CurrentJavaRuntimeParameter);
       WriteToJsonValue (jsonOutput, 'plantUmlInformation', InfoList, 1, false, false);
       InputHandler.GlobalConfiguration.GenerateLogConfiguration (InfoList);

@@ -20,13 +20,16 @@
 	"detail": null,
 	"option": null,
 	"job": null,
-	"jobDescription": null,
+	"jobDescription": "SpaceX Launch Data\\nInput Parameter: \\n * launch: ${launch}",
 	"outputFormats": "svg",
 	"outputPath": null,
 	"outputSuffix": ".<option>",
 	"curlBaseUrl": "https://api.spacexdata.com/",
 	"curlUrlAddon": null,
 	"curlOptions": null,
+	"curlUserAgentInformation": null,
+	"curlSpanIdHeader": null,
+	"curlTraceIdHeader": null,
 	"summaryFile": "spacex_launch_${launch}",
 	"input":  [
 			{
