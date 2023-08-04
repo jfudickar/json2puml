@@ -117,9 +117,9 @@ begin
   if GlobalLogConsoleProvider.Enabled then
   begin
     Logger.Providers.Add (GlobalLogConsoleProvider);
-    if (iApplicationType = jatService) and iAllowsLogFile then
-      GlobalLogConsoleProvider.LogLevel := LOG_TRACE - [etInfo] + [etError]
-    else
+//    if (iApplicationType = jatService) and iAllowsLogFile then
+//      GlobalLogConsoleProvider.LogLevel := LOG_TRACE - [etInfo] + [etError]
+//    else
       GlobalLogConsoleProvider.LogLevel := LOG_DEBUG;
     GlobalLogConsoleProvider.TimePrecission := True;
     GlobalLogConsoleProvider.ShowEventColors := True;
