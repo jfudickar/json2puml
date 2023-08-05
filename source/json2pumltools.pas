@@ -373,6 +373,93 @@ begin
   end;
 end;
 
+function FileAttributesStr (iFileAttributes: TFileAttributes): string;
+var
+  a: TFileAttribute;
+begin
+  Result := '';
+  for a := low(TFileAttribute) to high(TFileAttribute) do
+  begin
+    case a of
+{$IFDEF MSWINDOWS}
+      TFileAttribute.faReadOnly:
+        Result := Result + ', ' + 'faReadOnly';
+      TFileAttribute.faHidden:
+        Result := Result + ', ' + 'faHidden';
+      TFileAttribute.faSystem:
+        Result := Result + ', ' + 'faSystem';
+      TFileAttribute.faDirectory:
+        Result := Result + ', ' + 'faDirectory';
+      TFileAttribute.faArchive:
+        Result := Result + ', ' + 'faArchive';
+      TFileAttribute.faDevice:
+        Result := Result + ', ' + 'faDevice';
+      TFileAttribute.faNormal:
+        Result := Result + ', ' + 'faNormal';
+      TFileAttribute.faTemporary:
+        Result := Result + ', ' + 'faTemporary';
+      TFileAttribute.faSparseFile:
+        Result := Result + ', ' + 'faSparseFile';
+      TFileAttribute.faReparsePoint:
+        Result := Result + ', ' + 'faReparsePoint';
+      TFileAttribute.faCompressed:
+        Result := Result + ', ' + 'faCompressed';
+      TFileAttribute.faOffline:
+        Result := Result + ', ' + 'faOffline';
+      TFileAttribute.faNotContentIndexed:
+        Result := Result + ', ' + 'faNotContentIndexed';
+      TFileAttribute.faEncrypted:
+        Result := Result + ', ' + 'faEncrypted';
+      TFileAttribute.faSymLink:
+        Result := Result + ', ' + 'faSymLink';
+{$ELSE}
+      TFileAttribute.faNamedPipe:
+        Result := Result + ', ' + 'faNamedPipe';
+      TFileAttribute.faCharacterDevice:
+        Result := Result + ', ' + 'faCharacterDevice';
+      TFileAttribute.faDirectory:
+        Result := Result + ', ' + 'faDirectory';
+      TFileAttribute.faBlockDevice:
+        Result := Result + ', ' + 'faBlockDevice';
+      TFileAttribute.faNormal:
+        Result := Result + ', ' + 'faNormal';
+      TFileAttribute.faSymLink:
+        Result := Result + ', ' + 'faSymLink';
+      TFileAttribute.faSocket:
+        Result := Result + ', ' + 'faSocket';
+      TFileAttribute.faWhiteout:
+        Result := Result + ', ' + 'faWhiteout';
+      TFileAttribute.faOwnerRead:
+        Result := Result + ', ' + 'faOwnerRead';
+      TFileAttribute.faOwnerWrite:
+        Result := Result + ', ' + 'faOwnerWrite';
+      TFileAttribute.faOwnerExecute:
+        Result := Result + ', ' + 'faOwnerExecute';
+      TFileAttribute.faGroupRead:
+        Result := Result + ', ' + 'faGroupRead';
+      TFileAttribute.faGroupWrite:
+        Result := Result + ', ' + 'faGroupWrite';
+      TFileAttribute.faGroupExecute:
+        Result := Result + ', ' + 'faGroupExecute';
+      TFileAttribute.faOthersRead:
+        Result := Result + ', ' + 'faOthersRead';
+      TFileAttribute.faOthersWrite:
+        Result := Result + ', ' + 'faOthersWrite';
+      TFileAttribute.faOthersExecute:
+        Result := Result + ', ' + 'faOthersExecute';
+      TFileAttribute.faUserIDExecution:
+        Result := Result + ', ' + 'faUserIDExecution';
+      TFileAttribute.faGroupIDExecution:
+        Result := Result + ', ' + 'faGroupIDExecution';
+      TFileAttribute.faStickyBit:
+        Result := Result + ', ' + 'faStickyBit';
+
+{$ENDIF}
+    end;
+  end;
+  Result := Result.TrimLeft([',', ' ']);
+end;
+
 function FileContent (iFileName: string): string;
 var
   Lines: TStringList;
@@ -425,17 +512,23 @@ begin
 end;
 
 procedure GenerateDirectory (const iDirectory: string);
+var
+  AttributesStr: string;
+  Attributes: TFileAttributes;
+  a: TFileAttribute;
 begin
-  if not TDirectory.Exists(iDirectory) then
-  try
-    GlobalLoghandler.Debug ('Create directory : %s', [iDirectory]);
-    ForceDirectories (iDirectory);
-  except
-    on e: exception do
-      GlobalLoghandler.Error ('Error creating directory : %s', [iDirectory]);
-  end
-  else
-    GlobalLoghandler.Debug ('Directory exists : %s', [iDirectory]);
+  if not TDirectory.Exists (iDirectory) then
+    try
+      GlobalLoghandler.Debug ('Create directory : %s', [iDirectory]);
+      ForceDirectories (iDirectory);
+      if not TDirectory.Exists (iDirectory) then
+        GlobalLoghandler.Error ('Directory not created : %s', [iDirectory]);
+    except
+      on e: exception do
+        GlobalLoghandler.Error ('Error creating directory : %s - %s', [iDirectory, e.Message]);
+    end;
+  if TDirectory.Exists (iDirectory) then
+    GlobalLoghandler.Debug ('Directory exists : %s - %s', [iDirectory, FileAttributesStr(TDirectory.GetAttributes (iDirectory))]);
 end;
 
 procedure GenerateFileDirectory (iFileName: string);
@@ -978,7 +1071,7 @@ begin
       Exit;
     end
     else if not iExecuteEvaluation.Trim.isEmpty then
-      GlobalLoghandler.debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
+      GlobalLoghandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
   except
     on e: exception do
