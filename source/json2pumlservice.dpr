@@ -88,7 +88,9 @@ begin
 end;
 
 begin
-  ReportMemoryLeaksOnShutdown := False;
+  {$IFDEF DEBUG}
+  ReportMemoryLeaksOnShutdown := True;
+  {$ENDIF}
   IsMultiThread := true;
   try
     if WebRequestHandler <> nil then

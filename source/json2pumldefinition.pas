@@ -2113,7 +2113,7 @@ begin
     end;
   end
   else
-    GlobalLoghandler.Info ('Default configuration file %s exists, generation skipped', [DefaultConfigurationFile]);
+    GlobalLoghandler.Debug ('Default configuration file %s exists, generation skipped', [DefaultConfigurationFile]);
   DefaultConfigurationFile := TPath.Combine (ExtractFilePath(ParamStr(0)), cDefaultCurlAuthenticationFile);
   if not FileExists (DefaultConfigurationFile) then
   begin
@@ -2126,7 +2126,7 @@ begin
     end;
   end
   else
-    GlobalLoghandler.Info ('Default curl authentication file %s exists, generation skipped',
+    GlobalLoghandler.Debug ('Default curl authentication file %s exists, generation skipped',
       [DefaultConfigurationFile]);
 end;
 
@@ -2195,7 +2195,7 @@ procedure tJson2PumlCommandLineParameter.LogParameterValue (iParameterName: stri
 begin
   if iParameterValue.IsEmpty and iParameterDetail.IsEmpty and not iAllways then
     exit;
-  GlobalLoghandler.InfoParameter (cCmdLinePrefix, iParameterName.ToLower,
+  GlobalLoghandler.DebugParameter (cCmdLinePrefix, iParameterName.ToLower,
     (iParameterValue.Trim + ' ' + iParameterDetail).Trim);
 end;
 

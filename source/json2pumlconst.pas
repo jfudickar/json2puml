@@ -86,7 +86,7 @@ const
 {$ENDIF}
 
 
-  cCurrentVersion = '2.2.4.88';
+  cCurrentVersion = '2.2.5.89';
 
   cApplicationName = 'json2puml';
 

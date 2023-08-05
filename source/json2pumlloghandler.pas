@@ -35,8 +35,8 @@ type
     FErrorWarningList: tStringList;
     FFailed: boolean;
   protected
-    procedure LogMsg (const aMsg: string; aEventType: TEventType); overload;
     procedure LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: TEventType); overload;
+    procedure LogMsg (const aMsg: string; aEventType: TEventType); overload;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -45,6 +45,8 @@ type
     procedure Clear;
     procedure Debug (const aMessage: string; const aTag: string = ''); overload;
     procedure Debug (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
+    procedure DebugParameter(const aParameterPrefix, aParameterName, aParameterValue: string; const aTag: string = '');
+        overload;
     procedure Error (const aMessage: string; const aTag: string = ''); overload;
     procedure Error (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
     procedure Header (const aMessage: string; const aTag: string = ''); overload;
@@ -61,12 +63,14 @@ type
     property Failed: boolean read FFailed;
   end;
 
+function GlobalLogHandler: TJson2PumlLogHandler;
+
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
   iAllowsConsole, iAllowsLogFile: boolean);
 
-procedure SetLogProviderEventTypeNames (iProvider: TLogProviderBase);
+procedure SetLogProviderDefaults (iProvider: TLogProviderBase);
 
-function GlobalLogHandler: TJson2PumlLogHandler;
+procedure SetLogProviderEventTypeNames (iProvider: TLogProviderBase);
 
 implementation
 
@@ -74,7 +78,7 @@ uses
   System.SysUtils, Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
   Quick.Logger.Provider.StringList, {$IFDEF DEBUG} Quick.Logger.ExceptionHook, {$ENDIF}
   Quick.Logger.RuntimeErrorHook,
-  Quick.Logger.UnhandledExceptionHook;
+  Quick.Logger.UnhandledExceptionHook, json2pumldefinition;
 
 var
   IntGlobalLogHandler: TJson2PumlLogHandler;
@@ -102,6 +106,20 @@ begin
     iProvider.EventTypeName[et] := JSON2PUML_EVENTTYPENAMES[Integer(et)];
 end;
 
+procedure SetLogProviderDefaults (iProvider: TLogProviderBase);
+var
+  et: TEventType;
+begin
+  if GlobalCommandLineParameter.Debug then
+    iProvider.LogLevel := LOG_DEBUG
+  else
+    iProvider.LogLevel := LOG_TRACE;
+  iProvider.TimePrecission := True;
+  SetLogProviderEventTypeNames (iProvider);
+  GlobalLogConsoleProvider.IncludedInfo := [iiAppName, iiHost, iiUserName, iiEnvironment, iiPlatform, iiOSVersion,
+    iiExceptionInfo, iiExceptionStackTrace];
+end;
+
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
   iAllowsConsole, iAllowsLogFile: boolean);
 
@@ -109,7 +127,7 @@ procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlA
   begin
     iLogProvider.CustomMsgOutput := True;
     iLogProvider.CustomFormatOutput := '%{DATETIME} - (%{THREADID}) - [%{LEVEL}] : %{MESSAGE}';
-    iLogProvider.IncludedInfo := iLogProvider.IncludedInfo + [iiThreadId, iiProcessId];
+    iLogProvider.IncludedInfo := iLogProvider.IncludedInfo + [iiThreadId];
   end;
 
 begin
@@ -117,15 +135,11 @@ begin
   if GlobalLogConsoleProvider.Enabled then
   begin
     Logger.Providers.Add (GlobalLogConsoleProvider);
-//    if (iApplicationType = jatService) and iAllowsLogFile then
-//      GlobalLogConsoleProvider.LogLevel := LOG_TRACE - [etInfo] + [etError]
-//    else
-      GlobalLogConsoleProvider.LogLevel := LOG_DEBUG;
-    GlobalLogConsoleProvider.TimePrecission := True;
-    GlobalLogConsoleProvider.ShowEventColors := True;
+    SetLogProviderDefaults (GlobalLogConsoleProvider);
+    //GlobalLogConsoleProvider.ShowEventColors := False;
+    // GlobalLogConsoleProvider.IncludedInfo := GlobalLogConsoleProvider.IncludedInfo + [iiThreadId];
     if (iApplicationType = jatService) then
       SetCustomFormat (GlobalLogConsoleProvider);
-    SetLogProviderEventTypeNames (GlobalLogConsoleProvider);
   end;
 
   GlobalLogFileProvider.Enabled := iAllowsLogFile;
@@ -142,11 +156,9 @@ begin
     GlobalLogFileProvider.MaxFileSizeInMB := 50;
     GlobalLogFileProvider.MaxRotateFiles := 20;
     GlobalLogFileProvider.AutoFlush := True;
-    GlobalLogFileProvider.LogLevel := LOG_DEBUG;
-    GlobalLogFileProvider.TimePrecission := True;
+    SetLogProviderDefaults (GlobalLogConsoleProvider);
     if iApplicationType = jatService then
       SetCustomFormat (GlobalLogFileProvider);
-    SetLogProviderEventTypeNames (GlobalLogFileProvider);
   end;
   // Log loggger status
   if GlobalLogFileProvider.Enabled then
@@ -159,7 +171,7 @@ end;
 
 constructor TJson2PumlLogHandler.Create;
 begin
-  FFailed := false;
+  FFailed := False;
   FErrorWarningList := tStringList.Create ();
 end;
 
@@ -182,7 +194,7 @@ end;
 procedure TJson2PumlLogHandler.Clear;
 begin
   ErrorWarningList.Clear;
-  FFailed := false;
+  FFailed := False;
   if Assigned (GlobalLogStringListProvider) then
     GlobalLogStringListProvider.Clear;
 end;
@@ -195,6 +207,12 @@ end;
 procedure TJson2PumlLogHandler.Debug (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etDebug);
+end;
+
+procedure TJson2PumlLogHandler.DebugParameter(const aParameterPrefix, aParameterName, aParameterValue: string; const
+    aTag: string = '');
+begin
+  LogMsg ('  %-45s %s', [Format('%s%s', [aParameterPrefix, aParameterName]).Trim, aParameterValue], etDebug);
 end;
 
 procedure TJson2PumlLogHandler.Error (const aMessage: string; const aTag: string = '');
@@ -238,14 +256,14 @@ begin
   LogMsg ('  %-45s %s', [Format('%s%s', [aParameterPrefix, aParameterName]).Trim, aParameterValue], etInfo);
 end;
 
-procedure TJson2PumlLogHandler.LogMsg (const aMsg: string; aEventType: TEventType);
-begin
-  Log (aMsg, aEventType);
-end;
-
 procedure TJson2PumlLogHandler.LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: TEventType);
 begin
   Log (aMsg, aValues, aEventType);
+end;
+
+procedure TJson2PumlLogHandler.LogMsg (const aMsg: string; aEventType: TEventType);
+begin
+  Log (aMsg, aEventType);
 end;
 
 procedure TJson2PumlLogHandler.Trace (const aMessage: string; const aTag: string = '');

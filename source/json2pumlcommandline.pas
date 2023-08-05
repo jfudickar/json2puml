@@ -100,7 +100,8 @@ begin
   finally
     if FindCmdLineSwitch ('wait') then
     begin
-      GlobalLogHandler.Info ('Press <RETURN> to continue');
+      GlobalLogHandler.Trace ('');
+      GlobalLogHandler.Trace ('Press <RETURN> to continue');
       readln;
     end;
   end;

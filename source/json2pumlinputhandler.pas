@@ -179,7 +179,7 @@ type
     procedure ReformatFile (iFileName: string; iClass: tJson2PumlBaseListClass); overload;
     procedure ReformatFile (iFileName: string; iClass: tJson2PumlBaseObjectClass); overload;
     function ReplaceFileNameVariables (iReplace, iFileName, iOption: string): string;
-    procedure SetFileLoading(iLoading, iAutoStartConvert: Boolean);
+    procedure SetFileLoading (iLoading, iAutoStartConvert: Boolean);
     property CurrentDetail: string read GetCurrentDetail;
     property GenerateDetails: Boolean read GetGenerateDetails;
     property GenerateDetailsStr: string read GetGenerateDetailsStr;
@@ -198,7 +198,7 @@ type
     procedure Clear;
     procedure ConvertAllRecords (iIndex: Integer = - 1);
     procedure DeleteGeneratedFiles;
-    procedure EndLoadFile(iAutoStartConvert: boolean = true);
+    procedure EndLoadFile (iAutoStartConvert: Boolean = true);
     procedure GenerateSummaryZipFile;
     function GetConfigurationFileLines: TStrings;
     function GetCurlAuthenticationFileLines: TStrings;
@@ -405,7 +405,7 @@ begin
   Inc (FLoadFileCnt);
   if FLoadFileCnt = 1 then
   begin
-    SetFileLoading (true,false);
+    SetFileLoading (true, false);
     GlobalLoghandler.Clear;
   end;
 end;
@@ -855,7 +855,7 @@ begin
   ConverterInputList.DeleteGeneratedFiles (BaseOutputPath);
 end;
 
-procedure TJson2PumlInputHandler.EndLoadFile(iAutoStartConvert: boolean = true);
+procedure TJson2PumlInputHandler.EndLoadFile (iAutoStartConvert: Boolean = true);
 begin
   Dec (FLoadFileCnt);
   if FLoadFileCnt = 0 then
@@ -1261,7 +1261,7 @@ begin
     CmdLineParameter.DefinitionFileName := iFileName;
   if CurrentDefinitionFileName.IsEmpty then
   begin
-    GlobalLoghandler.Debug('Definition file not defined');
+    GlobalLoghandler.Error ('Definition file not defined');
     Exit;
   end;
   Filename := GlobalConfiguration.FindDefinitionFile (CurrentDefinitionFileName);
@@ -1353,7 +1353,8 @@ begin
   if not Filename.IsEmpty then
     CmdLineParameter.InputListFileName := Filename
   else if not CurrentInputListFileName.IsEmpty then
-    GlobalLoghandler.Warn ('InputListFile : "%s" not found', [CurrentInputListFileName]);
+    GlobalLoghandler.Error ('InputListFile : "%s" not found', [CurrentInputListFileName]);
+  // Load Allways to empty the data when the file is not defined.
   Result := LoadFileToStringList (InputListLines, Filename, 'InputListFile', tJson2PumlInputList,
     ParseInputListFile, false);
 end;
@@ -1537,7 +1538,7 @@ begin
   Result := Result.TrimRight (tpath.DirectorySeparatorChar);
 end;
 
-procedure TJson2PumlInputHandler.SetFileLoading(iLoading, iAutoStartConvert: Boolean);
+procedure TJson2PumlInputHandler.SetFileLoading (iLoading, iAutoStartConvert: Boolean);
 begin
   if not iLoading then
     if iAutoStartConvert then

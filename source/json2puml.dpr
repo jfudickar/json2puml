@@ -42,6 +42,9 @@ uses
   json2pumlconverterdefinition in 'json2pumlconverterdefinition.pas';
 
 begin
+  {$IFDEF DEBUG}
+  ReportMemoryLeaksOnShutdown := True;
+  {$ENDIF}
   try
     handle_json2puml_commandline;
   except
