@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 unit json2pumlwinservice;
 
 interface
@@ -31,8 +31,8 @@ uses
 
 type
   TJ2PWinService = class(TService)
-    procedure ServiceCreate(Sender: TObject);
-    procedure ServiceExecute(Sender: TService);
+    procedure ServiceCreate (Sender: TObject);
+    procedure ServiceExecute (Sender: TService);
     procedure ServiceStart (Sender: TService; var Started: Boolean);
     procedure ServiceStop (Sender: TService; var Stopped: Boolean);
   private
@@ -58,10 +58,10 @@ begin
   J2PWinService.Controller (CtrlCode);
 end;
 
-procedure TJ2PWinService.ServiceCreate(Sender: TObject);
+procedure TJ2PWinService.ServiceCreate (Sender: TObject);
 begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, false, true);
-  GlobalLogHandler.Info('Service Created');
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatWinService, false, true);
+  GlobalLogHandler.Info ('Service Created');
   GlobalConfigurationDefinition.LogConfiguration;
   if WebRequestHandler <> nil then
     WebRequestHandler.WebModuleClass := Json2PumlWebModuleClass;
@@ -73,12 +73,12 @@ begin
   Result := ServiceController;
 end;
 
-procedure TJ2PWinService.ServiceExecute(Sender: TService);
+procedure TJ2PWinService.ServiceExecute (Sender: TService);
 begin
   while not Terminated do
   begin
-    ServiceThread.ProcessRequests(True);
-    Sleep(500);
+    ServiceThread.ProcessRequests (true);
+    Sleep (500);
   end;
 end;
 
@@ -87,9 +87,9 @@ begin
   fServer := TIdHTTPWebBrokerBridge.Create (nil);
   fServer.OnParseAuthentication := TMVCParseAuthentication.OnParseAuthentication;
   fServer.DefaultPort := GlobalConfigurationDefinition.ServicePort;
-  GlobalLogHandler.Info('Service Started');
-  GlobalLogHandler.Info('Listening to port %d', [GlobalConfigurationDefinition.ServicePort]);
-  fServer.KeepAlive := True;
+  GlobalLogHandler.Info ('Service Started');
+  GlobalLogHandler.Info ('Listening to port %d', [GlobalConfigurationDefinition.ServicePort]);
+  fServer.KeepAlive := true;
 
   { more info about MaxConnections
     http://ww2.indyproject.org/docsite/html/frames.html?frmname=topic&frmfile=index.html }
@@ -99,13 +99,13 @@ begin
     http://ww2.indyproject.org/docsite/html/frames.html?frmname=topic&frmfile=index.html }
   fServer.ListenQueue := 200;
 
-  fServer.Active := True;
+  fServer.Active := true;
 end;
 
 procedure TJ2PWinService.ServiceStop (Sender: TService; var Stopped: Boolean);
 begin
   GlobalFileDeleteHandler.DeleteFiles;
-  GlobalLogHandler.Info('Service Stopped');
+  GlobalLogHandler.Info ('Service Stopped');
   fServer.Free;
 end;
 

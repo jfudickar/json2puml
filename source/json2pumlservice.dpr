@@ -57,7 +57,7 @@ var
   LServer: TIdHTTPWebBrokerBridge;
 begin
   InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatService, true,
-    not FindCmdLineSwitch(cNoLogFiles));
+    not FindCmdLineSwitch(cNoLogFiles, true));
   GlobalLogHandler.Trace ('** JSON2PUML Server ** ' + FileVersion);
   GlobalCommandLineParameter.ReadInputParameter;
   GlobalConfigurationDefinition.LogConfiguration;

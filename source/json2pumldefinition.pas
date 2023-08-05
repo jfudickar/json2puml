@@ -852,18 +852,18 @@ end;
 
 procedure InitializationGlobalVariables;
 var
-  S: string;
+  s: string;
 begin
   IntGlobalCommandLineParameter := tJson2PumlCommandLineParameter.Create;
   GlobalCommandLineParameter.ReadInputParameter;
 
-  S := GlobalCommandLineParameter.ConfigurationFileName;
-  if (not S.IsEmpty) and FileExists (S) then
+  s := GlobalCommandLineParameter.ConfigurationFileName;
+  if (not s.IsEmpty) and FileExists (s) then
   else
-    S := GlobalCommandLineParameter.ConfigurationFileNameEnvironment;
+    s := GlobalCommandLineParameter.ConfigurationFileNameEnvironment;
 
   IntGlobalConfiguration := tJson2PumlGlobalDefinition.Create;
-  if (not S.IsEmpty) and FileExists (S) then
+  if (not s.IsEmpty) and FileExists (s) then
     IntGlobalConfiguration.ReadFromJsonFile (GetEnvironmentVariable(cConfigurationFileRegistry));
   IntGlobalFileDeleteHandler := tJson2PumlFileDeleteHandler.Create;
 end;
@@ -1593,19 +1593,19 @@ var
   function FindSuffix (iSuffix: string): string;
   var
     i: Integer;
-    S: string;
+    s: string;
   begin
     Result := '';
     i := 0;
     repeat
       if i = 0 then
-        S := iSuffix
+        s := iSuffix
       else
-        S := Format ('%s_%d', [iSuffix, i]);
-      if FileDetailNames.IndexOf (S) < 0 then
+        s := Format ('%s_%d', [iSuffix, i]);
+      if FileDetailNames.IndexOf (s) < 0 then
       begin
-        FileDetailNames.Add (S);
-        Result := S;
+        FileDetailNames.Add (s);
+        Result := s;
         break;
       end
       else
@@ -2134,7 +2134,7 @@ procedure tJson2PumlCommandLineParameter.LogLineWrapped (iParameter, iDescriptio
   iParameterLength: Integer = 50; iLineLength: Integer = 110);
 var
   LogLines: tStringList;
-  S: string;
+  s: string;
   l: string;
   Next: string;
   i, p: Integer;
@@ -2142,10 +2142,10 @@ begin
   LogLines := tStringList.Create;
   try
     LogLines.Text := iDescription;
-    S := iParameter;
+    s := iParameter;
     for i := 0 to LogLines.Count - 1 do
     begin
-      S := S.PadRight (iParameterLength);
+      s := s.PadRight (iParameterLength);
       l := LogLines[i];
       while not l.IsEmpty do
       begin
@@ -2160,19 +2160,19 @@ begin
           Next := l;
           l := '';
         end;
-        if S.length + Next.length >= iLineLength then
+        if s.length + Next.length >= iLineLength then
         begin
-          GlobalLoghandler.Info (S);
-          S := ' ';
-          S := S.PadRight (iParameterLength);
+          GlobalLoghandler.Info (s);
+          s := ' ';
+          s := s.PadRight (iParameterLength);
         end;
-        S := S + ' ' + Next;
+        s := s + ' ' + Next;
       end;
-      GlobalLoghandler.Info (S);
-      S := '';
+      GlobalLoghandler.Info (s);
+      s := '';
     end;
-    if not S.IsEmpty then
-      GlobalLoghandler.Info (S);
+    if not s.IsEmpty then
+      GlobalLoghandler.Info (s);
   finally
     LogLines.Free;
   end;
@@ -2195,14 +2195,14 @@ procedure tJson2PumlCommandLineParameter.LogParameterValue (iParameterName: stri
 begin
   if iParameterValue.IsEmpty and iParameterDetail.IsEmpty and not iAllways then
     exit;
-  GlobalLoghandler.DebugParameter (cCmdLinePrefix, iParameterName.ToLower,
+  GlobalLoghandler.InfoParameter (cCmdLinePrefix, iParameterName.ToLower,
     (iParameterValue.Trim + ' ' + iParameterDetail).Trim);
 end;
 
 procedure tJson2PumlCommandLineParameter.ReadCurlParameter;
 var
   l, i: Integer;
-  S: string;
+  s: string;
 
   pName: string;
   pValue: string;
@@ -2213,15 +2213,15 @@ begin
   CurlParameter.Clear;
   for i := 0 to ParamCount do
   begin
-    S := ParamStr (i).Trim;
+    s := ParamStr (i).Trim;
     for l := 0 to 1 do
     begin
-      if S.StartsWith ('/' + ccurlparam[l] + ':', true) or S.StartsWith ('/' + ccurlparam[l] + '=', true) or
-        S.StartsWith ('-' + ccurlparam[l] + ':', true) or S.StartsWith ('-' + ccurlparam[l] + '=', true) then
+      if s.StartsWith ('/' + ccurlparam[l] + ':', true) or s.StartsWith ('/' + ccurlparam[l] + '=', true) or
+        s.StartsWith ('-' + ccurlparam[l] + ':', true) or s.StartsWith ('-' + ccurlparam[l] + '=', true) then
       begin
-        S := S.Substring (length(ccurlparam[l]) + 2).DeQuotedString;
-        p1 := S.IndexOf ('=');
-        p2 := S.IndexOf (':');
+        s := s.Substring (length(ccurlparam[l]) + 2).DeQuotedString;
+        p1 := s.IndexOf ('=');
+        p2 := s.IndexOf (':');
         if p1 < 0 then
           p1 := p2;
         if p2 < 0 then
@@ -2232,12 +2232,12 @@ begin
           p := p2;
         if p >= 0 then
         begin
-          pName := S.Substring (0, p).Trim;
-          pValue := S.Substring (p + 1);
+          pName := s.Substring (0, p).Trim;
+          pValue := s.Substring (p + 1);
         end
         else
         begin
-          pName := S.Trim;
+          pName := s.Trim;
           pValue := '';
         end;
         if not pName.IsEmpty then
@@ -2310,31 +2310,31 @@ end;
 
 function tJson2PumlCommandLineParameter.ReadSingleInputParameter (iParameterName: string): string;
 var
-  S: string;
+  s: string;
 begin
-  FindCmdLineSwitch (iParameterName, S);
-  S := S.TrimLeft (['=', ':']);
-  Result := S;
-  LogParameterValue (iParameterName, S);
+  FindCmdLineSwitch (iParameterName, s, true, [clstValueAppended]);
+  s := s.TrimLeft (['=', ':']);
+  Result := s;
+  LogParameterValue (iParameterName, s);
 end;
 
 function tJson2PumlCommandLineParameter.ReadSingleInputParameterEnvironment (iParameterName: string): string;
 var
-  S: string;
+  s: string;
 begin
-  S := GetEnvironmentVariable (iParameterName);
-  ValidateFileInputParameter ('Env ' + iParameterName, S);
-  Result := S;
+  s := GetEnvironmentVariable (iParameterName);
+  ValidateFileInputParameter ('Env ' + iParameterName, s);
+  Result := s;
 end;
 
 function tJson2PumlCommandLineParameter.ReadSingleInputParameterFile (iParameterName: string): string;
 var
-  S: string;
+  s: string;
 begin
-  FindCmdLineSwitch (iParameterName, S);
-  S := S.TrimLeft (['=', ':']);
-  ValidateFileInputParameter (iParameterName, S);
-  Result := S;
+  FindCmdLineSwitch (iParameterName, s);
+  s := s.TrimLeft (['=', ':']);
+  ValidateFileInputParameter (iParameterName, s);
+  Result := s;
 end;
 
 procedure tJson2PumlCommandLineParameter.SetIdentFilter (const Value: string);
@@ -2346,7 +2346,7 @@ end;
 procedure tJson2PumlCommandLineParameter.SetOpenOutputsStr (const Value: string);
 var
   TempList: tStringList;
-  S: string;
+  s: string;
   f: tJson2PumlOutputFormat;
 begin
   FOpenOutputsStr := Value;
@@ -2355,9 +2355,9 @@ begin
   try
     TempList.LineBreak := ',';
     TempList.Text := Value.ToLower;
-    for S in TempList do
+    for s in TempList do
       for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
-        if (S.Trim = f.ToString) or (S.Trim = cOpenOutputAll) then
+        if (s.Trim = f.ToString) or (s.Trim = cOpenOutputAll) then
           FOpenOutputs := FOpenOutputs + [f];
   finally
     TempList.Free;
@@ -2418,7 +2418,7 @@ end;
 
 procedure tJson2PumlCommandLineParameter.WriteHelpScreen;
 var
-  S: string;
+  s: string;
   f: tJson2PumlOutputFormat;
 begin
   WriteHelpLine;
@@ -2474,17 +2474,17 @@ begin
     'This parameter overwrites the path configured in the definition file');
   WriteHelpLine ('outputsuffix:<suffix>', 'Additional suffix added to the name of the generated files. ' +
     'This parameter overwrites the value configured in the definition file');
-  S := '';
+  s := '';
   for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
     if f.IsPumlOutput then
-      S := string.Join (',', [S, f.ToString]);
-  WriteHelpLine ('outputformat:<format>', Format('Format of the generated Puml converters (Allowed values: %s) ', [S]));
-  S := string.Join (',', [S, jofPUML.ToString]);
-  S := string.Join (',', [S, jofZip.ToString]);
+      s := string.Join (',', [s, f.ToString]);
+  WriteHelpLine ('outputformat:<format>', Format('Format of the generated Puml converters (Allowed values: %s) ', [s]));
+  s := string.Join (',', [s, jofPUML.ToString]);
+  s := string.Join (',', [s, jofZip.ToString]);
   WriteHelpLine ('openoutput:[<format>]',
     Format('Flag to define if the generated files should be opened after the generation.' + #13#10 +
     'The files will be opened using the default program to handle the file format. ' + #13#10 +
-    'Optional the files to be opened can be restricted by the format types (Allowed values: %s) ', [S]));
+    'Optional the files to be opened can be restricted by the format types (Allowed values: %s) ', [s]));
   WriteHelpLine;
   WriteHelpLine ('generatedetails:<boolean>',
     'This allows to overwrite the generateDetails property of the InputListFile');
@@ -2542,8 +2542,6 @@ procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStrin
     end;
   end;
   procedure AddLineBool (iName: string; iValue: boolean);
-  var
-    envValue: string;
   begin
     if iValue then
       iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, cTrue]));
@@ -2655,21 +2653,21 @@ end;
 
 procedure tJson2PumlGlobalDefinition.FindFilesInFolderList (ioFileList, iFolderList: tStringList; iFilter: string = '');
 var
-  S: string;
+  s: string;
   Filter: string;
   searchResult: TSearchRec;
   FilePath: string;
 begin
   ioFileList.Clear;
-  for S in iFolderList do
+  for s in iFolderList do
   begin
     if iFilter.IsEmpty then
-      Filter := ExtractFileName (S)
+      Filter := ExtractFileName (s)
     else
       Filter := ExtractFileName (iFilter);
     if Filter.IsEmpty then
       Filter := cDefaultJsonFileFilter;
-    FilePath := ExtractFilePath (S);
+    FilePath := ExtractFilePath (s);
     Filter := TPath.Combine (FilePath, Filter);
     if findfirst (Filter, faAnyFile, searchResult) = 0 then
     begin
@@ -2693,14 +2691,14 @@ end;
 
 procedure tJson2PumlGlobalDefinition.LogConfiguration;
 var
-  S: string;
+  s: string;
   LogList: tStringList;
 begin
   LogList := tStringList.Create;
   try
     GenerateLogConfiguration (LogList);
-    for S in LogList do
-      GlobalLoghandler.Info (S);
+    for s in LogList do
+      GlobalLoghandler.Info (s);
   finally
     LogList.Free;
   end;
@@ -2857,7 +2855,7 @@ end;
 
 function tJson2PumlFilterList.ListMatches (iList: TStrings; iSearch: string): boolean;
 var
-  S: string;
+  s: string;
 begin
   if iList.Count <= 0 then
   begin
@@ -2865,8 +2863,8 @@ begin
     exit;
   end;
   Result := false;
-  for S in iList do
-    if MatchesMask (iSearch, S) then
+  for s in iList do
+    if MatchesMask (iSearch, s) then
     begin
       Result := true;
       exit;

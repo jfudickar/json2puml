@@ -241,7 +241,7 @@ type
     function GetCurrentPage: tJson2PumlPage;
     procedure InitFormDefaultLogger;
     procedure InitializeInputHandler;
-    procedure HandleNotifyChange(Sender: TObject; ProgressValue, ProgressMaxValue : Integer);
+    procedure HandleNotifyChange (Sender: TObject; ProgressValue, ProgressMaxValue: Integer);
     procedure SetCurrentPage (const Value: tJson2PumlPage);
     property CurlAuthenticationFileLines: TStrings read FCurlAuthenticationFileLines write FCurlAuthenticationFileLines;
     property CurlParameterFileLines: TStrings read FCurlParameterFileLines write FCurlParameterFileLines;
@@ -336,7 +336,7 @@ end;
 procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: TObject);
 begin
   FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
-  TaskBar.ProgressState := TTaskBarProgressState.None;
+  Taskbar.ProgressState := TTaskBarProgressState.None;
 end;
 
 procedure Tjson2pumlMainForm.AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
@@ -359,7 +359,7 @@ procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: TObject
 begin
   LockWindowUpdate (Handle);
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
-  TaskBar.ProgressState := TTaskBarProgressState.Normal;
+  Taskbar.ProgressState := TTaskBarProgressState.Normal;
   UpdateAllInfos;
 end;
 
@@ -843,13 +843,14 @@ end;
 
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;
 begin
-  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false, not FindCmdLineSwitch(cNoLogFiles));
+  InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false,
+    not FindCmdLineSwitch(cNoLogFiles, True));
   Logger.Providers.add (GlobalLogStringListProvider);
   GlobalLogStringListProvider.ShowTimeStamp := True;
   GlobalLogStringListProvider.ShowEventTypes := True;
   GlobalLogStringListProvider.LogList := LogLines;
   GlobalLogStringListProvider.LogLevel := LOG_DEBUG;
-  SetLogProviderEventTypeNames (GlobalLogStringListProvider);
+  SetLogProviderDefaults (GlobalLogStringListProvider, jatUI);
   GlobalLogStringListProvider.Enabled := True;
 
 end;
@@ -1138,7 +1139,7 @@ begin
   inherited Destroy;
 end;
 
-procedure Tjson2pumlMainForm.HandleNotifyChange(Sender: TObject; ProgressValue, ProgressMaxValue : Integer);
+procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: TObject; ProgressValue, ProgressMaxValue: Integer);
 begin
 {$IFDEF SYNEDIT}
   if Assigned (fLogMemo) then

@@ -41,8 +41,10 @@ type
     procedure OnAfterAction (Context: TWebContext; const AActionName: string); override;
     procedure GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
     procedure GetServiceInformationResponse;
+    function IsRequestBodyInvalid: Boolean;
     procedure LogRequestStart (iContext: TWebContext);
     procedure LogRequestEnd (iContext: TWebContext);
+    procedure RenderBadRequestMessage (iErrorMessage: string);
     function ServerInformation: string;
   public
     [MVCPath]
@@ -208,9 +210,10 @@ begin
       WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
       WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true),
         1, false);
-      InputHandler.CmdLineParameter.GenerateLogParameters(InfoList);
+      InputHandler.CmdLineParameter.GenerateLogParameters (InfoList);
       WriteToJsonValue (jsonOutput, 'commandLineParameter', InfoList, 1, false, false);
-      InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile, InputHandler.CurrentJavaRuntimeParameter);
+      InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile,
+        InputHandler.CurrentJavaRuntimeParameter);
       WriteToJsonValue (jsonOutput, 'plantUmlInformation', InfoList, 1, false, false);
       InputHandler.GlobalConfiguration.GenerateLogConfiguration (InfoList);
       WriteToJsonValue (jsonOutput, 'globalConfiguration', InfoList, 1, false, false);
@@ -267,6 +270,8 @@ begin
   LogRequestStart (Context);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
+    if IsRequestBodyInvalid then
+      Exit;
     try
       InputHandler.CmdLineParameter.ReadInputParameter;
       InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
@@ -293,8 +298,8 @@ begin
     end;
   finally
     InputHandler.Free;
+    LogRequestEnd (Context);
   end;
-  LogRequestEnd (Context);
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestPng;
@@ -305,6 +310,8 @@ begin
   LogRequestStart (Context);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
+    if IsRequestBodyInvalid then
+      Exit;
     try
       InputHandler.CmdLineParameter.ReadInputParameter;
       InputHandler.CmdLineParameter.GenerateDetailsStr := 'false';
@@ -341,8 +348,8 @@ begin
     end;
   finally
     InputHandler.Free;
+    LogRequestEnd (Context);
   end;
-  LogRequestEnd (Context);
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestSvg;
@@ -353,6 +360,8 @@ begin
   LogRequestStart (Context);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
+    if IsRequestBodyInvalid then
+      Exit;
     try
       InputHandler.CmdLineParameter.ReadInputParameter;
       InputHandler.CmdLineParameter.GenerateDetailsStr := 'false';
@@ -389,8 +398,8 @@ begin
     end;
   finally
     InputHandler.Free;
+    LogRequestEnd (Context);
   end;
-  LogRequestEnd (Context);
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestZip;
@@ -400,6 +409,8 @@ begin
   LogRequestStart (Context);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
+    if IsRequestBodyInvalid then
+      Exit;
     try
       InputHandler.CmdLineParameter.ReadInputParameter;
       InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
@@ -434,8 +445,15 @@ begin
     end;
   finally
     InputHandler.Free;
+    LogRequestEnd (Context);
   end;
-  LogRequestEnd (Context);
+end;
+
+function TJson2PumlController.IsRequestBodyInvalid: Boolean;
+begin
+  Result := Context.Request.Body.IsEmpty;
+  if Result then
+    RenderBadRequestMessage ('Payload is empty');
 end;
 
 procedure TJson2PumlController.LogRequestEnd (iContext: TWebContext);
@@ -448,21 +466,26 @@ procedure TJson2PumlController.LogRequestStart (iContext: TWebContext);
 // var
 // Name: string;
 // I: Integer;
-
 begin
   GlobalLoghandler.Trace ('%s started', [Context.Request.PathInfo]);
-  // Deactivated because of critical data which can be in header or body (e.g. Curl Authentication Parameter)
-  // Should only be activated if realy needed for testing
-   if Context.Request.RawWebRequest is TIdHTTPAppRequest then
-   begin
-  // for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do
-  // begin
-  // name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
-  // GlobalLoghandler.Debug  ('Header %s : %s', [name, Context.Request.Headers[name]]);
-  // end;
-   if not Context.Request.Body.IsEmpty then
-   GlobalLoghandler.Debug ('Request Body : %s ', [Context.Request.Body]);
-   end;
+  if Context.Request.RawWebRequest is TIdHTTPAppRequest then
+  begin
+    // Deactivated because of critical data which can be in header or body (e.g. Curl Authentication Parameter)
+    // Should only be activated if realy needed for testing
+    // for I := 0 to TIdHTTPAppRequest(Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Count - 1 do
+    // begin
+    // name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
+    // GlobalLoghandler.Debug  ('Header %s : %s', [name, Context.Request.Headers[name]]);
+    // end;
+    if not Context.Request.Body.IsEmpty then
+      GlobalLoghandler.Debug ('Request Body : %s ', [Context.Request.Body]);
+  end;
+end;
+
+procedure TJson2PumlController.RenderBadRequestMessage (iErrorMessage: string);
+begin
+  RenderStatusMessage (HTTP_STATUS.BadRequest, iErrorMessage);
+  GlobalLoghandler.Info ('HTTP-%d : %s ', [HTTP_STATUS.BadRequest, iErrorMessage]);
 end;
 
 function TJson2PumlController.ServerInformation: string;

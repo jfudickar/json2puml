@@ -31,7 +31,7 @@ uses
 
 type
   tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip, jofFileList);
-  tJson2PumlApplicationType = (jatConsole, jatService, jatUI);
+  tJson2PumlApplicationType = (jatConsole, jatService, jatUI, jatWinService);
   tJson2PumlOutputFormats = set of tJson2PumlOutputFormat;
   tJson2PumlCharacteristicType = (jctUndefined, jctRecord, jctList);
   tJson2PumlListOperation = (jloReplace, jloMerge);
@@ -52,7 +52,6 @@ const
   cJson2PumlFileNameReplace: array [tJson2PumlFileNameReplace] of string = ('<group>', '<detail>', '<option>', '<job>',
     '<file>');
   cUmlRelationDirection: array [tUmlRelationDirection] of string = ('To', 'From');
-
 
   cDefaultDefinitionFile = 'json2pumldefinition.json';
   cDefinitionFileRegistry = 'Json2PumlDefinitionFile';
@@ -84,15 +83,14 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-
-
   cCurrentVersion = '2.2.5.89';
 
   cApplicationName = 'json2puml';
 
   cDefaultServicePort = 8080;
 
-  cJson2PumlApplicationTypeName: array [tJson2PumlApplicationType] of string = (cApplicationName+' command line', cApplicationName+' service', cApplicationName+' ui');
+  cJson2PumlApplicationTypeName: array [tJson2PumlApplicationType] of string = (cApplicationName + ' command line',
+    cApplicationName + ' service', cApplicationName + ' ui', cApplicationName + ' windows service');
 
   JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
     'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];

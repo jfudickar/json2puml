@@ -2,8 +2,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   Left = 0
   Top = 0
   Caption = 'json2puml'
-  ClientHeight = 903
-  ClientWidth = 1347
+  ClientHeight = 901
+  ClientWidth = 1339
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -53,8 +53,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 884
-    Width = 1347
+    Top = 882
+    Width = 1339
     Height = 19
     Margins.Left = 2
     Margins.Top = 2
@@ -67,7 +67,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object MainActionToolBar: TActionToolBar
     Left = 0
     Top = 50
-    Width = 1347
+    Width = 1339
     Height = 23
     ActionManager = MainActionManager
     AllowHiding = False
@@ -89,7 +89,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object ActionMainMenuBar: TActionMainMenuBar
     Left = 0
     Top = 0
-    Width = 1347
+    Width = 1339
     Height = 25
     UseSystemFont = False
     ActionManager = MainActionManager
@@ -109,8 +109,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object MainPageControl: TPageControl
     Left = 0
     Top = 73
-    Width = 1347
-    Height = 811
+    Width = 1339
+    Height = 809
     ActivePage = LogTabSheet
     Align = alClient
     TabOrder = 3
@@ -120,7 +120,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object CommandLineEditPanel: TPanel
         Left = 0
         Top = 0
-        Width = 1329
+        Width = 1325
         Height = 345
         Align = alTop
         BevelOuter = bvNone
@@ -626,8 +626,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object LogFileDetailPageControl: TPageControl
         Left = 0
         Top = 345
-        Width = 1329
-        Height = 428
+        Width = 1321
+        Height = 426
         ActivePage = ExecutionLogTabSheet
         Align = alClient
         TabOrder = 1
@@ -746,7 +746,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object ActionToolBar5: TActionToolBar
     Left = 0
     Top = 25
-    Width = 1347
+    Width = 1339
     Height = 25
     ActionManager = MainActionManager
     Caption = 'EditToolbar'

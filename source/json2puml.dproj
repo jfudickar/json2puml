@@ -142,7 +142,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Linux64)'!=''">
-        <Debugger_RunParams>-debug -parameterfile=~/json2puml/samples/jsonplaceholder/placeholder_parameter_curl.json</Debugger_RunParams>
+        <Debugger_RunParams>-debug -parameterfile=~/json2puml/samples/jsonplaceholder/placeholder_parameter_curl.json -FormatDefinitionFiles</Debugger_RunParams>
         <Debugger_Launcher>/usr/bin/xterm -e &quot;%debuggee%&quot;</Debugger_Launcher>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
