@@ -1,0 +1,21 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class ServiceInformation{
+   service : String
+   additionalServiceInformation : String
+   plantUmlInformation : Array of String
+   definitionFiles : Array of string
+   inputlistFiles : Array of string
+}
+
+@enduml
