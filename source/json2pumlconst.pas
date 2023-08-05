@@ -83,7 +83,7 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-  cCurrentVersion = '2.2.5.89';
+  cCurrentVersion = '2.2.5.90';
 
   cApplicationName = 'json2puml';
 

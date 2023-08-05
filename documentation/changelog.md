@@ -1,3 +1,8 @@
+# **json2puml v2.2.5.90** - 05.08.2023
+## All Editions 
+### Changed Feature
+- Log handling Improved
+
 # **json2puml v2.2.4.88** - 04.08.2023
 ## All Editions 
 ### New Feature
