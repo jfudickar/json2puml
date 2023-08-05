@@ -426,12 +426,16 @@ end;
 
 procedure GenerateDirectory (const iDirectory: string);
 begin
+  if not TDirectory.Exists(iDirectory) then
   try
+    GlobalLoghandler.Debug ('Create directory : %s', [iDirectory]);
     ForceDirectories (iDirectory);
   except
     on e: exception do
       GlobalLoghandler.Error ('Error creating directory : %s', [iDirectory]);
-  end;
+  end
+  else
+    GlobalLoghandler.Debug ('Directory exists : %s', [iDirectory]);
 end;
 
 procedure GenerateFileDirectory (iFileName: string);
