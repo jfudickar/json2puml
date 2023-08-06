@@ -27,21 +27,45 @@ unit json2pumlloghandler;
 interface
 
 uses
-  System.Classes, Quick.Logger, json2pumlconst;
+  System.Classes, Quick.Logger, json2pumlconst, System.SysUtils, System.SyncObjs;
 
 type
+  tJson2PumlErrorRecord = class(tPersistent)
+  private
+    FErrorMessage: string;
+    FErrorType: tJson2PumlErrorType;
+    FThreadId: TThreadID;
+  public
+    property ErrorMessage: string read FErrorMessage write FErrorMessage;
+    property ErrorType: tJson2PumlErrorType read FErrorType write FErrorType;
+    property ThreadId: TThreadID read FThreadId write FThreadId;
+  end;
+
+  TJson2PumlErrorList = class(tStringList)
+  private
+    FLock: TCriticalSection;
+    function GetFailed: Boolean;
+  protected
+    property Lock: TCriticalSection read FLock;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure AddErrorWarning (const aErrorType: tJson2PumlErrorType; const aMessage: string);
+    procedure Clear; override;
+    procedure RenderErrorReponseFromErrorList (var oResponseText: string; var oHttpCode: Integer);
+    property Failed: Boolean read GetFailed;
+  end;
+
   TJson2PumlLogHandler = class(tPersistent)
   private
-    FErrorWarningList: tStringList;
-    FFailed: boolean;
+    FErrorList: TJson2PumlErrorList;
+    function GetFailed: Boolean;
   protected
     procedure LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: TEventType); overload;
     procedure LogMsg (const aMsg: string; aEventType: TEventType); overload;
   public
     constructor Create; virtual;
     destructor Destroy; override;
-    procedure AddErrorWarning (const aType, aMessage: string); overload;
-    procedure AddErrorWarning (const aType, aMessage: string; const aParams: array of TVarRec); overload;
     procedure Clear;
     procedure Debug (const aMessage: string; const aTag: string = ''); overload;
     procedure Debug (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
@@ -49,6 +73,9 @@ type
       const aTag: string = ''); overload;
     procedure Error (const aMessage: string; const aTag: string = ''); overload;
     procedure Error (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
+    procedure Error (const aErrorType: tJson2PumlErrorType; const aTag: string = ''); overload;
+    procedure Error (const aErrorType: tJson2PumlErrorType; const aParams: array of TVarRec;
+      const aTag: string = ''); overload;
     procedure Header (const aMessage: string; const aTag: string = ''); overload;
     procedure Header (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
     procedure Info (const aMessage: string; const aTag: string = ''); overload;
@@ -57,26 +84,28 @@ type
       const aTag: string = ''); overload;
     procedure Trace (const aMessage: string; const aTag: string = ''); overload;
     procedure Trace (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
+    procedure UnhandledException (aException: Exception); virtual;
     procedure Warn (const aMessage: string; const aTag: string = ''); overload;
     procedure Warn (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
-    property ErrorWarningList: tStringList read FErrorWarningList;
-    property Failed: boolean read FFailed;
+    property ErrorList: TJson2PumlErrorList read FErrorList;
+    property Failed: Boolean read GetFailed;
   end;
 
 function GlobalLogHandler: TJson2PumlLogHandler;
 
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
-  iAllowsConsole, iAllowsLogFile: boolean);
+  iAllowsConsole, iAllowsLogFile: Boolean);
 
-procedure SetLogProviderDefaults(iProvider: TLogProviderBase; iApplicationType: tJson2PumlApplicationType);
+procedure SetLogProviderDefaults (iProvider: TLogProviderBase; iApplicationType: tJson2PumlApplicationType);
 
 implementation
 
 uses
-  System.SysUtils, Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
+  Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
   Quick.Logger.Provider.StringList, {$IFDEF DEBUG} Quick.Logger.ExceptionHook, {$ENDIF}
   Quick.Logger.RuntimeErrorHook,
-  Quick.Logger.UnhandledExceptionHook, json2pumldefinition;
+  Quick.Logger.UnhandledExceptionHook, json2pumldefinition, json2pumlbasedefinition, jsontools,
+  MVCFramework.Commons, json2pumltools;
 
 var
   IntGlobalLogHandler: TJson2PumlLogHandler;
@@ -118,15 +147,15 @@ begin
   else
     iProvider.LogLevel := LOG_TRACE;
   iProvider.TimePrecission := True;
-  iProvider.IncludedInfo := [iiAppName, iiHost, iiUserName, iiEnvironment, iiPlatform, iiOSVersion,
-    iiExceptionInfo, iiExceptionStackTrace];
+  iProvider.IncludedInfo := [iiAppName, iiHost, iiUserName, iiEnvironment, iiPlatform, iiOSVersion, iiExceptionInfo,
+    iiExceptionStackTrace];
   SetLogProviderEventTypeNames (iProvider);
   if iApplicationType in [jatService, jatWinService] then
     SetCustomFormat (iProvider);
 end;
 
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
-  iAllowsConsole, iAllowsLogFile: boolean);
+  iAllowsConsole, iAllowsLogFile: Boolean);
 
 var
   LogFileName: string;
@@ -151,7 +180,7 @@ begin
         TDirectory.CreateDirectory (iLogFilePath);
         Log ('Log directory %s created', [iLogFilePath], etInfo);
       except
-        on e: exception do
+        on e: Exception do
         begin
           LogFileName := '';
           Log ('Log directory %s not created: %s', [iLogFilePath, e.Message], etError);
@@ -180,30 +209,20 @@ end;
 
 constructor TJson2PumlLogHandler.Create;
 begin
-  FFailed := False;
-  FErrorWarningList := tStringList.Create ();
+  FErrorList := TJson2PumlErrorList.Create ();
+  FErrorList.OwnsObjects := True;
+  Clear;
 end;
 
 destructor TJson2PumlLogHandler.Destroy;
 begin
-  FErrorWarningList.Free;
+  FErrorList.Free;
   inherited Destroy;
-end;
-
-procedure TJson2PumlLogHandler.AddErrorWarning (const aType, aMessage: string);
-begin
-  ErrorWarningList.Add (Format('%s: %s', [aType, aMessage]));
-end;
-
-procedure TJson2PumlLogHandler.AddErrorWarning (const aType, aMessage: string; const aParams: array of TVarRec);
-begin
-  ErrorWarningList.Add (Format('%s: %s', [aType, Format(aMessage, aParams)]));
 end;
 
 procedure TJson2PumlLogHandler.Clear;
 begin
-  ErrorWarningList.Clear;
-  FFailed := False;
+  ErrorList.Clear;
   if Assigned (GlobalLogStringListProvider) then
     GlobalLogStringListProvider.Clear;
 end;
@@ -227,15 +246,31 @@ end;
 procedure TJson2PumlLogHandler.Error (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etError);
-  AddErrorWarning ('Error', aMessage);
-  FFailed := True;
+  ErrorList.AddErrorWarning (jetUnknown, aMessage);
 end;
 
 procedure TJson2PumlLogHandler.Error (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etError);
-  AddErrorWarning ('Error', aMessage, aParams);
-  FFailed := True;
+  ErrorList.AddErrorWarning (jetUnknown, Format(aMessage, aParams));
+end;
+
+procedure TJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aTag: string = '');
+begin
+  LogMsg (aErrorType.ErrorMessage, etError);
+  ErrorList.AddErrorWarning (aErrorType, aErrorType.ErrorMessage);
+end;
+
+procedure TJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aParams: array of TVarRec;
+  const aTag: string = '');
+begin
+  LogMsg (aErrorType.ErrorMessage, aParams, etError);
+  ErrorList.AddErrorWarning (aErrorType, Format(aErrorType.ErrorMessage, aParams));
+end;
+
+function TJson2PumlLogHandler.GetFailed: Boolean;
+begin
+  Result := ErrorList.Failed;
 end;
 
 procedure TJson2PumlLogHandler.Header (const aMessage: string; const aTag: string = '');
@@ -285,16 +320,157 @@ begin
   LogMsg (aMessage, aParams, etTrace);
 end;
 
+procedure TJson2PumlLogHandler.UnhandledException (aException: Exception);
+begin
+  Error (jetException, [aException.ClassName, aException.Message, aException.StackTrace]);
+end;
+
 procedure TJson2PumlLogHandler.Warn (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etWarning);
-  AddErrorWarning ('Warning', aMessage);
+  ErrorList.AddErrorWarning (jetWarning, aMessage);
 end;
 
 procedure TJson2PumlLogHandler.Warn (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etWarning);
-  AddErrorWarning ('Warning', aMessage, aParams);
+  ErrorList.AddErrorWarning (jetWarning, Format(aMessage, aParams));
+end;
+
+constructor TJson2PumlErrorList.Create;
+begin
+  inherited Create;
+  FLock := TCriticalSection.Create ();
+end;
+
+destructor TJson2PumlErrorList.Destroy;
+begin
+  FLock.Free;
+  inherited Destroy;
+end;
+
+procedure TJson2PumlErrorList.AddErrorWarning (const aErrorType: tJson2PumlErrorType; const aMessage: string);
+var
+  ErrorRecord: tJson2PumlErrorRecord;
+begin
+  Lock.Acquire;
+  try
+    ErrorRecord := tJson2PumlErrorRecord.Create;
+    ErrorRecord.ErrorType := aErrorType;
+    ErrorRecord.ErrorMessage := aMessage;
+    ErrorRecord.ThreadId := CurrentThreadId;
+    AddObject (ErrorRecord.ErrorMessage, ErrorRecord);
+  finally
+    Lock.Release;
+  end;
+end;
+
+procedure TJson2PumlErrorList.Clear;
+var
+  i: Integer;
+  ErrorRecord: tJson2PumlErrorRecord;
+  ThreadId: TThreadID;
+begin
+  Lock.Acquire;
+  try
+    ThreadId := CurrentThreadId;
+    i := 0;
+    while i < Count do
+    begin
+      ErrorRecord := tJson2PumlErrorRecord (Objects[i]);
+      if Assigned (ErrorRecord) and (ErrorRecord.ThreadId = ThreadId) then
+        Delete (i)
+      else
+        Inc (i);
+    end;
+  finally
+    Lock.Release;
+  end;
+end;
+
+function TJson2PumlErrorList.GetFailed: Boolean;
+var
+  i: Integer;
+  ErrorRecord: tJson2PumlErrorRecord;
+  ThreadId: TThreadID;
+begin
+  Lock.Acquire;
+  try
+    ThreadId := CurrentThreadId;
+    Result := False;
+    for i := 0 to Count - 1 do
+    begin
+      ErrorRecord := tJson2PumlErrorRecord (Objects[i]);
+      if Assigned (ErrorRecord) and (ErrorRecord.ThreadId = ThreadId) then
+        Result := Result or ErrorRecord.ErrorType.Failed;
+    end;
+  finally
+    Lock.Release;
+  end;
+end;
+
+procedure TJson2PumlErrorList.RenderErrorReponseFromErrorList (var oResponseText: string; var oHttpCode: Integer);
+var
+  MaxHttpCode: Integer;
+  i: Integer;
+  ErrorRecord: tJson2PumlErrorRecord;
+  JsonResult: tStringList;
+  ThreadId: TThreadID;
+
+  procedure AddError (iCode, iMessage, iDescription: string);
+  begin
+    WriteObjectStartToJson (JsonResult, 2, '');
+    WriteToJsonValue (JsonResult, 'errorCode', iCode, 3, False);
+    WriteToJsonValue (JsonResult, 'message', iMessage, 3, False);
+    WriteToJsonValue (JsonResult, 'description', iDescription, 3, False);
+    WriteObjectEndToJson (JsonResult, 2);
+  end;
+
+begin
+  Lock.Acquire;
+  try
+    ThreadId := CurrentThreadId;
+    JsonResult := tStringList.Create;
+    try
+      MaxHttpCode := 0;
+      WriteObjectStartToJson (JsonResult, 0, '');
+      WriteArrayStartToJson (JsonResult, 1, '');
+      i := 0;
+      while i < Count do
+      begin
+        ErrorRecord := tJson2PumlErrorRecord (Objects[i]);
+        if not Assigned (ErrorRecord) then
+        begin
+          Delete (i);
+          Continue;
+        end;
+        if ErrorRecord.ThreadId <> ThreadId then
+        begin
+          Inc (i);
+          Continue;
+        end;
+        if ErrorRecord.ErrorType.HttpStatusCode > MaxHttpCode then
+          MaxHttpCode := ErrorRecord.ErrorType.HttpStatusCode;
+        AddError (ErrorRecord.ErrorType.Errorcode, GlobalLogHandler.ErrorList[i],
+          ErrorRecord.ErrorType.ErrorDescription);
+        Delete (i);
+      end;
+      if MaxHttpCode = 0 then
+      begin
+        MaxHttpCode := HTTP_STATUS.InternalServerError;
+        AddError (jetUnknownServerError.Errorcode, jetUnknownServerError.ErrorMessage,
+          jetUnknownServerError.ErrorDescription);
+      end;
+      WriteArrayEndToJson (JsonResult, 1);
+      WriteObjectEndToJson (JsonResult, 0);
+      oResponseText := JsonResult.Text;
+      oHttpCode := MaxHttpCode;
+    finally
+      JsonResult.Free;
+    end;
+  finally
+    Lock.Release;
+  end;
 end;
 
 initialization

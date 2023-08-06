@@ -879,8 +879,7 @@ begin
 
   jValue := TJsonObject.ParseJSONValue (JsonInput.Text);
   if not Assigned (jValue) then
-    GlobalLoghandler.Error ('Unable to parse JSON structure of file "%s"',
-      [InputHandlerRecord.InputFile.OutputFileName])
+    GlobalLoghandler.Error (jetUnableToParseInputFileStructure, [InputHandlerRecord.InputFile.OutputFileName])
   else
   begin
     InfoRec.Init (LeadingObject);

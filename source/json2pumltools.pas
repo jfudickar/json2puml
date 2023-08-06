@@ -88,6 +88,7 @@ function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: C
 
 function ValidateOutputSuffix (iOutputSuffix: string): string;
 
+function CurrentThreadId: TThreadId;
 type
   TCurlUtils = class
   private
@@ -373,6 +374,8 @@ begin
   end;
 end;
 
+{$WARN SYMBOL_PLATFORM OFF}
+
 function FileAttributesStr (iFileAttributes: TFileAttributes): string;
 var
   a: TFileAttribute;
@@ -457,8 +460,9 @@ begin
 {$ENDIF}
     end;
   end;
-  Result := Result.TrimLeft([',', ' ']);
+  Result := Result.TrimLeft ([',', ' ']);
 end;
+{$WARN SYMBOL_PLATFORM ON}
 
 function FileContent (iFileName: string): string;
 var
@@ -512,23 +516,19 @@ begin
 end;
 
 procedure GenerateDirectory (const iDirectory: string);
-var
-  AttributesStr: string;
-  Attributes: TFileAttributes;
-  a: TFileAttribute;
 begin
   if not TDirectory.Exists (iDirectory) then
     try
       GlobalLoghandler.Debug ('Create directory : %s', [iDirectory]);
-      ForceDirectories (iDirectory);
-      if not TDirectory.Exists (iDirectory) then
-        GlobalLoghandler.Error ('Directory not created : %s', [iDirectory]);
+      if not ForceDirectories (iDirectory) then
+        GlobalLoghandler.Error (jetDirectoryCouldNotBeCreated, [iDirectory]);
     except
       on e: exception do
-        GlobalLoghandler.Error ('Error creating directory : %s - %s', [iDirectory, e.Message]);
+        GlobalLoghandler.Error (jetDirectoryDeletionFailed, [iDirectory, e.Message]);
     end;
   if TDirectory.Exists (iDirectory) then
-    GlobalLoghandler.Debug ('Directory exists : %s - %s', [iDirectory, FileAttributesStr(TDirectory.GetAttributes (iDirectory))]);
+    GlobalLoghandler.Debug ('Directory created %s (%s)',
+      [iDirectory, FileAttributesStr(TDirectory.GetAttributes(iDirectory))]);
 end;
 
 procedure GenerateFileDirectory (iFileName: string);
@@ -551,7 +551,7 @@ begin
     Exit;
   if not FileExists (iPlantUmlJarFile) then
   begin
-    GlobalLoghandler.Error ('PlantUML Jar File "%s" not found!', [iPlantUmlJarFile]);
+    GlobalLoghandler.Error (jetPlantUmlFileNotFound, [iPlantUmlJarFile]);
     Exit;
   end;
   DestinationFile := tPath.ChangeExtension (iPlantUmlFile, iFormat.FileExtension);
@@ -573,7 +573,7 @@ begin
       OpenFile (DestinationFile);
   end
   else
-    GlobalLoghandler.Error ('Generation of %s for %s FAILED.', [iFormat.toString, iPlantUmlFile]);
+    GlobalLoghandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.toString, iPlantUmlFile]);
 end;
 
 function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
@@ -801,6 +801,15 @@ begin
       else
     else
       Result := '.' + Result;
+end;
+
+function CurrentThreadId: TThreadId;
+begin
+  {$IFDEF MSWINDOWS}
+  Result := GetCurrentThreadId;
+  {$ELSE}
+  Result := TThread.CurrentThread.ThreadID;
+  {$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}
@@ -1075,14 +1084,13 @@ begin
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
   except
     on e: exception do
-      GlobalLoghandler.Error ('curl file %s skipped - Exception "%s" raised when validating [%s]',
-        [iOutputFile, e.Message, iExecuteEvaluation]);
+      GlobalLoghandler.Error (jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
   end;
 
   Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
   if Url.Trim.isEmpty then
   begin
-    GlobalLoghandler.Warn ('curl file %s skipped - url not defined.', [iOutputFile]);
+    GlobalLoghandler.Error (jetCurlFileSkippedUrlMissing, [iOutputFile]);
     Exit;
   end;
 
@@ -1090,7 +1098,7 @@ begin
     iCurlDetailParameterList, true);
   if oProtocolCurlCommand.isEmpty then
   begin
-    GlobalLoghandler.Warn ('curl file %s skipped - unable to generate curl command .', [iOutputFile]);
+    GlobalLoghandler.Error (jetCurlFileSkippedInvalidCurlCommand, [iOutputFile]);
     Exit;
   end;
   oProtocolCurlCommand := Format ('%s %s', ['curl', oProtocolCurlCommand]);
@@ -1134,8 +1142,8 @@ begin
   begin
     if FileExists (iOutputFile) then
       tFile.SetLastWriteTime (iOutputFile, Now - 10);
-    GlobalLoghandler.Warn ('Fetching from "%s" for "%s" FAILED (%d ms) : [%s]',
-      [Url, iOutputFile, MillisecondsBetween(Now, StartTime), vErrorMessage]);
+    GlobalLoghandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),
+      vErrorMessage]);
   end;
 end;
 

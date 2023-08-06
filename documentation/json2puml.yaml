@@ -24,6 +24,14 @@ paths:
             application/json:
               schema:
                 type: string
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
+                
   /serviceinformation:
     get:
       description: 'Returns a set of informations about the service application and the current configuration'
@@ -37,6 +45,13 @@ paths:
                 type: object
                 items:
                   $ref: '#/components/schemas/ServiceInformationResponse'
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
   /definitionfile:
     get:
       description: 'Returns a list of all available definition files'
@@ -50,6 +65,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DefinitionFileResponse'
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
   /inputlistfile:
     get:
       description: 'Returns a list of all available input list files'
@@ -63,6 +85,13 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/InputListFileResponse'          
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
     
   /json2pumlRequest:
     post:
@@ -78,7 +107,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Json2PumlResponse'          
+                $ref: '#/components/schemas/Json2PumlResponse'        
+        '400':
+          description: '*Bad Request* - The server cannot process the request due to malformed\
+            \ syntax. The response can be caused by missing mandatory query parameters,\
+            \ invalid value in the query parameters, validation exceptions, and so on.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
   /json2pumlRequestPng:
     post:
       description: 'Execute a json2puml curl and generation call and returns the summary PNG file'
@@ -95,6 +139,21 @@ paths:
               schema: 
                 type: string
                 format: binary
+        '400':
+          description: '*Bad Request* - The server cannot process the request due to malformed\
+            \ syntax. The response can be caused by missing mandatory query parameters,\
+            \ invalid value in the query parameters, validation exceptions, and so on.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
   /json2pumlRequestSvg:
     post:
       description: 'Execute a json2puml curl and generation call and returns the summary SVG file'
@@ -111,6 +170,21 @@ paths:
               schema: 
                 type: string
                 format: binary
+        '400':
+          description: '*Bad Request* - The server cannot process the request due to malformed\
+            \ syntax. The response can be caused by missing mandatory query parameters,\
+            \ invalid value in the query parameters, validation exceptions, and so on.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
   /json2pumlRequestZip:
     post:
       description: 'Execute a json2puml curl and generation call and returns a zip file containing all generated filee'
@@ -127,6 +201,21 @@ paths:
               schema: 
                 type: string
                 format: binary
+        '400':
+          description: '*Bad Request* - The server cannot process the request due to malformed\
+            \ syntax. The response can be caused by missing mandatory query parameters,\
+            \ invalid value in the query parameters, validation exceptions, and so on.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
 components:
   schemas:
     ServiceInformationResponse:
@@ -324,18 +413,31 @@ components:
     GeneratedOutputFile:
       type: object
       properties:
-        source:
-          type: string
-        curlcommand:
-          type: string    
-        logFile:
+        isSplitFile:
+          type: boolean
+        pumlFile:
+          $ref: '#/components/schemas/OutputFile'
+        pdfFile:
           $ref: '#/components/schemas/OutputFile'
         pngFile:
           $ref: '#/components/schemas/OutputFile'
         svgFile:
           $ref: '#/components/schemas/OutputFile'
-        pumlfFile:
+        converterLogFile:
           $ref: '#/components/schemas/OutputFile'
+    ErrorResponse:
+      type: array
+      items:       
+        type: object
+        properties:
+          errorCode: 
+            type : string
+          message: 
+            type : string
+          description: 
+            type : string
+
+    
 
         
 

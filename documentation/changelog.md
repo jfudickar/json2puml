@@ -1,3 +1,13 @@
+# **json2puml v2.2.5.93** - 06.08.2023
+## All Editions 
+### Changed Feature
+- Log handling Improved
+
+## Service Editions 
+### New Feature
+- For failed service calls now a structured error message is returned, which contains the list of all errors which have lead to the server error
+  Each error has a unique error code, an error message and an optional description
+
 # **json2puml v2.2.5.90** - 05.08.2023
 ## All Editions 
 ### Changed Feature
@@ -8,32 +18,38 @@
 ### New Feature
 - The displayName and descrition property of the inputlistfile and the definitionfile are now supporting the text replacement of environment variables
 ### Changed Feature
-- Additional information into the get /serviceinformation result set
 - Fixed plantuml generation for table fields when the content contains a \n for a fixed newline
+
+## Service Editions 
+### New Feature
+- Additional information into the get /serviceinformation result set
 
 # **json2puml v2.2.3.87** - 03.08.2023
 ## All Editions 
 ### Changed Feature
 - Fixed protocol handling of boolean command line parameters
-- For calculating the Plantuml information shown in the get /serviceinformation now also the globalconfiguration.javaRuntimeParameter will be used
 - Improved/fixed initialisation of the logger classes
 
+## Service Editions 
+### New Feature
+- For calculating the Plantuml information shown in the get /serviceinformation now also the globalconfiguration.javaRuntimeParameter will be used
+
 # **json2puml v2.2.2.86** - 03.08.2023
-## All Editions 
+## Service Editions 
 ### New  Feature
 - New api operation get /heartbeat which returns service version information
 ### Changed Feature
 - Additional information into the get /serviceinformation result set
 
 # **json2puml v2.2.1.85** - 02.08.2023
-## All Editions 
+## Service Editions 
 ### Changed Feature
 - Optimized protocol handling
 - Additional information into the get /serviceinformation result set
 - Improved handling of fetching data for the get /serviceinformation result set
 
 # **json2puml v2.2.0.84** - 01.08.2023
-## All Editions 
+## Service Editions 
 ### New Feature
 - New command line parameter -serviceport added which allows to override the configured port used by the service application 
 - The globalconfiguration.serviceport can now be defined via environment variable using the curl variable format in the config file

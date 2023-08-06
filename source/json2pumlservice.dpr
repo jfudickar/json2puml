@@ -88,9 +88,9 @@ begin
 end;
 
 begin
-  {$IFDEF DEBUG}
-  ReportMemoryLeaksOnShutdown := True;
-  {$ENDIF}
+{$IFDEF DEBUG}
+  ReportMemoryLeaksOnShutdown := true;
+{$ENDIF}
   IsMultiThread := true;
   try
     if WebRequestHandler <> nil then
@@ -102,7 +102,7 @@ begin
       RunServer (GlobalConfigurationDefinition.ServicePort);
   except
     on E: Exception do
-      GlobalLogHandler.Error ('%s: %s', [E.ClassName, E.Message]);
+      GlobalLogHandler.UnhandledException (E);
   end;
 
 end.

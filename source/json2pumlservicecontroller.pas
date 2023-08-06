@@ -44,7 +44,7 @@ type
     function IsRequestBodyInvalid: Boolean;
     procedure LogRequestStart (iContext: TWebContext);
     procedure LogRequestEnd (iContext: TWebContext);
-    procedure RenderBadRequestMessage (iErrorMessage: string);
+    procedure RenderErrorReponseFromErrorList;
     function ServerInformation: string;
   public
     [MVCPath]
@@ -155,8 +155,7 @@ begin
     except
       on e: exception do
       begin
-        GlobalLoghandler.Error (e.Message);
-        GlobalLoghandler.Error (e.StackTrace);
+        GlobalLoghandler.UnhandledException (e);
         RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
       end;
     end;
@@ -230,8 +229,7 @@ begin
     except
       on e: exception do
       begin
-        GlobalLoghandler.Error (e.Message);
-        GlobalLoghandler.Error (e.StackTrace);
+        GlobalLoghandler.UnhandledException (e);
         RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
       end;
     end;
@@ -284,16 +282,14 @@ begin
         Context.Response.StatusCode := HTTP_STATUS.OK;
       end
       else
-      begin
-        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
-      end;
+        RenderErrorReponseFromErrorList;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
       on e: exception do
       begin
-        GlobalLoghandler.Error (e.Message);
-        GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
+        GlobalLoghandler.UnhandledException (e);
+        RenderErrorReponseFromErrorList;
+        InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
       end;
     end;
   finally
@@ -330,20 +326,17 @@ begin
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
-          RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
+          RenderErrorReponseFromErrorList;
       end
       else
-      begin
-        Context.Response.StatusCode := HTTP_STATUS.BadRequest;
-        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
-      end;
+        RenderErrorReponseFromErrorList;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
       on e: exception do
       begin
-        GlobalLoghandler.Error (e.Message);
-        GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
+        GlobalLoghandler.UnhandledException (e);
+        RenderErrorReponseFromErrorList;
+        InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
       end;
     end;
   finally
@@ -380,20 +373,17 @@ begin
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
-          RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
+          RenderErrorReponseFromErrorList;
       end
       else
-      begin
-        Context.Response.StatusCode := HTTP_STATUS.BadRequest;
-        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
-      end;
+        RenderErrorReponseFromErrorList;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
       on e: exception do
       begin
-        GlobalLoghandler.Error (e.Message);
-        GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
+        GlobalLoghandler.UnhandledException (e);
+        RenderErrorReponseFromErrorList;
+        InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
       end;
     end;
   finally
@@ -427,20 +417,19 @@ begin
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
-          RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
+          RenderErrorReponseFromErrorList;
       end
       else
       begin
-        Context.Response.StatusCode := HTTP_STATUS.BadRequest;
-        RenderStatusMessage (HTTP_STATUS.BadRequest, ClearJsonPropertyValue(GlobalLoghandler.ErrorWarningList.Text));
+        RenderErrorReponseFromErrorList;
       end;
       InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
     except
       on e: exception do
       begin
-        GlobalLoghandler.Error (e.Message);
-        GlobalLoghandler.Error (e.StackTrace);
-        RenderStatusMessage (HTTP_STATUS.InternalServerError, ClearJsonPropertyValue(e.Message));
+        GlobalLoghandler.UnhandledException (e);
+        RenderErrorReponseFromErrorList;
+        InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
       end;
     end;
   finally
@@ -453,7 +442,10 @@ function TJson2PumlController.IsRequestBodyInvalid: Boolean;
 begin
   Result := Context.Request.Body.IsEmpty;
   if Result then
-    RenderBadRequestMessage ('Payload is empty');
+  begin
+    GlobalLoghandler.Error (jetPayLoadIsEmpty);
+    RenderErrorReponseFromErrorList;
+  end;
 end;
 
 procedure TJson2PumlController.LogRequestEnd (iContext: TWebContext);
@@ -482,10 +474,15 @@ begin
   end;
 end;
 
-procedure TJson2PumlController.RenderBadRequestMessage (iErrorMessage: string);
+procedure TJson2PumlController.RenderErrorReponseFromErrorList;
+var
+  HttpCode: Integer;
+  ErrorResponse: string;
 begin
-  RenderStatusMessage (HTTP_STATUS.BadRequest, iErrorMessage);
-  GlobalLoghandler.Info ('HTTP-%d : %s ', [HTTP_STATUS.BadRequest, iErrorMessage]);
+  GlobalLoghandler.ErrorList.RenderErrorReponseFromErrorList (ErrorResponse, HttpCode);
+  Context.Response.StatusCode := HttpCode;
+  Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+  Render (ErrorResponse);
 end;
 
 function TJson2PumlController.ServerInformation: string;

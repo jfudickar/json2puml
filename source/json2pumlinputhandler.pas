@@ -604,10 +604,10 @@ begin
       Exit;
     end
     else
-      GlobalLoghandler.Warn ('PlantUML Jar file ("%s") not found!', [JarFile]);
+      GlobalLoghandler.Error (jetPlantUmlFileNotFound, [JarFile]);
   end;
   Result := '';
-  GlobalLoghandler.Error ('No configured PlantUML jar files found!');
+  GlobalLoghandler.Error (jetNoConfiguredPlantUmlFileFound);
 end;
 
 function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
@@ -785,20 +785,13 @@ begin
     GenSummary := CurrentGenerateSummary;
     GenDetails := CurrentGenerateDetails;
     if ConverterInputList.ExecuteCount <= 0 then
-    begin
-      GlobalLoghandler.Error ('No input files found, conversion aborted');
-      Exit;
-    end;
+      GlobalLoghandler.Error (jetNoInputFile);
     if OptionList.Count < 0 then
-    begin
-      GlobalLoghandler.Error ('No matching option found/defined, conversion aborted');
-      Exit;
-    end;
+      GlobalLoghandler.Error (jetNoMatchingOptionFound);
     if not GenDetails and not GenSummary then
-    begin
-      GlobalLoghandler.Error ('GenerateDetails or GenerateSummary must be activated, conversion aborted');
+      GlobalLoghandler.Error (jetGenerateDetailsSummaryNotDefined);
+    if GlobalLoghandler.Failed then
       Exit;
-    end;
     ConverterInputList.AddSummaryFile (CalculateSummaryFileName(jofJSON));
     for InputFile in ConverterInputList do
     begin
@@ -1261,13 +1254,13 @@ begin
     CmdLineParameter.DefinitionFileName := iFileName;
   if CurrentDefinitionFileName.IsEmpty then
   begin
-    GlobalLoghandler.Error ('Definition file not defined');
+    GlobalLoghandler.Error (jetNoDefinitionFileDefined);
     Exit;
   end;
   Filename := GlobalConfiguration.FindDefinitionFile (CurrentDefinitionFileName);
   if Filename.IsEmpty then
   begin
-    GlobalLoghandler.Error ('Definition file "%s" not found', [CurrentDefinitionFileName]);
+    GlobalLoghandler.Error (jetDefinitionFileNotFound, [CurrentDefinitionFileName]);
   end
   else
     CmdLineParameter.DefinitionFileName := Filename;
@@ -1314,16 +1307,16 @@ begin
         iFileList.LoadFromFile (Filename);
       except
         on e: exception do
-          GlobalLoghandler.Error (e.Message);
+          GlobalLoghandler.UnhandledException (e);
       end;
       GlobalLoghandler.InfoParameter ('Load "', iFileDescription + '" from',
         Format('%s (%d lines)', [Filename, iFileList.Count]));
       Result := true;
     end
     else if iMandatory then
-      GlobalLoghandler.Error ('Skipped loading %s from %s, file does not exist.', [iFileDescription, Filename])
+      GlobalLoghandler.Error (jetMandatoryFileNotFound, [iFileDescription, Filename])
     else
-      GlobalLoghandler.Warn ('Skipped loading %s from %s, file does not exist.', [iFileDescription, Filename]);
+      GlobalLoghandler.Error (jetOptionalFileNotFound, [iFileDescription, Filename]);
     if Assigned (iParseProcedure) then
       iParseProcedure;
   finally
@@ -1353,7 +1346,7 @@ begin
   if not Filename.IsEmpty then
     CmdLineParameter.InputListFileName := Filename
   else if not CurrentInputListFileName.IsEmpty then
-    GlobalLoghandler.Error ('InputListFile : "%s" not found', [CurrentInputListFileName]);
+    GlobalLoghandler.Error (jetInputListFileNotFound, [CurrentInputListFileName]);
   // Load Allways to empty the data when the file is not defined.
   Result := LoadFileToStringList (InputListLines, Filename, 'InputListFile', tJson2PumlInputList,
     ParseInputListFile, false);
@@ -1388,7 +1381,7 @@ procedure TJson2PumlInputHandler.ParseConfigurationFile;
 begin
   if not GlobalConfiguration.ReadFromJson (ConfigurationFileLines.Text, CurrentConfigurationFileName) then
     if not ConfigurationFileLines.Text.IsEmpty then
-      GlobalLoghandler.Error ('Error parsing configuration file "%s".', [CurrentConfigurationFileName]);
+      GlobalLoghandler.Error (jetFailedParsingFile, ['configuration', CurrentConfigurationFileName]);
 end;
 
 procedure TJson2PumlInputHandler.ParseDefintions;
@@ -1398,13 +1391,13 @@ begin
   ClearAllRecords;
   if DefinitionLines.Count > 0 then
     if not ConverterDefinitionGroup.ReadFromJson (DefinitionLines.Text, CmdLineParameter.DefinitionFileName) then
-      GlobalLoghandler.Error ('Error parsing definition file "%s".', [CmdLineParameter.DefinitionFileName]);
+      GlobalLoghandler.Error (jetFailedParsingFile, ['definition', CmdLineParameter.DefinitionFileName]);
 
   OptionFileDefinition.ReadFromJson (OptionFileLines.Text, CmdLineParameter.OptionFileName);
 
   if not CurlParameterList.ReadFromJson (CurlParameterFileLines.Text, CmdLineParameter.CurlParameterFileName) then
     if not CurlParameterFileLines.Text.IsEmpty then
-      GlobalLoghandler.Error ('Error parsing curl parameter file "%s".', [CmdLineParameter.CurlParameterFileName]);
+      GlobalLoghandler.Error (jetFailedParsingFile, ['curl parameter', CmdLineParameter.CurlParameterFileName]);
 
   CalculateCurrentConverterDefinition;
 
@@ -1412,7 +1405,7 @@ begin
 
   if not CurlAuthenticationList.ReadFromJson (CurlAuthenticationFileLines.Text, CurrentCurlAuthenticationFileName) then
     if not CurlAuthenticationFileLines.Text.IsEmpty then
-      GlobalLoghandler.Error ('Error parsing curl authentication file "%s".', [CurrentCurlAuthenticationFileName]);
+      GlobalLoghandler.Error (jetFailedParsingFile, ['curl authentication', CurrentCurlAuthenticationFileName]);
 
   CurlParameterList.AddParameter (CmdLineParameter.CurlParameter);
   CurlParameterList.AddParameter (ParameterDefinition.CurlParameter);
@@ -1428,14 +1421,14 @@ procedure TJson2PumlInputHandler.ParseInputListFile;
 begin
   if not ConverterInputList.ReadFromJson (InputListLines.Text, CmdLineParameter.InputListFileName) then
     if not InputListLines.Text.IsEmpty then
-      GlobalLoghandler.Error ('Error parsing input list file "%s".', [CmdLineParameter.InputListFileName]);
+      GlobalLoghandler.Error (jetFailedParsingFile, ['input list', CmdLineParameter.InputListFileName]);
 end;
 
 procedure TJson2PumlInputHandler.ParseParameterFile;
 begin
   if not ParameterDefinition.ReadFromJson (ParameterFileLines.Text, CmdLineParameter.ParameterFileName) then
     if not ParameterFileLines.Text.IsEmpty then
-      GlobalLoghandler.Error ('Error parsing parameter file "%s".', [CmdLineParameter.ParameterFileName]);
+      GlobalLoghandler.Error (jetFailedParsingFile, ['parameter', CmdLineParameter.ParameterFileName]);
 end;
 
 procedure TJson2PumlInputHandler.RecreateAllRecords;

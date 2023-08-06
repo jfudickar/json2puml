@@ -67,6 +67,14 @@ type
     function ToString: string;
   end;
 
+  tJson2PumlErrorTypeHelper = record helper for tJson2PumlErrorType
+    function Errorcode: string;
+    function ErrorDescription: string;
+    function ErrorMessage: string;
+    function Failed: boolean;
+    function HttpStatusCode: Integer;
+  end;
+
   tJson2PumlBaseObject = class(tPersistent)
   private
     FSourceFileName: string;
@@ -169,7 +177,8 @@ type
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks, System.Generics.Collections;
+  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks, System.Generics.Collections,
+  Quick.Logger;
 
 function tJson2PumlOutputFormatHelper.FileExtension (iLeadingSeparator: boolean = false): string;
 begin
@@ -840,6 +849,31 @@ end;
 function tJson2PumlApplicationTypeHelper.ApplicationName: string;
 begin
   Result := cJson2PumlApplicationTypeName[self];
+end;
+
+function tJson2PumlErrorTypeHelper.Errorcode: string;
+begin
+  Result := cJson2PumlErrorInformation[self].Errorcode;
+end;
+
+function tJson2PumlErrorTypeHelper.ErrorDescription: string;
+begin
+  Result := cJson2PumlErrorInformation[self].ErrorDescription;
+end;
+
+function tJson2PumlErrorTypeHelper.ErrorMessage: string;
+begin
+  Result := cJson2PumlErrorInformation[self].ErrorMessage;
+end;
+
+function tJson2PumlErrorTypeHelper.Failed: boolean;
+begin
+  Result := cJson2PumlErrorInformation[self].EventType in [etError, etCritical, etException];
+end;
+
+function tJson2PumlErrorTypeHelper.HttpStatusCode: Integer;
+begin
+  Result := cJson2PumlErrorInformation[self].HttpStatusCode;
 end;
 
 end.

@@ -934,7 +934,7 @@ procedure tJson2PumlInputFileDefinition.DeleteGeneratedFiles;
         GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
-          GlobalLoghandler.Warn ('Deleting of file "%s" failed. (%s)', [iFileName, e.Message]);
+          GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
       end;
   end;
 
@@ -1459,7 +1459,7 @@ begin
         GlobalLoghandler.Debug ('Directory "%s" deleted."', [iOutputDir]);
       except
         on e: exception do
-          GlobalLoghandler.Warn ('Deleting of directory "%s" failed. (%s)', [iOutputDir, e.Message]);
+          GlobalLoghandler.Error ('Deleting of directory "%s" failed. (%s)', [iOutputDir, e.Message]);
       end;
 end;
 
@@ -1522,7 +1522,7 @@ begin
     end;
     NotFound := NotFound.Trim ([TPath.PathSeparator]);
     if not NotFound.IsEmpty then
-      GlobalLoghandler.Warn ('File "%s" not found (%s).', [FileName, NotFound]);
+      GlobalLoghandler.Error (jetInputFileNotFound, [FileName, NotFound]);
   end;
   for InputFile in self do
   begin
@@ -2401,7 +2401,7 @@ begin
     LogParameterValue (iParameterName, ioParameterValue);
   if (not ioParameterValue.IsEmpty) and (Fc <= 0) then
   begin
-    GlobalLoghandler.Warn ('%s%s File "%s" does not exist', [cCmdLinePrefix, iParameterName.ToLower.Trim.PadRight(29),
+    GlobalLoghandler.Error (jetCmdLineParameterFileDoesNotExits, [cCmdLinePrefix, iParameterName.ToLower.Trim.PadRight(29),
       ioParameterValue.Trim]);
     ioParameterValue := '';
   end;
@@ -3398,7 +3398,7 @@ procedure tJson2PumlFileOutputDefinition.DeleteGeneratedFiles;
         GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
-          GlobalLoghandler.Warn ('Deleting of file "%s" failed. (%s)', [iFileName, e.Message]);
+          GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
       end;
   end;
 
@@ -3856,7 +3856,7 @@ var
         GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
-          GlobalLoghandler.Warn ('Deleting of file "%s" failed. (%s)', [iFileName, e.Message]);
+          GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
       end;
     Result := not FileExists (iFileName);
   end;
@@ -3869,7 +3869,7 @@ var
         GlobalLoghandler.Debug ('Directory "%s" deleted."', [iDirectoryName]);
       except
         on e: exception do
-          GlobalLoghandler.Warn ('Deleting of directory "%s" failed. (%s)', [iDirectoryName, e.Message]);
+          GlobalLoghandler.Error (jetDirectoryDeletionFailed, [iDirectoryName, e.Message]);
       end;
     Result := not TDirectory.Exists (iDirectoryName);
   end;

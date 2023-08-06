@@ -49,7 +49,7 @@ begin
     handle_json2puml_commandline;
   except
     on E: Exception do
-      GlobalLogHandler.Error('%s: %s', [E.ClassName, E.Message]);
+      GlobalLoghandler.UnhandledException (e);
   end;
 
 end.
