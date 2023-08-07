@@ -520,8 +520,9 @@ begin
   if not TDirectory.Exists (iDirectory) then
     try
       GlobalLoghandler.Debug ('Create directory : %s', [iDirectory]);
-      if not ForceDirectories (iDirectory) then
-        GlobalLoghandler.Error (jetDirectoryCouldNotBeCreated, [iDirectory]);
+      TDirectory.CreateDirectory(iDirectory) ;
+//      if not ForceDirectories (iDirectory) then
+//        GlobalLoghandler.Error (jetDirectoryCouldNotBeCreated, [iDirectory]);
     except
       on e: exception do
         GlobalLoghandler.Error (jetDirectoryDeletionFailed, [iDirectory, e.Message]);

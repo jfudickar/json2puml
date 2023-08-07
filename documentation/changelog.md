@@ -1,3 +1,8 @@
+# **json2puml v2.2.5.94** - 07.08.2023
+## All Editions 
+### Changed Feature
+- Changed handling of directory creation
+
 # **json2puml v2.2.5.93** - 06.08.2023
 ## All Editions 
 ### Changed Feature
