@@ -1,3 +1,13 @@
+# **json2puml v2.2.5.95** - 08.08.2023
+## All Editions 
+### New Feature
+- when the log outputformat is actovated additional an ".execute.log" file is generated, which contains the execution log informations  
+  of the current execution
+- when the curl command fails, but a result file has been created, the content of the file will be shown in the log. This gives additional
+  options for debugging
+### Changed Feature
+- Log handling Improved
+
 # **json2puml v2.2.5.94** - 07.08.2023
 ## All Editions 
 ### Changed Feature

@@ -102,9 +102,9 @@ implementation
 
 uses
   Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
-  Quick.Logger.Provider.StringList, {$IFDEF DEBUG} Quick.Logger.ExceptionHook, {$ENDIF}
-  Quick.Logger.RuntimeErrorHook,
-  Quick.Logger.UnhandledExceptionHook, json2pumldefinition, json2pumlbasedefinition, jsontools,
+  Quick.Logger.Provider.StringList,
+  {$IFDEF DEBUG} Quick.Logger.UnhandledExceptionHook, Quick.Logger.ExceptionHook, Quick.Logger.RuntimeErrorHook, {$ENDIF}
+  json2pumldefinition, json2pumlbasedefinition, jsontools,
   MVCFramework.Commons, json2pumltools;
 
 var
@@ -137,8 +137,13 @@ procedure SetLogProviderDefaults (iProvider: TLogProviderBase; iApplicationType:
   procedure SetCustomFormat (iLogProvider: TLogProviderBase);
   begin
     iLogProvider.CustomMsgOutput := True;
-    iLogProvider.CustomFormatOutput := '%{DATETIME} - (%{THREADID}) - [%{LEVEL}] : %{MESSAGE}';
-    iLogProvider.IncludedInfo := iLogProvider.IncludedInfo + [iiThreadId];
+    if iApplicationType in [jatService, jatWinService] then
+    begin
+      iLogProvider.IncludedInfo := iLogProvider.IncludedInfo + [iiThreadId];
+      iLogProvider.CustomFormatOutput := '%{DATETIME} - (%{THREADID}) - [%{LEVEL}] : %{MESSAGE}'
+    end
+    else
+      iLogProvider.CustomFormatOutput := '%{DATETIME} - [%{LEVEL}] : %{MESSAGE}'
   end;
 
 begin
@@ -150,8 +155,7 @@ begin
   iProvider.IncludedInfo := [iiAppName, iiHost, iiUserName, iiEnvironment, iiPlatform, iiOSVersion, iiExceptionInfo,
     iiExceptionStackTrace];
   SetLogProviderEventTypeNames (iProvider);
-  if iApplicationType in [jatService, jatWinService] then
-    SetCustomFormat (iProvider);
+  SetCustomFormat (iProvider);
 end;
 
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;

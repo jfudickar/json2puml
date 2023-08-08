@@ -89,6 +89,7 @@ function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: C
 function ValidateOutputSuffix (iOutputSuffix: string): string;
 
 function CurrentThreadId: TThreadId;
+
 type
   TCurlUtils = class
   private
@@ -519,17 +520,12 @@ procedure GenerateDirectory (const iDirectory: string);
 begin
   if not TDirectory.Exists (iDirectory) then
     try
-      GlobalLoghandler.Debug ('Create directory : %s', [iDirectory]);
-      TDirectory.CreateDirectory(iDirectory) ;
-//      if not ForceDirectories (iDirectory) then
-//        GlobalLoghandler.Error (jetDirectoryCouldNotBeCreated, [iDirectory]);
+      if not ForceDirectories (iDirectory) then
+        GlobalLoghandler.Error (jetDirectoryCouldNotBeCreated, [iDirectory]);
     except
       on e: exception do
         GlobalLoghandler.Error (jetDirectoryDeletionFailed, [iDirectory, e.Message]);
     end;
-  if TDirectory.Exists (iDirectory) then
-    GlobalLoghandler.Debug ('Directory created %s (%s)',
-      [iDirectory, FileAttributesStr(TDirectory.GetAttributes(iDirectory))]);
 end;
 
 procedure GenerateFileDirectory (iFileName: string);
@@ -555,7 +551,7 @@ begin
     GlobalLoghandler.Error (jetPlantUmlFileNotFound, [iPlantUmlJarFile]);
     Exit;
   end;
-  DestinationFile := tPath.ChangeExtension (iPlantUmlFile, iFormat.FileExtension);
+  DestinationFile := iFormat.FileName (iPlantUmlFile);
   GenerateFileDirectory (DestinationFile);
 
   if FileExists (DestinationFile) then
@@ -806,11 +802,11 @@ end;
 
 function CurrentThreadId: TThreadId;
 begin
-  {$IFDEF MSWINDOWS}
+{$IFDEF MSWINDOWS}
   Result := GetCurrentThreadId;
-  {$ELSE}
+{$ELSE}
   Result := TThread.CurrentThread.ThreadID;
-  {$ENDIF}
+{$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}
@@ -1059,6 +1055,8 @@ var
   vErrorMessage: string;
   vCommandOutPut, vCommandErrors: TStringList;
   ExecuteEvaluation: string;
+  s: string;
+  vOutputFile: TStringList;
 
 begin
 
@@ -1141,10 +1139,22 @@ begin
       [Url, iOutputFile, MillisecondsBetween(Now, StartTime)])
   else
   begin
-    if FileExists (iOutputFile) then
-      tFile.SetLastWriteTime (iOutputFile, Now - 10);
     GlobalLoghandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),
       vErrorMessage]);
+    if FileExists (iOutputFile) then
+    begin
+      tFile.SetLastWriteTime (iOutputFile, Now - 10);
+      vOutputFile := TStringList.Create;
+      try
+        vOutputFile.LoadFromFile (iOutputFile);
+        if vOutputFile.Count > 0 then
+          GlobalLoghandler.Debug ('curl result output (%s)', [iOutputFile]);
+        for s in vOutputFile do
+          GlobalLoghandler.Debug (s);
+      finally
+        vOutputFile.Free;
+      end;
+    end;
   end;
 end;
 

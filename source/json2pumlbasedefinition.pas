@@ -41,6 +41,8 @@ type
     function PumlGenerateFlag: string;
     function ServiceResultName: string;
     function ToString: string;
+  public
+    function FileName(const iFileName: string): string;
   end;
 
   tJson2PumlApplicationTypeHelper = record helper for tJson2PumlApplicationType
@@ -185,6 +187,12 @@ begin
   Result := cJson2PumlOutputFormat[self];
   if not Result.IsEmpty and iLeadingSeparator then
     Result := tPath.ExtensionSeparatorChar + Result;
+end;
+
+function tJson2PumlOutputFormatHelper.FileName(const iFileName: string): string;
+begin
+  Result := ChangeFileExt (iFileName, self.FileExtension(true));
+//  tPath.ChangeExtension (
 end;
 
 procedure tJson2PumlOutputFormatHelper.FromString (aValue: string);

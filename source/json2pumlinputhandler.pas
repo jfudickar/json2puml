@@ -28,7 +28,7 @@ interface
 
 uses
   json2pumldefinition, System.Classes, json2pumlloghandler, json2pumlconst, json2pumlbasedefinition,
-  json2pumlconverterdefinition;
+  json2pumlconverterdefinition, Quick.Logger.Provider.StringList, Quick.Logger;
 
 type
 
@@ -99,7 +99,9 @@ type
     FCurlParameterFileLines: TStrings;
     FCurlParameterList: tJson2PumlCurlParameterList;
     FCurrentConverterDefinition: tJson2PumlConverterDefinition;
+    FCurThreadId: TTHreadId;
     FDefinitionLines: TStrings;
+    FExecuteLogHandler: TLogStringListProvider;
     FGlobalConfiguration: tJson2PumlGlobalDefinition;
     FHandlerRecordList: TJson2PumlInputHandlerList;
     FInputListLines: TStrings;
@@ -155,6 +157,7 @@ type
     function GetParameterFileLines: TStrings;
     function GetServerResultLines: TStrings;
     procedure SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);
+    function OnFilterLogItem (aLogItem: TLogItem): Boolean;
   protected
     procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
@@ -181,6 +184,8 @@ type
     function ReplaceFileNameVariables (iReplace, iFileName, iOption: string): string;
     procedure SetFileLoading (iLoading, iAutoStartConvert: Boolean);
     property CurrentDetail: string read GetCurrentDetail;
+    property CurThreadId: TTHreadId read FCurThreadId;
+    property ExecuteLogHandler: TLogStringListProvider read FExecuteLogHandler;
     property GenerateDetails: Boolean read GetGenerateDetails;
     property GenerateDetailsStr: string read GetGenerateDetailsStr;
     property GenerateSummary: Boolean read GetGenerateSummary;
@@ -365,10 +370,18 @@ begin
   FGlobalConfiguration := tJson2PumlGlobalDefinition.Create ();
   FIntConfigurationFileLines := TStringList.Create;
   FApplicationType := iApplicationType;
+  FExecuteLogHandler := TLogStringListProvider.Create ();
+  ExecuteLogHandler.OnFilterItem := OnFilterLogItem;
+  ExecuteLogHandler.Enabled := True;
+  SetLogProviderDefaults (ExecuteLogHandler, jatService);
+  Logger.Providers.Add (ExecuteLogHandler);
+  fCurThreadId := CurrentThreadId;
 end;
 
 destructor TJson2PumlInputHandler.Destroy;
 begin
+  Logger.Providers.Delete(Logger.Providers.IndexOf(ExecuteLogHandler));
+//  FExecuteLogHandler.Free;
   FIntConfigurationFileLines.Free;
   FGlobalConfiguration.Free;
   FIntServerResultLines.Free;
@@ -405,8 +418,9 @@ begin
   Inc (FLoadFileCnt);
   if FLoadFileCnt = 1 then
   begin
-    SetFileLoading (true, false);
+    SetFileLoading (true, False);
     GlobalLoghandler.Clear;
+    ExecuteLogHandler.Clear;
   end;
 end;
 
@@ -449,7 +463,7 @@ begin
       end;
       if not First then
         iSingleRecord.JsonInput.Add (',');
-      First := false;
+      First := False;
       if InputFile.LeadingObject.IsEmpty then
         iSingleRecord.JsonInput.AddStrings (SingleJson)
       else
@@ -614,7 +628,7 @@ function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2P
 var
   Filename: string;
 begin
-  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', iOutputFormat.FileExtension(false));
+  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', iOutputFormat.FileExtension(False));
   Result := CalculateSummaryPath;
   Result := PathCombine (Result, Filename);
 end;
@@ -692,7 +706,7 @@ begin
 
       SingleRecord.ConverterLog.Clear;
       OutputFormats := GetCurrentOutputFormats;
-      SingleRecord.InputFile.IsConverted := false;
+      SingleRecord.InputFile.IsConverted := False;
       if not SingleRecord.InputFile.IncludeIntoOutput then
         Continue;
 
@@ -723,11 +737,11 @@ begin
         CurrentConverterDefinition.WriteToJsonFile (ChangeFileExt(OutputFile, '.definition.json'), true);
       if (jofLog in OutputFormats) then
       begin
-        SingleRecord.ConverterLog.SaveToFile (ChangeFileExt(OutputFile, '.log'));
-        SingleRecord.InputFile.Output.ConverterLogFileName := ChangeFileExt (OutputFile, '.log');
+        SingleRecord.ConverterLog.SaveToFile (jofLog.Filename(OutputFile));
+        SingleRecord.InputFile.Output.ConverterLogFileName := jofLog.Filename (OutputFile);
       end;
       if SingleRecord.PUmlOutput.Text.IsEmpty then
-        SingleRecord.InputFile.IsConverted := false
+        SingleRecord.InputFile.IsConverted := False
       else
       begin
         SingleRecord.InputFile.IsConverted := true;
@@ -736,16 +750,16 @@ begin
         if GenerateOutputsFromPuml (SingleRecord.InputFile.Output.PUmlFileName, JarFile, CurrentJavaRuntimeParameter,
           OutputFormats, CmdLineParameter.OpenOutputs) then
         begin
-          if (jofPng in OutputFormats) and FileExists (ChangeFileExt(OutputFile, '.' + jofPng.FileExtension)) then
-            SingleRecord.InputFile.Output.PNGFileName := ChangeFileExt (OutputFile, '.' + jofPng.FileExtension)
+          if (jofPng in OutputFormats) and FileExists (jofPng.Filename(OutputFile)) then
+            SingleRecord.InputFile.Output.PNGFileName := jofPng.Filename (OutputFile)
           else
             SingleRecord.InputFile.Output.PNGFileName := '';
-          if (jofSvg in OutputFormats) and FileExists (ChangeFileExt(OutputFile, '.' + jofSvg.FileExtension)) then
-            SingleRecord.InputFile.Output.SVGFileName := ChangeFileExt (OutputFile, '.' + jofSvg.FileExtension)
+          if (jofSvg in OutputFormats) and FileExists (jofSvg.Filename(OutputFile)) then
+            SingleRecord.InputFile.Output.SVGFileName := jofSvg.Filename (OutputFile)
           else
             SingleRecord.InputFile.Output.SVGFileName := '';
-          if (jofPdf in OutputFormats) and FileExists (ChangeFileExt(OutputFile, '.' + jofPdf.FileExtension)) then
-            SingleRecord.InputFile.Output.PDFFilename := ChangeFileExt (OutputFile, '.' + jofPdf.FileExtension)
+          if (jofPdf in OutputFormats) and FileExists (jofPdf.Filename(OutputFile)) then
+            SingleRecord.InputFile.Output.PDFFilename := jofPdf.Filename (OutputFile)
           else
             SingleRecord.InputFile.Output.PDFFilename := '';
         end;
@@ -754,9 +768,13 @@ begin
         AfterUpdateRecord (SingleRecord);
     end;
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
-    ConverterInputList.WriteToJsonOutputFiles (tpath.ChangeExtension(CalculateSummaryFileName(jofPUML),
-      jofFileList.FileExtension)); // Use PUML to get the Filename with the option included
-    ConverterInputList.WriteToJsonServiceResult (ServerResultLines, GetCurrentOutputFormats, false);
+    ConverterInputList.WriteToJsonOutputFiles (jofFileList.FileName(CalculateSummaryFileName(jofPUML))); // Use PUML to get the Filename with the option included
+    ConverterInputList.WriteToJsonServiceResult (ServerResultLines, GetCurrentOutputFormats, False);
+    if (jofLog in OutputFormats) then
+    begin
+      ExecuteLogHandler.LogList.SaveToFile(jofExecuteLog.FileName(CalculateSummaryFileName(jofPUML)));
+      ConverterInputList.ExecuteLogFileName := jofExecuteLog.FileName(CalculateSummaryFileName(jofPUML)); // needed for zip and delete handler
+    end;
     if jofZip in OutputFormats then
       GenerateSummaryZipFile;
     if Assigned (AfterHandleAllRecords) then
@@ -852,7 +870,7 @@ procedure TJson2PumlInputHandler.EndLoadFile (iAutoStartConvert: Boolean = true)
 begin
   Dec (FLoadFileCnt);
   if FLoadFileCnt = 0 then
-    SetFileLoading (false, iAutoStartConvert);
+    SetFileLoading (False, iAutoStartConvert);
 end;
 
 procedure TJson2PumlInputHandler.GenerateSummaryZipFile;
@@ -1151,7 +1169,7 @@ end;
 
 function TJson2PumlInputHandler.GetGenerateDetails: Boolean;
 begin
-  Result := StringToBoolean (GenerateDetailsStr, false);
+  Result := StringToBoolean (GenerateDetailsStr, False);
 end;
 
 function TJson2PumlInputHandler.GetGenerateDetailsStr: string;
@@ -1166,7 +1184,7 @@ end;
 
 function TJson2PumlInputHandler.GetGenerateSummary: Boolean;
 begin
-  Result := StringToBoolean (GenerateSummaryStr, false);
+  Result := StringToBoolean (GenerateSummaryStr, False);
 end;
 
 function TJson2PumlInputHandler.GetGenerateSummaryStr: string;
@@ -1226,7 +1244,7 @@ begin
   if not iFileName.IsEmpty then
     CmdLineParameter.ConfigurationFileName := iFileName;
   Result := LoadFileToStringList (ConfigurationFileLines, CurrentConfigurationFileName, 'GlobalConfigurationFile',
-    tJson2PumlGlobalDefinition, ParseConfigurationFile, false);
+    tJson2PumlGlobalDefinition, ParseConfigurationFile, False);
 end;
 
 function TJson2PumlInputHandler.LoadCurlAuthenticationFile (iFileName: string = ''): Boolean;
@@ -1234,7 +1252,7 @@ begin
   if not iFileName.IsEmpty then
     CmdLineParameter.CurlAuthenticationFileName := iFileName;
   Result := LoadFileToStringList (CurlAuthenticationFileLines, CurrentCurlAuthenticationFileName, 'CurlAuthentication',
-    tJson2PumlCurlAuthenticationList, nil, false);
+    tJson2PumlCurlAuthenticationList, nil, False);
 end;
 
 function TJson2PumlInputHandler.LoadCurlParameterFile (iFileName: string = ''): Boolean;
@@ -1242,14 +1260,14 @@ begin
   if not iFileName.IsEmpty then
     CmdLineParameter.CurlParameterFileName := iFileName;
   Result := LoadFileToStringList (CurlParameterFileLines, CmdLineParameter.CurlParameterFileName, 'CurlParameter',
-    tJson2PumlCurlParameterList, nil, false);
+    tJson2PumlCurlParameterList, nil, False);
 end;
 
 function TJson2PumlInputHandler.LoadDefinitionFile (iFileName: string = ''): Boolean;
 var
   Filename: string;
 begin
-  Result := false;
+  Result := False;
   if not iFileName.IsEmpty then
     CmdLineParameter.DefinitionFileName := iFileName;
   if CurrentDefinitionFileName.IsEmpty then
@@ -1292,7 +1310,7 @@ function TJson2PumlInputHandler.LoadFileToStringList (iFileList: TStrings; iFile
 var
   Filename: string;
 begin
-  Result := false;
+  Result := False;
   iFileList.Clear;
   if iFileName.IsEmpty then
     Exit;
@@ -1349,7 +1367,7 @@ begin
     GlobalLoghandler.Error (jetInputListFileNotFound, [CurrentInputListFileName]);
   // Load Allways to empty the data when the file is not defined.
   Result := LoadFileToStringList (InputListLines, Filename, 'InputListFile', tJson2PumlInputList,
-    ParseInputListFile, false);
+    ParseInputListFile, False);
 end;
 
 function TJson2PumlInputHandler.LoadOptionFile (iFileName: string = ''): Boolean;
@@ -1357,7 +1375,7 @@ begin
   if not iFileName.IsEmpty then
     CmdLineParameter.OptionFileName := iFileName;
   Result := LoadFileToStringList (OptionFileLines, CmdLineParameter.OptionFileName, 'ConverterDefinitionOptionFile',
-    tJson2PumlConverterDefinition, nil, false);
+    tJson2PumlConverterDefinition, nil, False);
 end;
 
 function TJson2PumlInputHandler.LoadParameterFile (iFileName: string = ''): Boolean;
@@ -1373,8 +1391,13 @@ begin
     if not iFileName.IsEmpty then
       CmdLineParameter.ParameterFileName := iFileName;
     Result := LoadFileToStringList (ParameterFileLines, CmdLineParameter.ParameterFileName, 'ParameterFile',
-      tJson2PumlParameterFileDefinition, ParseParameterFile, false);
+      tJson2PumlParameterFileDefinition, ParseParameterFile, False);
   end;
+end;
+
+function TJson2PumlInputHandler.OnFilterLogItem (aLogItem: TLogItem): Boolean;
+begin
+  Result := aLogItem.ThreadID = CurThreadId;
 end;
 
 procedure TJson2PumlInputHandler.ParseConfigurationFile;
@@ -1401,7 +1424,8 @@ begin
 
   CalculateCurrentConverterDefinition;
 
-  ParseInputListFile; // Behind Option and Definition Group to get the Option filled (needed for calculate output path)
+  ParseInputListFile;
+  // Behind Option and Definition Group to get the Option filled (needed for calculate output path)
 
   if not CurlAuthenticationList.ReadFromJson (CurlAuthenticationFileLines.Text, CurrentCurlAuthenticationFileName) then
     if not CurlAuthenticationFileLines.Text.IsEmpty then
@@ -1565,7 +1589,7 @@ begin
   log ('Detail', CurrentDetail);
   log ('OutputPath', CurrentOutputPath);
   log ('OutputSuffix', CurrentOutputSuffix);
-  log ('OutputFormats', GetCurrentOutputFormats.ToString(false));
+  log ('OutputFormats', GetCurrentOutputFormats.ToString(False));
   log ('GenerateSummary', BooleanToString(CurrentGenerateSummary));
   log ('GenerateDetails', BooleanToString(CurrentGenerateDetails));
   log ('BaseOutputPath', BaseOutputPath);

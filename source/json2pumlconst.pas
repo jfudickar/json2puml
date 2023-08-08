@@ -30,7 +30,8 @@ uses
   Quick.Logger, MVCFramework.Commons;
 
 type
-  tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip, jofFileList);
+  tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip, jofFileList,
+    jofExecuteLog);
   tJson2PumlApplicationType = (jatConsole, jatService, jatUI, jatWinService);
   tJson2PumlOutputFormats = set of tJson2PumlOutputFormat;
   tJson2PumlCharacteristicType = (jctUndefined, jctRecord, jctList);
@@ -142,11 +143,11 @@ const
     HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Payload is empty';
     ErrorDescription: 'The service request payload is empty. The request can not be handled.'));
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',
-    'zip', 'filelist');
+    'zip', 'filelist', 'execute.log');
   cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '',
-    '', '', '');
+    '', '', '', '');
   cJson2PumlServiceResultName: array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile',
-    'pumlFile', 'jsonFile', 'logFile', '', '');
+    'pumlFile', 'jsonFile', 'convertLogFile', '', '', 'executeLogFile');
   cJson2PumlCharacteristicType: array [tJson2PumlCharacteristicType] of string = ('', 'record', 'list');
   cJson2PumlListHandlingMode: array [tJson2PumlListOperation] of string = ('replace', 'merge');
   cJson2PumlFileNameReplace: array [tJson2PumlFileNameReplace] of string = ('<group>', '<detail>', '<option>', '<job>',
@@ -183,7 +184,7 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-  cCurrentVersion = '2.2.5.94';
+  cCurrentVersion = '2.2.5.95';
 
   cApplicationName = 'json2puml';
 
