@@ -48,7 +48,8 @@ type
     jetFailedParsingFile, jetPlantUmlResultGenerationFailed, jetCurlFileSkippedValidationException,
     jetCurlFileSkippedUrlMissing, jetCurlFileSkippedInvalidCurlCommand, jetCurlExecutionFailed,
     jetDirectoryCouldNotBeCreated, jetDirectoryCreationFailed, jetFileDeletionFailed, jetDirectoryDeletionFailed,
-    jetCmdLineParameterFileDoesNotExits, jetInputFileNotFound, jetPayLoadIsEmpty);
+    jetCmdLineParameterFileDoesNotExits, jetInputFileNotFound, jetMandatoryInputFileNotFound, jetPayLoadIsEmpty,
+    jetInputListCurlFileMissing);
 
   tJson2PumlErrorInformation = record
     EventType: TEventType;
@@ -65,10 +66,10 @@ const
     ErrorDescription: ''),
     { jetUnknownError } (EventType: etError; Errorcode: 'J2P-400-001'; HttpStatusCode: HTTP_STATUS.BadRequest;
     ErrorMessage: 'Unknown error'; ErrorDescription: ''),
-    { jetException } (EventType: etError; Errorcode: 'J2P-500-001'; HttpStatusCode: HTTP_STATUS.InternalServerError;
+    { jetException } (EventType: etCritical; Errorcode: 'J2P-500-001'; HttpStatusCode: HTTP_STATUS.InternalServerError;
     ErrorMessage: 'Unhandled exception %s: %s'#13#10'%s';
     ErrorDescription: 'Unhandled exception, please contact the system administrator.'),
-    { jetUnknownServerError } (EventType: etError; Errorcode: 'J2P-500-001';
+    { jetUnknownServerError } (EventType: etCritical; Errorcode: 'J2P-500-002';
     HttpStatusCode: HTTP_STATUS.InternalServerError; ErrorMessage: 'Unknown server error';
     ErrorDescription: 'Please contact the system administrator.'),
     { jetDefinitionFileNotFound } (EventType: etError; Errorcode: 'J2P-400-002'; HttpStatusCode: HTTP_STATUS.BadRequest;
@@ -139,13 +140,19 @@ const
     ErrorDescription: 'The file handed over as command line parameter does not exists'),
     { jetInputFileNotFound } (EventType: etWarning; Errorcode: 'J2P-400-024'; HttpStatusCode: HTTP_STATUS.BadRequest;
     ErrorMessage: 'Input file "%s" not found (%s).'),
-    { jetCmdLineParameterFileDoesNotExits } (EventType: etError; Errorcode: 'J2P-400-025';
+    { jetMandatoryInputFileNotFound } (EventType: etError; Errorcode: 'J2P-400-025';
+    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandarory input file "%s" not found (%s).'),
+    { jetCmdLineParameterFileDoesNotExits } (EventType: etError; Errorcode: 'J2P-400-026';
     HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Payload is empty';
-    ErrorDescription: 'The service request payload is empty. The request can not be handled.'));
+    ErrorDescription: 'The service request payload is empty. The request can not be handled.'),
+    { jetInputListCurlFileMissing } (EventType: etError; Errorcode: 'J2P-400-027'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    ErrorMessage: 'Mandatory input list file "%s" could not be fetched';
+    ErrorDescription: 'The file defined in the inputlist could not be fetched via curl.'));
+
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',
     'zip', 'filelist', 'execute.log');
-  cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '',
-    '', '', '', '');
+  cJson2PumlOutputFormatFlag: array [tJson2PumlOutputFormat] of string = ('', '-png', '-svg', '-pdf', '', '', '',
+    '', '', '');
   cJson2PumlServiceResultName: array [tJson2PumlOutputFormat] of string = ('', 'pngFile', 'svgFile', 'pdfFile',
     'pumlFile', 'jsonFile', 'convertLogFile', '', '', 'executeLogFile');
   cJson2PumlCharacteristicType: array [tJson2PumlCharacteristicType] of string = ('', 'record', 'list');
@@ -184,7 +191,7 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-  cCurrentVersion = '2.2.5.95';
+  cCurrentVersion = '2.2.5.96';
 
   cApplicationName = 'json2puml';
 

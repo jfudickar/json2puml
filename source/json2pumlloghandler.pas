@@ -103,7 +103,8 @@ implementation
 uses
   Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
   Quick.Logger.Provider.StringList,
-  {$IFDEF DEBUG} Quick.Logger.UnhandledExceptionHook, Quick.Logger.ExceptionHook, Quick.Logger.RuntimeErrorHook, {$ENDIF}
+{$IFDEF DEBUG} Quick.Logger.UnhandledExceptionHook, Quick.Logger.ExceptionHook, Quick.Logger.RuntimeErrorHook,
+  {$ENDIF}
   json2pumldefinition, json2pumlbasedefinition, jsontools,
   MVCFramework.Commons, json2pumltools;
 
@@ -261,14 +262,14 @@ end;
 
 procedure TJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aTag: string = '');
 begin
-  LogMsg (aErrorType.ErrorMessage, etError);
+  LogMsg (aErrorType.ErrorMessage, aErrorType.EventType);
   ErrorList.AddErrorWarning (aErrorType, aErrorType.ErrorMessage);
 end;
 
 procedure TJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aParams: array of TVarRec;
   const aTag: string = '');
 begin
-  LogMsg (aErrorType.ErrorMessage, aParams, etError);
+  LogMsg (aErrorType.ErrorMessage, aParams, aErrorType.EventType);
   ErrorList.AddErrorWarning (aErrorType, Format(aErrorType.ErrorMessage, aParams));
 end;
 
@@ -421,15 +422,6 @@ var
   JsonResult: tStringList;
   ThreadId: TThreadID;
 
-  procedure AddError (iCode, iMessage, iDescription: string);
-  begin
-    WriteObjectStartToJson (JsonResult, 2, '');
-    WriteToJsonValue (JsonResult, 'errorCode', iCode, 3, False);
-    WriteToJsonValue (JsonResult, 'message', iMessage, 3, False);
-    WriteToJsonValue (JsonResult, 'description', iDescription, 3, False);
-    WriteObjectEndToJson (JsonResult, 2);
-  end;
-
 begin
   Lock.Acquire;
   try
@@ -455,15 +447,13 @@ begin
         end;
         if ErrorRecord.ErrorType.HttpStatusCode > MaxHttpCode then
           MaxHttpCode := ErrorRecord.ErrorType.HttpStatusCode;
-        AddError (ErrorRecord.ErrorType.Errorcode, GlobalLogHandler.ErrorList[i],
-          ErrorRecord.ErrorType.ErrorDescription);
+        ErrorRecord.ErrorType.RenderErrorResponse(JsonResult, 2, GlobalLogHandler.ErrorList[i]);
         Delete (i);
       end;
       if MaxHttpCode = 0 then
       begin
         MaxHttpCode := HTTP_STATUS.InternalServerError;
-        AddError (jetUnknownServerError.Errorcode, jetUnknownServerError.ErrorMessage,
-          jetUnknownServerError.ErrorDescription);
+        jetUnknownServerError.RenderErrorResponse (JsonResult,2);
       end;
       WriteArrayEndToJson (JsonResult, 1);
       WriteObjectEndToJson (JsonResult, 0);

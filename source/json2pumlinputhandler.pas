@@ -217,6 +217,7 @@ type
     function LoadOptionFile (iFileName: string = ''): Boolean;
     function LoadParameterFile (iFileName: string = ''): Boolean;
     procedure RecreateAllRecords;
+    function ReplaceFilenameCurlVariables(const iReplaceString: string): string;
     function ValidateCurrentOptions: Boolean;
     property ApplicationType: tJson2PumlApplicationType read FApplicationType;
     property BaseOutputPath: string read GetBaseOutputPath;
@@ -566,9 +567,8 @@ begin
   Suffix := ReplaceFileNameVariables (CurrentOutputSuffix, SourceFileName, Option);
   if (not Suffix.IsEmpty) and (Suffix <> tpath.ExtensionSeparatorChar) then
     Filename := Filename + Suffix;
-  Filename := CurlParameterList.ReplaceParameterValues (Filename);
   Filename := Filename + tpath.ExtensionSeparatorChar + FileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
-  Filename := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Filename);
+  FileName := ReplaceFilenameCurlVariables(Filename);
   Filename := ReplaceInvalidFileNameChars (Filename);
   Result := Filename;
 end;
@@ -631,6 +631,7 @@ begin
   Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', iOutputFormat.FileExtension(False));
   Result := CalculateSummaryPath;
   Result := PathCombine (Result, Filename);
+  Result := ReplaceInvalidFileNameChars (Result, true);
 end;
 
 function TJson2PumlInputHandler.CalculateSummaryPath: string;
@@ -644,7 +645,7 @@ begin
   Result := ReplaceFileNameVariables (Result, '', CurrentOption);
   Result := CurlParameterList.ReplaceParameterValues (Result);
   Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
-  Result := ReplaceInvalidPathChars (Result);
+  Result := ReplaceInvalidPathChars (Result, true);
 end;
 
 function TJson2PumlInputHandler.CleanSummaryPath (iFileName: string): string;
@@ -715,6 +716,7 @@ begin
       else
         OutputFile := CalculateOutputFileNamePath (SingleRecord.InputFile.OutputFileName,
           SingleRecord.InputFile.InputFileName, jofPUML.FileExtension(true));
+      OutputFile := ReplaceInvalidFileNameChars (OutputFile, true);
       GenerateFileDirectory (OutputFile);
 
       if SingleRecord.InputFile.IsSummaryFile then
@@ -817,7 +819,7 @@ begin
       begin
         if not InputFile.IncludeIntoOutput then
           Continue;
-        CreateSingleRecord (InputFile, CurrentGroup, CurrentDetail);
+        CreateSingleRecord (InputFile, ReplaceFilenameCurlVariables (CurrentGroup), CurrentDetail);
       end;
     end;
   finally
@@ -1483,7 +1485,7 @@ begin
         Lines.Text := ParameterInputFile.Content;
         if not IsRelativePath (ExtractFilePath(Filename)) then
           Filename := ExtractFileName (Filename);
-        Filename := CalculateOutputFileNamePath (Filename, Filename);
+        Filename := ReplaceInvalidFileNameChars (CalculateOutputFileNamePath (Filename, Filename), true);
         GenerateFileDirectory (Filename);
         Lines.SaveToFile (Filename);
         ConverterInputList.AddInputFileCommandLine (Filename, Filename, ParameterInputFile.LeadingObject, '', '');
@@ -1608,6 +1610,12 @@ begin
   for CurlParameter in CurlAuthenticationList.AdditionalCurlParameter do
     log ('  ' + CurlParameter.Name, '****');
   GlobalLoghandler.Info ('');
+end;
+
+function TJson2PumlInputHandler.ReplaceFilenameCurlVariables(const iReplaceString: string): string;
+begin
+  Result := CurlParameterList.ReplaceParameterValues(iReplaceString);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result );
 end;
 
 end.

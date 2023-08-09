@@ -37,3 +37,5 @@ java -jar ..\..\plantuml\plantuml.jar 	json2pumlrequest\json2pumlrequest.puml -s
 java -jar ..\..\plantuml\plantuml.jar 	getserviceinformation\getserviceinformation.puml -png
 java -jar ..\..\plantuml\plantuml.jar 	getserviceinformation\getserviceinformation.puml -svg
 
+java -jar ..\..\plantuml\plantuml.jar 	geterrormessages\geterrormessages.puml -png
+java -jar ..\..\plantuml\plantuml.jar 	geterrormessages\geterrormessages.puml -svg

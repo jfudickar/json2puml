@@ -82,9 +82,11 @@ function PathCombineIfRelative (iBasePath, iPath: string): string;
 
 function ProductVersion: string;
 
-function ReplaceInvalidFileNameChars (const iFileName: string; const iReplaceWith: Char = '_'): string;
+function ReplaceInvalidFileNameChars(const iFileName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
+    string;
 
-function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: Char = '_'): string;
+function ReplaceInvalidPathChars(const iPathName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
+    string;
 
 function ValidateOutputSuffix (iOutputSuffix: string): string;
 
@@ -765,27 +767,36 @@ begin
   Result := 'v' + GetVersionInfo ('ProductVersion');
 end;
 
-function ReplaceInvalidFileNameChars (const iFileName: string; const iReplaceWith: Char = '_'): string;
+function ReplaceInvalidFileNameChars(const iFileName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
+    string;
 var
   i: Integer;
+  Path : String;
 begin
-  Result := iFileName.Trim;
+  Path := ExtractFilePath(iFileName).trim;
+  Result := ExtractFileName(iFileName).Trim;
+  Path := ReplaceInvalidPathChars(Path, iFinal, iReplaceWith);
+  for i := low(Result) to high(Result) do
+    if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (Result[i] in ['$'])) then
+      Result[i] := iReplaceWith;
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
       tPath.ExtensionSeparatorChar);
-  for i := low(Result) to high(Result) do
-    if not tPath.IsValidFileNameChar (Result[i]) then
-      Result[i] := iReplaceWith;
+  Result := tPath.Combine(Path, Result);
 end;
 
-function ReplaceInvalidPathChars (const iPathName: string; const iReplaceWith: Char = '_'): string;
+function ReplaceInvalidPathChars(const iPathName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
+    string;
 var
   i: Integer;
 begin
   Result := iPathName.Trim;
   for i := low(Result) to high(Result) do
-    if not tPath.IsValidPathChar (Result[i]) then
+    if not tPath.IsValidPathChar (Result[i]) or (iFinal and (Result[i] in ['$'])) then
       Result[i] := iReplaceWith;
+  while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
+    Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
+      tPath.ExtensionSeparatorChar);
 end;
 
 function ValidateOutputSuffix (iOutputSuffix: string): string;

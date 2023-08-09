@@ -40,7 +40,6 @@ type
     procedure OnBeforeAction (Context: TWebContext; const AActionName: string; var Handled: Boolean); override;
     procedure OnAfterAction (Context: TWebContext; const AActionName: string); override;
     procedure GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
-    procedure GetServiceInformationResponse;
     function IsRequestBodyInvalid: Boolean;
     procedure LogRequestStart (iContext: TWebContext);
     procedure LogRequestEnd (iContext: TWebContext);
@@ -63,6 +62,9 @@ type
     [MVCPath('/heartbeat')]
     [MVCHTTPMethod([httpGET])]
     procedure GetHeartbeat;
+    [MVCPath('/errormessages')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetErrorMessages;
 
     [MVCPath('/json2pumlRequestSvg')]
     [MVCHTTPMethod([httpPOST])]
@@ -140,6 +142,37 @@ begin
   GetFileListResponse (GlobalConfigurationDefinition.DefinitionFileSearchFolder, false);
 end;
 
+procedure TJson2PumlController.GetErrorMessages;
+var
+  jsonOutput: TStringList;
+  ErrorType : tJson2PumlErrorType;
+begin
+  LogRequestStart (Context);
+  jsonOutput := TStringList.Create;
+  try
+    try
+      Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+      WriteObjectStartToJson (jsonOutput, 0, '');
+      WriteArrayStartToJson (jsonOutput, 1, '');
+      for errortype := Low(tJson2PumlErrorType) to High(tJson2PumlErrorType)   do
+        ErrorType.RenderErrorResponse(jsonOutput, 2);
+      WriteArrayEndToJson (jsonOutput, 1);
+      WriteObjectEndToJson (jsonOutput, 0);
+      Render (jsonOutput.Text);
+      Context.Response.StatusCode := HTTP_STATUS.OK;
+    except
+      on e: exception do
+      begin
+        GlobalLoghandler.UnhandledException (e);
+        RenderStatusMessage (HTTP_STATUS.InternalServerError, e.Message);
+      end;
+    end;
+  finally
+    jsonOutput.Free;
+  end;
+  LogRequestEnd (Context);
+end;
+
 procedure TJson2PumlController.GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
 var
   jsonOutput: TStringList;
@@ -176,11 +209,6 @@ begin
 end;
 
 procedure TJson2PumlController.GetServiceInformation;
-begin
-  GetServiceInformationResponse;
-end;
-
-procedure TJson2PumlController.GetServiceInformationResponse;
 var
   jsonOutput: TStringList;
   InputHandler: TJson2PumlInputHandler;

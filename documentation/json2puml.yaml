@@ -52,6 +52,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'        
+  /errormessages:
+    get:
+      description: 'Returns the list of all error messages defined in the system'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
+        '500':
+          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+            \ that prevented it from fulfilling the request.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'        
   /definitionfile:
     get:
       description: 'Returns a list of all available definition files'
@@ -431,6 +449,8 @@ components:
         type: object
         properties:
           errorCode: 
+            type : string
+          errorClass: 
             type : string
           message: 
             type : string

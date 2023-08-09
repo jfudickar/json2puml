@@ -13,7 +13,10 @@ skinparam class {
 class ServiceInformation{
    service : String
    additionalServiceInformation : String
+   commandLine : String
+   commandLineParameter : Array of String
    plantUmlInformation : Array of String
+   globalConfiguration : Array of String
    definitionFiles : Array of string
    inputlistFiles : Array of string
 }

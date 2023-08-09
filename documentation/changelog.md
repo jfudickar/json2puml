@@ -1,3 +1,16 @@
+# **json2puml v2.2.5.96** - 09.08.2023
+## All Editions 
+### New Feature
+- New property inputlist.input.mandatory
+  This allows to define a file as mandatory. When this file can not be found/fetched the process stops with an error.
+### Changed Feature
+- The "$" character is now replaced in all file and path names with a "_" to be more linux compatible
+- Changed default order of the inputlist.input properties when storing a input list file
+
+## Service Editions 
+### New Feature
+- New operation get /errormessage to receive a list of all implemented error messages.
+
 # **json2puml v2.2.5.95** - 08.08.2023
 ## All Editions 
 ### New Feature

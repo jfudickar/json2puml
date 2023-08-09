@@ -26,7 +26,7 @@ unit json2pumlbasedefinition;
 
 interface
 
-uses System.JSON, System.Classes, json2pumlconst;
+uses System.JSON, System.Classes, json2pumlconst, Quick.Logger;
 
 type
   tJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
@@ -42,7 +42,7 @@ type
     function ServiceResultName: string;
     function ToString: string;
   public
-    function FileName(const iFileName: string): string;
+    function FileName (const iFileName: string): string;
   end;
 
   tJson2PumlApplicationTypeHelper = record helper for tJson2PumlApplicationType
@@ -73,8 +73,10 @@ type
     function Errorcode: string;
     function ErrorDescription: string;
     function ErrorMessage: string;
+    function EventType: TEventType;
     function Failed: boolean;
     function HttpStatusCode: Integer;
+    procedure RenderErrorResponse(oJson: TStringList; iLevel: Integer; iErrorMessage: string = '');
   end;
 
   tJson2PumlBaseObject = class(tPersistent)
@@ -179,8 +181,7 @@ type
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks, System.Generics.Collections,
-  Quick.Logger;
+  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks, System.Generics.Collections;
 
 function tJson2PumlOutputFormatHelper.FileExtension (iLeadingSeparator: boolean = false): string;
 begin
@@ -189,10 +190,9 @@ begin
     Result := tPath.ExtensionSeparatorChar + Result;
 end;
 
-function tJson2PumlOutputFormatHelper.FileName(const iFileName: string): string;
+function tJson2PumlOutputFormatHelper.FileName (const iFileName: string): string;
 begin
   Result := ChangeFileExt (iFileName, self.FileExtension(true));
-//  tPath.ChangeExtension (
 end;
 
 procedure tJson2PumlOutputFormatHelper.FromString (aValue: string);
@@ -874,6 +874,11 @@ begin
   Result := cJson2PumlErrorInformation[self].ErrorMessage;
 end;
 
+function tJson2PumlErrorTypeHelper.EventType: TEventType;
+begin
+  Result := cJson2PumlErrorInformation[self].EventType;
+end;
+
 function tJson2PumlErrorTypeHelper.Failed: boolean;
 begin
   Result := cJson2PumlErrorInformation[self].EventType in [etError, etCritical, etException];
@@ -882,6 +887,22 @@ end;
 function tJson2PumlErrorTypeHelper.HttpStatusCode: Integer;
 begin
   Result := cJson2PumlErrorInformation[self].HttpStatusCode;
+end;
+
+procedure tJson2PumlErrorTypeHelper.RenderErrorResponse(oJson: TStringList; iLevel: Integer; iErrorMessage: string =
+    '');
+begin
+  if ErrorCode.IsEmpty then
+    Exit;
+  WriteObjectStartToJson (oJson, iLevel, '');
+  WriteToJsonValue (oJson, 'errorCode', Errorcode, iLevel + 1, false);
+  WriteToJsonValue (oJson, 'errorClass', JSON2PUML_EVENTTYPENAMES[Integer(EventType)], iLevel + 1, false);
+  if iErrorMessage.IsEmpty then
+    WriteToJsonValue (oJson, 'message', ErrorMessage, iLevel + 1, false)
+  else
+    WriteToJsonValue (oJson, 'message', iErrorMessage, iLevel + 1, false);
+  WriteToJsonValue (oJson, 'description', ErrorDescription, iLevel + 1, false);
+  WriteObjectEndToJson (oJson, iLevel);
 end;
 
 end.
