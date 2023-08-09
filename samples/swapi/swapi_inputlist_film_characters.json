@@ -8,7 +8,8 @@
 					"displayName": "Film ID",
 					"description": "Primary id of the film",
 					"mandatory": true,
-					"regularExpression": null
+					"regularExpression": null,
+					"defaultValue": null
 				}
 		]
 	},
@@ -20,26 +21,29 @@
 	"option": null,
 	"job": null,
 	"jobDescription": null,
-	"outputFormats":["svg"],
+	"outputFormats": "svg",
 	"outputPath": null,
 	"outputSuffix": null,
 	"curlBaseUrl": null,
 	"curlUrlAddon": null,
 	"curlOptions": null,
+	"curlUserAgentInformation": null,
+	"curlSpanIdHeader": null,
+	"curlTraceIdHeader": null,
 	"summaryFile": "${title}",
 	"input":  [
 			{
 				"inputFile": "films.json",
-				"curlFileSuffix": "_${id}",
-				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
-				"curlFormatOutput": true,
-				"curlUrl": null,
-				"curlOptions": null,
-				"curlCache": 0,
-				"splitIdentifier": null,
-				"splitInputFile": null,
 				"leadingObject": "films",
 				"generateOutput": true,
+				"mandatory": false,
+				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
+				"curlCache": 0,
+				"curlExecuteEvaluation": null,
+				"curlFileSuffix": "_${id}",
+				"curlFormatOutput": true,
+				"curlOptions": null,
+				"curlUrl": null,
 				"curlOutputParameter":  [
 						{
 							"${characters}": "characters"
@@ -47,40 +51,46 @@
 						{
 							"${title}": "title"
 						}
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "characters.json",
-				"curlFileSuffix": "_${characters}",
-				"curlBaseUrl": "${characters}",
-				"curlFormatOutput": true,
-				"curlUrl": null,
-				"curlOptions": null,
-				"curlCache": 0,
-				"splitIdentifier": null,
-				"splitInputFile": null,
 				"leadingObject": "characters",
 				"generateOutput": true,
+				"mandatory": false,
+				"curlBaseUrl": "${characters}",
+				"curlCache": 0,
+				"curlExecuteEvaluation": null,
+				"curlFileSuffix": "_${characters}",
+				"curlFormatOutput": true,
+				"curlOptions": null,
+				"curlUrl": null,
 				"curlOutputParameter":  [
 						{
 							"${planets}": "homeworld"
 						}
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "planets.json",
-				"curlFileSuffix": "_${planets}",
-				"curlBaseUrl": "${planets}",
-				"curlFormatOutput": true,
-				"curlUrl": null,
-				"curlOptions": null,
-				"curlCache": 0,
-				"splitIdentifier": null,
-				"splitInputFile": null,
 				"leadingObject": "planets",
 				"generateOutput": true,
+				"mandatory": false,
+				"curlBaseUrl": "${planets}",
+				"curlCache": 0,
+				"curlExecuteEvaluation": null,
+				"curlFileSuffix": "_${planets}",
+				"curlFormatOutput": true,
+				"curlOptions": null,
+				"curlUrl": null,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			}
 	]
 }

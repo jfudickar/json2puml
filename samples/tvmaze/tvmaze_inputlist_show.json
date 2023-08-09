@@ -8,7 +8,8 @@
 					"displayName": "Show ID",
 					"description": "Primary id of the Show",
 					"mandatory": true,
-					"regularExpression": null
+					"regularExpression": null,
+					"defaultValue": null
 				}
 		]
 	},
@@ -20,26 +21,29 @@
 	"option": null,
 	"job": null,
 	"jobDescription": "All details around the show \"${name}\"",
-	"outputFormats":["svg"],
+	"outputFormats": "svg",
 	"outputPath": null,
 	"outputSuffix": null,
 	"curlBaseUrl": "https://api.tvmaze.com/",
 	"curlUrlAddon": null,
 	"curlOptions": null,
+	"curlUserAgentInformation": null,
+	"curlSpanIdHeader": null,
+	"curlTraceIdHeader": null,
 	"summaryFile": "${name}",
 	"input":  [
 			{
 				"inputFile": "show.json",
-				"curlFileSuffix": "_${id}",
-				"curlBaseUrl": null,
-				"curlFormatOutput": true,
-				"curlUrl": "shows/${id}?embed[]=cast&embed[]=nextepisode",
-				"curlOptions": null,
-				"curlCache": 0,
-				"splitIdentifier": null,
-				"splitInputFile": null,
 				"leadingObject": "show",
 				"generateOutput": true,
+				"mandatory": false,
+				"curlBaseUrl": null,
+				"curlCache": 0,
+				"curlExecuteEvaluation": null,
+				"curlFileSuffix": "_${id}",
+				"curlFormatOutput": true,
+				"curlOptions": null,
+				"curlUrl": "shows/${id}?embed[]=cast&embed[]=nextepisode",
 				"curlOutputParameter":  [
 						{
 							"${character}": "_embedded.cast.character.idx"
@@ -50,37 +54,43 @@
 						{
 							"${person}": "_embedded.cast.person.idx"
 						}
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "person.json",
-				"curlFileSuffix": "_${person}",
-				"curlBaseUrl": null,
-				"curlFormatOutput": true,
-				"curlUrl": "people/${person}",
-				"curlOptions": null,
-				"curlCache": 0,
-				"splitIdentifier": null,
-				"splitInputFile": null,
 				"leadingObject": "person",
 				"generateOutput": true,
+				"mandatory": false,
+				"curlBaseUrl": null,
+				"curlCache": 0,
+				"curlExecuteEvaluation": null,
+				"curlFileSuffix": "_${person}",
+				"curlFormatOutput": true,
+				"curlOptions": null,
+				"curlUrl": "people/${person}",
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "character.json",
-				"curlFileSuffix": "_${character}",
-				"curlBaseUrl": null,
-				"curlFormatOutput": true,
-				"curlUrl": "character/${character}",
-				"curlOptions": null,
-				"curlCache": 0,
-				"splitIdentifier": null,
-				"splitInputFile": null,
 				"leadingObject": "character",
 				"generateOutput": true,
+				"mandatory": false,
+				"curlBaseUrl": null,
+				"curlCache": 0,
+				"curlExecuteEvaluation": null,
+				"curlFileSuffix": "_${character}",
+				"curlFormatOutput": true,
+				"curlOptions": null,
+				"curlUrl": "character/${character}",
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			}
 	]
 }

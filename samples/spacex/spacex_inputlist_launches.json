@@ -34,17 +34,16 @@
 	"input":  [
 			{
 				"inputFile": "launches.json",
+				"leadingObject": "launch",
+				"generateOutput": true,
+				"mandatory": true,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": null,
 				"curlFileSuffix": "_${launch}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v5/launches/${launch}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "launch",
-				"generateOutput": true,
+				"curlUrl": "v5/launchesx/${launch}",
 				"curlOutputParameter":  [
 						{
 							"${capsule}": "capsules"
@@ -67,10 +66,15 @@
 						{
 							"${rocket}": "rocket"
 						}
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "crew.json",
+				"leadingObject": "crew",
+				"generateOutput": true,
+				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${crew}\" <> \"\"",
@@ -78,15 +82,16 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/crew/${crew}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "crew",
-				"generateOutput": true,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "capsule.json",
+				"leadingObject": "capsule",
+				"generateOutput": true,
+				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${capsule}\" <> \"\"",
@@ -94,15 +99,16 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/capsules/${capsule}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "capsule",
-				"generateOutput": true,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "launchpad.json",
+				"leadingObject": "launchpad",
+				"generateOutput": true,
+				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${launchpad}\" <> \"\"",
@@ -110,15 +116,16 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/launchpads/${launchpad}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "launchpad",
-				"generateOutput": true,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "landpad.json",
+				"leadingObject": "landpad",
+				"generateOutput": true,
+				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${landpad}\" <> \"\"",
@@ -126,15 +133,16 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/landpads/${landpad}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "landpad",
-				"generateOutput": true,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "core.json",
+				"leadingObject": "core",
+				"generateOutput": true,
+				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${core}\" <> \"\"",
@@ -142,15 +150,16 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/cores/${core}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "core",
-				"generateOutput": true,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "payload.json",
+				"leadingObject": "payload",
+				"generateOutput": true,
+				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${payload}\" <> \"\"",
@@ -158,15 +167,16 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/payloads/${payload}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "payload",
-				"generateOutput": true,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			},
 			{
 				"inputFile": "rocket.json",
+				"leadingObject": "rocket",
+				"generateOutput": true,
+				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${rocket}\" <> \"\"",
@@ -174,12 +184,10 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/rockets/${rocket}",
-				"splitIdentifier": null,
-				"splitInputFile": null,
-				"leadingObject": "rocket",
-				"generateOutput": true,
 				"curlOutputParameter":  [
-				]
+				],
+				"splitIdentifier": null,
+				"splitInputFile": false
 			}
 	]
 }
