@@ -43,7 +43,7 @@
 				"curlFileSuffix": "_${launch}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v5/launchesx/${launch}",
+				"curlUrl": "v5/launches/${launch}",
 				"curlOutputParameter":  [
 						{
 							"${capsule}": "capsules"
@@ -74,7 +74,7 @@
 				"inputFile": "crew.json",
 				"leadingObject": "crew",
 				"generateOutput": true,
-				"mandatory": false,
+				"mandatory": true,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": "\"${crew}\" <> \"\"",
