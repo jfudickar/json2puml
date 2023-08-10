@@ -429,8 +429,7 @@ begin
     JsonResult := tStringList.Create;
     try
       MaxHttpCode := 0;
-      WriteObjectStartToJson (JsonResult, 0, '');
-      WriteArrayStartToJson (JsonResult, 1, '');
+      WriteArrayStartToJson (JsonResult, 0, '');
       i := 0;
       while i < Count do
       begin
@@ -447,16 +446,15 @@ begin
         end;
         if ErrorRecord.ErrorType.HttpStatusCode > MaxHttpCode then
           MaxHttpCode := ErrorRecord.ErrorType.HttpStatusCode;
-        ErrorRecord.ErrorType.RenderErrorResponse(JsonResult, 2, GlobalLogHandler.ErrorList[i]);
+        ErrorRecord.ErrorType.RenderErrorResponse(JsonResult, 1, GlobalLogHandler.ErrorList[i]);
         Delete (i);
       end;
       if MaxHttpCode = 0 then
       begin
         MaxHttpCode := HTTP_STATUS.InternalServerError;
-        jetUnknownServerError.RenderErrorResponse (JsonResult,2);
+        jetUnknownServerError.RenderErrorResponse (JsonResult,1);
       end;
-      WriteArrayEndToJson (JsonResult, 1);
-      WriteObjectEndToJson (JsonResult, 0);
+      WriteArrayEndToJson (JsonResult, 0);
       oResponseText := JsonResult.Text;
       oHttpCode := MaxHttpCode;
     finally

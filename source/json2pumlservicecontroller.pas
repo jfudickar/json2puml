@@ -152,12 +152,10 @@ begin
   try
     try
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-      WriteObjectStartToJson (jsonOutput, 0, '');
-      WriteArrayStartToJson (jsonOutput, 1, '');
+      WriteArrayStartToJson (jsonOutput, 0, '');
       for errortype := Low(tJson2PumlErrorType) to High(tJson2PumlErrorType)   do
-        ErrorType.RenderErrorResponse(jsonOutput, 2);
-      WriteArrayEndToJson (jsonOutput, 1);
-      WriteObjectEndToJson (jsonOutput, 0);
+        ErrorType.RenderErrorResponse(jsonOutput, 1);
+      WriteArrayEndToJson (jsonOutput, 0);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
     except
