@@ -1,3 +1,12 @@
+# **json2puml v2.2.5.97** - 10.08.2023
+## All Editions 
+### Changed Feature
+- the mandatory flag is now ignored when the file has not been fetched because of a not valid executevalidation rule
+
+## Service Editions 
+### Changed Geature
+- The error list are not correct generated
+
 # **json2puml v2.2.5.96** - 09.08.2023
 ## All Editions 
 ### New Feature
