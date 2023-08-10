@@ -21,9 +21,11 @@ paths:
         '200':
           description: OK
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
+              example: 
+                'json2puml server v2.2.5.96 (Windows 64Bit)'
         '500':
           description:  '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
@@ -153,7 +155,7 @@ paths:
         '200':
           description: Successful operation, returns the generated PNG file
           content:
-            image/*:
+            image/png:
               schema: 
                 type: string
                 format: binary
@@ -184,7 +186,7 @@ paths:
         '200':
           description: Successful operation, returns the generated SVG file
           content:
-            image/*:
+            image/svg+xml:
               schema: 
                 type: string
                 format: binary
@@ -215,7 +217,7 @@ paths:
         '200':
           description: Successful operation, returns the generated SVG file
           content:
-            image/*:
+            application/zip:
               schema: 
                 type: string
                 format: binary
