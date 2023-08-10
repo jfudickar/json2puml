@@ -113,10 +113,11 @@ type
     class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
       var oErrorMessage: string): Boolean;
     class function CheckEvaluation (iExecuteEvaluation: string): Boolean;
-    class function Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
-      const iOutputFile: string; iExecuteEvaluation: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
-      var oProtocolCurlCommand: string): Boolean;
+    class function CheckExecuteEvaluation(const iOutputFile: string; iExecuteEvaluation: string; iCurlDetailParameterList:
+        tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
+    class function Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const iOutputFile: string;
+        iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList, iCurlParameterList:
+        tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
     class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
     class function CleanUnusedCurlVariables (iValue: string): string;
     class function CombineParameter (iParameter: array of string): string;
@@ -989,6 +990,32 @@ begin
   Result := string.Join (' ', iParameter).Trim;
 end;
 
+class function TCurlUtils.CheckExecuteEvaluation(const iOutputFile: string; iExecuteEvaluation: string;
+    iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
+var
+  ExecuteEvaluation: string;
+begin
+  Result := true;
+  ExecuteEvaluation := iExecuteEvaluation;
+  if Assigned(iCurlDetailParameterList) then
+    ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues(ExecuteEvaluation);
+  if Assigned(iCurlParameterList) then
+    ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues(ExecuteEvaluation);
+  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment(ExecuteEvaluation);
+  ExecuteEvaluation := CleanUnusedCurlVariables(ExecuteEvaluation);
+  try
+    Result := CheckEvaluation(ExecuteEvaluation) ;
+    if not Result then
+      GlobalLoghandler.Info('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful', [iOutputFile, iExecuteEvaluation, ExecuteEvaluation])
+    else
+    if not iExecuteEvaluation.Trim.isEmpty then
+      GlobalLoghandler.Debug('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful', [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
+  except
+    on e: exception do
+      GlobalLoghandler.Error(jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
+  end;
+end;
+
 class function TCurlUtils.CheckEvaluation (iExecuteEvaluation: string): Boolean;
 var
   BindExpr: TBindingExpressionDefault;
@@ -1053,10 +1080,9 @@ begin
   Result := oErrorMessage.isEmpty;
 end;
 
-class function TCurlUtils.Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
-  const iOutputFile: string; iExecuteEvaluation: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
-  var oProtocolCurlCommand: string): Boolean;
+class function TCurlUtils.Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const
+    iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList,
+    iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
 var
   Url: string;
   Command: string;
@@ -1065,7 +1091,6 @@ var
   StartTime: tDateTime;
   vErrorMessage: string;
   vCommandOutPut, vCommandErrors: TStringList;
-  ExecuteEvaluation: string;
   s: string;
   vOutputFile: TStringList;
 
@@ -1074,29 +1099,6 @@ begin
   Result := False;
   if iOutputFile.Trim.isEmpty then
     Exit;
-
-  ExecuteEvaluation := iExecuteEvaluation;
-  if Assigned (iCurlDetailParameterList) then
-    ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues (ExecuteEvaluation);
-  if Assigned (iCurlParameterList) then
-    ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues (ExecuteEvaluation);
-  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment (ExecuteEvaluation);
-  ExecuteEvaluation := CleanUnusedCurlVariables (ExecuteEvaluation);
-  try
-    if not CheckEvaluation (ExecuteEvaluation) then
-    begin
-      GlobalLoghandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
-        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
-      Exit;
-    end
-    else if not iExecuteEvaluation.Trim.isEmpty then
-      GlobalLoghandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
-        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
-  except
-    on e: exception do
-      GlobalLoghandler.Error (jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
-  end;
-
   Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
   if Url.Trim.isEmpty then
   begin

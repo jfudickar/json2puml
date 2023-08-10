@@ -1067,18 +1067,22 @@ begin
     BaseUrl := CurlBaseUrlDecoded;
   Options := [string.Join(' ', [CurlOptions, string.Join(' ', iOptions)]).Trim];
   ExpandFileNameWithCurlParameter (iExecuteCurlParameterList, ioResultCurlParameterList);
-  Result := TCurlUtils.Execute (BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim], Options, OutputFileName, CurlExecuteEvaluation,
-    iCurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache, Command);
-  CurlCommand := Command;
-  if Result then
+  if TCurlUtils.CheckExecuteEvaluation (OutputFileName, CurlExecuteEvaluation, iExecuteCurlParameterList,
+    ioResultCurlParameterList) then
   begin
-    Result := true;
-    if CurlFormatOutput then
-      FormatJsonFile (OutputFileName);
-    GetCurlParameterFromFile (CurlOutputParameter, ioResultCurlParameterList);
-  end
-  else if Mandatory then
-    GlobalLoghandler.Error (jetInputListCurlFileMissing, [OutputFileName]);
+    Result := TCurlUtils.Execute (BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim], Options, OutputFileName,
+      iCurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList, CurlCache, Command);
+    CurlCommand := Command;
+    if Result then
+    begin
+      Result := true;
+      if CurlFormatOutput then
+        FormatJsonFile (OutputFileName);
+      GetCurlParameterFromFile (CurlOutputParameter, ioResultCurlParameterList);
+    end
+    else if Mandatory then
+      GlobalLoghandler.Error (jetInputListCurlFileMissing, [OutputFileName]);
+  end;
 end;
 
 function tJson2PumlInputFileDefinition.HasValidCurl: boolean;
