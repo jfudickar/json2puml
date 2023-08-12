@@ -1,10 +1,22 @@
+# **json2puml v2.2.5.98** - 12.08.2023
+## All Editions 
+### New Feature
+- Additional command line and global configuration parameter "plantUmlRuntimeParameter" which allows to add additional plantuml parameters
+  to the command line when generating the result files
+### Changed Feature
+- Improved error handling when plantuml fails to generate the output files
+
+## Service Editions 
+### Changed Feature
+- The service returns now a HTTP300 when the result file was not generated
+
 # **json2puml v2.2.5.97** - 10.08.2023
 ## All Editions 
 ### Changed Feature
 - the mandatory flag is now ignored when the file has not been fetched because of a not valid executevalidation rule
 
 ## Service Editions 
-### Changed Geature
+### Changed Feature
 - The error list are not correct generated
 
 # **json2puml v2.2.5.96** - 09.08.2023

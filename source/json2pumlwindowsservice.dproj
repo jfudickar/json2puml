@@ -93,10 +93,10 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.97;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
+        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.98;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <VerInfo_Build>97</VerInfo_Build>
+        <VerInfo_Build>98</VerInfo_Build>
         <UWP_DelphiLogo44>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo150>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
@@ -109,10 +109,10 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.97;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
+        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.98;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <VerInfo_Build>97</VerInfo_Build>
+        <VerInfo_Build>98</VerInfo_Build>
         <UWP_DelphiLogo44>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>..\documentation\icons\json2puml_icon.png</UWP_DelphiLogo150>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
@@ -132,16 +132,16 @@
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.97;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
-        <VerInfo_Build>97</VerInfo_Build>
+        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.98;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
+        <VerInfo_Build>98</VerInfo_Build>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
         <VerInfo_Release>5</VerInfo_Release>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Build>97</VerInfo_Build>
-        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.97;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
+        <VerInfo_Build>98</VerInfo_Build>
+        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.98;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -158,8 +158,8 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.97;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
-        <VerInfo_Build>97</VerInfo_Build>
+        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.98;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
+        <VerInfo_Build>98</VerInfo_Build>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
         <VerInfo_Release>5</VerInfo_Release>
@@ -167,8 +167,8 @@
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
-        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.97;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
-        <VerInfo_Build>97</VerInfo_Build>
+        <VerInfo_Keys>FileDescription=$(MSBuildProjectName) Windows Service;FileVersion=2.2.5.98;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0;CompanyName=SWE Jens Fudickar;LegalCopyright=(c) by Jens Fudickar in 2023</VerInfo_Keys>
+        <VerInfo_Build>98</VerInfo_Build>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
         <VerInfo_Release>5</VerInfo_Release>

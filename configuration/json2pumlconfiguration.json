@@ -5,11 +5,11 @@
 	"curlAuthenticationFileName": "e:\\Delphi\\Projects\\json2puml\\configuration\\json2pumlcurlauthentication.json",
 	"curlPassThroughHeader": [
 		"traceid",
-		"X-b3-traceid"
+		"x-b3-traceid"
 	],
 	"curlUserAgentInformation": null,
-	"curlSpanIdHeader": "X-B3-SpanId",
-	"curlTraceIdHeader": "X-B3-TraceId",
+	"curlSpanIdHeader": "x-b3-spanid",
+	"curlTraceIdHeader": "x-b3-traceid",
 	"defaultDefinitionFileName": null,
 	"definitionFileSearchFolder": [
 		"e:\\Delphi\\Projects\\json2puml\\definition\\",
@@ -29,5 +29,6 @@
 	"javaRuntimeParameter": "-DPLANTUML_LIMIT_SIZE=8192",
 	"logFileOutputPath": "e:\\Delphi\\Projects\\json2puml\\runtime\\logs\\",
 	"plantUmlJarFileName": null,
-	"servicePort": 8080
+	"plantUmlRuntimeParameter": null,
+	"servicePort": "8080"
 }
