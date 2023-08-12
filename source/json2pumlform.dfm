@@ -51,6 +51,13 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Height = 13
     Caption = '/outputpath'
   end
+  object Label21: TLabel
+    Left = 28
+    Top = 32
+    Width = 71
+    Height = 13
+    Caption = '/plantumljarfile'
+  end
   object StatusBar: TStatusBar
     Left = 0
     Top = 881
@@ -120,7 +127,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object CommandLineEditPanel: TPanel
         Left = 0
         Top = 0
-        Width = 1321
+        Width = 1317
         Height = 345
         Align = alTop
         BevelOuter = bvNone
@@ -135,15 +142,15 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Left = 820
           Top = 216
           Width = 400
-          Height = 77
+          Height = 109
           Caption = 'PlantUML Jar'
           TabOrder = 5
           DesignSize = (
             400
-            77)
+            109)
           object PlantUmlJarFileLabel: TLabel
             Left = 20
-            Top = 24
+            Top = 19
             Width = 71
             Height = 13
             Caption = '/plantumljarfile'
@@ -151,11 +158,19 @@ object json2pumlMainForm: Tjson2pumlMainForm
           end
           object javaruntimeparameterLabel: TLabel
             Left = 20
-            Top = 51
+            Top = 71
             Width = 111
             Height = 13
             Caption = '/javaruntimeparameter'
             FocusControl = javaruntimeparameterEdit
+          end
+          object Label25: TLabel
+            Left = 20
+            Top = 43
+            Width = 110
+            Height = 13
+            Caption = '/plantumlruntimeparam'
+            FocusControl = PlantUmlRuntimeParameterEdit
           end
           object PlantUmlJarFileEdit: TEdit
             Left = 137
@@ -167,7 +182,15 @@ object json2pumlMainForm: Tjson2pumlMainForm
           end
           object javaruntimeparameterEdit: TEdit
             Left = 137
-            Top = 43
+            Top = 67
+            Width = 255
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 2
+          end
+          object PlantUmlRuntimeParameterEdit: TEdit
+            Left = 137
+            Top = 42
             Width = 255
             Height = 21
             Anchors = [akLeft, akTop, akRight]
@@ -573,7 +596,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         end
         object Button1: TButton
           Left = 1059
-          Top = 299
+          Top = 331
           Width = 161
           Height = 25
           Action = ReloadAndConvertAction
@@ -636,8 +659,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ExecutionLogPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1313
-            Height = 398
+            Width = 1309
+            Height = 397
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -649,8 +672,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object FileListPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1321
-            Height = 400
+            Width = 1309
+            Height = 397
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -662,8 +685,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1321
-            Height = 400
+            Width = 1309
+            Height = 397
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -675,8 +698,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceInputListFileResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1321
-            Height = 400
+            Width = 1309
+            Height = 397
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -688,8 +711,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceDefinitionFileResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1321
-            Height = 400
+            Width = 1309
+            Height = 397
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -704,8 +727,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object FilePageControl: TPageControl
         Left = 0
         Top = 0
-        Width = 1329
-        Height = 773
+        Width = 1317
+        Height = 770
         Align = alClient
         MultiLine = True
         TabOrder = 0

@@ -145,7 +145,7 @@ end;
 procedure TJson2PumlController.GetErrorMessages;
 var
   jsonOutput: TStringList;
-  ErrorType : tJson2PumlErrorType;
+  ErrorType: tJson2PumlErrorType;
 begin
   LogRequestStart (Context);
   jsonOutput := TStringList.Create;
@@ -153,8 +153,8 @@ begin
     try
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
       WriteArrayStartToJson (jsonOutput, 0, '');
-      for errortype := Low(tJson2PumlErrorType) to High(tJson2PumlErrorType)   do
-        ErrorType.RenderErrorResponse(jsonOutput, 1);
+      for ErrorType := low(tJson2PumlErrorType) to high(tJson2PumlErrorType) do
+        ErrorType.RenderErrorResponse (jsonOutput, 1);
       WriteArrayEndToJson (jsonOutput, 0);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
@@ -345,7 +345,7 @@ begin
       if not GlobalLoghandler.Failed then
       begin
         f := InputHandler.ConverterInputList.SummaryInputFile;
-        if Assigned (f) and f.Exists then
+        if Assigned (f) and f.Exists and FileExistsMinSize (f.Output.PNGFileName) then
         begin
           Context.Response.ContentType := TMVCMediaType.IMAGE_PNG;
           SendFile (f.Output.PNGFileName);
@@ -392,7 +392,7 @@ begin
       if not GlobalLoghandler.Failed then
       begin
         f := InputHandler.ConverterInputList.SummaryInputFile;
-        if Assigned (f) and f.Exists then
+        if Assigned (f) and f.Exists and FileExistsMinSize (f.Output.SVGFileName) then
         begin
           Context.Response.ContentType := TMVCMediaType.APPLICATION_SVG_XML;
           SendFile (f.Output.SVGFileName);
@@ -434,9 +434,9 @@ begin
       InputHandler.LoadDefinitionFiles;
       if not GlobalLoghandler.Failed then
       begin
-        if not FileExists (InputHandler.ConverterInputList.SummaryZipFileName) then
+        if not FileExistsMinSize (InputHandler.ConverterInputList.SummaryZipFileName) then
           InputHandler.GenerateSummaryZipFile;
-        if FileExists (InputHandler.ConverterInputList.SummaryZipFileName) then
+        if FileExistsMinSize (InputHandler.ConverterInputList.SummaryZipFileName) then
         begin
           Context.Response.ContentType := 'application/zip';
           SendFile (InputHandler.ConverterInputList.SummaryZipFileName);

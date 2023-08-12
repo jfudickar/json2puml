@@ -137,6 +137,7 @@ type
     function GetCurrentGroup: string;
     function GetCurrentInputListFileName: string;
     function GetCurrentJavaRuntimeParameter: string;
+    function GetCurrentPlantUmlRuntimeParameter: string;
     function GetCurrentJobDescription: string;
     function GetCurrentJobName: string;
     function GetCurrentOption: string;
@@ -217,7 +218,7 @@ type
     function LoadOptionFile (iFileName: string = ''): Boolean;
     function LoadParameterFile (iFileName: string = ''): Boolean;
     procedure RecreateAllRecords;
-    function ReplaceFilenameCurlVariables(const iReplaceString: string): string;
+    function ReplaceFilenameCurlVariables (const iReplaceString: string): string;
     function ValidateCurrentOptions: Boolean;
     property ApplicationType: tJson2PumlApplicationType read FApplicationType;
     property BaseOutputPath: string read GetBaseOutputPath;
@@ -242,6 +243,7 @@ type
     property CurrentGroup: string read GetCurrentGroup;
     property CurrentInputListFileName: string read GetCurrentInputListFileName;
     property CurrentJavaRuntimeParameter: string read GetCurrentJavaRuntimeParameter;
+    property CurrentPlantUmlRuntimeParameter: string read GetCurrentPlantUmlRuntimeParameter;
     property CurrentJobDescription: string read GetCurrentJobDescription;
     property CurrentJobName: string read GetCurrentJobName;
     property CurrentOption: string read GetCurrentOption;
@@ -373,16 +375,16 @@ begin
   FApplicationType := iApplicationType;
   FExecuteLogHandler := TLogStringListProvider.Create ();
   ExecuteLogHandler.OnFilterItem := OnFilterLogItem;
-  ExecuteLogHandler.Enabled := True;
+  ExecuteLogHandler.Enabled := true;
   SetLogProviderDefaults (ExecuteLogHandler, jatService);
   Logger.Providers.Add (ExecuteLogHandler);
-  fCurThreadId := CurrentThreadId;
+  FCurThreadId := CurrentThreadId;
 end;
 
 destructor TJson2PumlInputHandler.Destroy;
 begin
-  Logger.Providers.Delete(Logger.Providers.IndexOf(ExecuteLogHandler));
-//  FExecuteLogHandler.Free;
+  Logger.Providers.Delete (Logger.Providers.IndexOf(ExecuteLogHandler));
+  // FExecuteLogHandler.Free;
   FIntConfigurationFileLines.Free;
   FGlobalConfiguration.Free;
   FIntServerResultLines.Free;
@@ -568,7 +570,7 @@ begin
   if (not Suffix.IsEmpty) and (Suffix <> tpath.ExtensionSeparatorChar) then
     Filename := Filename + Suffix;
   Filename := Filename + tpath.ExtensionSeparatorChar + FileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
-  FileName := ReplaceFilenameCurlVariables(Filename);
+  Filename := ReplaceFilenameCurlVariables (Filename);
   Filename := ReplaceInvalidFileNameChars (Filename);
   Result := Filename;
 end;
@@ -750,7 +752,7 @@ begin
         SingleRecord.InputFile.Output.PUmlFileName := OutputFile;
         SingleRecord.PUmlOutput.SaveToFile (SingleRecord.InputFile.Output.PUmlFileName);
         if GenerateOutputsFromPuml (SingleRecord.InputFile.Output.PUmlFileName, JarFile, CurrentJavaRuntimeParameter,
-          OutputFormats, CmdLineParameter.OpenOutputs) then
+          GetCurrentPlantUmlRuntimeParameter, OutputFormats, CmdLineParameter.OpenOutputs) then
         begin
           if (jofPng in OutputFormats) and FileExists (jofPng.Filename(OutputFile)) then
             SingleRecord.InputFile.Output.PNGFileName := jofPng.Filename (OutputFile)
@@ -770,18 +772,20 @@ begin
         AfterUpdateRecord (SingleRecord);
     end;
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
-    ConverterInputList.WriteToJsonOutputFiles (jofFileList.FileName(CalculateSummaryFileName(jofPUML))); // Use PUML to get the Filename with the option included
+    ConverterInputList.WriteToJsonOutputFiles (jofFileList.Filename(CalculateSummaryFileName(jofPUML)));
+    // Use PUML to get the Filename with the option included
     ConverterInputList.WriteToJsonServiceResult (ServerResultLines, GetCurrentOutputFormats, False);
     if (jofLog in OutputFormats) then
     begin
-      ExecuteLogHandler.LogList.SaveToFile(jofExecuteLog.FileName(CalculateSummaryFileName(jofPUML)));
-      ConverterInputList.ExecuteLogFileName := jofExecuteLog.FileName(CalculateSummaryFileName(jofPUML)); // needed for zip and delete handler
+      ExecuteLogHandler.LogList.SaveToFile (jofExecuteLog.Filename(CalculateSummaryFileName(jofPUML)));
+      ConverterInputList.ExecuteLogFileName := jofExecuteLog.Filename (CalculateSummaryFileName(jofPUML));
+      // needed for zip and delete handler
     end;
+    GlobalLoghandler.Info ('Done');
     if jofZip in OutputFormats then
       GenerateSummaryZipFile;
     if Assigned (AfterHandleAllRecords) then
       AfterHandleAllRecords (nil);
-    GlobalLoghandler.Info ('Done');
   finally
     Converter.Free;
   end;
@@ -819,7 +823,7 @@ begin
       begin
         if not InputFile.IncludeIntoOutput then
           Continue;
-        CreateSingleRecord (InputFile, ReplaceFilenameCurlVariables (CurrentGroup), CurrentDetail);
+        CreateSingleRecord (InputFile, ReplaceFilenameCurlVariables(CurrentGroup), CurrentDetail);
       end;
     end;
   finally
@@ -1126,6 +1130,14 @@ begin
     Result := CmdLineParameter.PlantUmlJarFileName
   else
     Result := GlobalConfiguration.PlantUmlJarFileName;
+end;
+
+function TJson2PumlInputHandler.GetCurrentPlantUmlRuntimeParameter: string;
+begin
+  if not CmdLineParameter.PlantUmlRuntimeParameter.IsEmpty then
+    Result := CmdLineParameter.PlantUmlRuntimeParameter
+  else
+    Result := GlobalConfiguration.PlantUmlRuntimeParameter;
 end;
 
 function TJson2PumlInputHandler.GetCurrentSummaryFileName: string;
@@ -1485,7 +1497,7 @@ begin
         Lines.Text := ParameterInputFile.Content;
         if not IsRelativePath (ExtractFilePath(Filename)) then
           Filename := ExtractFileName (Filename);
-        Filename := ReplaceInvalidFileNameChars (CalculateOutputFileNamePath (Filename, Filename), true);
+        Filename := ReplaceInvalidFileNameChars (CalculateOutputFileNamePath(Filename, Filename), true);
         GenerateFileDirectory (Filename);
         Lines.SaveToFile (Filename);
         ConverterInputList.AddInputFileCommandLine (Filename, Filename, ParameterInputFile.LeadingObject, '', '');
@@ -1612,10 +1624,10 @@ begin
   GlobalLoghandler.Info ('');
 end;
 
-function TJson2PumlInputHandler.ReplaceFilenameCurlVariables(const iReplaceString: string): string;
+function TJson2PumlInputHandler.ReplaceFilenameCurlVariables (const iReplaceString: string): string;
 begin
-  Result := CurlParameterList.ReplaceParameterValues(iReplaceString);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(Result );
+  Result := CurlParameterList.ReplaceParameterValues (iReplaceString);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
 end;
 
 end.

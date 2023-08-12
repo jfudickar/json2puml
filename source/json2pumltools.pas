@@ -50,17 +50,19 @@ function FileCount (iFileFilter: string): Integer;
 
 function FileDescription: string;
 
+function FileExistsMinSize (iFileName: string): Boolean;
+
 function FileVersion: string;
 
 procedure GenerateDirectory (const iDirectory: string);
 
 procedure GenerateFileDirectory (iFileName: string);
 
-function GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
+function GenerateOutputFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, iPlantUmlRuntimeParameter
+  : string; iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
 
-function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
+function GenerateOutputsFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter,
+  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
 
 function GetPlantUmlVersion (iPlantUmlJarFile, iJavaRuntimeParameter: string): string;
 
@@ -82,11 +84,11 @@ function PathCombineIfRelative (iBasePath, iPath: string): string;
 
 function ProductVersion: string;
 
-function ReplaceInvalidFileNameChars(const iFileName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
-    string;
+function ReplaceInvalidFileNameChars (const iFileName: string; iFinal: Boolean = false;
+  const iReplaceWith: Char = '_'): string;
 
-function ReplaceInvalidPathChars(const iPathName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
-    string;
+function ReplaceInvalidPathChars (const iPathName: string; iFinal: Boolean = false;
+  const iReplaceWith: Char = '_'): string;
 
 function ValidateOutputSuffix (iOutputSuffix: string): string;
 
@@ -113,11 +115,12 @@ type
     class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
       var oErrorMessage: string): Boolean;
     class function CheckEvaluation (iExecuteEvaluation: string): Boolean;
-    class function CheckExecuteEvaluation(const iOutputFile: string; iExecuteEvaluation: string; iCurlDetailParameterList:
-        tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
-    class function Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const iOutputFile: string;
-        iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList, iCurlParameterList:
-        tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
+    class function CheckExecuteEvaluation (const iOutputFile: string; iExecuteEvaluation: string;
+      iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
+    class function Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+      const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
+      var oProtocolCurlCommand: string): Boolean;
     class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
     class function CleanUnusedCurlVariables (iValue: string): string;
     class function CombineParameter (iParameter: array of string): string;
@@ -536,13 +539,13 @@ begin
   GenerateDirectory (ExtractFilePath(iFileName));
 end;
 
-function GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
+function GenerateOutputFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, iPlantUmlRuntimeParameter
+  : string; iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
 var
   Command: string;
   DestinationFile: string;
 begin
-  Result := False;
+  Result := false;
   if not FileExists (iPlantUmlFile) then
     Exit;
   if not iFormat.IsPumlOutput then
@@ -560,32 +563,34 @@ begin
   if FileExists (DestinationFile) then
     tFile.Delete (DestinationFile);
 
-  Command := Format ('java %s -jar "%s" "%s" %s', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile, iPlantUmlFile,
-    iFormat.PumlGenerateFlag]);
+  Command := Format ('java %s -jar "%s" "%s" %s %s', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile, iPlantUmlFile,
+    iFormat.PumlGenerateFlag, iPlantUmlRuntimeParameter]).Trim;
 
   Result := ExecuteCommand (Command, Command);
   if Result then
   begin
-    GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
-
-    Result := FileExists (DestinationFile);
-    if Result and iOpenAfter then
-      OpenFile (DestinationFile);
-  end
-  else
+    Result := FileExistsMinSize (DestinationFile);
+    if Result then
+    begin
+      GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
+      if iOpenAfter then
+        OpenFile (DestinationFile);
+    end;
+  end;
+  if not Result then
     GlobalLoghandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.toString, iPlantUmlFile]);
 end;
 
-function GenerateOutputsFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter: string;
-  iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
+function GenerateOutputsFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter,
+  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
 var
   f: tJson2PumlOutputFormat;
 begin
   Result := true;
   for f in iOutputFormats do
     if f.IsPumlOutput then
-      Result := Result and GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, f,
-        f in iOpenOutputs);
+      Result := Result and GenerateOutputFromPuml (iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter,
+        iPlantUmlRuntimeParameter, f, f in iOpenOutputs);
 end;
 
 function GetPlantUmlVersion (iPlantUmlJarFile, iJavaRuntimeParameter: string): string;
@@ -636,9 +641,9 @@ begin
         if ConfigFile.IsValid then
         begin
           if iInputList then
-            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False)
+            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, false)
           else
-            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, False);
+            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, false);
           Inc (Result);
         end;
       finally
@@ -717,14 +722,14 @@ begin
 {$IFDEF LINUX}
   Result := iPath.StartsWith (cLinuxHome);
 {$ELSE}
-  Result := False;
+  Result := false;
 {$ENDIF}
 end;
 
 function IsRelativePath (iPath: string): Boolean;
 begin
   if IsLinuxHomeBasedPath (iPath) then
-    Result := False
+    Result := false
   else
     Result := tPath.IsRelativePath (iPath);
 end;
@@ -768,26 +773,26 @@ begin
   Result := 'v' + GetVersionInfo ('ProductVersion');
 end;
 
-function ReplaceInvalidFileNameChars(const iFileName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
-    string;
+function ReplaceInvalidFileNameChars (const iFileName: string; iFinal: Boolean = false;
+  const iReplaceWith: Char = '_'): string;
 var
   i: Integer;
-  Path : String;
+  Path: string;
 begin
-  Path := ExtractFilePath(iFileName).trim;
-  Result := ExtractFileName(iFileName).Trim;
-  Path := ReplaceInvalidPathChars(Path, iFinal, iReplaceWith);
+  Path := ExtractFilePath (iFileName).Trim;
+  Result := ExtractFileName (iFileName).Trim;
+  Path := ReplaceInvalidPathChars (Path, iFinal, iReplaceWith);
   for i := low(Result) to high(Result) do
     if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (Result[i] in ['$'])) then
       Result[i] := iReplaceWith;
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
       tPath.ExtensionSeparatorChar);
-  Result := tPath.Combine(Path, Result);
+  Result := tPath.Combine (Path, Result);
 end;
 
-function ReplaceInvalidPathChars(const iPathName: string; iFinal: boolean = false; const iReplaceWith: Char = '_'):
-    string;
+function ReplaceInvalidPathChars (const iPathName: string; iFinal: Boolean = false;
+  const iReplaceWith: Char = '_'): string;
 var
   i: Integer;
 begin
@@ -821,6 +826,25 @@ begin
 {$ENDIF}
 end;
 
+function FileExistsMinSize (iFileName: string): Boolean;
+var
+  Reader: TFileStream;
+begin
+  Result := FileExists (iFileName);
+  if Result then
+    try
+      Reader := tFile.OpenRead (iFileName);
+      try
+        Result := Reader.size >= cMinFileSize;
+      finally
+        Reader.Free;
+      end;
+    except
+      on e: exception do
+        Result := false;
+    end;
+end;
+
 {$IFDEF MSWINDOWS}
 {$ELSE}
 
@@ -832,7 +856,7 @@ var
   M: TMarshaller;
 
 begin
-  Result := False;
+  Result := false;
   if not Assigned (ResultList) then
     ResultList := TStringList.Create;
   try
@@ -859,7 +883,7 @@ var
   M: TMarshaller;
 
 begin
-  Result := False;
+  Result := false;
   try
     Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
     try
@@ -880,7 +904,7 @@ class function TLinuxUtils.findParameter (AParameter: string): Boolean;
 var
   i: Integer;
 begin
-  Result := False;
+  Result := false;
   for i := 0 to Pred(ParamCount) do
   begin
     Result := AParameter.ToUpper = ParamStr (i).ToUpper;
@@ -990,29 +1014,30 @@ begin
   Result := string.Join (' ', iParameter).Trim;
 end;
 
-class function TCurlUtils.CheckExecuteEvaluation(const iOutputFile: string; iExecuteEvaluation: string;
-    iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
+class function TCurlUtils.CheckExecuteEvaluation (const iOutputFile: string; iExecuteEvaluation: string;
+  iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
 var
   ExecuteEvaluation: string;
 begin
   Result := true;
   ExecuteEvaluation := iExecuteEvaluation;
-  if Assigned(iCurlDetailParameterList) then
-    ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues(ExecuteEvaluation);
-  if Assigned(iCurlParameterList) then
-    ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues(ExecuteEvaluation);
-  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment(ExecuteEvaluation);
-  ExecuteEvaluation := CleanUnusedCurlVariables(ExecuteEvaluation);
+  if Assigned (iCurlDetailParameterList) then
+    ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues (ExecuteEvaluation);
+  if Assigned (iCurlParameterList) then
+    ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues (ExecuteEvaluation);
+  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment (ExecuteEvaluation);
+  ExecuteEvaluation := CleanUnusedCurlVariables (ExecuteEvaluation);
   try
-    Result := CheckEvaluation(ExecuteEvaluation) ;
+    Result := CheckEvaluation (ExecuteEvaluation);
     if not Result then
-      GlobalLoghandler.Info('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful', [iOutputFile, iExecuteEvaluation, ExecuteEvaluation])
-    else
-    if not iExecuteEvaluation.Trim.isEmpty then
-      GlobalLoghandler.Debug('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful', [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
+      GlobalLoghandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
+        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation])
+    else if not iExecuteEvaluation.Trim.isEmpty then
+      GlobalLoghandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
+        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
   except
     on e: exception do
-      GlobalLoghandler.Error(jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
+      GlobalLoghandler.Error (jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
   end;
 end;
 
@@ -1047,7 +1072,7 @@ var
   end;
 
 begin
-  Result := False;
+  Result := false;
   vResponseCode := '';
   vExitCode := '';
   vErrorMessage := '';
@@ -1080,9 +1105,10 @@ begin
   Result := oErrorMessage.isEmpty;
 end;
 
-class function TCurlUtils.Execute(const iBaseUrl: string; const iUrlParts, iOptions: array of string; const
-    iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iCurlDetailParameterList,
-    iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer; var oProtocolCurlCommand: string): Boolean;
+class function TCurlUtils.Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+  const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
+  var oProtocolCurlCommand: string): Boolean;
 var
   Url: string;
   Command: string;
@@ -1096,7 +1122,7 @@ var
 
 begin
 
-  Result := False;
+  Result := false;
   if iOutputFile.Trim.isEmpty then
     Exit;
   Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);

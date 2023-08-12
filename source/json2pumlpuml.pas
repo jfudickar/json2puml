@@ -1062,7 +1062,7 @@ var
           'to ' + r.PropertyName))
       else
         ipuml.add (tPumlHelper.RelationLine(GroupIdent, r.ArrowFormat, r.RelatedObject.PlantUmlIdent,
-          Format ('from\n%s.%s', [r.ParentUmlObject.ObjectType, r.PropertyName])));
+          Format('from\n%s.%s', [r.ParentUmlObject.ObjectType, r.PropertyName])));
       iGroupCountList.ValueFromIndex[i] := (iGroupCountList.ValueFromIndex[i].ToInteger + 1).ToString;
       ipuml.add (Format('%s %s', [ClassIdent, Color]));
     end;
@@ -1905,7 +1905,7 @@ begin
   Result := TableColumnSeparator;
   for i := 0 to high(iColumns) do
     Result := Result + TableColumn ('%s', iHeader);
-  Result := Format (Result, iColumns).Replace('\n', '\n ');
+  Result := Format (Result, iColumns).Replace ('\n', '\n ');
 end;
 
 class function tPumlHelper.TableLine (iColumns: TStringList; iHeader: boolean = False;

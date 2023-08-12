@@ -112,8 +112,10 @@ const
     ErrorMessage: 'Error parsing %s file "%s".';
     ErrorDescription: 'The json structure of the defined file is invalid or does not match the required structure.'),
     { jetPlantUmlResultGenerationFailed } (EventType: etWarning; Errorcode: 'J2P-400-014';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Generation of target format %s from plant uml file "%s".';
-    ErrorDescription: ''),
+    HttpStatusCode: HTTP_STATUS.BadRequest;
+    ErrorMessage: 'Failed generation of target format %s for PlantUml file "%s".';
+    ErrorDescription
+    : 'The generation of the target file failed. Activate the PlantUml debug informations to get further details.'),
     { jetCurlFileSkippedValidationException } (EventType: etWarning; Errorcode: 'J2P-400-015';
     HttpStatusCode: HTTP_STATUS.BadRequest;
     ErrorMessage: 'curl file %s skipped - Exception "%s" raised when validating [%s]';
@@ -145,8 +147,8 @@ const
     { jetCmdLineParameterFileDoesNotExits } (EventType: etError; Errorcode: 'J2P-400-026';
     HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Payload is empty';
     ErrorDescription: 'The service request payload is empty. The request can not be handled.'),
-    { jetInputListCurlFileMissing } (EventType: etError; Errorcode: 'J2P-400-027'; HttpStatusCode: HTTP_STATUS.BadRequest;
-    ErrorMessage: 'Mandatory input list file "%s" could not be fetched';
+    { jetInputListCurlFileMissing } (EventType: etError; Errorcode: 'J2P-400-027';
+    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input list file "%s" could not be fetched';
     ErrorDescription: 'The file defined in the inputlist could not be fetched via curl.'));
 
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',
@@ -196,6 +198,9 @@ const
   cApplicationName = 'json2puml';
 
   cDefaultServicePort = 8080;
+
+  // Minimum Size a file must have to be excepted / determined as existing
+  cMinFileSize = 5;
 
   cJson2PumlApplicationTypeName: array [tJson2PumlApplicationType] of string = (cApplicationName + ' command line',
     cApplicationName + ' service', cApplicationName + ' ui', cApplicationName + ' windows service');

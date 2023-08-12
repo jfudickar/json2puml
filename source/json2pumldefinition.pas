@@ -166,6 +166,7 @@ type
     FLogFileOutputPath: string;
     FOutputPath: string;
     FPlantUmlJarFileName: string;
+    FPlantUmlRuntimeParameter: string;
     FServicePort: Integer;
     FServicePortStr: string;
     procedure SetCurlSpanIdHeader (const Value: string);
@@ -202,6 +203,7 @@ type
     property LogFileOutputPath: string read FLogFileOutputPath write FLogFileOutputPath;
     property OutputPath: string read FOutputPath write FOutputPath;
     property PlantUmlJarFileName: string read FPlantUmlJarFileName write FPlantUmlJarFileName;
+    property PlantUmlRuntimeParameter: string read FPlantUmlRuntimeParameter write FPlantUmlRuntimeParameter;
     property ServicePort: Integer read FServicePort;
     property ServicePortStr: string read FServicePortStr write SetServicePortStr;
   end;
@@ -608,6 +610,7 @@ type
     FParameterFileName: string;
     FPlantUmlJarFileName: string;
     FPlantUmlJarFileNameEnvironment: string;
+    FPlantUmlRuntimeParameter: string;
     FServicePort: Integer;
     FServicePortStr: string;
     FSplitIdentifier: string;
@@ -697,6 +700,7 @@ type
     property PlantUmlJarFileName: string read FPlantUmlJarFileName write FPlantUmlJarFileName;
     property PlantUmlJarFileNameEnvironment: string read FPlantUmlJarFileNameEnvironment
       write FPlantUmlJarFileNameEnvironment;
+    property PlantUmlRuntimeParameter: string read FPlantUmlRuntimeParameter write FPlantUmlRuntimeParameter;
     property ServicePortStr: string read FServicePortStr write SetServicePortStr;
     property SplitIdentifier: string read FSplitIdentifier write FSplitIdentifier;
     property SplitInputFileStr: string read FSplitInputFileStr write FSplitInputFileStr;
@@ -1017,7 +1021,7 @@ end;
 
 function tJson2PumlInputFileDefinition.GetExists: boolean;
 begin
-  Result := FileExists (OutputFileName);
+  Result := FileExistsMinSize(OutputFileName);
 end;
 
 function tJson2PumlInputFileDefinition.GetExtractedOutputFileName: string;
@@ -2252,6 +2256,7 @@ begin
   InputFileName := ReadSingleInputParameterFile ('Inputfile');
   PlantUmlJarFileName := ReadSingleInputParameterFile ('PlantUmlJarfile');
   PlantUmlJarFileNameEnvironment := ReadSingleInputParameterEnvironment (cPlantUmlJarFileRegistry);
+  PlantUmlRuntimeParameter := ReadSingleInputParameterFile ('PlantUmlRuntimeParameter');
   JavaRuntimeParameter := ReadSingleInputParameter ('JavaRuntimeParameter');
   ServicePortStr := ReadSingleInputParameter ('serviceport');
   LeadingObject := ReadSingleInputParameter ('LeadingObject');
@@ -2555,6 +2560,7 @@ begin
   AddLine ('OutputSuffix', OutputSuffix);
   AddLine ('ParameterFileName', ParameterFileName);
   AddLine ('PlantUmlJarFileName', PlantUmlJarFileName);
+  AddLine ('PlantUmlRuntimeParameter', PlantUmlRuntimeParameter);
   AddLine ('ServicePort', ServicePortStr);
   AddLine ('SplitIdentifier', SplitIdentifier);
   AddLine ('SplitInputFile', SplitInputFileStr);
@@ -2591,6 +2597,7 @@ end;
 procedure tJson2PumlGlobalDefinition.Clear;
 begin
   PlantUmlJarFileName := '';
+  PlantUmlRuntimeParameter := '';
   DefinitionFileSearchFolder.Clear;
   InputListFileSearchFolder.Clear;
   DefaultDefinitionFileName := '';
@@ -2732,6 +2739,7 @@ begin
   AddLine ('logFileOutputPath', LogFileOutputPath);
   AddLine ('outputPath', OutputPath);
   AddLine ('plantUmlJarFileName', PlantUmlJarFileName);
+  AddLine ('PlantUmlRuntimeParameter', PlantUmlRuntimeParameter);
   iLogList.Add (Format('  %-30s: %s / %d', ['servicePortStr', ServicePortStr, ServicePort]));
 end;
 
@@ -2755,9 +2763,10 @@ begin
   CurlTraceIdHeader := GetJsonStringValue (DefinitionRecord, 'curlTraceIdHeader', CurlTraceIdHeader);
   GetJsonStringValueList (DefinitionFileSearchFolder, DefinitionRecord, 'definitionFileSearchFolder');
   GetJsonStringValueList (InputListFileSearchFolder, DefinitionRecord, 'inputListFileSearchFolder');
-  JavaRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'javaRuntimeParameter', PlantUmlJarFileName);
-  LogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', PlantUmlJarFileName);
+  JavaRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'javaRuntimeParameter', JavaRuntimeParameter);
+  LogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', LogFileOutputPath);
   PlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', PlantUmlJarFileName);
+  PlantUmlRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'plantUmlRuntimeParameter', PlantUmlRuntimeParameter);
   BaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', BaseOutputPath);
   AdditionalServiceInformation := GetJsonStringValue (DefinitionRecord, 'additionalServiceInformation',
     AdditionalServiceInformation);
@@ -2803,6 +2812,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'javaRuntimeParameter', JavaRuntimeParameter, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'logFileOutputPath', LogFileOutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'plantUmlJarFileName', PlantUmlJarFileName, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'plantUmlRuntimeParameter', PlantUmlRuntimeParameter, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'servicePort', ServicePortStr, iLevel + 1);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;

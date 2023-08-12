@@ -184,6 +184,9 @@ type
     OpenCurrentJSONAction: TAction;
     OpenConfigurationFileExternal: TAction;
     Taskbar: TTaskbar;
+    Label21: TLabel;
+    PlantUmlRuntimeParameterEdit: TEdit;
+    Label25: TLabel;
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
     procedure CopyCurrentPUMLActionExecute (Sender: TObject);
@@ -428,6 +431,7 @@ procedure Tjson2pumlMainForm.CommandLineToForm;
 
 begin
   PlantUmlJarFileEdit.Text := InputHandler.CmdLineParameter.PlantUmlJarFileName;
+  PlantUmlRuntimeParameterEdit.Text := InputHandler.CmdLineParameter.PlantUmlRuntimeParameter;
   javaruntimeparameterEdit.Text := InputHandler.CmdLineParameter.JavaRuntimeParameter;
   CurlAuthenticationFileEdit.Text := InputHandler.CmdLineParameter.CurlAuthenticationFileName;
   CurlParameterFileEdit.Text := InputHandler.CmdLineParameter.CurlParameterFileName;
@@ -724,6 +728,7 @@ procedure Tjson2pumlMainForm.FormToCommandline;
 
 begin
   InputHandler.CmdLineParameter.PlantUmlJarFileName := PlantUmlJarFileEdit.Text;
+  InputHandler.CmdLineParameter.PlantUmlRuntimeParameter := PlantUmlRuntimeParameterEdit.Text;
   InputHandler.CmdLineParameter.JavaRuntimeParameter := javaruntimeparameterEdit.Text;
   InputHandler.CmdLineParameter.CurlAuthenticationFileName := CurlAuthenticationFileEdit.Text;
   InputHandler.CmdLineParameter.CurlParameterFileName := CurlParameterFileEdit.Text;
