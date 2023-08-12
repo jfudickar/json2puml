@@ -25,6 +25,7 @@ class GlobalConfiguration <<Pivot>>{
    javaRuntimeParameter : String
    logFileOutputPath : String
    plantUmlJarFileName : String
+   plantUmlRuntimeParameter : String
    servicePort : Integer
 }
 
