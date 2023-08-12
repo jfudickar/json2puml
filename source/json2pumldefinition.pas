@@ -646,8 +646,8 @@ type
     procedure LogLineWrapped (iParameter, iDescription: string; iParameterLength: Integer = 50;
       iLineLength: Integer = 110);
     procedure ReadInputParameter;
-    procedure WriteHelpLine (iParameter: string = ''; iDescription: string = ''; iParameterLength: Integer = 30;
-      iLineLength: Integer = 110);
+    procedure WriteHelpLine(iParameter: string = ''; iDescription: string = ''; iParameterLength: Integer = 31;
+        iLineLength: Integer = 111);
     procedure WriteHelpScreen;
     property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
@@ -1021,7 +1021,7 @@ end;
 
 function tJson2PumlInputFileDefinition.GetExists: boolean;
 begin
-  Result := FileExistsMinSize(OutputFileName);
+  Result := FileExistsMinSize (OutputFileName);
 end;
 
 function tJson2PumlInputFileDefinition.GetExtractedOutputFileName: string;
@@ -2388,13 +2388,13 @@ begin
   end;
 end;
 
-procedure tJson2PumlCommandLineParameter.WriteHelpLine (iParameter: string = ''; iDescription: string = '';
-  iParameterLength: Integer = 30; iLineLength: Integer = 110);
+procedure tJson2PumlCommandLineParameter.WriteHelpLine(iParameter: string = ''; iDescription: string = '';
+    iParameterLength: Integer = 31; iLineLength: Integer = 111);
 begin
-  if iParameter.IsEmpty then
+  if iParameter.Trim.IsEmpty then
     GlobalLoghandler.Info ('')
   else
-    LogLineWrapped (cCmdLinePrefix + iParameter.ToLower, iDescription, iParameterLength, iLineLength);
+    LogLineWrapped (cCmdLinePrefix + iParameter.ToLower.Trim, iDescription.Trim, iParameterLength, iLineLength);
 end;
 
 procedure tJson2PumlCommandLineParameter.WriteHelpScreen;
@@ -2407,6 +2407,8 @@ begin
   WriteHelpLine ('plantumljarfile:<file>      ',
     'Plantuml Jar file which should be used to generate the sample images. ' +
     'If defined this parameter overwrites the corresponding parameter in the definition file');
+  WriteHelpLine ('plantumlruntimeparater:<param>',
+    'Additional PlantUml runtime parameters which will be added to the PlantUml call when generating the image files.');
   WriteHelpLine ('javaruntimeparameter:<param>',
     'Additional parameter which will be added to the java call when calling the PlantUML jar file ' +
     'to generate the output formats.');
@@ -2766,7 +2768,8 @@ begin
   JavaRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'javaRuntimeParameter', JavaRuntimeParameter);
   LogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', LogFileOutputPath);
   PlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', PlantUmlJarFileName);
-  PlantUmlRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'plantUmlRuntimeParameter', PlantUmlRuntimeParameter);
+  PlantUmlRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'plantUmlRuntimeParameter',
+    PlantUmlRuntimeParameter);
   BaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', BaseOutputPath);
   AdditionalServiceInformation := GetJsonStringValue (DefinitionRecord, 'additionalServiceInformation',
     AdditionalServiceInformation);
