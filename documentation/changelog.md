@@ -1,3 +1,8 @@
+# **json2puml v2.2.5.99** - 14.08.2023
+## All Editions 
+### Changed Feature
+- Various memory leaks fixed
+
 # **json2puml v2.2.5.98** - 12.08.2023
 ## All Editions 
 ### New Feature

@@ -170,13 +170,15 @@ begin
   GlobalLogConsoleProvider.Enabled := not (iApplicationType in [jatUI, jatWinService]);
   if GlobalLogConsoleProvider.Enabled then
   begin
-    Logger.Providers.Add (GlobalLogConsoleProvider);
+    if Logger.Providers.IndexOf(GlobalLogConsoleProvider) < 0 then
+      Logger.Providers.Add (GlobalLogConsoleProvider);
     SetLogProviderDefaults (GlobalLogConsoleProvider, iApplicationType);
     // GlobalLogConsoleProvider.ShowEventColors := False;
   end;
 
   if iAllowsLogFile then
   begin
+    if Logger.Providers.IndexOf(GlobalLogFileProvider) < 0 then
     Logger.Providers.Add (GlobalLogFileProvider);
     LogFileName := iLogFilePath;
     if not TDirectory.Exists (iLogFilePath) and not (iLogFilePath.IsEmpty) then
@@ -215,7 +217,6 @@ end;
 constructor TJson2PumlLogHandler.Create;
 begin
   FErrorList := TJson2PumlErrorList.Create ();
-  FErrorList.OwnsObjects := True;
   Clear;
 end;
 
@@ -346,6 +347,7 @@ constructor TJson2PumlErrorList.Create;
 begin
   inherited Create;
   FLock := TCriticalSection.Create ();
+  OwnsObjects := True;
 end;
 
 destructor TJson2PumlErrorList.Destroy;

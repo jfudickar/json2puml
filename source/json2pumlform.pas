@@ -323,6 +323,7 @@ end;
 destructor Tjson2pumlMainForm.Destroy;
 begin
   FInputHandler.Free;
+  GlobalLogStringListProvider.LogList := nil;
   inherited Destroy;
 end;
 

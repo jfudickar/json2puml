@@ -92,7 +92,6 @@ procedure tJson2PumlCommandlineHandler.Execute;
 begin
   WriteAppTitle;
   try
-
     if FindCmdLineSwitch ('?') or (ParamCount <= 0) then
       InputHandler.CmdLineParameter.WriteHelpScreen;
     InputHandler.CmdLineParameter.ReadInputParameter;

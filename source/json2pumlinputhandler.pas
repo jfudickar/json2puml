@@ -58,6 +58,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    procedure Clear; override;
     property index: Integer read FIndex write FIndex;
     property InputDetail: string read FInputDetail write FInputDetail;
     property InputFile: tJson2PumlInputFileDefinition read FInputFile write FInputFile;
@@ -294,6 +295,13 @@ begin
   inherited Destroy;
 end;
 
+procedure TJson2PumlInputHandlerRecord.Clear;
+begin
+  FIntConverterLog.Clear;
+  FIntJsonInput.Clear;
+  FIntPUmlOutput.Clear;
+end;
+
 function TJson2PumlInputHandlerRecord.GetConverterLog: TStrings;
 begin
   if Assigned (FConverterLog) then
@@ -383,8 +391,9 @@ end;
 
 destructor TJson2PumlInputHandler.Destroy;
 begin
+  ExecuteLogHandler.Enabled := False;
+  ExecuteLogHandler.Clear;
   Logger.Providers.Delete (Logger.Providers.IndexOf(ExecuteLogHandler));
-  // FExecuteLogHandler.Free;
   FIntConfigurationFileLines.Free;
   FGlobalConfiguration.Free;
   FIntServerResultLines.Free;
@@ -442,8 +451,8 @@ begin
   ConverterInputList.Sort;
   First := true;
   SingleJson := TStringList.Create;
-  iSingleRecord.ConverterLog.Add (Format('Start building summary file"%s"', [iSingleRecord.InputFile.OutputFileName]));
   try
+    iSingleRecord.ConverterLog.Add (Format('Start building summary file"%s"', [iSingleRecord.InputFile.OutputFileName]));
     LastProperty := '';
     iSingleRecord.JsonInput.Add ('[');
     for InputFile in ConverterInputList do
@@ -775,17 +784,18 @@ begin
     ConverterInputList.WriteToJsonOutputFiles (jofFileList.Filename(CalculateSummaryFileName(jofPUML)));
     // Use PUML to get the Filename with the option included
     ConverterInputList.WriteToJsonServiceResult (ServerResultLines, GetCurrentOutputFormats, False);
+    GlobalLoghandler.Info ('Generation done');
     if (jofLog in OutputFormats) then
     begin
       ExecuteLogHandler.LogList.SaveToFile (jofExecuteLog.Filename(CalculateSummaryFileName(jofPUML)));
-      ConverterInputList.ExecuteLogFileName := jofExecuteLog.Filename (CalculateSummaryFileName(jofPUML));
       // needed for zip and delete handler
+      ConverterInputList.ExecuteLogFileName := jofExecuteLog.Filename (CalculateSummaryFileName(jofPUML));
     end;
-    GlobalLoghandler.Info ('Done');
     if jofZip in OutputFormats then
       GenerateSummaryZipFile;
     if Assigned (AfterHandleAllRecords) then
       AfterHandleAllRecords (nil);
+    GlobalLoghandler.Info ('Overall Done');
   finally
     Converter.Free;
   end;

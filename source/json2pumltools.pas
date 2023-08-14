@@ -627,9 +627,9 @@ begin
   Result := 0;
   oJsonOutPut.clear;
   FileList := TStringList.Create;
-  GlobalConfigurationDefinition.FindFilesInFolderList (FileList, iFolderList);
-  WriteArrayStartToJson (oJsonOutPut, 0, '');
   try
+    GlobalConfigurationDefinition.FindFilesInFolderList (FileList, iFolderList);
+    WriteArrayStartToJson (oJsonOutPut, 0, '');
     for s in FileList do
     begin
       if iInputList then
@@ -783,7 +783,7 @@ begin
   Result := ExtractFileName (iFileName).Trim;
   Path := ReplaceInvalidPathChars (Path, iFinal, iReplaceWith);
   for i := low(Result) to high(Result) do
-    if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (Result[i] in ['$'])) then
+    if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (CharInSet(Result[i],['$']))) then
       Result[i] := iReplaceWith;
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
@@ -798,7 +798,7 @@ var
 begin
   Result := iPathName.Trim;
   for i := low(Result) to high(Result) do
-    if not tPath.IsValidPathChar (Result[i]) or (iFinal and (Result[i] in ['$'])) then
+    if not tPath.IsValidPathChar (Result[i]) or (iFinal and (CharInSet(Result[i],['$']))) then
       Result[i] := iReplaceWith;
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,

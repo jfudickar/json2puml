@@ -76,7 +76,7 @@ type
     function EventType: TEventType;
     function Failed: boolean;
     function HttpStatusCode: Integer;
-    procedure RenderErrorResponse(oJson: TStringList; iLevel: Integer; iErrorMessage: string = '');
+    procedure RenderErrorResponse (oJson: TStringList; iLevel: Integer; iErrorMessage: string = '');
   end;
 
   tJson2PumlBaseObject = class(tPersistent)
@@ -391,17 +391,20 @@ end;
 
 function tJson2PumlBaseObject.ReadFromJson (iJson, iFileName: string): boolean;
 var
-  Definition: TJSONValue;
+  JsonValue: TJSONValue;
 begin
   Result := false;
   Clear;
   if iJson.IsEmpty then
     exit;
-  Definition := TJSONObject.ParseJSONValue (iJson) as TJSONValue;
-  if not Assigned (Definition) then
-    exit;
-  SourceFileName := iFileName;
-  Result := ReadFromJson (Definition, '');
+  JsonValue := TJSONObject.ParseJSONValue (iJson) as TJSONValue;
+  if Assigned (JsonValue) then
+    try
+      SourceFileName := iFileName;
+      Result := ReadFromJson (JsonValue, '');
+    finally
+      JsonValue.Free;
+    end;
 end;
 
 function tJson2PumlBaseObject.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
@@ -468,6 +471,7 @@ constructor tJson2PumlBaseList.Create;
 begin
   inherited Create;
   FItemList := TStringList.Create ();
+  FItemList.OwnsObjects := true;
 end;
 
 destructor tJson2PumlBaseList.Destroy;
@@ -889,11 +893,11 @@ begin
   Result := cJson2PumlErrorInformation[self].HttpStatusCode;
 end;
 
-procedure tJson2PumlErrorTypeHelper.RenderErrorResponse(oJson: TStringList; iLevel: Integer; iErrorMessage: string =
-    '');
+procedure tJson2PumlErrorTypeHelper.RenderErrorResponse (oJson: TStringList; iLevel: Integer;
+  iErrorMessage: string = '');
 begin
-  if ErrorCode.IsEmpty then
-    Exit;
+  if Errorcode.IsEmpty then
+    exit;
   WriteObjectStartToJson (oJson, iLevel, '');
   WriteToJsonValue (oJson, 'errorCode', Errorcode, iLevel + 1, false);
   WriteToJsonValue (oJson, 'errorClass', JSON2PUML_EVENTTYPENAMES[Integer(EventType)], iLevel + 1, false);

@@ -1294,6 +1294,7 @@ constructor tBasePumlStringList.Create (iParentObject: tBasePumlObject);
 begin
   inherited Create (iParentObject);
   FItemList := TStringList.Create;
+  FItemList.OwnsObjects := True;
 end;
 
 destructor tBasePumlStringList.Destroy;
@@ -1311,9 +1312,7 @@ procedure tBasePumlStringList.Assign (Source: tPersistent);
 begin
   inherited Assign (Source);
   if Source is tBasePumlStringList then
-  begin
     ItemList.Assign (tBasePumlStringList(Source).ItemList);
-  end;
 end;
 
 procedure tBasePumlStringList.clear;

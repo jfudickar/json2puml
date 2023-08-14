@@ -866,7 +866,7 @@ end;
 
 function TJson2PumlConverter.Convert: Boolean;
 var
-  jValue: TJSONValue;
+  JsonValue: TJSONValue;
   InfoRec: tJson2PumlRecursionRecord;
 begin
   Result := false;
@@ -877,16 +877,19 @@ begin
   if FileExists (PumlFile) then
     tFile.Delete (PumlFile);
 
-  jValue := TJsonObject.ParseJSONValue (JsonInput.Text);
-  if not Assigned (jValue) then
+  JsonValue := TJsonObject.ParseJSONValue (JsonInput.Text);
+  if not Assigned (JsonValue) then
     GlobalLoghandler.Error (jetUnableToParseInputFileStructure, [InputHandlerRecord.InputFile.OutputFileName])
   else
-  begin
+  try
     InfoRec.Init (LeadingObject);
-    ConvertValue (jValue, InfoRec, trpStart);
+    ConvertValue (JsonValue, InfoRec, trpStart);
     GeneratePuml;
     Result := true;
+  finally
+    JsonValue.Free;
   end;
+
 end;
 
 procedure TJson2PumlConverter.GeneratePumlLegend (iUsedFormats: TStrings);
@@ -1010,7 +1013,7 @@ begin
         end;
       end;
     finally
-      Colors.Clear;
+      Colors.Free;
     end;
     vAdd := true;
   end;

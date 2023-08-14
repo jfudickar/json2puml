@@ -60,6 +60,8 @@ type
   protected
     function GetIdent: string; override;
   public
+    constructor Create; override;
+    destructor Destroy; override;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
@@ -646,8 +648,8 @@ type
     procedure LogLineWrapped (iParameter, iDescription: string; iParameterLength: Integer = 50;
       iLineLength: Integer = 110);
     procedure ReadInputParameter;
-    procedure WriteHelpLine(iParameter: string = ''; iDescription: string = ''; iParameterLength: Integer = 31;
-        iLineLength: Integer = 111);
+    procedure WriteHelpLine (iParameter: string = ''; iDescription: string = ''; iParameterLength: Integer = 31;
+      iLineLength: Integer = 111);
     procedure WriteHelpScreen;
     property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
@@ -978,7 +980,7 @@ procedure tJson2PumlInputFileDefinition.GetCurlParameterFromFile (iCurlOutputPar
   iCurlParameterList: tJson2PumlCurlParameterList);
 var
   FileContent: tStringList;
-  jValue: TJSONValue;
+  JsonValue: TJSONValue;
   CurlParameter: tJson2PumlCurlParameterDefinition;
   ValueList: tStringList;
   i: Integer;
@@ -994,25 +996,30 @@ begin
   ValueList := tStringList.Create;
   try
     FileContent.LoadFromFile (OutputFileName);
-    jValue := TJSONObject.ParseJSONValue (FileContent.Text);
-    if not Assigned (jValue) then
-      exit;
-    for CurlParameter in iCurlOutputParameter do
-    begin
-      if CurlParameter.Value.Trim.IsEmpty then
-        Continue;
-      GetJsonStringValueList (ValueList, jValue, CurlParameter.Value);
-      GlobalLoghandler.Info ('    Fetch parameter "%s" from value "%s" (Records found : %d)',
-        [CurlParameter.name, CurlParameter.Value, ValueList.Count]);
-      for i := 0 to ValueList.Count - 1 do
-      begin
-        if (CurlParameter.MaxValues > 0) and (iCurlParameterList.ParameterNameCount(CurlParameter.name) >=
-          CurlParameter.MaxValues) then
-          GlobalLoghandler.Info ('      Parameter "%s"(%d) : Value "%s" skipped', [CurlParameter.name, i, ValueList[i]])
-        else if iCurlParameterList.AddParameter (CurlParameter.name, ValueList[i]) then
-          GlobalLoghandler.Info ('      Parameter "%s"(%d) : Value "%s" found', [CurlParameter.name, i, ValueList[i]]);
+    JsonValue := TJSONObject.ParseJSONValue (FileContent.Text);
+    if Assigned (JsonValue) then
+      try
+        for CurlParameter in iCurlOutputParameter do
+        begin
+          if CurlParameter.Value.Trim.IsEmpty then
+            Continue;
+          GetJsonStringValueList (ValueList, JsonValue, CurlParameter.Value);
+          GlobalLoghandler.Info ('    Fetch parameter "%s" from value "%s" (Records found : %d)',
+            [CurlParameter.name, CurlParameter.Value, ValueList.Count]);
+          for i := 0 to ValueList.Count - 1 do
+          begin
+            if (CurlParameter.MaxValues > 0) and (iCurlParameterList.ParameterNameCount(CurlParameter.name) >=
+              CurlParameter.MaxValues) then
+              GlobalLoghandler.Info ('      Parameter "%s"(%d) : Value "%s" skipped',
+                [CurlParameter.name, i, ValueList[i]])
+            else if iCurlParameterList.AddParameter (CurlParameter.name, ValueList[i]) then
+              GlobalLoghandler.Info ('      Parameter "%s"(%d) : Value "%s" found',
+                [CurlParameter.name, i, ValueList[i]]);
+          end;
+        end;
+      finally
+        JsonValue.Free;
       end;
-    end;
   finally
     ValueList.Free;
     FileContent.Free;
@@ -1610,37 +1617,41 @@ begin
     JsonValue := TJSONObject.ParseJSONValue (InputFile.Text);
     if not Assigned (JsonValue) then
       exit;
-    if not (JsonValue is TJSONArray) then
-      exit;
-    JsonArray := TJSONArray (JsonValue);
-    if JsonArray.Count <= 1 then
-      exit;
-    GlobalLoghandler.Info ('Split file %s', [iInputFile.InputFileName]);
-    iInputFile.GenerateOutput := false;
-    idx := 0;
-    if JsonArray.Count > 0 then
-    begin
-      NewFileName := CalculateOutputFileName (iInputFile.InputFileName, iInputFile.InputFileName);
-      GenerateFileDirectory (NewFileName);
-    end;
-    for i := 0 to JsonArray.Count - 1 do
-    begin
-      FileExtension := TPath.GetExtension (iInputFile.InputFileName);
-      Ident := '';
-      if JsonArray.Items[i] is TJSONObject then
-        Ident := GetJsonStringValue (TJSONObject(JsonArray.Items[i]), iInputFile.SplitIdentifier, '', '.');
-      if Ident.IsEmpty then
+    try
+      if not (JsonValue is TJSONArray) then
+        exit;
+      JsonArray := TJSONArray (JsonValue);
+      if JsonArray.Count <= 1 then
+        exit;
+      GlobalLoghandler.Info ('Split file %s', [iInputFile.InputFileName]);
+      iInputFile.GenerateOutput := false;
+      idx := 0;
+      if JsonArray.Count > 0 then
       begin
-        Inc (idx);
-        Ident := Format ('split_%d', [idx]);
+        NewFileName := CalculateOutputFileName (iInputFile.InputFileName, iInputFile.InputFileName);
+        GenerateFileDirectory (NewFileName);
       end;
+      for i := 0 to JsonArray.Count - 1 do
+      begin
+        FileExtension := TPath.GetExtension (iInputFile.InputFileName);
+        Ident := '';
+        if JsonArray.Items[i] is TJSONObject then
+          Ident := GetJsonStringValue (TJSONObject(JsonArray.Items[i]), iInputFile.SplitIdentifier, '', '.');
+        if Ident.IsEmpty then
+        begin
+          Inc (idx);
+          Ident := Format ('split_%d', [idx]);
+        end;
 
-      NewFileName := TPath.ChangeExtension (NewFileName, FindSuffix(Ident).Substring(0, 80) + '.' + jofJSON.ToString);
-      OutputFile.Text := JsonArray.Items[i].ToJSON;
-      OutputFile.SaveToFile (NewFileName);
-      AddInputFileSplit (iInputFile.InputFileName, NewFileName, iInputFile.LeadingObject, iInputFile.CurlCommand,
-        iInputFile.GenerateOutput);
-      GlobalLoghandler.Info ('  Detail file %s created', [NewFileName]);
+        NewFileName := TPath.ChangeExtension (NewFileName, FindSuffix(Ident).Substring(0, 80) + '.' + jofJSON.ToString);
+        OutputFile.Text := JsonArray.Items[i].ToJSON;
+        OutputFile.SaveToFile (NewFileName);
+        AddInputFileSplit (iInputFile.InputFileName, NewFileName, iInputFile.LeadingObject, iInputFile.CurlCommand,
+          iInputFile.GenerateOutput);
+        GlobalLoghandler.Info ('  Detail file %s created', [NewFileName]);
+      end;
+    finally
+      JsonValue.Free;
     end;
   finally
     ConverterDefinition.Free;
@@ -2241,18 +2252,18 @@ end;
 procedure tJson2PumlCommandLineParameter.ReadInputParameter;
 begin
   GlobalLoghandler.Info ('Current command line parameters: (%s)', [CommandLineParameterStr(false)]);
-  // for i := 1 to ParamCount do
-  // GlobalLoghandler.Debug ('  [%d]: %s', [i, ParamStr(i)]);
   ConfigurationFileName := ReadSingleInputParameterFile ('configurationfile');
   ConfigurationFileNameEnvironment := ReadSingleInputParameterEnvironment (cConfigurationFileRegistry);
   ParameterFileName := ReadSingleInputParameterFile ('parameterfile');
-  DefinitionFileName := ReadSingleInputParameterFile ('definitionfile');
+  // Do not use ReadSingleInputParameter so that later the globalconfiguration.DefinitionFileSearchFolder can be used
+  DefinitionFileName := ReadSingleInputParameter ('definitionfile');
   JobDescription := ReadSingleInputParameter ('jobdescription');
   DefinitionFileNameEnvironment := ReadSingleInputParameterEnvironment (cDefinitionFileRegistry);
   CurlAuthenticationFileName := ReadSingleInputParameterFile ('CurlAuthenticationfile');
   CurlAuthenticationFileNameEnvironment := ReadSingleInputParameterEnvironment (cCurlAuthenticationFileRegistry);
   CurlParameterFileName := ReadSingleInputParameterFile ('CurlParameterfile');
-  InputListFileName := ReadSingleInputParameterFile ('InputListfile');
+  // Do not use ReadSingleInputParameter so that later the globalconfiguration.InputlistFileSearchFolder can be used
+  InputListFileName := ReadSingleInputParameter ('InputListfile');
   InputFileName := ReadSingleInputParameterFile ('Inputfile');
   PlantUmlJarFileName := ReadSingleInputParameterFile ('PlantUmlJarfile');
   PlantUmlJarFileNameEnvironment := ReadSingleInputParameterEnvironment (cPlantUmlJarFileRegistry);
@@ -2374,13 +2385,15 @@ procedure tJson2PumlCommandLineParameter.ValidateFileInputParameter (iParameterN
 var
   Fc: Integer;
 begin
+  if ioParameterValue.IsEmpty then
+    exit;
   iParameterName := iParameterName.ToLower.Trim;
   Fc := FileCount (ExpandFileName(ioParameterValue));
   if Fc > 1 then
     LogParameterValue (iParameterName, ioParameterValue, Format('(%d files found)', [Fc]))
   else
     LogParameterValue (iParameterName, ioParameterValue);
-  if (not ioParameterValue.IsEmpty) and (Fc <= 0) then
+  if (Fc <= 0) then
   begin
     GlobalLoghandler.Error (jetCmdLineParameterFileDoesNotExits,
       [cCmdLinePrefix, iParameterName.ToLower.Trim.PadRight(29), ioParameterValue.Trim]);
@@ -2388,8 +2401,8 @@ begin
   end;
 end;
 
-procedure tJson2PumlCommandLineParameter.WriteHelpLine(iParameter: string = ''; iDescription: string = '';
-    iParameterLength: Integer = 31; iLineLength: Integer = 111);
+procedure tJson2PumlCommandLineParameter.WriteHelpLine (iParameter: string = ''; iDescription: string = '';
+  iParameterLength: Integer = 31; iLineLength: Integer = 111);
 begin
   if iParameter.Trim.IsEmpty then
     GlobalLoghandler.Info ('')
@@ -2578,13 +2591,13 @@ end;
 constructor tJson2PumlGlobalDefinition.Create;
 begin
   inherited Create;
-  FInputListFileSearchFolder := tStringList.Create ();
-  FInputListFileSearchFolder.Delimiter := ';';
-  FInputListFileSearchFolder.StrictDelimiter := true;
+  FCurlPassThroughHeader := tStringList.Create ();
   FDefinitionFileSearchFolder := tStringList.Create ();
   FDefinitionFileSearchFolder.Delimiter := ';';
   FDefinitionFileSearchFolder.StrictDelimiter := true;
-  FCurlPassThroughHeader := tStringList.Create ();
+  FInputListFileSearchFolder := tStringList.Create ();
+  FInputListFileSearchFolder.Delimiter := ';';
+  FInputListFileSearchFolder.StrictDelimiter := true;
   ServicePortStr := cDefaultServicePort.ToString;
 end;
 
@@ -2598,16 +2611,16 @@ end;
 
 procedure tJson2PumlGlobalDefinition.Clear;
 begin
-  PlantUmlJarFileName := '';
-  PlantUmlRuntimeParameter := '';
-  DefinitionFileSearchFolder.Clear;
-  InputListFileSearchFolder.Clear;
-  DefaultDefinitionFileName := '';
   CurlAuthenticationFileName := '';
-  CurlUserAgentInformation := '';
+  CurlPassThroughHeader.Clear;
   CurlSpanIdHeader := '';
   CurlTraceIdHeader := '';
-  CurlPassThroughHeader.Clear;
+  CurlUserAgentInformation := '';
+  DefaultDefinitionFileName := '';
+  DefinitionFileSearchFolder.Clear;
+  InputListFileSearchFolder.Clear;
+  PlantUmlJarFileName := '';
+  PlantUmlRuntimeParameter := '';
 end;
 
 function tJson2PumlGlobalDefinition.FindDefinitionFile (iFileName: string): string;
@@ -3222,6 +3235,7 @@ begin
   FNameList.Sorted := true;
   FNameList.Duplicates := dupIgnore;
   FRowList := tStringList.Create ();
+  FRowList.OwnsObjects := True;
 end;
 
 destructor tJson2PumlCurlFileParameterListMatrix.Destroy;
@@ -3611,6 +3625,19 @@ function tJson2PumlParameterInputFileDefinitionList.GetInputFile (Index: Integer
   : tJson2PumlParameterInputFileDefinition;
 begin
   Result := tJson2PumlParameterInputFileDefinition (Objects[index]);
+end;
+
+constructor tJson2PumlParameterInputFileDefinition.Create;
+begin
+  inherited Create;
+  FJsonContent := nil;
+end;
+
+destructor tJson2PumlParameterInputFileDefinition.Destroy;
+begin
+  if Assigned(FJsonContent) then
+    FJsonContent.Free;
+  inherited Destroy;
 end;
 
 function tJson2PumlParameterInputFileDefinition.GetIdent: string;

@@ -141,7 +141,7 @@ type
     FValueSplitLengthStr: string;
     FFormatName: string;
     FIconColor: string;
-    FObjectFilter: TStrings;
+    FObjectFilter: tStringList;
     FShowAttributesStr: string;
     FSortAttributesStr: string;
     FShowCharacteristicsStr: string;
@@ -206,7 +206,7 @@ type
     property ValueSplitLength: Integer read GetValueSplitLength;
     property FormatName: string read FFormatName write FFormatName;
     property IconColor: string read FIconColor write FIconColor;
-    property ObjectFilter: TStrings read FObjectFilter write FObjectFilter;
+    property ObjectFilter: tStringList read FObjectFilter write FObjectFilter;
     property ShowAttributes: boolean read GetShowAttributes;
     property SortAttributes: boolean read GetSortAttributes;
     property ShowCharacteristics: boolean read GetShowCharacteristics;
@@ -330,7 +330,6 @@ type
   end;
 
   tJson2PumlRelationshipTypeArrowFormatList = class(tJson2PumlOperationPropertyList)
-
   public
     function GetFormat (iObjectType, iPropertyName, iRelationshipType: string; var oFoundCondition: string): string;
   end;
@@ -1075,7 +1074,6 @@ var
 begin
   if iMergeList = self then
     exit;
-  OwnsObjects := false;
   if iMergeList.Operation = jloReplace then
     Clear;
   for i := 0 to iMergeList.Count - 1 do
@@ -1333,7 +1331,9 @@ constructor tJson2PumlSingleFormatDefinition.Create;
 begin
   inherited Create;
   FSkinParams := tStringList.Create ();
+  FSkinParams.OwnsObjects := true;
   FObjectFilter := tStringList.Create;
+  FObjectFilter.OwnsObjects := true;
 end;
 
 destructor tJson2PumlSingleFormatDefinition.Destroy;
