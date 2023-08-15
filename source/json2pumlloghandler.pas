@@ -103,8 +103,8 @@ implementation
 uses
   Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
   Quick.Logger.Provider.StringList,
-{$IFDEF DEBUG} Quick.Logger.UnhandledExceptionHook, Quick.Logger.ExceptionHook, Quick.Logger.RuntimeErrorHook,
-  {$ENDIF}
+  {.$IFDEF DEBUG} Quick.Logger.UnhandledExceptionHook, Quick.Logger.ExceptionHook, Quick.Logger.RuntimeErrorHook,
+  {.$ENDIF}
   json2pumldefinition, json2pumlbasedefinition, jsontools,
   MVCFramework.Commons, json2pumltools;
 
@@ -170,7 +170,7 @@ begin
   GlobalLogConsoleProvider.Enabled := not (iApplicationType in [jatUI, jatWinService]);
   if GlobalLogConsoleProvider.Enabled then
   begin
-    if Logger.Providers.IndexOf(GlobalLogConsoleProvider) < 0 then
+    if Logger.Providers.IndexOf (GlobalLogConsoleProvider) < 0 then
       Logger.Providers.Add (GlobalLogConsoleProvider);
     SetLogProviderDefaults (GlobalLogConsoleProvider, iApplicationType);
     // GlobalLogConsoleProvider.ShowEventColors := False;
@@ -178,8 +178,8 @@ begin
 
   if iAllowsLogFile then
   begin
-    if Logger.Providers.IndexOf(GlobalLogFileProvider) < 0 then
-    Logger.Providers.Add (GlobalLogFileProvider);
+    if Logger.Providers.IndexOf (GlobalLogFileProvider) < 0 then
+      Logger.Providers.Add (GlobalLogFileProvider);
     LogFileName := iLogFilePath;
     if not TDirectory.Exists (iLogFilePath) and not (iLogFilePath.IsEmpty) then
     begin
@@ -448,13 +448,13 @@ begin
         end;
         if ErrorRecord.ErrorType.HttpStatusCode > MaxHttpCode then
           MaxHttpCode := ErrorRecord.ErrorType.HttpStatusCode;
-        ErrorRecord.ErrorType.RenderErrorResponse(JsonResult, 1, GlobalLogHandler.ErrorList[i]);
+        ErrorRecord.ErrorType.RenderErrorResponse (JsonResult, 1, GlobalLogHandler.ErrorList[i]);
         Delete (i);
       end;
       if MaxHttpCode = 0 then
       begin
         MaxHttpCode := HTTP_STATUS.InternalServerError;
-        jetUnknownServerError.RenderErrorResponse (JsonResult,1);
+        jetUnknownServerError.RenderErrorResponse (JsonResult, 1);
       end;
       WriteArrayEndToJson (JsonResult, 0);
       oResponseText := JsonResult.Text;
