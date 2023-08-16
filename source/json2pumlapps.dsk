@@ -15,29 +15,39 @@ File_12=TSourceModule,'E:\Delphi\Projects\json2puml\source\json2pumlwinservice.p
 File_13=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\rtl\win\Winapi.Windows.pas',0,1,3563,1,3584,0,0,,
 
 [Modules]
-Module0=E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj
-Module1=E:\Delphi\Components\QuickLogger\Quick.Logger.pas
-Module2=E:\Delphi\Projects\json2puml\source\json2pumlloghandler.pas
-Module3=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
-Module4=E:\Delphi\Projects\json2puml\source\json2pumlui.dproj
-Module5=E:\Delphi\Projects\json2puml\source\json2puml.dproj
-Module6=e:\Delphi\Components\QuickLogger\Quick.Logger.Provider.StringList.pas
-Module7=E:\Delphi\Projects\json2puml\source\json2pumlform.pas
-Module8=E:\Delphi\Projects\json2puml\source\json2pumlinputhandler.pas
-Module9=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
-Module10=E:\Delphi\Projects\json2puml\source\json2pumltools.pas
-Module11=E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pas
-Module12=c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\System.IOUtils.pas
-Module13=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
-Module14=E:\Delphi\Projects\json2puml\source\json2pumldefinition.pas
-Module15=E:\Delphi\Projects\json2puml\source\json2pumlcommandline.pas
-Module16=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
-Module17=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
-Module18=E:\Delphi\Projects\json2puml\source\jsontools.pas
-Count=19
+Module0=E:\Delphi\Projects\json2puml\source\json2pumlconfigframe.pas
+Module1=E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj
+Module2=E:\Delphi\Projects\json2puml\source\json2pumlui.dproj
+Module3=E:\Delphi\Projects\json2puml\source\json2puml.dproj
+Module4=E:\Delphi\Components\QuickLogger\Quick.Logger.pas
+Module5=E:\Delphi\Projects\json2puml\source\json2pumlloghandler.pas
+Module6=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
+Module7=e:\Delphi\Components\QuickLogger\Quick.Logger.Provider.StringList.pas
+Module8=E:\Delphi\Projects\json2puml\source\json2pumlform.pas
+Module9=E:\Delphi\Projects\json2puml\source\json2pumlinputhandler.pas
+Module10=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
+Module11=E:\Delphi\Projects\json2puml\source\json2pumltools.pas
+Module12=E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pas
+Module13=c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\System.IOUtils.pas
+Module14=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
+Module15=E:\Delphi\Projects\json2puml\source\json2pumldefinition.pas
+Module16=E:\Delphi\Projects\json2puml\source\json2pumlcommandline.pas
+Module17=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
+Module18=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
+Module19=E:\Delphi\Projects\json2puml\source\jsontools.pas
+Count=20
 EditWindowCount=1
 
+[E:\Delphi\Projects\json2puml\source\json2pumlconfigframe.pas]
+ModuleType=TSourceModule
+
 [E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj]
+ModuleType=TBaseProject
+
+[E:\Delphi\Projects\json2puml\source\json2pumlui.dproj]
+ModuleType=TBaseProject
+
+[E:\Delphi\Projects\json2puml\source\json2puml.dproj]
 ModuleType=TBaseProject
 
 [E:\Delphi\Components\QuickLogger\Quick.Logger.pas]
@@ -48,12 +58,6 @@ ModuleType=TSourceModule
 
 [E:\Delphi\Projects\json2puml\source\json2pumlconst.pas]
 ModuleType=TSourceModule
-
-[E:\Delphi\Projects\json2puml\source\json2pumlui.dproj]
-ModuleType=TBaseProject
-
-[E:\Delphi\Projects\json2puml\source\json2puml.dproj]
-ModuleType=TBaseProject
 
 [e:\Delphi\Components\QuickLogger\Quick.Logger.Provider.StringList.pas]
 ModuleType=TSourceModule
@@ -95,8 +99,8 @@ ModuleType=TSourceModule
 ModuleType=TSourceModule
 
 [EditWindow0]
-ViewCount=19
-CurrentEditView=E:\Delphi\Projects\json2puml\source\json2pumlservice.dpr
+ViewCount=20
+CurrentEditView=E:\Delphi\Projects\json2puml\source\json2pumlconfigframe.pas
 View0=0
 View1=1
 View2=2
@@ -116,6 +120,7 @@ View15=15
 View16=16
 View17=17
 View18=18
+View19=19
 PercentageSizes=1
 Create=1
 Visible=1
@@ -302,15 +307,26 @@ EditViewName=c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\Sy
 [View14]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlservice.dpr
-CursorX=1
-CursorY=58
-TopLine=49
+CursorX=99
+CursorY=70
+TopLine=50
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlservice.dpr
 
 [View15]
+CustomEditViewType=TEditView
+Module=E:\Delphi\Projects\json2puml\source\json2pumlconfigframe.pas
+CursorX=1
+CursorY=1
+TopLine=1
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=Borland.FormDesignerView
+
+[View16]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
 CursorX=31
@@ -321,7 +337,7 @@ Elisions=
 Bookmarks={7,67,100}
 EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
 
-[View16]
+[View17]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
 CursorX=1
@@ -332,7 +348,7 @@ Elisions=
 Bookmarks=
 EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
 
-[View17]
+[View18]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlform.pas
 CursorX=1
@@ -343,11 +359,11 @@ Elisions=
 Bookmarks=
 EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlform.pas
 
-[View18]
+[View19]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlui.dpr
 CursorX=1
-CursorY=46
+CursorY=51
 TopLine=25
 LeftCol=1
 Elisions=
@@ -503,11 +519,16 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
 ClientHeight=3772
-TBDockHeight=7004
+TBDockHeight=3772
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
 SplitPos=111
+
+[PropInspDesignerSelection]
+ArrangeBy=Name
+SelectedItem=Name,
+ExpandedItems=Font=0,HorzScrollBar=0,LiveBindings=0,"LiveBindings Designer=0",Margins=0,Padding=0
 
 [frmDesignPreview]
 PercentageSizes=1
@@ -518,11 +539,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6803
+Height=2155
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6803
+ClientHeight=2155
 TBDockHeight=5955
 LRDockWidth=2512
 Dockable=1
@@ -534,8 +555,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-2296
-Top=370
+Left=0
+Top=0
 Width=273
 Height=359
 MaxLeft=-1
@@ -639,11 +660,11 @@ State=0
 Left=0
 Top=0
 Width=2340
-Height=1042
+Height=2234
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2340
-ClientHeight=1042
+ClientHeight=2234
 TBDockHeight=2320
 LRDockWidth=2824
 Dockable=1
@@ -704,11 +725,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6803
+Height=0
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6803
+ClientHeight=0
 TBDockHeight=4885
 LRDockWidth=7148
 Dockable=1
@@ -720,8 +741,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=501
-Top=1099
+Left=0
+Top=0
 Width=2855
 Height=2500
 MaxLeft=-1
@@ -739,8 +760,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-250
-Top=-124
+Left=-336
+Top=-293
 Width=1848
 Height=3139
 MaxLeft=-1
@@ -882,11 +903,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6803
+Height=0
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6803
+ClientHeight=0
 TBDockHeight=5747
 LRDockWidth=1996
 Dockable=1
@@ -904,11 +925,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6803
+Height=0
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6803
+ClientHeight=0
 TBDockHeight=4885
 LRDockWidth=5309
 Dockable=1
@@ -968,8 +989,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=28
+Left=8
+Top=8
 Width=3824
 Height=1221
 MaxLeft=-1
@@ -1000,7 +1021,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
 ClientHeight=4799
-TBDockHeight=7004
+TBDockHeight=4799
 LRDockWidth=1996
 Dockable=1
 StayOnTop=0
@@ -1024,7 +1045,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
 ClientHeight=3542
-TBDockHeight=7004
+TBDockHeight=3542
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
@@ -1048,7 +1069,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
 ClientHeight=2514
-TBDockHeight=7004
+TBDockHeight=2514
 LRDockWidth=1996
 Dockable=1
 StayOnTop=0
@@ -1057,5 +1078,5 @@ ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
 
 [ActiveProject]
-ActiveProject=3
+ActiveProject=1
 

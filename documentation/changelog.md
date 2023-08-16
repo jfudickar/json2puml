@@ -1,7 +1,12 @@
+# **json2puml v2.2.5.101** - 16.08.2023
+## All Editions 
+### Changed Feature
+- Fixed behaviour after memory leak fix
+
 # **json2puml v2.2.5.100** - 15.08.2023
 ## All Editions 
 ### Changed Feature
-- Slightly enhnaced exception logging
+- Slightly enhanced exception logging
 
 # **json2puml v2.2.5.99** - 14.08.2023
 ## All Editions 
