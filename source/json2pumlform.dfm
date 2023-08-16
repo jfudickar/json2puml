@@ -142,12 +142,12 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Left = 820
           Top = 216
           Width = 400
-          Height = 109
+          Height = 97
           Caption = 'PlantUML Jar'
           TabOrder = 5
           DesignSize = (
             400
-            109)
+            97)
           object PlantUmlJarFileLabel: TLabel
             Left = 20
             Top = 19
@@ -596,10 +596,11 @@ object json2pumlMainForm: Tjson2pumlMainForm
         end
         object Button1: TButton
           Left = 1059
-          Top = 331
+          Top = 317
           Width = 161
           Height = 25
           Action = ReloadAndConvertAction
+          Default = True
           TabOrder = 6
         end
         object CurlParameterPageControl: TPageControl
