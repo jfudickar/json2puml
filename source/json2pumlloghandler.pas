@@ -229,8 +229,7 @@ end;
 procedure TJson2PumlLogHandler.Clear;
 begin
   ErrorList.Clear;
-  if Assigned (GlobalLogStringListProvider) then
-    GlobalLogStringListProvider.Clear;
+  GlobalLogStringListProvider.Clear;
 end;
 
 procedure TJson2PumlLogHandler.Debug (const aMessage: string; const aTag: string = '');
