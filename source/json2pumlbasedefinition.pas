@@ -96,6 +96,7 @@ type
     constructor Create; virtual;
     procedure Assign (Source: tPersistent); override;
     procedure Clear; virtual;
+    function Clone: tJson2PumlBaseObject; virtual;
     procedure MergeWith (iMergeDefinition: tJson2PumlBaseObject); virtual;
     function ReadFromJson (iJson, iFileName: string): boolean; overload; virtual;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; overload; virtual;
@@ -333,6 +334,12 @@ procedure tJson2PumlBaseObject.Clear;
 begin
 end;
 
+function tJson2PumlBaseObject.Clone: tJson2PumlBaseObject;
+begin
+  Result := tJson2PumlBaseObjectClass (Self.ClassType).Create;
+  Result.Assign (self);
+end;
+
 function tJson2PumlBaseObject.GetFileNameExpanded (iFileName: string): string;
 begin
   if not iFileName.IsEmpty then
@@ -495,12 +502,26 @@ begin
 end;
 
 procedure tJson2PumlBaseList.Assign (Source: tPersistent);
+var
+  i: Integer;
+  BaseObject: tJson2PumlBaseObject;
+  NewBaseObject: tJson2PumlBaseObject;
 begin
   inherited Assign (Source);
   if Source is tJson2PumlBaseList then
-  begin
-    ItemList.Assign (tJson2PumlBaseList(Source).ItemList);
-  end;
+    if not OwnsObjects then
+      ItemList.Assign (tJson2PumlBaseList(Source).ItemList)
+    else
+    begin
+      for i := 0 to tJson2PumlBaseList(Source).Count - 1 do
+      begin
+        if Assigned (tJson2PumlBaseList(Source).BaseObject[i]) then
+          NewBaseObject := tJson2PumlBaseList (Source).BaseObject[i].Clone
+        else
+          NewBaseObject := nil;
+        AddObject (tJson2PumlBaseList(Source)[i], NewBaseObject);
+      end;
+    end;
 end;
 
 procedure tJson2PumlBaseList.Clear;
@@ -656,7 +677,7 @@ begin
     Value := TJSONString (iJsonValue).Value;
     if (Value.IsEmpty) then
       exit;
-    ItemList.Add (Value);
+    ItemList.add (Value);
   end
 end;
 
@@ -724,7 +745,7 @@ begin
   if Assigned (BaseObject[iIndex]) then
     BaseObject[iIndex].WriteToJson (oJsonOutPut, iPropertyName, iLevel + 1, iWriteEmpty)
   else
-    oJsonOutPut.Add (Format('%s%s"%s",', [JsonLinePrefix(iLevel + 1), JsonPropertyName(iPropertyName),
+    oJsonOutPut.add (Format('%s%s"%s",', [JsonLinePrefix(iLevel + 1), JsonPropertyName(iPropertyName),
       ClearJsonPropertyValue(self[iIndex])]));
 end;
 

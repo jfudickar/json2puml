@@ -1082,7 +1082,10 @@ begin
     if j < 0 then
     begin
       if (iMergeList.Objects[i] is tJson2PumlBaseObject) then
-        AddBaseObject (tJson2PumlBaseObject(iMergeList.Objects[i]))
+        if OwnsObjects then
+          AddBaseObject (tJson2PumlBaseObject(iMergeList.Objects[i]).Clone)
+        else
+          AddBaseObject (tJson2PumlBaseObject(iMergeList.Objects[i]))
       else
         AddObject (iMergeList[i], iMergeList.Objects[i]);
     end
