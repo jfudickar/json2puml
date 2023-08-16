@@ -71,7 +71,7 @@ Source: "..\samples\swapi\*.md"; DestDir: "{app}\samples\swapi"; Components: Sam
 Source: "..\samples\jsonplaceholder\*.json"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
 Source: "..\samples\jsonplaceholder\*.cmd"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
 Source: "..\samples\jsonplaceholder\*.md"; DestDir: "{app}\samples\jsonplaceholder"; Components: Samples
-Source: "..\samples\tmf\tmf_definition.json"; DestDir: "{app}\samples\tmf"; Components: Samples
+Source: "..\samples\tmf\tmf-definition.json"; DestDir: "{app}\samples\tmf"; Components: Samples
 Source: "..\samples\tmf\tmf-productdetail.json"; DestDir: "{app}\samples\tmf"; Components: Samples
 Source: "..\samples\tmf\*.md"; DestDir: "{app}\samples\tmf"; Components: Samples
 Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components: Samples
