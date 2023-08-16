@@ -336,7 +336,7 @@ end;
 
 function tJson2PumlBaseObject.Clone: tJson2PumlBaseObject;
 begin
-  Result := tJson2PumlBaseObjectClass (Self.ClassType).Create;
+  Result := tJson2PumlBaseObjectClass (self.ClassType).Create;
   Result.Assign (self);
 end;
 
@@ -504,8 +504,6 @@ end;
 procedure tJson2PumlBaseList.Assign (Source: tPersistent);
 var
   i: Integer;
-  BaseObject: tJson2PumlBaseObject;
-  NewBaseObject: tJson2PumlBaseObject;
 begin
   inherited Assign (Source);
   if Source is tJson2PumlBaseList then
@@ -516,10 +514,9 @@ begin
       for i := 0 to tJson2PumlBaseList(Source).Count - 1 do
       begin
         if Assigned (tJson2PumlBaseList(Source).BaseObject[i]) then
-          NewBaseObject := tJson2PumlBaseList (Source).BaseObject[i].Clone
+          AddObject (tJson2PumlBaseList(Source)[i], tJson2PumlBaseList(Source).BaseObject[i].Clone)
         else
-          NewBaseObject := nil;
-        AddObject (tJson2PumlBaseList(Source)[i], NewBaseObject);
+          AddObject (tJson2PumlBaseList(Source)[i], tJson2PumlBaseList(Source).ItemList.Objects[i]);
       end;
     end;
 end;
