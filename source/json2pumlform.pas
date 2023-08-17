@@ -39,7 +39,7 @@ uses
   Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
   Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
-  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar;
+  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar, Quick.Logger.Provider.StringList;
 
 type
   tOutputFileFrame = class(TObject)
@@ -224,6 +224,7 @@ type
     FInputListLines: TStrings;
     FLogLines: TStrings;
     fLogMemo: TWinControl;
+    FLogStringListProvider: TLogStringListProvider;
     FOptionFileLines: TStrings;
     FParameterFileLines: TStrings;
     FServicedefinitionfileResultLines: TStrings;
@@ -289,6 +290,7 @@ type
     property ConfigFileName[Page: tJson2PumlPage]: string read GetConfigFileName write SetConfigFileName;
     property ConfigFrame[Page: tJson2PumlPage]: TJson2PumlConfigurationFrame read GetConfigFrame;
     property CurrentPage: tJson2PumlPage read GetCurrentPage write SetCurrentPage;
+    property LogStringListProvider: TLogStringListProvider read FLogStringListProvider;
   public
     constructor Create (AOwner: TComponent); override;
     destructor Destroy; override;
@@ -309,7 +311,7 @@ implementation
 
 uses
   json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst, System.UITypes,
-  json2pumlloghandler, Quick.Logger.Provider.StringList, Quick.Logger,
+  json2pumlloghandler, Quick.Logger,
   json2pumlconverterdefinition;
 
 {$R *.dfm}
@@ -322,6 +324,12 @@ end;
 
 destructor Tjson2pumlMainForm.Destroy;
 begin
+  if Assigned (LogStringListProvider) then
+  begin
+    if Logger.Providers.IndexOf (LogStringListProvider) >= 0 then
+      Logger.Providers.delete (Logger.Providers.IndexOf(LogStringListProvider));
+    //FLogStringListProvider.Free;
+  end;
   FInputHandler.Free;
   GlobalLogStringListProvider.LogList := nil;
   inherited Destroy;
@@ -425,7 +433,7 @@ procedure Tjson2pumlMainForm.CommandLineToForm;
   begin
     iDataset.Active := True;
     while iDataset.RecordCount > 0 do
-      iDataset.Delete;
+      iDataset.delete;
     for Parameter in iCurlParameter do
       iDataset.InsertRecord ([Parameter.Name, Parameter.Value]);
   end;
@@ -851,14 +859,14 @@ procedure Tjson2pumlMainForm.InitFormDefaultLogger;
 begin
   InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false,
     not FindCmdLineSwitch(cNoLogFiles, True));
-  Logger.Providers.add (GlobalLogStringListProvider);
-  GlobalLogStringListProvider.ShowTimeStamp := True;
-  GlobalLogStringListProvider.ShowEventTypes := True;
-  GlobalLogStringListProvider.LogList := LogLines;
-  GlobalLogStringListProvider.LogLevel := LOG_DEBUG;
-  SetLogProviderDefaults (GlobalLogStringListProvider, jatUI);
-  GlobalLogStringListProvider.Enabled := True;
-
+  FLogStringListProvider := TLogStringListProvider.Create;
+  Logger.Providers.add (LogStringListProvider);
+  LogStringListProvider.ShowTimeStamp := True;
+  LogStringListProvider.ShowEventTypes := True;
+  LogStringListProvider.LogList := LogLines;
+  LogStringListProvider.LogLevel := LOG_DEBUG;
+  SetLogProviderDefaults (LogStringListProvider, jatUI);
+  LogStringListProvider.Enabled := True;
 end;
 
 procedure Tjson2pumlMainForm.InitializeInputHandler;
@@ -1140,8 +1148,9 @@ end;
 
 destructor tOutputFileFrame.Destroy;
 begin
-  FFrame.Free;
-  FTabSheet.Free;
+  // Free will be handled automatically when clearing the parent contrls
+  // FFrame.Free;
+  // FTabSheet.Free;
   inherited Destroy;
 end;
 
