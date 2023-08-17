@@ -292,6 +292,8 @@ begin
   FIntConverterLog.Free;
   FIntJsonInput.Free;
   FIntPUmlOutput.Free;
+  if Assigned(RelatedObject) then
+    FreeAndNil(fRelatedObject);
   inherited Destroy;
 end;
 

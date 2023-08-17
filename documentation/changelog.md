@@ -1,3 +1,13 @@
+# **json2puml v2.2.6.102** - 17.08.2023
+## All Editions 
+### Changed Feature
+- Fixed behaviour after memory leak fix
+
+## Service Editions 
+### Changed Feature
+- No additional log files are created in a log folder of the binary
+
+
 # **json2puml v2.2.5.101** - 16.08.2023
 ## All Editions 
 ### Changed Feature

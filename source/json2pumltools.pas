@@ -94,6 +94,8 @@ function ValidateOutputSuffix (iOutputSuffix: string): string;
 
 function CurrentThreadId: TThreadId;
 
+function LogIndent(iIndent: Integer): string;
+
 type
   TCurlUtils = class
   private
@@ -783,7 +785,7 @@ begin
   Result := ExtractFileName (iFileName).Trim;
   Path := ReplaceInvalidPathChars (Path, iFinal, iReplaceWith);
   for i := low(Result) to high(Result) do
-    if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (CharInSet(Result[i],['$']))) then
+    if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (CharInSet(Result[i], ['$']))) then
       Result[i] := iReplaceWith;
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
@@ -798,7 +800,7 @@ var
 begin
   Result := iPathName.Trim;
   for i := low(Result) to high(Result) do
-    if not tPath.IsValidPathChar (Result[i]) or (iFinal and (CharInSet(Result[i],['$']))) then
+    if not tPath.IsValidPathChar (Result[i]) or (iFinal and (CharInSet(Result[i], ['$']))) then
       Result[i] := iReplaceWith;
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
@@ -843,6 +845,12 @@ begin
       on e: exception do
         Result := false;
     end;
+end;
+
+function LogIndent(iIndent: Integer): string;
+begin
+  Result := '';
+  Result := Result.PadRight(iIndent*2, ' ');
 end;
 
 {$IFDEF MSWINDOWS}

@@ -25,6 +25,7 @@ located at https://github.com/jfudickar/json2puml
 program json2pumlwindowsservice;
 
 uses
+  madExcept,
   Vcl.SvcMgr,
   json2pumlwinservice in 'json2pumlwinservice.pas' {J2PWinService: TService},
   json2pumldefinition in 'json2pumldefinition.pas',

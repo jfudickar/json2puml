@@ -20,6 +20,7 @@
 		"e:\\Delphi\\Projects\\json2puml\\samples\\tvmaze\\*definition*.json"
 	],
 	"inputListFileSearchFolder": [
+		"e:\\Delphi\\Projects\\json2puml\\samples-local\\tmf\\inputlist\\*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\curl\\*inputlist*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\jsonplaceholder\\*inputlist*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\spacex\\*inputlist*.json",

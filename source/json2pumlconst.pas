@@ -193,14 +193,14 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-  cCurrentVersion = '2.2.5.101';
+  cCurrentVersion = '2.2.6.102';
 
   cApplicationName = 'json2puml';
 
   cDefaultServicePort = 8080;
 
   // Minimum Size a file must have to be excepted / determined as existing
-  cMinFileSize = 5;
+  cMinFileSize = 2;
 
   cJson2PumlApplicationTypeName: array [tJson2PumlApplicationType] of string = (cApplicationName + ' command line',
     cApplicationName + ' service', cApplicationName + ' ui', cApplicationName + ' windows service');

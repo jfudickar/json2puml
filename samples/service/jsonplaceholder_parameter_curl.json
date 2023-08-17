@@ -1,5 +1,4 @@
 {
-	"definitionFile": "placeholder_definition.json",
 	"inputListFile": "placeholder_inputlist_curl.json",
 	"generateSummary": "true",
 	"generateDetails": "true",
