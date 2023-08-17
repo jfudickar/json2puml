@@ -947,7 +947,7 @@ procedure tJson2PumlInputFileDefinition.DeleteGeneratedFiles;
     if not iFileName.IsEmpty then
       try
         TFile.Delete (iFileName);
-        GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
+        //GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
@@ -1433,7 +1433,7 @@ begin
     if TDirectory.Exists (iOutputDir) then
       try
         TDirectory.Delete (iOutputDir, true);
-        GlobalLoghandler.Debug ('Directory "%s" deleted."', [iOutputDir]);
+        //GlobalLoghandler.Debug ('Directory "%s" deleted."', [iOutputDir]);
       except
         on e: exception do
           GlobalLoghandler.Error ('Deleting of directory "%s" failed. (%s)', [iOutputDir, e.Message]);
@@ -3399,7 +3399,7 @@ procedure tJson2PumlFileOutputDefinition.DeleteGeneratedFiles;
     if not iFileName.IsEmpty then
       try
         TFile.Delete (iFileName);
-        GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
+        //GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
@@ -3870,7 +3870,7 @@ var
     if FileExists (iFileName) then
       try
         TFile.Delete (iFileName);
-        GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
+        //GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
@@ -3883,7 +3883,7 @@ var
     if TDirectory.Exists (iDirectoryName) then
       try
         TDirectory.Delete (iDirectoryName, true);
-        GlobalLoghandler.Debug ('Directory "%s" deleted."', [iDirectoryName]);
+        //GlobalLoghandler.Debug ('Directory "%s" deleted."', [iDirectoryName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetDirectoryDeletionFailed, [iDirectoryName, e.Message]);
