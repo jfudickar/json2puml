@@ -339,6 +339,7 @@ type
 
   tPumlDetailObjectList = class(tBasePumlStringList)
   public
+    constructor Create(iParentObject: tBasePumlObject); override;
     procedure GeneratePumlClassList (ipuml: TStrings);
     procedure GeneratePumlTogether (ipuml: TStrings; iParentObjectName, iParentObjectTitle: string);
   end;
@@ -446,7 +447,7 @@ implementation
 
 uses
   System.SysUtils,
-  System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, System.Variants;
+  System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, System.Variants, json2pumlloghandler;
 
 constructor tPumlObjectList.Create;
 begin
@@ -538,8 +539,6 @@ begin
   FCharacteristics := tPumlCharacteristicList.Create (Self);
   FRelations := tPumlObjectRelationshipList.Create (Self);
   FDetailObjects := tPumlDetailObjectList.Create (Self);
-  FDetailObjects.Sorted := true;
-  FDetailObjects.Duplicates := dupIgnore;
   FIsObjectDetail := False;
   FIsRelationship := False;
   FFiltered := true;
@@ -1455,6 +1454,14 @@ begin
     if Assigned (Objects[i]) then
       if (Objects[i] is tBasePumlObject) then
         tBasePumlObject (Objects[i]).UpdateRedundant;
+end;
+
+constructor tPumlDetailObjectList.Create(iParentObject: tBasePumlObject);
+begin
+  inherited Create(iParentObject);
+  Sorted := true;
+  Duplicates := dupIgnore;
+  OwnsObjects := False;
 end;
 
 procedure tPumlDetailObjectList.GeneratePumlClassList (ipuml: TStrings);
