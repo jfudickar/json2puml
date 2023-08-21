@@ -306,11 +306,12 @@ end;
 
 procedure TJson2PumlLogHandler.LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: TEventType);
 begin
-  Log (aMsg, aValues, aEventType);
+  LogMsg (Format(aMsg, aValues), aEventType);
 end;
 
 procedure TJson2PumlLogHandler.LogMsg (const aMsg: string; aEventType: TEventType);
 begin
+  if aMsg.IndexOf('GET:/api/heartbeat') < 0 then
   Log (aMsg, aEventType);
 end;
 
