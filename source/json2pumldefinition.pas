@@ -157,6 +157,7 @@ type
     FAdditionalServiceInformation: string;
     FBaseOutputPath: string;
     FCurlAuthenticationFileName: string;
+    FCurlParameter: tJson2PumlCurlParameterList;
     FCurlPassThroughHeader: tStringList;
     FCurlSpanIdHeader: string;
     FCurlTraceIdHeader: string;
@@ -194,6 +195,7 @@ type
       write FAdditionalServiceInformation;
     property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
     property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
+    property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlPassThroughHeader: tStringList read FCurlPassThroughHeader;
     property CurlSpanIdHeader: string read FCurlSpanIdHeader write SetCurlSpanIdHeader;
     property CurlTraceIdHeader: string read FCurlTraceIdHeader write SetCurlTraceIdHeader;
@@ -947,7 +949,7 @@ procedure tJson2PumlInputFileDefinition.DeleteGeneratedFiles;
     if not iFileName.IsEmpty then
       try
         TFile.Delete (iFileName);
-        //GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
+        // GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
@@ -967,13 +969,13 @@ begin
     OutputFileName := iCurlParameterList1.ReplaceParameterValuesFileName (OutputFileName);
   if Assigned (iCurlParameterList2) then
     OutputFileName := iCurlParameterList2.ReplaceParameterValuesFileName (OutputFileName);
-  OutputFileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (OutputFileName);
+  OutputFileName := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (OutputFileName);
   OutputFileName := ReplaceInvalidFileNameChars (OutputFileName, true);
 end;
 
 function tJson2PumlInputFileDefinition.GetCurlBaseUrlDecoded: string;
 begin
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (CurlBaseUrl);
+  Result := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (CurlBaseUrl);
 end;
 
 procedure tJson2PumlInputFileDefinition.GetCurlParameterFromFile (iCurlOutputParameter,
@@ -1433,7 +1435,7 @@ begin
     if TDirectory.Exists (iOutputDir) then
       try
         TDirectory.Delete (iOutputDir, true);
-        //GlobalLoghandler.Debug ('Directory "%s" deleted."', [iOutputDir]);
+        // GlobalLoghandler.Debug ('Directory "%s" deleted."', [iOutputDir]);
       except
         on e: exception do
           GlobalLoghandler.Error ('Deleting of directory "%s" failed. (%s)', [iOutputDir, e.Message]);
@@ -1479,7 +1481,7 @@ begin
       else
         FileName := CurlParameterList.ReplaceParameterValuesFileName
           (GetFileNameExpanded(InputFile.InputFileNameExpanded));
-      FileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (FileName);
+      FileName := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (FileName);
       NewPath := ExtractFilePath (FileName);
       if findfirst (FileName, faAnyFile, searchResult) = 0 then
       begin
@@ -1685,7 +1687,7 @@ end;
 
 function tJson2PumlInputList.GetCurlBaseUrlDecoded: string;
 begin
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (CurlBaseUrl);
+  Result := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (CurlBaseUrl);
 end;
 
 function tJson2PumlInputList.GetDefinitionFileNameExpanded: string;
@@ -1924,10 +1926,10 @@ var
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'name', ExtractFileName(SourceFileName), iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'displayName', TCurlUtils.ReplaceCurlVariablesFromEnvironment(Description.DisplayName),
-    iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'description', TCurlUtils.ReplaceCurlVariablesFromEnvironment(Description.Description),
-    iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'displayName', ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
+    (Description.DisplayName), iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'description', ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
+    (Description.Description), iLevel + 1, iWriteEmpty);
   if not DefinitionFileName.IsEmpty then
   begin
     FileName := GlobalConfigurationDefinition.FindFileInFolderList (DefinitionFileName,
@@ -2591,6 +2593,7 @@ end;
 constructor tJson2PumlGlobalDefinition.Create;
 begin
   inherited Create;
+  FCurlParameter := tJson2PumlCurlParameterList.Create ();
   FCurlPassThroughHeader := tStringList.Create ();
   FDefinitionFileSearchFolder := tStringList.Create ();
   FDefinitionFileSearchFolder.Delimiter := ';';
@@ -2603,6 +2606,7 @@ end;
 
 destructor tJson2PumlGlobalDefinition.Destroy;
 begin
+  FCurlParameter.Free;
   FCurlPassThroughHeader.Free;
   FDefinitionFileSearchFolder.Free;
   FInputListFileSearchFolder.Free;
@@ -2619,6 +2623,7 @@ begin
   DefaultDefinitionFileName := '';
   DefinitionFileSearchFolder.Clear;
   InputListFileSearchFolder.Clear;
+  CurlParameter.Clear;
   PlantUmlJarFileName := '';
   PlantUmlRuntimeParameter := '';
 end;
@@ -2790,6 +2795,7 @@ begin
   GetJsonStringValueList (CurlPassThroughHeader, DefinitionRecord, 'curlPassThroughHeader');
   CurlPassThroughHeader.Text := CurlPassThroughHeader.Text.ToLower;
   ServicePortStr := GetJsonStringValue (DefinitionRecord, 'servicePort', ServicePortStr);
+  CurlParameter.ReadFromJson (DefinitionRecord, 'curlParameter');
 end;
 
 procedure tJson2PumlGlobalDefinition.SetCurlSpanIdHeader (const Value: string);
@@ -2816,6 +2822,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'baseOutputPath', BaseOutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputPath', OutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlAuthenticationFileName', CurlAuthenticationFileName, iLevel + 1, iWriteEmpty);
+  CurlParameter.WriteToJson (oJsonOutPut, 'curlParameter', iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlPassThroughHeader', CurlPassThroughHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlUserAgentInformation', CurlUserAgentInformation, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlSpanIdHeader', CurlSpanIdHeader, iLevel + 1, iWriteEmpty);
@@ -2920,7 +2927,7 @@ end;
 
 function tJson2PumlCurlAuthenticationDefinition.GetBaseUrlDecoded: string;
 begin
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (BaseUrl);
+  Result := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (BaseUrl);
 end;
 
 function tJson2PumlCurlAuthenticationDefinition.GetIdent: string;
@@ -3235,7 +3242,7 @@ begin
   FNameList.Sorted := true;
   FNameList.Duplicates := dupIgnore;
   FRowList := tStringList.Create ();
-  FRowList.OwnsObjects := True;
+  FRowList.OwnsObjects := true;
 end;
 
 destructor tJson2PumlCurlFileParameterListMatrix.Destroy;
@@ -3399,7 +3406,7 @@ procedure tJson2PumlFileOutputDefinition.DeleteGeneratedFiles;
     if not iFileName.IsEmpty then
       try
         TFile.Delete (iFileName);
-        //GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
+        // GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
@@ -3635,7 +3642,7 @@ end;
 
 destructor tJson2PumlParameterInputFileDefinition.Destroy;
 begin
-  if Assigned(FJsonContent) then
+  if Assigned (FJsonContent) then
     FJsonContent.Free;
   inherited Destroy;
 end;
@@ -3870,7 +3877,7 @@ var
     if FileExists (iFileName) then
       try
         TFile.Delete (iFileName);
-        //GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
+        // GlobalLoghandler.Debug ('"File %s" deleted."', [iFileName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetFileDeletionFailed, [iFileName, e.Message]);
@@ -3883,7 +3890,7 @@ var
     if TDirectory.Exists (iDirectoryName) then
       try
         TDirectory.Delete (iDirectoryName, true);
-        //GlobalLoghandler.Debug ('Directory "%s" deleted."', [iDirectoryName]);
+        // GlobalLoghandler.Debug ('Directory "%s" deleted."', [iDirectoryName]);
       except
         on e: exception do
           GlobalLoghandler.Error (jetDirectoryDeletionFailed, [iDirectoryName, e.Message]);

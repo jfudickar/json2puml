@@ -230,7 +230,7 @@ begin
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
       WriteObjectStartToJson (jsonOutput, 0, '');
       WriteToJsonValue (jsonOutput, 'service', ServerInformation, 1, true);
-      InfoList.Text := TCurlUtils.ReplaceCurlVariablesFromEnvironment
+      InfoList.Text := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
         (InputHandler.GlobalConfiguration.AdditionalServiceInformation.Replace('\n', #13#10));
       WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
       WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true),

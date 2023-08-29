@@ -96,6 +96,8 @@ function CurrentThreadId: TThreadId;
 
 function LogIndent(iIndent: Integer): string;
 
+function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration(iValue: string): string;
+
 type
   TCurlUtils = class
   private
@@ -851,6 +853,12 @@ function LogIndent(iIndent: Integer): string;
 begin
   Result := '';
   Result := Result.PadRight(iIndent*2, ' ');
+end;
+
+function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration(iValue: string): string;
+begin
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(iValue);
+  Result := GlobalConfigurationDefinition.CurlParameter.ReplaceParameterValues(Result);
 end;
 
 {$IFDEF MSWINDOWS}

@@ -292,8 +292,8 @@ begin
   FIntConverterLog.Free;
   FIntJsonInput.Free;
   FIntPUmlOutput.Free;
-  if Assigned(RelatedObject) then
-    FreeAndNil(fRelatedObject);
+  if Assigned (RelatedObject) then
+    FreeAndNil (FRelatedObject);
   inherited Destroy;
 end;
 
@@ -454,7 +454,8 @@ begin
   First := true;
   SingleJson := TStringList.Create;
   try
-    iSingleRecord.ConverterLog.Add (Format('Start building summary file"%s"', [iSingleRecord.InputFile.OutputFileName]));
+    iSingleRecord.ConverterLog.Add (Format('Start building summary file"%s"',
+      [iSingleRecord.InputFile.OutputFileName]));
     LastProperty := '';
     iSingleRecord.JsonInput.Add ('[');
     for InputFile in ConverterInputList do
@@ -603,7 +604,7 @@ begin
   Result := CurrentFullOutputPath;
   Result := ReplaceFileNameVariables (Result, iSourceFileName, Option);
   Result := CurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
+  Result := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (Result);
   Result := ReplaceInvalidPathChars (Result);
   Result := PathCombine (Result, Filename);
 end;
@@ -657,7 +658,7 @@ begin
     Result := Result.SubString (0, i - 1);
   Result := ReplaceFileNameVariables (Result, '', CurrentOption);
   Result := CurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
+  Result := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (Result);
   Result := ReplaceInvalidPathChars (Result, true);
 end;
 
@@ -1121,7 +1122,7 @@ begin
     Result := Result.TrimLeft (tpath.DirectorySeparatorChar);
   end;
   Result := CurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
+  Result := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (Result);
 end;
 
 function TJson2PumlInputHandler.GetCurrentOutputSuffix: string;
@@ -1639,7 +1640,7 @@ end;
 function TJson2PumlInputHandler.ReplaceFilenameCurlVariables (const iReplaceString: string): string;
 begin
   Result := CurlParameterList.ReplaceParameterValues (iReplaceString);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
+  Result := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (Result);
 end;
 
 end.

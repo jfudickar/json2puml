@@ -881,14 +881,14 @@ begin
   if not Assigned (JsonValue) then
     GlobalLoghandler.Error (jetUnableToParseInputFileStructure, [InputHandlerRecord.InputFile.OutputFileName])
   else
-  try
-    InfoRec.Init (LeadingObject);
-    ConvertValue (JsonValue, InfoRec, trpStart);
-    GeneratePuml;
-    Result := true;
-  finally
-    JsonValue.Free;
-  end;
+    try
+      InfoRec.Init (LeadingObject);
+      ConvertValue (JsonValue, InfoRec, trpStart);
+      GeneratePuml;
+      Result := true;
+    finally
+      JsonValue.Free;
+    end;
 
 end;
 
@@ -951,8 +951,9 @@ begin
     else
       vAdd := true;
     Puml.Add (tPumlHelper.TableLine(['<b>Job description'.PadRight(FileLength + 50)]));
-    Puml.Add (tPumlHelper.TableLine([TCurlUtils.CleanUnusedCurlVariables(TCurlUtils.ReplaceCurlVariablesFromEnvironment
-      (InputHandler.CurlParameterList.ReplaceParameterValues(InputHandler.CurrentJobDescription)))]));
+    Puml.Add (tPumlHelper.TableLine([TCurlUtils.CleanUnusedCurlVariables
+      (ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration(InputHandler.CurlParameterList.ReplaceParameterValues
+      (InputHandler.CurrentJobDescription)))]));
   end;
   if Definition.LegendShowObjectFormats then
   begin
