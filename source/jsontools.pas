@@ -39,6 +39,8 @@ function ExistsJsonProperty (iJsonObject: TJsonObject; iName: string): Boolean;
 
 procedure FormatJsonFile (iFileName: string; iOutputFileName: string = '');
 
+function GetJsonFileRecordCount(iFileName: string): Integer;
+
 function GetJsonArray (iJsonObject: TJsonObject; iName: string): TJsonArray;
 
 function GetJsonObject (iJsonObject: TJsonObject; iName: string): TJsonObject; overload;
@@ -765,6 +767,30 @@ begin
   oJsonOutPut.Add (Format('%s},', [JsonLinePrefix(iLevel)]));
   if iLevel <= 0 then
     ClearJsonLastLineComma (oJsonOutPut);
+end;
+
+function GetJsonFileRecordCount(iFileName: string): Integer;
+var
+  InputFile: tStringList;
+  JsonValue: TJSONValue;
+begin
+  Result := 0;
+  InputFile := tStringList.Create;
+  try
+    InputFile.LoadFromFile (iFileName);
+    JsonValue := TJsonObject.ParseJSONValue (InputFile.Text);
+    if Assigned (JsonValue) then
+      try
+        if JsonValue is TJSONArray then
+          Result := TJSONArray(JsonValue).Count
+        else
+          Result := 1;
+      finally
+        JsonValue.Free;
+      end;
+  finally
+    InputFile.Free;
+  end;
 end;
 
 end.

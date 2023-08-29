@@ -218,11 +218,13 @@ type
     FFileName: string;
     FFileSize: Integer;
     FNoOfLines: Integer;
+    FNoOfRecords: Integer;
   public
     property FileDate: tDateTime read FFileDate write FFileDate;
     property FileName: string read FFileName write FFileName;
     property FileSize: Integer read FFileSize write FFileSize;
     property NoOfLines: Integer read FNoOfLines write FNoOfLines;
+    property NoOfRecords: Integer read FNoOfRecords write FNoOfRecords;
   end;
 
   tJson2PumlFileOutputDefinition = class(tJson2PumlBaseObject)
@@ -3394,6 +3396,7 @@ begin
   FileDetailRecord.FileDate := TFile.GetLastWriteTime (iFileName);
   FileDetailRecord.FileSize := IntFileSize;
   FileDetailRecord.NoOfLines := NoOfLine;
+  FileDetailRecord.NoOfRecords := GetJsonFileRecordCount(iFileName);
 
   SourceFiles.AddObject (iFileName, FileDetailRecord);
 
