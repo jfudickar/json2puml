@@ -10,11 +10,17 @@ skinparam class {
    BackgroundColor #FCF2E3
 }
 
+class CurlParameter {
+	name : String
+	value : String
+}
+
 class GlobalConfiguration <<Pivot>>{
    additionalServiceInformation : String
    baseOutputPath : String
    outputPath : String
    curlAuthenticationFileName : String
+   curlParameter : Array of CurlParameter
    curlPassThroughHeader : Array of String
    curlSpanIdHeader : String
    curlTraceIdHeader : String
@@ -29,5 +35,5 @@ class GlobalConfiguration <<Pivot>>{
    servicePort : Integer
 }
 
-
+GlobalConfiguration::curlParameter --> "0..*" CurlParameter
 @enduml

@@ -1,9 +1,20 @@
+# **json2puml v2.2.8.104** - 29.08.2023
+## ALL Editions 
+### New Feature
+- The legend is enhanced with the number of json records of every input file
+- A new property "curlParameter" is added to the Globalconfigruation. This allows to define global curl parameters.
+
+# **json2puml v2.2.7.103** - 21.08.2023
+## Service Edition 
+### Changed Feature
+- Hide Get /api/heartbeat messages in the log files
+
 # **json2puml v2.2.6.102** - 17.08.2023
 ## All Editions 
 ### Changed Feature
 - Fixed behaviour after memory leak fix
 
-## Service Editions 
+## Service Edition 
 ### Changed Feature
 - No additional log files are created in a log folder of the binary
 
@@ -31,16 +42,16 @@
 ### Changed Feature
 - Improved error handling when plantuml fails to generate the output files
 
-## Service Editions 
+## Service Edition 
 ### Changed Feature
-- The service returns now a HTTP300 when the result file was not generated
+- The service returns now a HTTP500 when the result file was not generated
 
 # **json2puml v2.2.5.97** - 10.08.2023
 ## All Editions 
 ### Changed Feature
 - the mandatory flag is now ignored when the file has not been fetched because of a not valid executevalidation rule
 
-## Service Editions 
+## Service Edition 
 ### Changed Feature
 - The error list are not correct generated
 
@@ -53,7 +64,7 @@
 - The "$" character is now replaced in all file and path names with a "_" to be more linux compatible
 - Changed default order of the inputlist.input properties when storing a input list file
 
-## Service Editions 
+## Service Edition 
 ### New Feature
 - New operation get /errormessage to receive a list of all implemented error messages.
 
@@ -77,7 +88,7 @@
 ### Changed Feature
 - Log handling Improved
 
-## Service Editions 
+## Service Edition 
 ### New Feature
 - For failed service calls now a structured error message is returned, which contains the list of all errors which have lead to the server error
   Each error has a unique error code, an error message and an optional description
@@ -94,7 +105,7 @@
 ### Changed Feature
 - Fixed plantuml generation for table fields when the content contains a \n for a fixed newline
 
-## Service Editions 
+## Service Edition 
 ### New Feature
 - Additional information into the get /serviceinformation result set
 
@@ -104,26 +115,26 @@
 - Fixed protocol handling of boolean command line parameters
 - Improved/fixed initialisation of the logger classes
 
-## Service Editions 
+## Service Edition 
 ### New Feature
 - For calculating the Plantuml information shown in the get /serviceinformation now also the globalconfiguration.javaRuntimeParameter will be used
 
 # **json2puml v2.2.2.86** - 03.08.2023
-## Service Editions 
+## Service Edition 
 ### New  Feature
 - New api operation get /heartbeat which returns service version information
 ### Changed Feature
 - Additional information into the get /serviceinformation result set
 
 # **json2puml v2.2.1.85** - 02.08.2023
-## Service Editions 
+## Service Edition 
 ### Changed Feature
 - Optimized protocol handling
 - Additional information into the get /serviceinformation result set
 - Improved handling of fetching data for the get /serviceinformation result set
 
 # **json2puml v2.2.0.84** - 01.08.2023
-## Service Editions 
+## Service Edition 
 ### New Feature
 - New command line parameter -serviceport added which allows to override the configured port used by the service application 
 - The globalconfiguration.serviceport can now be defined via environment variable using the curl variable format in the config file
