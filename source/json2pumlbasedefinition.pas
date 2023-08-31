@@ -326,6 +326,7 @@ procedure tJson2PumlBaseObject.Assign (Source: tPersistent);
 begin
   if Source is tJson2PumlBaseObject then
   begin
+    Clear;
     SourceFileName := tJson2PumlBaseObject (Source).SourceFileName;
   end;
 end;

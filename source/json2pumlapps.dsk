@@ -14,18 +14,22 @@ File_11=TSourceModule,'E:\Delphi\Components\loggerpro\LoggerPro.SimpleConsoleApp
 File_12=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\System.IOUtils.pas',0,1,3804,1,3825,0,0,,
 
 [Modules]
-Module0=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
-Module1=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
-Module2=E:\Delphi\Projects\json2puml\source\json2pumldefinition.pas
-Module3=E:\Delphi\Projects\json2puml\source\json2pumlinputhandler.pas
-Module4=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
-Module5=E:\Delphi\Projects\json2puml\source\jsontools.pas
-Module6=E:\Delphi\Projects\json2puml\source\json2pumltools.pas
-Module7=E:\Delphi\Projects\json2puml\source\json2pumlservicewebmodule.pas
-Module8=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
-Module9=E:\Delphi\Projects\json2puml\source\json2pumlcommandline.pas
-Count=10
+Module0=E:\Delphi\Components\SVGIconImageList\Image32\source\Img32.SVG.Reader.pas
+Module1=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
+Module2=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
+Module3=E:\Delphi\Projects\json2puml\source\json2pumldefinition.pas
+Module4=E:\Delphi\Projects\json2puml\source\json2pumlinputhandler.pas
+Module5=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
+Module6=E:\Delphi\Projects\json2puml\source\jsontools.pas
+Module7=E:\Delphi\Projects\json2puml\source\json2pumltools.pas
+Module8=E:\Delphi\Projects\json2puml\source\json2pumlservicewebmodule.pas
+Module9=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
+Module10=E:\Delphi\Projects\json2puml\source\json2pumlcommandline.pas
+Count=11
 EditWindowCount=1
+
+[E:\Delphi\Components\SVGIconImageList\Image32\source\Img32.SVG.Reader.pas]
+ModuleType=TSourceModule
 
 [E:\Delphi\Projects\json2puml\source\json2pumlconst.pas]
 ModuleType=TSourceModule
@@ -58,8 +62,8 @@ ModuleType=TSourceModule
 ModuleType=TSourceModule
 
 [EditWindow0]
-ViewCount=10
-CurrentEditView=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
+ViewCount=11
+CurrentEditView=E:\Delphi\Components\SVGIconImageList\Image32\source\Img32.SVG.Reader.pas
 View0=0
 View1=1
 View2=2
@@ -70,6 +74,7 @@ View6=6
 View7=7
 View8=8
 View9=9
+View10=10
 PercentageSizes=1
 Create=1
 Visible=1
@@ -203,11 +208,22 @@ CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
 CursorX=3
 CursorY=54
-TopLine=54
+TopLine=55
 LeftCol=1
 Elisions=
 Bookmarks={7,67,100}
 EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
+
+[View10]
+CustomEditViewType=TEditView
+Module=E:\Delphi\Components\SVGIconImageList\Image32\source\Img32.SVG.Reader.pas
+CursorX=76
+CursorY=2133
+TopLine=2113
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=E:\Delphi\Components\SVGIconImageList\Image32\source\Img32.SVG.Reader.pas
 
 [Watches]
 Count=11
@@ -691,7 +707,7 @@ StayOnTop=0
 [fmGrepResults]
 PercentageSizes=1
 Create=1
-Visible=1
+Visible=0
 Docked=0
 State=0
 Left=195
