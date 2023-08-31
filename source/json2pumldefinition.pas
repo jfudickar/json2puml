@@ -491,6 +491,7 @@ type
     procedure SetOutputFormatStr (const Value: string);
     procedure SetOutputPath (const Value: string);
     procedure SetOutputSuffix (const Value: string);
+    procedure SetSummaryFileName (const Value: string);
   protected
     function AddInputFileCurl (const iInputFileName, iOutputFileName, iLeadingObject: string;
       const iSplitInputFile: boolean; const iSplitIdentifier, iCurlCommand: string;
@@ -570,7 +571,7 @@ type
     property OutputFormatStr: string read FOutputFormatStr write SetOutputFormatStr;
     property OutputPath: string read FOutputPath write SetOutputPath;
     property OutputSuffix: string read FOutputSuffix write SetOutputSuffix;
-    property SummaryFileName: string read FSummaryFileName write FSummaryFileName;
+    property SummaryFileName: string read FSummaryFileName write SetSummaryFileName;
   end;
 
   tJson2PumlCommandLineParameter = class(tPersistent)
@@ -972,7 +973,7 @@ begin
   if Assigned (iCurlParameterList2) then
     OutputFileName := iCurlParameterList2.ReplaceParameterValuesFileName (OutputFileName);
   OutputFileName := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (OutputFileName);
-  OutputFileName := ReplaceInvalidFileNameChars (OutputFileName, true);
+  OutputFileName := ReplaceInvalidPathFileNameChars (OutputFileName, true);
 end;
 
 function tJson2PumlInputFileDefinition.GetCurlBaseUrlDecoded: string;
@@ -1120,8 +1121,7 @@ begin
   if TPath.GetExtension (InputFileName).TrimLeft ([TPath.ExtensionSeparatorChar]).IsEmpty then
     InputFileName := TPath.ChangeExtension (InputFileName, jofJSON.FileExtension(true));
 
-  CurlFileNameSuffix := TPath.GetFileNameWithoutExtension (GetJsonStringValue(TJSONObject(Definition),
-    'curlFileSuffix'));
+  CurlFileNameSuffix := GetJsonStringValue (TJSONObject(Definition), 'curlFileSuffix');
 
   if InputFileName.IsEmpty then
     exit;
@@ -1831,12 +1831,27 @@ end;
 
 procedure tJson2PumlInputList.SetOutputPath (const Value: string);
 begin
-  FOutputPath := Value.Trim;
+  FOutputPath := ReplaceInvalidPathChars (Value.Trim, false);
 end;
 
 procedure tJson2PumlInputList.SetOutputSuffix (const Value: string);
 begin
   FOutputSuffix := ValidateOutputSuffix (Value);
+end;
+
+procedure tJson2PumlInputList.SetSummaryFileName (const Value: string);
+var
+  Extension: string;
+  Format: tJson2PumlOutputFormat;
+begin
+  FSummaryFileName := ReplaceInvalidFileNameChars (Value, false);
+  Extension := TPath.GetExtension (FSummaryFileName).ToLower.TrimLeft([TPath.ExtensionSeparatorChar]);
+  for Format := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
+    if Format.FileExtension.ToLower = Extension then
+    begin
+      FSummaryFileName := TPath.ChangeExtension (FSummaryFileName, '').TrimRight([TPath.ExtensionSeparatorChar]);
+      exit;
+    end;
 end;
 
 procedure tJson2PumlInputList.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -3232,7 +3247,7 @@ var
 begin
   Result := iFileName;
   for CurlParameter in self do
-    Result := StringReplace (Result, CurlParameter.name, ReplaceInvalidFileNameChars(CurlParameter.ValueDecoded),
+    Result := StringReplace (Result, CurlParameter.name, ReplaceInvalidPathFileNameChars(CurlParameter.ValueDecoded),
       [rfReplaceAll, rfIgnoreCase]);
 end;
 
@@ -3396,7 +3411,7 @@ begin
   FileDetailRecord.FileDate := TFile.GetLastWriteTime (iFileName);
   FileDetailRecord.FileSize := IntFileSize;
   FileDetailRecord.NoOfLines := NoOfLine;
-  FileDetailRecord.NoOfRecords := GetJsonFileRecordCount(iFileName);
+  FileDetailRecord.NoOfRecords := GetJsonFileRecordCount (iFileName);
 
   SourceFiles.AddObject (iFileName, FileDetailRecord);
 

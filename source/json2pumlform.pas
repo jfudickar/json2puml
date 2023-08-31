@@ -852,7 +852,7 @@ begin
   end;
   ReloadFiles;
   UpdateAllInfos;
-  GenerateServiceListResults;
+  //GenerateServiceListResults;
 end;
 
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;

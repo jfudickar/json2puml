@@ -163,7 +163,8 @@ type
   protected
     procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
-    function CalculateOutputFileName (iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
+    function CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension: string;
+      iRemoveExtension: Boolean): string;
     function CalculateOutputFileNamePath (iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
     function CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
     procedure ClearAllRecords;
@@ -560,8 +561,8 @@ begin
   Result := ReplaceInvalidPathChars (Result);
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileName (iFileName, iSourceFileName: string;
-  iNewFileExtension: string = ''): string;
+function TJson2PumlInputHandler.CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension: string;
+  iRemoveExtension: Boolean): string;
 var
   Filename: string;
   SourceFileName: string;
@@ -575,7 +576,10 @@ begin
     Option := ''
   else
     Option := CurrentOption;
-  Filename := tpath.GetFileNameWithoutExtension (ExtractFileName(iFileName));
+  if iRemoveExtension then // This allows to have curl variables with a "." and summary file names with a "."
+    Filename := tpath.GetFileNameWithoutExtension (ExtractFileName(iFileName))
+  else
+    Filename := ExtractFileName (iFileName);
   SourceFileName := tpath.GetFileNameWithoutExtension (ExtractFileName(iSourceFileName));
   Filename := ReplaceFileNameVariables (Filename, SourceFileName, Option);
   Suffix := ReplaceFileNameVariables (CurrentOutputSuffix, SourceFileName, Option);
@@ -583,7 +587,7 @@ begin
     Filename := Filename + Suffix;
   Filename := Filename + tpath.ExtensionSeparatorChar + FileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
   Filename := ReplaceFilenameCurlVariables (Filename);
-  Filename := ReplaceInvalidFileNameChars (Filename);
+  Filename := ReplaceInvalidPathFileNameChars (Filename);
   Result := Filename;
 end;
 
@@ -600,7 +604,7 @@ begin
     Option := ''
   else
     Option := CurrentOption;
-  Filename := CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension);
+  Filename := CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension, true);
   Result := CurrentFullOutputPath;
   Result := ReplaceFileNameVariables (Result, iSourceFileName, Option);
   Result := CurlParameterList.ReplaceParameterValues (Result);
@@ -642,10 +646,10 @@ function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2P
 var
   Filename: string;
 begin
-  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', iOutputFormat.FileExtension(False));
+  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', iOutputFormat.FileExtension(False), false);
   Result := CalculateSummaryPath;
   Result := PathCombine (Result, Filename);
-  Result := ReplaceInvalidFileNameChars (Result, true);
+  Result := ReplaceInvalidPathFileNameChars (Result, true);
 end;
 
 function TJson2PumlInputHandler.CalculateSummaryPath: string;
@@ -730,7 +734,7 @@ begin
       else
         OutputFile := CalculateOutputFileNamePath (SingleRecord.InputFile.OutputFileName,
           SingleRecord.InputFile.InputFileName, jofPUML.FileExtension(true));
-      OutputFile := ReplaceInvalidFileNameChars (OutputFile, true);
+      OutputFile := ReplaceInvalidPathFileNameChars (OutputFile, true);
       GenerateFileDirectory (OutputFile);
 
       if SingleRecord.InputFile.IsSummaryFile then
@@ -1510,7 +1514,7 @@ begin
         Lines.Text := ParameterInputFile.Content;
         if not IsRelativePath (ExtractFilePath(Filename)) then
           Filename := ExtractFileName (Filename);
-        Filename := ReplaceInvalidFileNameChars (CalculateOutputFileNamePath(Filename, Filename), true);
+        Filename := ReplaceInvalidPathFileNameChars (CalculateOutputFileNamePath(Filename, Filename), true);
         GenerateFileDirectory (Filename);
         Lines.SaveToFile (Filename);
         ConverterInputList.AddInputFileCommandLine (Filename, Filename, ParameterInputFile.LeadingObject, '', '');

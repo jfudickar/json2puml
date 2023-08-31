@@ -90,13 +90,16 @@ function ReplaceInvalidFileNameChars (const iFileName: string; iFinal: Boolean =
 function ReplaceInvalidPathChars (const iPathName: string; iFinal: Boolean = false;
   const iReplaceWith: Char = '_'): string;
 
+function ReplaceInvalidPathFileNameChars (const iFileName: string; iFinal: Boolean = false;
+  const iReplaceWith: Char = '_'): string;
+
 function ValidateOutputSuffix (iOutputSuffix: string): string;
 
 function CurrentThreadId: TThreadId;
 
-function LogIndent(iIndent: Integer): string;
+function LogIndent (iIndent: Integer): string;
 
-function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration(iValue: string): string;
+function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (iValue: string): string;
 
 type
   TCurlUtils = class
@@ -779,6 +782,19 @@ end;
 
 function ReplaceInvalidFileNameChars (const iFileName: string; iFinal: Boolean = false;
   const iReplaceWith: Char = '_'): string;
+Var i : Integer;
+begin
+  Result := iFileName.Trim;
+  for i := low(Result) to high(Result) do
+    if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (CharInSet(Result[i], ['$']))) then
+      Result[i] := iReplaceWith;
+  while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
+    Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
+      tPath.ExtensionSeparatorChar);
+end;
+
+function ReplaceInvalidPathFileNameChars (const iFileName: string; iFinal: Boolean = false;
+  const iReplaceWith: Char = '_'): string;
 var
   i: Integer;
   Path: string;
@@ -786,12 +802,7 @@ begin
   Path := ExtractFilePath (iFileName).Trim;
   Result := ExtractFileName (iFileName).Trim;
   Path := ReplaceInvalidPathChars (Path, iFinal, iReplaceWith);
-  for i := low(Result) to high(Result) do
-    if not tPath.IsValidFileNameChar (Result[i]) or (iFinal and (CharInSet(Result[i], ['$']))) then
-      Result[i] := iReplaceWith;
-  while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
-    Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
-      tPath.ExtensionSeparatorChar);
+  Result := ReplaceInvalidFileNameChars (Result, iFinal, iReplaceWith);
   Result := tPath.Combine (Path, Result);
 end;
 
@@ -849,16 +860,16 @@ begin
     end;
 end;
 
-function LogIndent(iIndent: Integer): string;
+function LogIndent (iIndent: Integer): string;
 begin
   Result := '';
-  Result := Result.PadRight(iIndent*2, ' ');
+  Result := Result.PadRight (iIndent * 2, ' ');
 end;
 
-function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration(iValue: string): string;
+function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (iValue: string): string;
 begin
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment(iValue);
-  Result := GlobalConfigurationDefinition.CurlParameter.ReplaceParameterValues(Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
+  Result := GlobalConfigurationDefinition.CurlParameter.ReplaceParameterValues (Result);
 end;
 
 {$IFDEF MSWINDOWS}
