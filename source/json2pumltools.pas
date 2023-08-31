@@ -796,7 +796,6 @@ end;
 function ReplaceInvalidPathFileNameChars (const iFileName: string; iFinal: Boolean = false;
   const iReplaceWith: Char = '_'): string;
 var
-  i: Integer;
   Path: string;
 begin
   Path := ExtractFilePath (iFileName).Trim;

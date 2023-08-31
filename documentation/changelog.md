@@ -1,5 +1,18 @@
+# **json2puml v2.2.9.105** - 31.08.2023
+## All Editions
+### Changed Feature
+- Fixes duplicated records in configuration lists when reassigning values to the list 
+- Inputlistfile.summaryfile handling improved
+  - Known file extentions will be removed
+  - Invalid characters are removed
+  - Curl Variables with "." are now supported
+
+## UI Edition
+### Changed Feature
+- Updated to SVGIconImageList v4
+
 # **json2puml v2.2.8.104** - 29.08.2023
-## ALL Editions 
+## All Editions 
 ### New Feature
 - The legend is enhanced with the number of json records of every input file
 - A new property "curlParameter" is added to the Globalconfigruation. This allows to define global curl parameters.
