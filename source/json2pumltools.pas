@@ -52,6 +52,8 @@ function FileDescription: string;
 
 function FileExistsMinSize (iFileName: string): Boolean;
 
+function FileNameWithSuffix (iFileName, iFileNameSuffix: string): string;
+
 function FileVersion: string;
 
 procedure GenerateDirectory (const iDirectory: string);
@@ -782,7 +784,8 @@ end;
 
 function ReplaceInvalidFileNameChars (const iFileName: string; iFinal: Boolean = false;
   const iReplaceWith: Char = '_'): string;
-Var i : Integer;
+var
+  i: Integer;
 begin
   Result := iFileName.Trim;
   for i := low(Result) to high(Result) do
@@ -857,6 +860,20 @@ begin
       on e: exception do
         Result := false;
     end;
+end;
+
+function FileNameWithSuffix (iFileName, iFileNameSuffix: string): string;
+var
+  Extension: string;
+begin
+  if iFileNameSuffix.isEmpty then
+  begin
+    Result := iFileName;
+    Exit;
+  end;
+  Extension := tPath.GetExtension (iFileName);
+  Result := TPath.Combine(TPath.GetDirectoryName(iFileName), TPath.GetFileNameWithoutExtension(iFileName));
+  Result:= Result + iFileNameSuffix+ Extension;
 end;
 
 function LogIndent (iIndent: Integer): string;

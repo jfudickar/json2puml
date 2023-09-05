@@ -288,6 +288,7 @@ type
     function GetInputFileNameExpanded: string;
     function GetIsSplitFile: boolean;
     function GetIsSummaryFile: boolean;
+    procedure SetCurlFileNameSuffix(const Value: string);
     procedure SetInputFileName (const Value: string);
     procedure SetIsSplitFile (const Value: boolean);
     procedure SetIsSummaryFile (const Value: boolean);
@@ -333,7 +334,7 @@ type
     property CurlBaseUrl: string read FCurlBaseUrl write FCurlBaseUrl;
     property CurlCache: Integer read FCurlCache write FCurlCache;
     property CurlExecuteEvaluation: string read FCurlExecuteEvaluation write FCurlExecuteEvaluation;
-    property CurlFileNameSuffix: string read FCurlFileNameSuffix write FCurlFileNameSuffix;
+    property CurlFileNameSuffix: string read FCurlFileNameSuffix write SetCurlFileNameSuffix;
     property CurlFormatOutput: boolean read FCurlFormatOutput write FCurlFormatOutput;
     property CurlOptions: string read FCurlOptions write FCurlOptions;
     property CurlOutputParameter: tJson2PumlCurlParameterList read FCurlOutputParameter;
@@ -1144,6 +1145,11 @@ begin
   Result := true;
 end;
 
+procedure tJson2PumlInputFileDefinition.SetCurlFileNameSuffix(const Value: string);
+begin
+  FCurlFileNameSuffix := ValidateOutputSuffix(Value);
+end;
+
 procedure tJson2PumlInputFileDefinition.SetInputFileName (const Value: string);
 begin
   FInputFileName := Value;
@@ -1538,8 +1544,7 @@ begin
   Result := true;
   CurlParameterMatrix := tJson2PumlCurlFileParameterListMatrix.Create;
   try
-    CurlParameterMatrix.FillMatrix (CurlParameterList, iCurrentInputFile.InputFileName +
-      iCurrentInputFile.CurlFileNameSuffix);
+    CurlParameterMatrix.FillMatrix (CurlParameterList, iCurrentInputFile.OutputFileName);
     if CurlParameterMatrix.RowList.Count > 0 then
     begin
       iCurrentInputFile.IsInternalOnly := true;
@@ -1783,8 +1788,7 @@ begin
     exit;
   inherited ReadFromJson (Definition, 'input'); // put this first because of the inherited clear
   for InputFile in self do
-    InputFile.OutputFileName := CalculateOutputFileName (TPath.GetFileNameWithoutExtension(InputFile.InputFileName) +
-      InputFile.CurlFileNameSuffix.Trim, InputFile.InputFileName);
+    InputFile.OutputFileName := CalculateOutputFileName (FileNameWithSuffix(InputFile.InputFileName, InputFile.CurlFileNameSuffix), InputFile.InputFileName);
   DefinitionFileName := GetJsonStringValue (Definition, 'definitionFile');
   Description.ReadFromJson (Definition, 'description');
   Detail := GetJsonStringValue (Definition, 'detail');
