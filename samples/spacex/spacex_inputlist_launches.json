@@ -40,31 +40,31 @@
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": null,
-				"curlFileSuffix": "_${launch}",
+				"curlFileSuffix": ".${launch}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v5/launches/${launch}",
 				"curlOutputParameter":  [
 						{
-							"${capsule}": "capsules"
+							"${capsule.id}": "capsules"
 						},
 						{
-							"${core}": "cores.core"
+							"${core.id}": "cores.core"
 						},
 						{
-							"${crew}": "crew.crew"
+							"${crew.id}": "crew.crew"
 						},
 						{
-							"${landpad}": "cores.landpad"
+							"${landpad.id}": "cores.landpad"
 						},
 						{
-							"${launchpad}": "launchpad"
+							"${launchpad.id}": "launchpad"
 						},
 						{
-							"${payload}": "payloads"
+							"${payload.id}": "payloads"
 						},
 						{
-							"${rocket}": "rocket"
+							"${rocket.id}": "rocket"
 						}
 				],
 				"splitIdentifier": null,
@@ -77,11 +77,11 @@
 				"mandatory": true,
 				"curlBaseUrl": null,
 				"curlCache": 0,
-				"curlExecuteEvaluation": "\"${crew}\" <> \"\"",
-				"curlFileSuffix": "_${crew}",
+				"curlExecuteEvaluation": "\"${crew.id}\" <> \"\"",
+				"curlFileSuffix": ".${crew.id}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v4/crew/${crew}",
+				"curlUrl": "v4/crew/${crew.id}",
 				"curlOutputParameter":  [
 				],
 				"splitIdentifier": null,
@@ -94,11 +94,11 @@
 				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
-				"curlExecuteEvaluation": "\"${capsule}\" <> \"\"",
-				"curlFileSuffix": "_${capsule}",
+				"curlExecuteEvaluation": "\"${capsule.id}\" <> \"\"",
+				"curlFileSuffix": ".${capsule.id}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v4/capsules/${capsule}",
+				"curlUrl": "v4/capsules/${capsule.id}",
 				"curlOutputParameter":  [
 				],
 				"splitIdentifier": null,
@@ -111,11 +111,11 @@
 				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
-				"curlExecuteEvaluation": "\"${launchpad}\" <> \"\"",
-				"curlFileSuffix": "_${launchpad}",
+				"curlExecuteEvaluation": "\"${launchpad.id}\" <> \"\"",
+				"curlFileSuffix": ".${launchpad.id}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v4/launchpads/${launchpad}",
+				"curlUrl": "v4/launchpads/${launchpad.id}",
 				"curlOutputParameter":  [
 				],
 				"splitIdentifier": null,
@@ -128,11 +128,11 @@
 				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
-				"curlExecuteEvaluation": "\"${landpad}\" <> \"\"",
-				"curlFileSuffix": "_${landpad}",
+				"curlExecuteEvaluation": "\"${landpad.id}\" <> \"\"",
+				"curlFileSuffix": ".${landpad.id}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v4/landpads/${landpad}",
+				"curlUrl": "v4/landpads/${landpad.id}",
 				"curlOutputParameter":  [
 				],
 				"splitIdentifier": null,
@@ -145,11 +145,11 @@
 				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
-				"curlExecuteEvaluation": "\"${core}\" <> \"\"",
-				"curlFileSuffix": "_${core}",
+				"curlExecuteEvaluation": "\"${core.id}\" <> \"\"",
+				"curlFileSuffix": ".${core.id}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v4/cores/${core}",
+				"curlUrl": "v4/cores/${core.id}",
 				"curlOutputParameter":  [
 				],
 				"splitIdentifier": null,
@@ -162,11 +162,11 @@
 				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
-				"curlExecuteEvaluation": "\"${payload}\" <> \"\"",
-				"curlFileSuffix": "_${payload}",
+				"curlExecuteEvaluation": "\"${payload.id}\" <> \"\"",
+				"curlFileSuffix": ".${payload.id}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v4/payloads/${payload}",
+				"curlUrl": "v4/payloads/${payload.id}",
 				"curlOutputParameter":  [
 				],
 				"splitIdentifier": null,
@@ -179,11 +179,11 @@
 				"mandatory": false,
 				"curlBaseUrl": null,
 				"curlCache": 0,
-				"curlExecuteEvaluation": "\"${rocket}\" <> \"\"",
-				"curlFileSuffix": "_${rocket}",
+				"curlExecuteEvaluation": "\"${rocket.id}\" <> \"\"",
+				"curlFileSuffix": ".${rocket.id}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
-				"curlUrl": "v4/rockets/${rocket}",
+				"curlUrl": "v4/rockets/${rocket.id}",
 				"curlOutputParameter":  [
 				],
 				"splitIdentifier": null,
