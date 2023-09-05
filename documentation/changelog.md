@@ -1,3 +1,18 @@
+# **json2puml v2.2.10.106** - 05.09.2023
+## All Editions
+### Changed Feature
+- Inputlistfile.curlFileNameSuffix handling improved
+  - Curl Variables with "." are now supported
+  - if the first character is not ".", "-" or "_" a "." will be added
+
+## Service Editions
+### Changed Feature
+- Updated to latest DelphiMVCFramework
+
+## UI Edition
+### Changed Feature
+- Updated to SVGIconImageList v4.1
+
 # **json2puml v2.2.9.105** - 31.08.2023
 ## All Editions
 ### Changed Feature
