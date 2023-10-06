@@ -288,7 +288,7 @@ type
     function GetInputFileNameExpanded: string;
     function GetIsSplitFile: boolean;
     function GetIsSummaryFile: boolean;
-    procedure SetCurlFileNameSuffix(const Value: string);
+    procedure SetCurlFileNameSuffix (const Value: string);
     procedure SetInputFileName (const Value: string);
     procedure SetIsSplitFile (const Value: boolean);
     procedure SetIsSummaryFile (const Value: boolean);
@@ -371,6 +371,7 @@ type
     FMandatory: boolean;
     FName: string;
     FRegularExpression: string;
+    procedure SetName (const Value: string);
   protected
     function GetIdent: string; override;
     function GetIsValid: boolean; override;
@@ -383,7 +384,7 @@ type
     property Description: string read FDescription write FDescription;
     property DisplayName: string read FDisplayName write FDisplayName;
     property Mandatory: boolean read FMandatory write FMandatory;
-    property name: string read FName write FName;
+    property name: string read FName write SetName;
     property RegularExpression: string read FRegularExpression write FRegularExpression;
   end;
 
@@ -1145,9 +1146,9 @@ begin
   Result := true;
 end;
 
-procedure tJson2PumlInputFileDefinition.SetCurlFileNameSuffix(const Value: string);
+procedure tJson2PumlInputFileDefinition.SetCurlFileNameSuffix (const Value: string);
 begin
-  FCurlFileNameSuffix := ValidateOutputSuffix(Value);
+  FCurlFileNameSuffix := ValidateOutputSuffix (Value);
 end;
 
 procedure tJson2PumlInputFileDefinition.SetInputFileName (const Value: string);
@@ -1788,7 +1789,8 @@ begin
     exit;
   inherited ReadFromJson (Definition, 'input'); // put this first because of the inherited clear
   for InputFile in self do
-    InputFile.OutputFileName := CalculateOutputFileName (FileNameWithSuffix(InputFile.InputFileName, InputFile.CurlFileNameSuffix), InputFile.InputFileName);
+    InputFile.OutputFileName := CalculateOutputFileName (FileNameWithSuffix(InputFile.InputFileName,
+      InputFile.CurlFileNameSuffix), InputFile.InputFileName);
   DefinitionFileName := GetJsonStringValue (Definition, 'definitionFile');
   Description.ReadFromJson (Definition, 'description');
   Detail := GetJsonStringValue (Definition, 'detail');
@@ -1849,11 +1851,11 @@ var
   Format: tJson2PumlOutputFormat;
 begin
   FSummaryFileName := ReplaceInvalidFileNameChars (Value, false);
-  Extension := TPath.GetExtension (FSummaryFileName).ToLower.TrimLeft([TPath.ExtensionSeparatorChar]);
+  Extension := TPath.GetExtension (FSummaryFileName).ToLower.TrimLeft ([TPath.ExtensionSeparatorChar]);
   for Format := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
     if Format.FileExtension.ToLower = Extension then
     begin
-      FSummaryFileName := TPath.ChangeExtension (FSummaryFileName, '').TrimRight([TPath.ExtensionSeparatorChar]);
+      FSummaryFileName := TPath.ChangeExtension (FSummaryFileName, '').TrimRight ([TPath.ExtensionSeparatorChar]);
       exit;
     end;
 end;
@@ -3071,7 +3073,7 @@ end;
 procedure tJson2PumlCurlParameterDefinition.SetName (const Value: string);
 begin
   FName := Value.Trim.ToLower;
-  if FName.Substring (0, 2) <> '${' then
+  if not FName.IsEmpty and (FName.Substring (0, 2) <> '${') then
     FName := Format ('${%s}', [FName]);
 end;
 
@@ -3837,6 +3839,13 @@ begin
   RegularExpression := GetJsonStringValue (Definition, 'regularExpression');
   DefaultValue := GetJsonStringValue (Definition, 'defaultValue');
   Result := IsValid;
+end;
+
+procedure tJson2PumlFileDescriptionParameterDefinition.SetName (const Value: string);
+begin
+  FName := Value.Trim.ToLower;
+  if not FName.IsEmpty and (FName.Substring (0, 2) <> '${') then
+    FName := Format ('${%s}', [FName]);
 end;
 
 procedure tJson2PumlFileDescriptionParameterDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string;
