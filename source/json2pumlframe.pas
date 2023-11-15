@@ -32,6 +32,10 @@ uses
   {$IFDEF SVGICONIMAGE}
   SVGIconImage,
   {$ENDIF}
+  {$IFDEF SKIASVG}
+  System.IOUtils,
+  System.Skia, Vcl.Skia,
+  {$ENDIF}
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, json2pumlvcltools;
 
@@ -57,6 +61,7 @@ type
     SVGTabSheet: TTabSheet;
     SVGScrollBox: TScrollBox;
     SVGFileNameEdit: TEdit;
+
   private
     FInputFileName: string;
     FInputGroup: string;
@@ -69,6 +74,9 @@ type
     FSVGFileName: string;
   {$IFDEF SVGICONIMAGE}
     SVGIconImage: TSVGIconImage;
+  {$ENDIF}
+  {$IFDEF SKIASVG}
+    SkSvg: TSkSvg;
   {$ENDIF}
     function GetJsonInput: TStrings;
     function GetLeadingObject: string;
@@ -122,6 +130,14 @@ begin
   SVGIconImage.Align := alClient;
   SVGIconImage.Stretch := true;
   SVGIconImage.Proportional := true;
+  {$ENDIF}
+
+  {$IFDEF SKIASVG}
+  SkSvg := TSkSvg.Create(Self);
+
+  SkSvg.Name := 'SkSvg';
+  SkSvg.Parent := SVGScrollBox;
+  SkSvg.Align := alClient;
   {$ENDIF}
 
 end;
@@ -228,6 +244,14 @@ begin
   if SVGTabSheet.TabVisible then
   begin
     SVGIconImage.LoadFromFile(Value);
+  end;
+  {$ENDIF}
+  {$IFDEF SKIASVG}
+  if SVGTabSheet.TabVisible then
+    ResultPageControl.ActivePage := SVGTabSheet;
+  if SVGTabSheet.TabVisible then
+  begin
+    SkSvg.svg.Source := TFile.ReadAllText(Value);
   end;
   {$ENDIF}
 end;

@@ -33,6 +33,7 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
         Height = 15
         Align = alTop
         Caption = 'Json &Input'
+        ExplicitWidth = 54
       end
       object Panel1: TPanel
         Left = 1
@@ -76,7 +77,7 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
         Top = 1
         Width = 561
         Height = 430
-        ActivePage = LogFileTabSheet
+        ActivePage = PNGTabSheet
         Align = alClient
         TabOrder = 0
         object PumlTabSheet: TTabSheet
@@ -112,6 +113,8 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
             Top = 23
             Width = 553
             Height = 377
+            HorzScrollBar.Tracking = True
+            VertScrollBar.Smooth = True
             Align = alClient
             TabOrder = 0
             object ResultImage: TImage
@@ -122,6 +125,9 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
               Align = alClient
               AutoSize = True
               Proportional = True
+              ExplicitLeft = -2
+              ExplicitTop = -3
+              ExplicitHeight = 328
             end
           end
           object PNGFileNameEdit: TEdit
