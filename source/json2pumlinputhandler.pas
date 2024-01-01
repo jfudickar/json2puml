@@ -168,10 +168,11 @@ type
     function CalculateOutputFileNamePath (iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
     function CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
     procedure ClearAllRecords;
-    procedure ConvertAllRecordsInt (iIndex: Integer = - 1);
+    procedure ConvertAllRecordsInt;
     procedure CreateAllRecords;
     function CreateSingleRecord (iInputFile: tJson2PumlInputFileDefinition; iInputGroup, iInputDetail: string)
       : TJson2PumlInputHandlerRecord;
+    procedure GenerateAllOutputsFromPuml;
     procedure GetFileNameExtension (iFileName, iNewFileExtension: string; var oFileNameExtension: string;
       var oFileFormat: tJson2PumlOutputFormat);
     function IsConverting: Boolean;
@@ -646,7 +647,8 @@ function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2P
 var
   Filename: string;
 begin
-  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '', iOutputFormat.FileExtension(False), false);
+  Filename := CalculateOutputFileName (ExtractFileName(CurrentSummaryFileName), '',
+    iOutputFormat.FileExtension(False), False);
   Result := CalculateSummaryPath;
   Result := PathCombine (Result, Filename);
   Result := ReplaceInvalidPathFileNameChars (Result, true);
@@ -696,7 +698,7 @@ begin
   RecreateAllRecords;
 end;
 
-procedure TJson2PumlInputHandler.ConvertAllRecordsInt (iIndex: Integer = - 1);
+procedure TJson2PumlInputHandler.ConvertAllRecordsInt;
 var
   i: Integer;
   SingleRecord: TJson2PumlInputHandlerRecord;
@@ -711,6 +713,7 @@ begin
   if HandlerRecordList.Count <= 0 then
     Exit;
   JarFile := CalculateRuntimeJarFile;
+  OutputFormats := GetCurrentOutputFormats;
   Converter := TJson2PumlConverter.Create;
   try
     Converter.InputHandler := self;
@@ -718,13 +721,9 @@ begin
     begin
       if Assigned (OnNotifyChange) then
         OnNotifyChange (self, i + 1, HandlerRecordList.Count);
-      if (iIndex >= 0) and (iIndex < HandlerRecordList.Count) then
-        if i <> iIndex then
-          Continue;
       SingleRecord := self[i];
 
       SingleRecord.ConverterLog.Clear;
-      OutputFormats := GetCurrentOutputFormats;
       SingleRecord.InputFile.IsConverted := False;
       if not SingleRecord.InputFile.IncludeIntoOutput then
         Continue;
@@ -740,9 +739,9 @@ begin
       if SingleRecord.InputFile.IsSummaryFile then
         BuildSummaryFile (SingleRecord);
 
-      GlobalLoghandler.Info ('[%3d/%3d] Convert %s', [i + 1, HandlerRecordList.Count,
-        SingleRecord.InputFile.OutputFileName]);
-      GlobalLoghandler.Info ('               to %s', [OutputFile]);
+      GlobalLoghandler.Info ('[%3d/%3d] Generate puml : Convert %s to %s', [i + 1, HandlerRecordList.Count,
+        SingleRecord.InputFile.OutputFileName, OutputFile]);
+//      GlobalLoghandler.Info ('               to %s', [OutputFile]);
       if Assigned (AfterUpdateRecord) then
         AfterUpdateRecord (SingleRecord); // To Update the console
       Converter.LeadingObject := SingleRecord.InputFile.LeadingObject;
@@ -751,7 +750,7 @@ begin
       Converter.PumlFile := OutputFile;
       if not Converter.Convert then
         Continue;
-      GlobalLoghandler.Info ('               %-4s generated', ['puml']);
+  //    GlobalLoghandler.Info ('               %-4s generated', ['puml']);
 
       if CmdLineParameter.GenerateOutputDefinition then
         CurrentConverterDefinition.WriteToJsonFile (ChangeFileExt(OutputFile, '.definition.json'), true);
@@ -767,26 +766,11 @@ begin
         SingleRecord.InputFile.IsConverted := true;
         SingleRecord.InputFile.Output.PUmlFileName := OutputFile;
         SingleRecord.PUmlOutput.SaveToFile (SingleRecord.InputFile.Output.PUmlFileName);
-        if GenerateOutputsFromPuml (SingleRecord.InputFile.Output.PUmlFileName, JarFile, CurrentJavaRuntimeParameter,
-          GetCurrentPlantUmlRuntimeParameter, OutputFormats, CmdLineParameter.OpenOutputs) then
-        begin
-          if (jofPng in OutputFormats) and FileExists (jofPng.Filename(OutputFile)) then
-            SingleRecord.InputFile.Output.PNGFileName := jofPng.Filename (OutputFile)
-          else
-            SingleRecord.InputFile.Output.PNGFileName := '';
-          if (jofSvg in OutputFormats) and FileExists (jofSvg.Filename(OutputFile)) then
-            SingleRecord.InputFile.Output.SVGFileName := jofSvg.Filename (OutputFile)
-          else
-            SingleRecord.InputFile.Output.SVGFileName := '';
-          if (jofPdf in OutputFormats) and FileExists (jofPdf.Filename(OutputFile)) then
-            SingleRecord.InputFile.Output.PDFFilename := jofPdf.Filename (OutputFile)
-          else
-            SingleRecord.InputFile.Output.PDFFilename := '';
-        end;
       end;
       if Assigned (AfterUpdateRecord) then
         AfterUpdateRecord (SingleRecord);
     end;
+    GenerateAllOutputsFromPuml;
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
     ConverterInputList.WriteToJsonOutputFiles (jofFileList.Filename(CalculateSummaryFileName(jofPUML)));
     // Use PUML to get the Filename with the option included
@@ -894,6 +878,53 @@ begin
   Dec (FLoadFileCnt);
   if FLoadFileCnt = 0 then
     SetFileLoading (False, iAutoStartConvert);
+end;
+
+procedure TJson2PumlInputHandler.GenerateAllOutputsFromPuml;
+var
+  i: Integer;
+  SingleRecord: TJson2PumlInputHandlerRecord;
+  OutputFormats: tJson2PumlOutputFormats;
+  FileList: TStringList;
+begin
+  OutputFormats := GetCurrentOutputFormats;
+  FileList := TStringList.Create;
+  try
+    for i := 0 to HandlerRecordList.Count - 1 do
+    begin
+      SingleRecord := self[i];
+      if not SingleRecord.InputFile.IsConverted then
+        Continue;
+      FileList.Add (SingleRecord.InputFile.Output.PUmlFileName);
+    end;
+    if GenerateOutputsFromPumlFiles (FileList, CalculateRuntimeJarFile, CurrentJavaRuntimeParameter, GetCurrentPlantUmlRuntimeParameter,
+      OutputFormats, CmdLineParameter.OpenOutputs) then
+      for i := 0 to HandlerRecordList.Count - 1 do
+      begin
+        SingleRecord := self[i];
+        if not SingleRecord.InputFile.IsConverted then
+          Continue;
+        if (jofPng in OutputFormats) and FileExistsMinSize (jofPng.Filename(SingleRecord.InputFile.Output.PUmlFileName))
+        then
+          SingleRecord.InputFile.Output.PNGFileName := jofPng.Filename (SingleRecord.InputFile.Output.PUmlFileName)
+        else
+          SingleRecord.InputFile.Output.PNGFileName := '';
+        if (jofSvg in OutputFormats) and FileExistsMinSize (jofSvg.Filename(SingleRecord.InputFile.Output.PUmlFileName))
+        then
+          SingleRecord.InputFile.Output.SVGFileName := jofSvg.Filename (SingleRecord.InputFile.Output.PUmlFileName)
+        else
+          SingleRecord.InputFile.Output.SVGFileName := '';
+        if (jofPdf in OutputFormats) and FileExistsMinSize (jofPdf.Filename(SingleRecord.InputFile.Output.PUmlFileName))
+        then
+          SingleRecord.InputFile.Output.PDFFilename := jofPdf.Filename (SingleRecord.InputFile.Output.PUmlFileName)
+        else
+          SingleRecord.InputFile.Output.PDFFilename := '';
+        if Assigned (AfterUpdateRecord) then
+          AfterUpdateRecord (SingleRecord);
+      end;
+  finally
+    FileList.Free;
+  end;
 end;
 
 procedure TJson2PumlInputHandler.GenerateSummaryZipFile;

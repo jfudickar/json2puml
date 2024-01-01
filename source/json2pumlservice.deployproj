@@ -27,7 +27,6 @@
             <Required>True</Required>
         </DeployFile>
     </ItemGroup>
-    <ItemGroup Condition="'$(Platform)'=='OSX64'"/>
     <ItemGroup Condition="'$(Platform)'=='Win32'">
         <DeployFile Include="..\documentation\icons\json2puml_icon.png" Condition="'$(Config)'=='Debug'">
             <RemoteDir>json2pumlservice\Assets\</RemoteDir>
@@ -39,5 +38,4 @@
             <Overwrite>True</Overwrite>
         </DeployFile>
     </ItemGroup>
-    <ItemGroup Condition="'$(Platform)'=='OSXARM64'"/>
 </Project>

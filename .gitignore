@@ -3,8 +3,7 @@
 *.formatted.json
 /samples-local
 *.mes
-/source/json2pumltest.dpr
-/source/json2pumltest.dproj
-/source/json2pumltest.dsk
-/source/json2pumltest.res
 *.log
+*.dsv
+
+

@@ -1,5 +1,5 @@
 # IDE files
-*.~*~
+*.~*
 *.local
 *.identcache
 __history
@@ -19,9 +19,11 @@ __recovery
 *.dcp
 *.o
 *.
+*.dsk
 
 # Output Folder
 /Win32
 /Win64
 /Linux64
-/*.~dsk
+
+json2pumltest.*

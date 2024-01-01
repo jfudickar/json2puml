@@ -39,9 +39,9 @@ function ApplicationCompileVersion: string;
 
 function ConvertFileToBase64 (iFileName: string): string;
 
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean; overload;
+function ExecuteCommand (const iCommand: WideString; const iCommandType, iCommandInfo: string): Boolean; overload;
 
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
+function ExecuteCommand (const iCommand: WideString; const iCommandType, iCommandInfo: string;
   oCommandOutPut, oCommandErrors: TStringList): Boolean; overload;
 
 function FileContent (iFileName: string): string;
@@ -60,9 +60,12 @@ procedure GenerateDirectory (const iDirectory: string);
 
 procedure GenerateFileDirectory (iFileName: string);
 
+function GenerateOutputFromPumlFiles (iPlantUmlFiles: TStringList; const iPlantUmlJarFile, iJavaRuntimeParameter,
+  iPlantUmlRuntimeParameter: string; iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
+function GenerateOutputsFromPumlFiles (iPlantUmlFiles: TStringList; const iPlantUmlJarFile, iJavaRuntimeParameter,
+  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
 function GenerateOutputFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, iPlantUmlRuntimeParameter
   : string; iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
-
 function GenerateOutputsFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter,
   iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
 
@@ -353,28 +356,31 @@ begin
 end;
 {$ENDIF}
 
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string): Boolean;
+function ExecuteCommand (const iCommand: WideString; const iCommandType, iCommandInfo: string): Boolean;
 var
   vCommandOutPut, vCommandErrors: TStringList;
 begin
   vCommandOutPut := TStringList.Create;
   vCommandErrors := TStringList.Create;
   try
-    Result := ExecuteCommand (iCommand, iCommandInfo, vCommandOutPut, vCommandErrors);
+    Result := ExecuteCommand (iCommand, iCommandType, iCommandInfo, vCommandOutPut, vCommandErrors);
   finally
     vCommandOutPut.Free;
     vCommandErrors.Free;
   end;
 end;
 
-function ExecuteCommand (const iCommand: WideString; const iCommandInfo: string;
+function ExecuteCommand (const iCommand: WideString; const iCommandType, iCommandInfo: string;
   oCommandOutPut, oCommandErrors: TStringList): Boolean;
 var
   s: string;
 begin
   oCommandOutPut.clear;
   oCommandErrors.clear;
-  GlobalLoghandler.Info ('Execute %s', [iCommandInfo]);
+  if not iCommandType.IsEmpty then
+    GlobalLoghandler.Info ('%s : Execute %s', [iCommandType, iCommandInfo])
+  else
+    GlobalLoghandler.Info ('Execute %s', [iCommandInfo]);
   Result := ExecuteCommandInternal (iCommand, oCommandOutPut, oCommandErrors);
   if oCommandOutPut.Count > 0 then
   begin
@@ -501,7 +507,7 @@ var
   c: Integer;
   searchResult: TSearchRec;
 begin
-  if iFileFilter.isEmpty then
+  if iFileFilter.IsEmpty then
     Result := 0
   else
   begin
@@ -548,6 +554,77 @@ begin
   GenerateDirectory (ExtractFilePath(iFileName));
 end;
 
+function GenerateOutputFromPumlFiles (iPlantUmlFiles: TStringList; const iPlantUmlJarFile, iJavaRuntimeParameter,
+  iPlantUmlRuntimeParameter: string; iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
+var
+  Command: string;
+  DestinationFile: string;
+  PumlFile: string;
+  FileList: string;
+begin
+  Result := false;
+  if not iFormat.IsPumlOutput then
+    Exit;
+  if iPlantUmlJarFile.IsEmpty then
+    Exit;
+  if not FileExists (iPlantUmlJarFile) then
+  begin
+    GlobalLoghandler.Error (jetPlantUmlFileNotFound, [iPlantUmlJarFile]);
+    Exit;
+  end;
+  FileList := '';
+  for PumlFile in iPlantUmlFiles do
+  begin
+    if not FileExists (PumlFile) then
+      Continue;
+    DestinationFile := iFormat.FileName (PumlFile);
+
+    if FileExists (DestinationFile) then
+      tFile.Delete (DestinationFile);
+
+    FileList := FileList.Join (' ', [FileList, Format('"%s"', [PumlFile])]);
+  end;
+  if FileList.IsEmpty then
+    Exit;
+
+  Command := Format ('java %s -jar "%s" %s %s %s', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile, FileList,
+    iFormat.PumlGenerateFlag, iPlantUmlRuntimeParameter]).Trim;
+
+  Result := ExecuteCommand (Command, 'Generate ' + iFormat.ToString, Command);
+  if Result then
+  begin
+    Result := false;
+    for PumlFile in iPlantUmlFiles do
+    begin
+      if not FileExists (PumlFile) then
+        Continue;
+      DestinationFile := iFormat.FileName (PumlFile);
+      if FileExistsMinSize (DestinationFile) then
+      begin
+        Result := true;
+        if iOpenAfter then
+          OpenFile (DestinationFile);
+      end
+      else
+        GlobalLoghandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.ToString, PumlFile]);
+    end;
+  end;
+  // if Result then
+  // GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
+end;
+
+function GenerateOutputsFromPumlFiles (iPlantUmlFiles: TStringList; const iPlantUmlJarFile, iJavaRuntimeParameter,
+  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): Boolean;
+var
+  f: tJson2PumlOutputFormat;
+begin
+  Result := true;
+  for f in iOutputFormats do
+    if f.IsPumlOutput then
+      Result := Result and GenerateOutputFromPumlFiles (iPlantUmlFiles, iPlantUmlJarFile, iJavaRuntimeParameter,
+        iPlantUmlRuntimeParameter, f, f in iOpenOutputs);
+end;
+
 function GenerateOutputFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, iPlantUmlRuntimeParameter
   : string; iFormat: tJson2PumlOutputFormat; iOpenAfter: Boolean): Boolean;
 var
@@ -559,7 +636,7 @@ begin
     Exit;
   if not iFormat.IsPumlOutput then
     Exit;
-  if iPlantUmlJarFile.isEmpty then
+  if iPlantUmlJarFile.IsEmpty then
     Exit;
   if not FileExists (iPlantUmlJarFile) then
   begin
@@ -567,7 +644,6 @@ begin
     Exit;
   end;
   DestinationFile := iFormat.FileName (iPlantUmlFile);
-  GenerateFileDirectory (DestinationFile);
 
   if FileExists (DestinationFile) then
     tFile.Delete (DestinationFile);
@@ -575,19 +651,19 @@ begin
   Command := Format ('java %s -jar "%s" "%s" %s %s', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile, iPlantUmlFile,
     iFormat.PumlGenerateFlag, iPlantUmlRuntimeParameter]).Trim;
 
-  Result := ExecuteCommand (Command, Command);
+  Result := ExecuteCommand (Command, 'Generate ' + iFormat.ToString, Command);
   if Result then
   begin
     Result := FileExistsMinSize (DestinationFile);
     if Result then
     begin
-      GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
+      // GlobalLoghandler.Info ('               %-4s generated', [iFormat.toString]);
       if iOpenAfter then
         OpenFile (DestinationFile);
     end;
   end;
   if not Result then
-    GlobalLoghandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.toString, iPlantUmlFile]);
+    GlobalLoghandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.ToString, iPlantUmlFile]);
 end;
 
 function GenerateOutputsFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter,
@@ -607,7 +683,7 @@ var
   Command: string;
   vCommandOutPut, vCommandErrors: TStringList;
 begin
-  if iPlantUmlJarFile.isEmpty then
+  if iPlantUmlJarFile.IsEmpty then
     Result := 'PlantUml jar file not defined'
   else if not FileExists (iPlantUmlJarFile) then
     Result := Format ('defined PlantUml jar file (%s) not existing', [iPlantUmlJarFile])
@@ -617,7 +693,7 @@ begin
     vCommandErrors := TStringList.Create;
     try
       Command := Format ('java %s -jar "%s" -version', [iJavaRuntimeParameter.Trim, iPlantUmlJarFile.Trim]);
-      ExecuteCommand (Command, Command, vCommandOutPut, vCommandErrors);
+      ExecuteCommand (Command, 'get plantuml version', Command, vCommandOutPut, vCommandErrors);
       Result := vCommandOutPut.Text;
     finally
       vCommandOutPut.Free;
@@ -759,7 +835,7 @@ end;
 
 function PathCombine (const Path1, Path2: string): string;
 begin
-  if not Path1.isEmpty then
+  if not Path1.IsEmpty then
     Result := Path1.TrimRight (tPath.DirectorySeparatorChar) + tPath.DirectorySeparatorChar
   else
     Result := '';
@@ -825,9 +901,9 @@ end;
 function ValidateOutputSuffix (iOutputSuffix: string): string;
 begin
   Result := iOutputSuffix.Trim;
-  if not Result.isEmpty then
+  if not Result.IsEmpty then
     if CharInSet (Result[1], ['_', '-', '.']) then
-      if Result.Substring (1).Trim.isEmpty then
+      if Result.Substring (1).Trim.IsEmpty then
         Result := ''
       else
     else
@@ -866,14 +942,14 @@ function FileNameWithSuffix (iFileName, iFileNameSuffix: string): string;
 var
   Extension: string;
 begin
-  if iFileNameSuffix.isEmpty then
+  if iFileNameSuffix.IsEmpty then
   begin
     Result := iFileName;
     Exit;
   end;
   Extension := tPath.GetExtension (iFileName);
-  Result := TPath.Combine(TPath.GetDirectoryName(iFileName), TPath.GetFileNameWithoutExtension(iFileName));
-  Result:= Result + iFileNameSuffix+ Extension;
+  Result := tPath.Combine (tPath.GetDirectoryName(iFileName), tPath.GetFileNameWithoutExtension(iFileName));
+  Result := Result + iFileNameSuffix + Extension;
 end;
 
 function LogIndent (iIndent: Integer): string;
@@ -997,7 +1073,7 @@ begin
   Result := '';
 
   Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
-  if Url.isEmpty then
+  if Url.IsEmpty then
     Exit;
 
   Command := CombineParameter ([CalculateUrlParameter(Url), CombineParameter(iOptions),
@@ -1075,7 +1151,7 @@ begin
     if not Result then
       GlobalLoghandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation])
-    else if not iExecuteEvaluation.Trim.isEmpty then
+    else if not iExecuteEvaluation.Trim.IsEmpty then
       GlobalLoghandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
   except
@@ -1089,13 +1165,13 @@ var
   BindExpr: TBindingExpressionDefault;
 begin
   Result := true;
-  if iExecuteEvaluation.Trim.isEmpty then
+  if iExecuteEvaluation.Trim.IsEmpty then
     Exit;
   BindExpr := TBindingExpressionDefault.Create;
   try
     BindExpr.Source := iExecuteEvaluation;
     BindExpr.recompile;
-    Result := BindExpr.Evaluate.GetValue.toString.ToLower = 'true';
+    Result := BindExpr.Evaluate.GetValue.ToString.ToLower = 'true';
   finally
     BindExpr.Free;
   end;
@@ -1136,16 +1212,16 @@ begin
     if vExitCode <> '0' then
       oErrorMessage := Format ('curl command failed : (%s) : %s', [vExitCode, vErrorMessage])
     else if vResponseCode <> '200' then
-      if vErrorMessage.isEmpty then
+      if vErrorMessage.IsEmpty then
         oErrorMessage := Format ('Invalid HTTP Response : %s', [vResponseCode])
       else
         oErrorMessage := Format ('Invalid HTTP Response : %s - %s', [vResponseCode, vErrorMessage]);
   end;
 
-  if not FileExists (iOutputFileName) and oErrorMessage.isEmpty then
+  if not FileExists (iOutputFileName) and oErrorMessage.IsEmpty then
     oErrorMessage := Format ('Outputfile "%s" not generated.', [iOutputFileName]);
 
-  Result := oErrorMessage.isEmpty;
+  Result := oErrorMessage.IsEmpty;
 end;
 
 class function TCurlUtils.Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
@@ -1166,10 +1242,10 @@ var
 begin
 
   Result := false;
-  if iOutputFile.Trim.isEmpty then
+  if iOutputFile.Trim.IsEmpty then
     Exit;
   Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
-  if Url.Trim.isEmpty then
+  if Url.Trim.IsEmpty then
   begin
     GlobalLoghandler.Error (jetCurlFileSkippedUrlMissing, [iOutputFile]);
     Exit;
@@ -1177,7 +1253,7 @@ begin
 
   oProtocolCurlCommand := CalculateCommand (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlParameterList,
     iCurlDetailParameterList, true);
-  if oProtocolCurlCommand.isEmpty then
+  if oProtocolCurlCommand.IsEmpty then
   begin
     GlobalLoghandler.Error (jetCurlFileSkippedInvalidCurlCommand, [iOutputFile]);
     Exit;
@@ -1210,7 +1286,8 @@ begin
   vCommandOutPut := TStringList.Create;
   vCommandErrors := TStringList.Create;
   try
-    ExecuteCommand ('curl ' + Command, oProtocolCurlCommand, vCommandOutPut, vCommandErrors);
+    ExecuteCommand ('curl ' + Command, Format('curl fetch "%s"', [ExtractFileName(iOutputFile)]),
+      oProtocolCurlCommand, vCommandOutPut, vCommandErrors);
     Result := GetResultFromOutput (iOutputFile, vCommandOutPut, vErrorMessage);
   finally
     vCommandOutPut.Free;
@@ -1248,7 +1325,7 @@ var
 begin
   s := iValue;
   Value := '';
-  while not s.isEmpty do
+  while not s.IsEmpty do
   begin
     i := s.IndexOf ('${');
     if i < 0 then
@@ -1266,7 +1343,7 @@ begin
     end;
     v := s.Substring (2, i - 2);
     v := GetEnvironmentVariable (v.Trim);
-    if v.isEmpty then
+    if v.IsEmpty then
       Value := Value + s.Substring (0, i + 1)
     else
       Value := Value + v;
@@ -1283,7 +1360,7 @@ var
 begin
   s := iValue;
   Value := '';
-  while not s.isEmpty do
+  while not s.IsEmpty do
   begin
     i := s.IndexOf ('${');
     if i < 0 then

@@ -795,7 +795,7 @@ begin
       end;
     end;
   finally
-    oFoundCondition := iDefinitionList.BuildFoundCondition (iConfigurationPropertyName,
+    oFoundCondition := iDefinitionList.BuildFoundCondition (psmExact, iConfigurationPropertyName,
       PropertyName.TrimRight(['.']), Result);
     oPropertyName := PropertyName.TrimRight (['.']);
   end;

@@ -1,0 +1,27 @@
+# IDE files
+*.~*
+*.local
+*.identcache
+__history
+__recovery
+*.stat
+*.tvsconfig
+
+# Delphi Compiler output files
+*.drc
+*.map
+*.jdbg
+*.tds
+*.exe
+*.dll
+*.bpl
+*.dcu
+*.dcp
+*.o
+*.
+*.dsk
+
+# Output Folder
+/Win32
+/Win64
+/Linux64

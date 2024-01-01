@@ -29,6 +29,9 @@ interface
 uses System.JSON, System.Classes, json2pumlconst, Quick.Logger;
 
 type
+  tJson2PumlPropertySearchMatchType = (psmExactExact, psmExact, psmMatchMatch, psmMatch, psmExcludeExclude, psmExclude,
+    psmNoMatch);
+
   tJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
     : string of object;
   tJson2PumlNotifyChangeEvent = procedure(Sender: TObject; ProgressValue, ProgressMaxValue: Integer) of object;
@@ -166,14 +169,55 @@ type
     property Text: string read GetText write SetText;
   end;
 
+  tJson2PumlBasePropertyListEntry = class(TObject)
+  private
+    FFoundCondition: string;
+    FPropertyIndex: Integer;
+  protected
+  public
+    constructor Create;
+    property FoundCondition: string read FFoundCondition write FFoundCondition;
+    property PropertyIndex: Integer read FPropertyIndex write FPropertyIndex default - 1;
+  end;
+
+  tJson2PumlBasePropertyListCache = class(TObject)
+  private
+    FCacheList: TStringList;
+  protected
+    property CacheList: TStringList read FCacheList;
+    function CacheName (const iPropertyName, iParentPropertyName, iParentObjectType: string): string;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Clear;
+    function GetCache (const iPropertyName, iParentPropertyName, iParentObjectType: string; var oFoundCondition: string;
+      var oPropertyIndex: Integer): boolean;
+    procedure AddCache (const iPropertyName, iParentPropertyName, iParentObjectType, iFoundCondition: string;
+      iPropertyIndex: Integer);
+  end;
+
   tJson2PumlBasePropertyList = class(tJson2PumlBaseList)
+  private
+    FConfigurationPropertyName: string;
+    FPropertyCache: tJson2PumlBasePropertyListCache;
+    FSearchEmpyAsDefault: boolean;
+    FUseMatch: boolean;
+    procedure SetSearchEmpyAsDefault (const Value: boolean);
   protected
     function GetIsValid: boolean; override;
-    function IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, iConfigurationPropertyName: string;
-      var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false): Integer;
+    procedure OnPropertyListChange (Sender: TObject);
+    property PropertyCache: tJson2PumlBasePropertyListCache read FPropertyCache;
   public
     constructor Create; override;
-    function BuildFoundCondition (iConfigurationPropertyName, iConfiguredValue, iInputValue: string): string;
+    destructor Destroy; override;
+    function BuildFoundCondition (iMatchType: tJson2PumlPropertySearchMatchType;
+      const iConfigurationPropertyName, iConfiguredValue, iSearchValue: string): string;
+    procedure Clear; override;
+    function IndexOfProperty (const iPropertyName, iParentPropertyName, iParentObjectType: string;
+      var oFoundCondition: string): Integer;
+    property ConfigurationPropertyName: string read FConfigurationPropertyName write FConfigurationPropertyName;
+    property SearchEmpyAsDefault: boolean read FSearchEmpyAsDefault write SetSearchEmpyAsDefault default false;
+    property UseMatch: boolean read FUseMatch write FUseMatch default false;
   end;
 
   tJson2PumlBaseObjectClass = class of tJson2PumlBaseObject;
@@ -182,7 +226,8 @@ type
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks, System.Generics.Collections;
+  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks,
+  System.Generics.Collections;
 
 function tJson2PumlOutputFormatHelper.FileExtension (iLeadingSeparator: boolean = false): string;
 begin
@@ -751,96 +796,190 @@ constructor tJson2PumlBasePropertyList.Create;
 begin
   inherited Create;
   OwnsObjects := true;
+  FUseMatch := true;
+  FSearchEmpyAsDefault := false;
+  FPropertyCache := tJson2PumlBasePropertyListCache.Create ();
+  ItemList.OnChange := OnPropertyListChange;
 end;
 
-function tJson2PumlBasePropertyList.BuildFoundCondition (iConfigurationPropertyName, iConfiguredValue,
-  iInputValue: string): string;
+destructor tJson2PumlBasePropertyList.Destroy;
 begin
-  if iInputValue.IsEmpty then
-    Result := Format ('- ["%s" : Configured "%s"]', [iConfigurationPropertyName, iConfiguredValue])
-  else if iConfiguredValue.IsEmpty then
-    Result := Format ('- ["%s" : Not found "%s"]', [iConfigurationPropertyName, iInputValue])
-  else
-    Result := Format ('- ["%s" : Configured "%s" : Input "%s"]', [iConfigurationPropertyName, iConfiguredValue,
-      iInputValue]);
+  FPropertyCache.Free;
+  inherited Destroy;
 end;
 
-function tJson2PumlBasePropertyList.IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType,
-  iConfigurationPropertyName: string; var oFoundCondition: string; iUseMatch: boolean = false;
-  iSearchEmpyAsDefault: boolean = false): Integer;
+function tJson2PumlBasePropertyList.BuildFoundCondition (iMatchType: tJson2PumlPropertySearchMatchType;
+  const iConfigurationPropertyName, iConfiguredValue, iSearchValue: string): string;
+begin
+  case iMatchType of
+    psmExactExact, psmExact:
+      Result := Format ('- ["%s" : Exact Match : Configured "%s" : Search "%s"]',
+        [iConfigurationPropertyName, iConfiguredValue, iSearchValue]);
+    psmMatchMatch, psmMatch:
+      Result := Format ('- ["%s" : Wildcard match : Configured "%s" : Search "%s"]',
+        [iConfigurationPropertyName, iConfiguredValue, iSearchValue]);
+    psmExcludeExclude, psmExclude:
+      Result := Format ('- ["%s" : Excluded : Configured "%s" : Search "%s"]',
+        [iConfigurationPropertyName, iConfiguredValue, iSearchValue]);
+    psmNoMatch:
+      Result := Format ('- ["%s" : Not found "%s"]', [iConfigurationPropertyName, iSearchValue])
+  end;
+end;
+
+procedure tJson2PumlBasePropertyList.Clear;
+begin
+  inherited Clear;
+  PropertyCache.Clear;
+end;
+
+function tJson2PumlBasePropertyList.IndexOfProperty (const iPropertyName, iParentPropertyName,
+  iParentObjectType: string; var oFoundCondition: string): Integer;
 
 var
   PropertyIndex: Integer;
+  ExcludeType: tJson2PumlPropertySearchMatchType;
+  ExcludeIndex: Integer;
+  ParentPropertyName, ParentName: string;
+  CurrentMatchType, OverallMatchType: tJson2PumlPropertySearchMatchType;
+  ParentFilled: boolean;
+  i: Integer;
+
+  function ListValue (iIndex: Integer): string;
+  begin
+    Result := Names[iIndex];
+    if Result.IsEmpty then
+      Result := ItemList[iIndex];
+  end;
+
+  function CalculateMatchType (iIndex: Integer): tJson2PumlPropertySearchMatchType;
+  var
+    IndexName: string;
+    IndexPropertyName: string;
+    IndexParentName: string;
+    Splitted: TArray<string>;
+  begin
+    Result := psmNoMatch;
+    IndexName := ListValue (iIndex);
+    if ParentFilled and (IndexName = ParentPropertyName) then
+      Result := psmExactExact
+    else if IndexName = iPropertyName then
+      Result := psmExact
+    else if UseMatch then
+      if MatchesMask (iPropertyName, IndexName) then
+        Result := psmMatch
+      else if MatchesMask ('-' + iPropertyName, IndexName) then
+        Result := psmExclude
+      else if ParentFilled then
+      begin
+        Splitted := IndexName.Split (['.'], 2, TStringSplitOptions.None);
+        if Length (Splitted) > 1 then
+        begin
+          IndexPropertyName := Splitted[1];
+          IndexParentName := Splitted[0];
+          if MatchesMask (ParentName, IndexParentName) and MatchesMask (iPropertyName, IndexPropertyName) then
+            Result := psmMatchMatch
+          else if MatchesMask ('-' + ParentName, IndexParentName) and MatchesMask (iPropertyName, IndexPropertyName)
+          then
+            Result := psmExcludeExclude
+        end;
+      end;
+  end;
 
   function found: boolean;
   begin
-    Result := PropertyIndex >= 0;
-  end;
-
-  procedure DirectSearch (iValue: string);
-  begin
-    if not found then
-      PropertyIndex := IndexOfName (iValue);
-    if not found then
-      PropertyIndex := IndexOf (iValue);
-    if found then
-      oFoundCondition := iValue;
-  end;
-  procedure MatchSearch (iValue: string);
-  var
-    i: Integer;
-    S: string;
-  begin
-    if found then
-      exit;
-    for i := 0 to Count - 1 do
-    begin
-      S := Names[i];
-      if S.IsEmpty then
-        S := ItemList[i];
-      if MatchesMask (iValue, S) then
-        PropertyIndex := i;
-      if found then
-        break;
-    end;
-    if found then
-      oFoundCondition := iValue;
+    Result := (PropertyIndex > - 1) and (ExcludeIndex < 0)
   end;
 
 begin
+  ExcludeType := psmNoMatch;
+  ExcludeIndex := - 1;
+
   Result := - 1;
   PropertyIndex := - 1;
   if iPropertyName.IsEmpty then
     exit;
-  DirectSearch (iPropertyName);
-  if not found and not iParentPropertyName.IsEmpty then
-    DirectSearch (iParentPropertyName + '.' + iPropertyName);
-  if not found and not iParentObjectType.IsEmpty then
-    DirectSearch (iParentObjectType + '.' + iPropertyName);
-  if not found and iUseMatch then
+
+  if PropertyCache.GetCache (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition, PropertyIndex) then
   begin
-    MatchSearch (iPropertyName);
-    if not found and not iParentPropertyName.IsEmpty then
-      MatchSearch (iParentPropertyName + '.' + iPropertyName);
-    if not found and not iParentObjectType.IsEmpty then
-      MatchSearch (iParentObjectType + '.' + iPropertyName);
+    Result := PropertyIndex;
+    exit;
   end;
-  if not found and iSearchEmpyAsDefault then
-  begin
-    oFoundCondition := '<default>';
-    PropertyIndex := IndexOf ('');
-    if found then
-      oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, oFoundCondition, '');
-  end
-  else if found then
-    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, self[PropertyIndex], oFoundCondition)
-  else if not iParentObjectType.IsEmpty then
-    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iParentObjectType + '.' + iPropertyName)
-  else if not iParentPropertyName.IsEmpty then
-    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iParentPropertyName + '.' + iPropertyName)
-  else
-    oFoundCondition := BuildFoundCondition (iConfigurationPropertyName, '', iPropertyName);
-  Result := PropertyIndex;
+
+  try
+    if not iParentPropertyName.IsEmpty then
+      ParentName := iParentPropertyName
+    else if not iParentObjectType.IsEmpty then
+      ParentName := iParentObjectType
+    else
+      ParentName := '';
+    ParentFilled := not ParentName.IsEmpty;
+    ParentPropertyName := ParentName + '.' + iPropertyName;
+    OverallMatchType := psmNoMatch;
+    for i := 0 to Count - 1 do
+    begin
+      CurrentMatchType := CalculateMatchType (i);
+      case CurrentMatchType of
+        psmExactExact, psmExact, psmMatchMatch, psmMatch:
+          begin
+            if CurrentMatchType < OverallMatchType then
+            begin
+              OverallMatchType := CurrentMatchType;
+              PropertyIndex := i;
+              oFoundCondition := ListValue (i);
+            end;
+          end;
+        psmExcludeExclude, psmExclude:
+          begin
+            ExcludeType := CurrentMatchType;
+            ExcludeIndex := i;
+          end;
+        psmNoMatch:
+          ;
+      end;
+      if OverallMatchType in [psmExactExact] then
+        break;
+    end;
+
+    if (OverallMatchType in [psmMatchMatch, psmMatch]) and (ExcludeType <> psmNoMatch) then
+    begin
+      OverallMatchType := ExcludeType;
+      PropertyIndex := - 1;
+    end;
+
+    if not found and SearchEmpyAsDefault then
+    begin
+      oFoundCondition := '<default>';
+      PropertyIndex := IndexOf ('');
+      if found then
+        oFoundCondition := BuildFoundCondition (psmExact, ConfigurationPropertyName, oFoundCondition, '')
+      else
+        oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, '', ParentPropertyName);
+    end
+    else
+      case OverallMatchType of
+        psmExactExact, psmMatchMatch:
+          oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, ListValue(PropertyIndex),
+            ParentPropertyName);
+        psmExact, psmMatch:
+          oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, ListValue(PropertyIndex),
+            iPropertyName);
+        psmExcludeExclude:
+          oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, ListValue(ExcludeIndex),
+            ParentName);
+        psmExclude:
+          oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, ListValue(ExcludeIndex),
+            iPropertyName);
+        psmNoMatch:
+          if ParentFilled then
+            oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, '', iPropertyName)
+          else
+            oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, '',
+              ParentPropertyName);
+      end;
+    Result := PropertyIndex;
+  finally
+    PropertyCache.AddCache(iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition, Result);
+  end;
 end;
 
 function tJson2PumlBasePropertyList.GetIsValid: boolean;
@@ -856,6 +995,16 @@ begin
         if not Result then
           exit;
       end;
+end;
+
+procedure tJson2PumlBasePropertyList.OnPropertyListChange (Sender: TObject);
+begin
+  PropertyCache.Clear;
+end;
+
+procedure tJson2PumlBasePropertyList.SetSearchEmpyAsDefault (const Value: boolean);
+begin
+  FSearchEmpyAsDefault := Value;
 end;
 
 procedure tJson2PumlFileNameReplaceHelper.FromString (aValue: string);
@@ -926,6 +1075,65 @@ begin
     WriteToJsonValue (oJson, 'message', iErrorMessage, iLevel + 1, false);
   WriteToJsonValue (oJson, 'description', ErrorDescription, iLevel + 1, false);
   WriteObjectEndToJson (oJson, iLevel);
+end;
+
+constructor tJson2PumlBasePropertyListCache.Create;
+begin
+  inherited Create;
+  FCacheList := TStringList.Create;
+  FCacheList.OwnsObjects := true;
+  FCacheList.Sorted := true;
+  FCacheList.Duplicates := dupError;
+end;
+
+destructor tJson2PumlBasePropertyListCache.Destroy;
+begin
+  FCacheList.Free;
+  inherited Destroy;
+end;
+
+procedure tJson2PumlBasePropertyListCache.AddCache (const iPropertyName, iParentPropertyName, iParentObjectType,
+  iFoundCondition: string; iPropertyIndex: Integer);
+var
+  Entry: tJson2PumlBasePropertyListEntry;
+begin
+  Entry := tJson2PumlBasePropertyListEntry.Create;
+  Entry.FoundCondition := iFoundCondition;
+  Entry.PropertyIndex := iPropertyIndex;
+  CacheList.AddObject (CacheName(iPropertyName, iParentPropertyName, iParentObjectType), Entry);
+end;
+
+function tJson2PumlBasePropertyListCache.CacheName (const iPropertyName, iParentPropertyName,
+  iParentObjectType: string): string;
+begin
+  Result := string.Join ('#', [iPropertyName, iParentPropertyName, iParentObjectType]);
+end;
+
+procedure tJson2PumlBasePropertyListCache.Clear;
+begin
+  CacheList.Clear;
+end;
+
+function tJson2PumlBasePropertyListCache.GetCache (const iPropertyName, iParentPropertyName, iParentObjectType: string;
+  var oFoundCondition: string; var oPropertyIndex: Integer): boolean;
+var
+  Index: Integer;
+  Entry: tJson2PumlBasePropertyListEntry;
+begin
+  index := CacheList.IndexOf (CacheName(iPropertyName, iParentPropertyName, iParentObjectType));
+  Result := index >= 0;
+  if Result then
+  begin
+    Entry := tJson2PumlBasePropertyListEntry (CacheList.Objects[index]);
+    oFoundCondition := Entry.FoundCondition;
+    oPropertyIndex := Entry.PropertyIndex;
+  end;
+end;
+
+constructor tJson2PumlBasePropertyListEntry.Create;
+begin
+  inherited Create;
+  FPropertyIndex := - 1;
 end;
 
 end.

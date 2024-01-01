@@ -128,7 +128,7 @@ begin
   SVGIconImage.Parent := SVGScrollBox;
   SVGIconImage.AutoSize := False;
   SVGIconImage.Align := alClient;
-  SVGIconImage.Stretch := true;
+  SVGIconImage.Stretch := false;
   SVGIconImage.Proportional := true;
   {$ENDIF}
 

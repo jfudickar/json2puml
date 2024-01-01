@@ -15,7 +15,7 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
 						"list":  [
 								"id",
@@ -50,27 +50,7 @@
 							"metadata*"
 					],
 					"pumlHeaderLines":  [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": null,
-							"showFromRelations": null,
-							"showIfEmpty": null,
-							"showNullValues": null,
-							"showToRelations": null,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
-					}
+					]
 				}
 			},
 			{
@@ -83,13 +63,13 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
 						"list":  [
 								"*"
 						]
 					},
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
 						"list":  [
 								"geographicAddress",
@@ -125,27 +105,7 @@
 							"metadata*"
 					],
 					"pumlHeaderLines":  [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": null,
-							"showFromRelations": null,
-							"showIfEmpty": null,
-							"showNullValues": null,
-							"showToRelations": null,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
-					}
+					]
 				}
 			},
 			{
@@ -222,7 +182,7 @@
 					"attributeProperties":  [
 							"*"
 					],
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
 						"list":  [
 								{"objectName": "*","generateWithoutIdentifier": "true"}
@@ -284,7 +244,7 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
 						"list":  [
 								"id",
@@ -292,7 +252,7 @@
 								"status"
 						]
 					},
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
 						"list":  [
 								"product",
@@ -307,7 +267,7 @@
 					],
 					"objectTitleProperties":  [
 					],
-					"objectDetailProperties": {
+					"objectDetailProperties":  {
 						"operation": "replace",
 						"list":  [
 						]
@@ -358,17 +318,19 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
 						"list":  [
 								"*"
 						]
 					},
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
 						"list":  [
 								"product",
 								"productPrice",
+								"productOffering",
+								"productSpecification",
 								"customer"
 						]
 					},
@@ -380,7 +342,7 @@
 					],
 					"objectTitleProperties":  [
 					],
-					"objectDetailProperties": {
+					"objectDetailProperties":  {
 						"operation": "replace",
 						"list":  [
 						]
@@ -398,27 +360,7 @@
 					"hiddenProperties":  [
 					],
 					"pumlHeaderLines":  [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": null,
-							"showFromRelations": null,
-							"showIfEmpty": null,
-							"showNullValues": null,
-							"showToRelations": null,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
-					}
+					]
 				}
 			},
 			{
@@ -431,7 +373,7 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
 						"list":  [
 								"id",
@@ -439,7 +381,7 @@
 								"status"
 						]
 					},
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
 						"list":  [
 								{"objectName": "*","generateWithoutIdentifier": "true"}
@@ -502,7 +444,7 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
 						"list":  [
 								"id",
@@ -603,6 +545,7 @@
 				"itemPrice",
 				"productPrice",
 				"productOffering",
+				"productSpecification",
 				"agreement",
 				"agreementItem",
 				"paymentMethod",
@@ -621,8 +564,7 @@
 				"billsummary",
 				"billsummaryItem",
 				"subscription",
-				"PartyPrivacyProfile",
-				"partyPrivacyProfileSpecification"
+				"partyPrivacyProfile"
 		],
 		"objectTypeProperties":  [
 				"refType",
@@ -725,6 +667,7 @@
 				{"parentProperty": "troubleticket.statusChange", "type": "list", "propertyList": ["changeDate", "status", "*"]},
 				{"parentProperty": "note", "type": "list", "propertyList": ["date", "author", "text", "*"]},
 				{"parentProperty": "historyChange", "type": "list", "propertyList": ["operation", "path", "oldValue", "newValue", "*"]},
+				{"parentProperty": "actionReason", "type": "list", "propertyList": ["action", "reason", "*"]},
 				{"parentProperty": "*characteristic", "type": "list", "propertyList": ["name", "value", "*", "-metadataType", "-valueMetadata"]},
 				"tax*Amount",
 				"exemptAmount",
@@ -736,6 +679,7 @@
 				"presentationMedia",
 				"format",
 				"cycleSpecification",
+				"partyPrivacyProfileSpecification",
 				"periodCoverage",
 				"taxDefinition",
 				"immediatePayOption",
@@ -832,14 +776,6 @@
 						}
 					},
 					{
-						"formatName": "productOffering",
-						"definition": {
-							"objectFilter": ["productOffering"],
-							"iconColor": "IndianRed",
-							"skinParams": ["BackgroundColor=DarkSalmon"]
-						}
-					},
-					{
 						"formatName": "productOrder",
 						"definition": {
 							"objectFilter": [
@@ -852,19 +788,41 @@
 								"orderTotalPrice"
 							],
 							"iconColor": "DarkGreen",
-							"skinParams": ["BackgroundColor=Lime"]
+							"skinParams": ["BackgroundColor=LimeGreen"]
 						}
 					},
 					{
 						"formatName": "product",
 						"definition": {
+							"objectFilter": ["product"],
+							"iconColor": "Green",
+							"skinParams": ["BackgroundColor=LawnGreen"]
+						}
+					},
+					{
+						"formatName": "productDetails",
+						"definition": {
 							"objectFilter": [
 								"product*",
+								"product.*",
+								"-productOffering",
+								"-productSpecification",
 								"Price",
 								"appliedCustomerBillingRate"
 							],
 							"iconColor": "Green",
 							"skinParams": ["BackgroundColor=LightGreen"]
+						}
+					},
+					{
+						"formatName": "productCatalogue",
+						"definition": {
+							"objectFilter": [
+								"productOffering",
+								"productSpecification"
+							],
+							"iconColor": "IndianRed",
+							"skinParams": ["BackgroundColor=DarkSalmon"]
 						}
 					},
 					{
@@ -883,8 +841,8 @@
 								"agreementItem",
 								"commitment"
 							],
-							"iconColor": "Crimson",
-							"skinParams": ["BackgroundColor=red"]
+							"iconColor": "LimeGreen",
+							"skinParams": ["BackgroundColor=lime"]
 						}
 					},
 					{

@@ -1,7 +1,22 @@
+# **json2puml v2.2.11.107** - 01.01.2024
+## All Editions
+### Changed Feature
+- Inputlist.description.curlparameter.name handling improved
+  - Not the names will automatically converted into the ${<name>} format
+  - This fixes the wrong check if the parameter is defined at runtime which could lead to duplicate curlparameters
+- All property name filters which are supporting wildcards are supporting now to exclude a property from a previous found by supporting a remove with a leading "-". 
+  E.g.
+  "product*"
+  "-productOffering"
+  This will allow product and productCharacteristic but not productOffering.
+- Internal performance optimization (by caching) when searching in the definition configurations
+- Performance optimization by doing one plantuml call to convert all files of the same output format 
+- Installation uses now PlantUml v1.2023.13
+
 # **json2puml v2.2.10.106** - 05.09.2023
 ## All Editions
 ### Changed Feature
-- Inputlistfile.curlFileNameSuffix handling improved
+- Inputlistfile.curlFileNameSuffix handling improved (#12)
   - Curl Variables with "." are now supported
   - if the first character is not ".", "-" or "_" a "." will be added
 

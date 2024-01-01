@@ -15,6 +15,12 @@
         <Projects Include="json2pumlwindowsservice.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\unittests\json2pumlunittests.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\unittests\json2pumlunittestsui.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -59,14 +65,32 @@
     <Target Name="json2pumlwindowsservice:Make">
         <MSBuild Projects="json2pumlwindowsservice.dproj" Targets="Make"/>
     </Target>
+    <Target Name="json2pumlunittests">
+        <MSBuild Projects="..\unittests\json2pumlunittests.dproj"/>
+    </Target>
+    <Target Name="json2pumlunittests:Clean">
+        <MSBuild Projects="..\unittests\json2pumlunittests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="json2pumlunittests:Make">
+        <MSBuild Projects="..\unittests\json2pumlunittests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="json2pumlunittestsui">
+        <MSBuild Projects="..\unittests\json2pumlunittestsui.dproj"/>
+    </Target>
+    <Target Name="json2pumlunittestsui:Clean">
+        <MSBuild Projects="..\unittests\json2pumlunittestsui.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="json2pumlunittestsui:Make">
+        <MSBuild Projects="..\unittests\json2pumlunittestsui.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="json2pumlui;json2puml;json2pumlservice;json2pumlwindowsservice"/>
+        <CallTarget Targets="json2pumlui;json2puml;json2pumlservice;json2pumlwindowsservice;json2pumlunittests;json2pumlunittestsui"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="json2pumlui:Clean;json2puml:Clean;json2pumlservice:Clean;json2pumlwindowsservice:Clean"/>
+        <CallTarget Targets="json2pumlui:Clean;json2puml:Clean;json2pumlservice:Clean;json2pumlwindowsservice:Clean;json2pumlunittests:Clean;json2pumlunittestsui:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="json2pumlui:Make;json2puml:Make;json2pumlservice:Make;json2pumlwindowsservice:Make"/>
+        <CallTarget Targets="json2pumlui:Make;json2puml:Make;json2pumlservice:Make;json2pumlwindowsservice:Make;json2pumlunittests:Make;json2pumlunittestsui:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
