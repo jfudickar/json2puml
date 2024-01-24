@@ -13,8 +13,10 @@ uses
   DUnitX.Loggers.Xml.NUnit,
   {$ENDIF }
   DUnitX.TestFramework,
-  ut.Json2PumlBasePropertyList in 'ut.Json2PumlBasePropertyList.pas',
-  uttJson2PumlFormatDefinition in 'uttJson2PumlFormatDefinition.pas';
+  utJson2PumlBasePropertyList in 'utJson2PumlBasePropertyList.pas',
+  uttJson2PumlFormatDefinition in 'uttJson2PumlFormatDefinition.pas',
+  utJson2PumlCurlUtils in 'utJson2PumlCurlUtils.pas',
+  utJson2PumlFileDescriptionParameterList in 'utJson2PumlFileDescriptionParameterList.pas';
 
 { keep comment here to protect the following conditional from being removed by the IDE when adding a unit }
 {$IFNDEF TESTINSIGHT}

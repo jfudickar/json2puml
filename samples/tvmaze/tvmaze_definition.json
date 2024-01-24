@@ -1,7 +1,7 @@
 {
 	"description": {
-		"displayName": null,
-		"description": null
+		"displayName": "TV MAZE Show Format definition",
+		"description": "This example is based on the TVMAZE API (\"https://www.tvmaze.com/api\")."
 	},
 	"defaultOption": "default",
 	"options":  [

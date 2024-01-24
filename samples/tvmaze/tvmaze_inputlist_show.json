@@ -1,13 +1,14 @@
 {
 	"description": {
 		"displayName": "TV MAZE Show List",
-		"description": "This example is based on the TVMAZE API (\"https://www.tvmaze.com/api\").\nIt delivers a defined film with the starships and vehicles of the film.",
+		"description": "This example is based on the TVMAZE API (\"https://www.tvmaze.com/api\").\nIt delivers details of the show and the persons playing in this show.",
 		"curlParameter":  [
 				{
 					"name": "${id}",
 					"displayName": "Show ID",
 					"description": "Primary id of the Show",
 					"mandatory": true,
+					"mandatoryGroup": null,
 					"regularExpression": null,
 					"defaultValue": null
 				}
@@ -46,14 +47,13 @@
 				"curlUrl": "shows/${id}?embed[]=cast&embed[]=nextepisode",
 				"curlOutputParameter":  [
 						{
-							"${character}": "_embedded.cast.character.idx"
-						},
-						{
 							"${name}": "name"
 						},
 						{
-							"${person}": "_embedded.cast.person.idx"
+							"${person}": "_embedded.cast.person.id"
 						}
+				],
+				"curlInputParameter":  [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -72,22 +72,7 @@
 				"curlUrl": "people/${person}",
 				"curlOutputParameter":  [
 				],
-				"splitIdentifier": null,
-				"splitInputFile": false
-			},
-			{
-				"inputFile": "character.json",
-				"leadingObject": "character",
-				"generateOutput": true,
-				"mandatory": false,
-				"curlBaseUrl": null,
-				"curlCache": 0,
-				"curlExecuteEvaluation": null,
-				"curlFileSuffix": "_${character}",
-				"curlFormatOutput": true,
-				"curlOptions": null,
-				"curlUrl": "character/${character}",
-				"curlOutputParameter":  [
+				"curlInputParameter":  [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false

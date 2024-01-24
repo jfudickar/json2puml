@@ -8,7 +8,7 @@
 					"displayName": "UserId",
 					"description": "ID of the user",
 					"mandatory": true,
-					"regularExpression": null,
+					"regularExpression": "^[0-9]+$",
 					"defaultValue": null
 				},
 				{

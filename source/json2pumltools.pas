@@ -111,31 +111,40 @@ type
   private
     class function CalculateCommandExecute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
       const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList; iIncludeWriteOut: Boolean): string;
-    class function FullUrl (const iBaseUrl: string; const iUrlParts: array of string;
-      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: Boolean): string;
+    class function CalculateOutputParameter (const iOutput: string): string;
     class function CalculateParameter (const iParameterName, iParameterValue: string; iQuoteValue: Boolean): string;
     class function CalculateUrlParameter (const iUrl: string): string;
-    class function CalculateOutputParameter (const iOutput: string): string;
     class function CalculateWriteOutParameter (const iWriteout: string): string;
   public
     class function CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
       const iOutputFile: string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
-      iIncludeWriteOut: Boolean): string;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: Boolean): string;
     class function CalculateHeaderParameter (const iHeaderName: string; iHeaderValue: string): string;
+    class function CalculateUrl (const iBaseUrl: string; const iUrlParts: array of string;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList): string;
+    class function ReplaceCurlParameterValues (const iValue: string;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iCleanUnused: Boolean): string; overload;
     class function CalculateUserAgentParameter (const iUserAgent: string): string;
-    class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
-      var oErrorMessage: string): Boolean;
     class function CheckEvaluation (iExecuteEvaluation: string): Boolean;
     class function CheckExecuteEvaluation (const iOutputFile: string; iExecuteEvaluation: string;
-      iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
-    class function Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
-      const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
-      var oProtocolCurlCommand: string): Boolean;
-    class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
+      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList): Boolean;
     class function CleanUnusedCurlVariables (iValue: string): string;
     class function CombineParameter (iParameter: array of string): string;
+    class function Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+      const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+      iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iCurlCache: Integer;
+      iCurlResult: tJson2PumlCurlResult): Boolean;
+    class function GetResultFromOutput (iOutputFileName: string; iCommandOutput: TStringList;
+      var oErrorMessage: string): Boolean;
+    class function ReplaceCurlParameterValues (const iValue: string; iCurlParameterList: tJson2PumlCurlParameterList;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iCleanUnused: Boolean): string; overload;
+    class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
   end;
 
 {$IFDEF LINUX}
@@ -375,8 +384,8 @@ function ExecuteCommand (const iCommand: WideString; const iCommandType, iComman
 var
   s: string;
 begin
-  oCommandOutPut.clear;
-  oCommandErrors.clear;
+  oCommandOutPut.Clear;
+  oCommandErrors.Clear;
   if not iCommandType.IsEmpty then
     GlobalLoghandler.Info ('%s : Execute %s', [iCommandType, iCommandInfo])
   else
@@ -710,7 +719,7 @@ var
   ConfigFile: tJson2PumlBaseObject;
 begin
   Result := 0;
-  oJsonOutPut.clear;
+  oJsonOutPut.Clear;
   FileList := TStringList.Create;
   try
     GlobalConfigurationDefinition.FindFilesInFolderList (FileList, iFolderList);
@@ -870,6 +879,8 @@ begin
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
       tPath.ExtensionSeparatorChar);
+  while Result.IndexOf (iReplaceWith + iReplaceWith) >= 0 do
+    Result := Result.replace (iReplaceWith + iReplaceWith, tPath.ExtensionSeparatorChar);
 end;
 
 function ReplaceInvalidPathFileNameChars (const iFileName: string; iFinal: Boolean = false;
@@ -1043,28 +1054,18 @@ end;
 
 {$ENDIF}
 
-class function TCurlUtils.FullUrl (const iBaseUrl: string; const iUrlParts: array of string;
-  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList): string;
-begin
-  Result := string.Join ('/', [iBaseUrl.TrimRight(['/']), string.Join('', iUrlParts).Trim(['/'])]);
-  if Assigned (iCurlDetailParameterList) then
-    Result := iCurlDetailParameterList.ReplaceParameterValues (Result);
-  if Assigned (iCurlParameterList) then
-    Result := iCurlParameterList.ReplaceParameterValues (Result);
-  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
-end;
-
 class function TCurlUtils.CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
   const iOutputFile: string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
-  iIncludeWriteOut: Boolean): string;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: Boolean): string;
 begin
   Result := CalculateCommandExecute (iBaseUrl, iUrlParts, iOptions, iOutputFile, nil, iCurlParameterList,
-    iCurlDetailParameterList, iIncludeWriteOut);
+    iCurlDetailParameterList, iCurlMappingParameterList, iIncludeWriteOut);
 end;
 
 class function TCurlUtils.CalculateCommandExecute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
   const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList; iIncludeWriteOut: Boolean): string;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: Boolean): string;
 var
   Command: string;
   Url: string;
@@ -1072,7 +1073,7 @@ begin
 
   Result := '';
 
-  Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
+  Url := CalculateUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList);
   if Url.IsEmpty then
     Exit;
 
@@ -1085,13 +1086,26 @@ begin
 
   if Assigned (iCurlAuthenticationList) then
     Command := iCurlAuthenticationList.ReplaceParameterValues (iBaseUrl, Command);
-  if Assigned (iCurlDetailParameterList) then
-    Command := iCurlDetailParameterList.ReplaceParameterValues (Command);
-  if Assigned (iCurlParameterList) then
-    Command := iCurlParameterList.ReplaceParameterValues (Command);
-  Command := ReplaceCurlVariablesFromEnvironment (Command);
+  Command := ReplaceCurlParameterValues (Command, iCurlParameterList, iCurlDetailParameterList,
+    iCurlMappingParameterList, true);
 
   Result := Command;
+end;
+
+class function TCurlUtils.CalculateHeaderParameter (const iHeaderName: string; iHeaderValue: string): string;
+begin
+  if iHeaderName.IsEmpty then
+    Result := ''
+  else
+    Result := CalculateParameter ('header', Format('%s: %s', [iHeaderName, iHeaderValue]), true);
+end;
+
+class function TCurlUtils.CalculateOutputParameter (const iOutput: string): string;
+begin
+  if iOutput.IsEmpty then
+    Result := ''
+  else
+    Result := CalculateParameter ('output', iOutput, true);
 end;
 
 class function TCurlUtils.CalculateParameter (const iParameterName, iParameterValue: string;
@@ -1103,61 +1117,84 @@ begin
     Result := Format ('--%s %s', [iParameterName, iParameterValue]);
 end;
 
+class function TCurlUtils.CalculateUrl (const iBaseUrl: string; const iUrlParts: array of string;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList): string;
+var
+  UrlParts: string;
+begin
+  UrlParts := string.Join ('', iUrlParts).Trim (['/']);
+  if not UrlParts.IsEmpty then
+    Result := string.Join ('/', [iBaseUrl.TrimRight(['/']), UrlParts])
+  else
+    Result := iBaseUrl;
+  Result := ReplaceCurlParameterValues (Result, iCurlParameterList, iCurlDetailParameterList,
+    iCurlMappingParameterList, true);
+end;
+
+class function TCurlUtils.ReplaceCurlParameterValues (const iValue: string;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iCleanUnused: Boolean): string;
+var
+  LocalCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
+  InputParameter: tJson2PumlCurlMappingParameterDefinition;
+
+begin
+  Result := iValue;
+  if Assigned (iCurlMappingParameterList) and (iCurlMappingParameterList.Count > 0) then
+  begin
+    LocalCurlMappingParameterList := tJson2PumlCurlMappingParameterList.Create;
+    try
+      LocalCurlMappingParameterList.Assign (iCurlMappingParameterList);
+      for InputParameter in LocalCurlMappingParameterList do
+      begin
+        if not InputParameter.IsValid then
+          Continue;
+        if Assigned (iCurlDetailParameterList) then
+          InputParameter.Value := iCurlDetailParameterList.ReplaceParameterValues (InputParameter.Value);
+        if Assigned (iCurlParameterList) then
+          InputParameter.Value := iCurlParameterList.ReplaceParameterValues (InputParameter.Value);
+      end;
+      for InputParameter in LocalCurlMappingParameterList do
+      begin
+        if not InputParameter.IsValid then
+          Continue;
+        InputParameter.Value := LocalCurlMappingParameterList.ReplaceParameterValues (InputParameter.Value);
+      end;
+      Result := LocalCurlMappingParameterList.ReplaceParameterValues (Result);
+    finally
+      LocalCurlMappingParameterList.Free;
+    end;
+  end;
+  if Assigned (iCurlDetailParameterList) then
+    Result := iCurlDetailParameterList.ReplaceParameterValues (Result);
+  if Assigned (iCurlParameterList) then
+    Result := iCurlParameterList.ReplaceParameterValues (Result);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Result);
+  GlobalConfigurationDefinition.CurlParameter.ReplaceParameterValues (Result);
+  if iCleanUnused then
+    Result := TCurlUtils.CleanUnusedCurlVariables (Result);
+end;
+
 class function TCurlUtils.CalculateUrlParameter (const iUrl: string): string;
 begin
   Result := CalculateParameter ('url', iUrl, true);
 end;
 
-class function TCurlUtils.CalculateOutputParameter (const iOutput: string): string;
-begin
-  Result := CalculateParameter ('output', iOutput, true);
-end;
-
 class function TCurlUtils.CalculateUserAgentParameter (const iUserAgent: string): string;
 begin
-  Result := CalculateParameter ('user-agent', iUserAgent, true);
-end;
-
-class function TCurlUtils.CalculateHeaderParameter (const iHeaderName: string; iHeaderValue: string): string;
-begin
-  Result := CalculateParameter ('header', Format('%s: %s', [iHeaderName, iHeaderValue]), true);
+  if iUserAgent.IsEmpty then
+    Result := ''
+  else
+    Result := CalculateParameter ('user-agent', iUserAgent, true);
 end;
 
 class function TCurlUtils.CalculateWriteOutParameter (const iWriteout: string): string;
 begin
-  Result := CalculateParameter ('write-out', iWriteout, true);
-end;
-
-class function TCurlUtils.CombineParameter (iParameter: array of string): string;
-begin
-  Result := string.Join (' ', iParameter).Trim;
-end;
-
-class function TCurlUtils.CheckExecuteEvaluation (const iOutputFile: string; iExecuteEvaluation: string;
-  iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlParameterList: tJson2PumlCurlParameterList): Boolean;
-var
-  ExecuteEvaluation: string;
-begin
-  Result := true;
-  ExecuteEvaluation := iExecuteEvaluation;
-  if Assigned (iCurlDetailParameterList) then
-    ExecuteEvaluation := iCurlDetailParameterList.ReplaceParameterValues (ExecuteEvaluation);
-  if Assigned (iCurlParameterList) then
-    ExecuteEvaluation := iCurlParameterList.ReplaceParameterValues (ExecuteEvaluation);
-  ExecuteEvaluation := ReplaceCurlVariablesFromEnvironment (ExecuteEvaluation);
-  ExecuteEvaluation := CleanUnusedCurlVariables (ExecuteEvaluation);
-  try
-    Result := CheckEvaluation (ExecuteEvaluation);
-    if not Result then
-      GlobalLoghandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
-        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation])
-    else if not iExecuteEvaluation.Trim.IsEmpty then
-      GlobalLoghandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
-        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
-  except
-    on e: exception do
-      GlobalLoghandler.Error (jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
-  end;
+  if iWriteout.IsEmpty then
+    Result := ''
+  else
+    Result := CalculateParameter ('write-out', iWriteout, true);
 end;
 
 class function TCurlUtils.CheckEvaluation (iExecuteEvaluation: string): Boolean;
@@ -1174,6 +1211,166 @@ begin
     Result := BindExpr.Evaluate.GetValue.ToString.ToLower = 'true';
   finally
     BindExpr.Free;
+  end;
+end;
+
+class function TCurlUtils.CheckExecuteEvaluation (const iOutputFile: string; iExecuteEvaluation: string;
+  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList): Boolean;
+var
+  ExecuteEvaluation: string;
+begin
+  Result := true;
+  ExecuteEvaluation := ReplaceCurlParameterValues (iExecuteEvaluation, iCurlParameterList, iCurlDetailParameterList,
+    iCurlMappingParameterList, true);
+  try
+    Result := CheckEvaluation (ExecuteEvaluation);
+    if not Result then
+      GlobalLoghandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
+        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation])
+    else if not iExecuteEvaluation.Trim.IsEmpty then
+      GlobalLoghandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
+        [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
+  except
+    on e: exception do
+      GlobalLoghandler.Error (jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
+  end;
+end;
+
+class function TCurlUtils.CleanUnusedCurlVariables (iValue: string): string;
+var
+  Value: string;
+  s: string;
+  i: Integer;
+begin
+  s := iValue;
+  Value := '';
+  while not s.IsEmpty do
+  begin
+    i := s.IndexOf ('${');
+    if i < 0 then
+    begin
+      Value := Value + s;
+      Break;
+    end;
+    Value := Value + s.Substring (0, i);
+    s := s.Substring (i);
+    i := s.IndexOf ('}');
+    if i < 0 then
+    begin
+      Value := Value + s;
+      Break;
+    end;
+    s := s.Substring (i + 1);
+  end;
+  Result := Value;
+end;
+
+class function TCurlUtils.CombineParameter (iParameter: array of string): string;
+begin
+  Result := string.Join (' ', iParameter).Trim;
+end;
+
+class function TCurlUtils.Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
+  const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iCurlCache: Integer;
+  iCurlResult: tJson2PumlCurlResult): Boolean;
+var
+  Url: string;
+  Command: string;
+  FilePath: string;
+  FileLastWriteDate: tDateTime;
+  StartTime: tDateTime;
+  vErrorMessage: string;
+  vCommandOutPut, vCommandErrors: TStringList;
+  vOutputFile: TStringList;
+
+begin
+
+  Result := false;
+  iCurlResult.Clear;
+  try
+    if iOutputFile.Trim.IsEmpty then
+      Exit;
+    Url := CalculateUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList);
+    if Url.Trim.IsEmpty then
+    begin
+      iCurlResult.ErrorMessage := Format (jetCurlFileSkippedUrlMissing.ErrorMessage, [iOutputFile]);
+      GlobalLoghandler.Error (iCurlResult.ErrorMessage);
+      Exit;
+    end;
+    iCurlResult.Url := Url;
+    iCurlResult.OutPutFile := iOutputFile;
+
+    iCurlResult.Command := CalculateCommand (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlParameterList,
+      iCurlDetailParameterList, iCurlMappingParameterList, true);
+    if iCurlResult.Command.IsEmpty then
+    begin
+      iCurlResult.ErrorMessage := Format (jetCurlFileSkippedInvalidCurlCommand.ErrorMessage, [iOutputFile]);
+      GlobalLoghandler.Error (iCurlResult.ErrorMessage);
+      Exit;
+    end;
+    iCurlResult.Command := Format ('%s %s', ['curl', iCurlResult.Command]);
+
+    Command := CalculateCommandExecute (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlAuthenticationList,
+      iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList, true);
+
+    FilePath := tPath.GetDirectoryName (iOutputFile);
+    if tPath.IsRelativePath (FilePath) or IsLinuxHomeBasedPath (FilePath) then
+      FilePath := ExpandFileName (FilePath);
+    GenerateDirectory (FilePath);
+
+    if (iCurlCache > 0) and FileExists (iOutputFile) then
+    begin
+      FileLastWriteDate := tFile.GetLastWriteTime (iOutputFile);
+      if Now - FileLastWriteDate < iCurlCache / (24 * 60 * 60) then
+      begin
+        GlobalLoghandler.Info (iCurlResult.Command);
+        GlobalLoghandler.Info ('  curl skipped - %s is not older then %d seconds.', [iOutputFile, iCurlCache]);
+        Result := true;
+        Exit;
+      end;
+    end;
+
+    if FileExists (iOutputFile) then
+      tFile.Delete (iOutputFile);
+    StartTime := Now;
+    vCommandOutPut := TStringList.Create;
+    vCommandErrors := TStringList.Create;
+    try
+      ExecuteCommand ('curl ' + Command, Format('curl fetch "%s"', [ExtractFileName(iOutputFile)]), iCurlResult.Command,
+        vCommandOutPut, vCommandErrors);
+      Result := GetResultFromOutput (iOutputFile, vCommandOutPut, vErrorMessage);
+    finally
+      vCommandOutPut.Free;
+      vCommandErrors.Free;
+    end;
+    iCurlResult.Duration := MillisecondsBetween (Now, StartTime);
+    if Result then
+      GlobalLoghandler.Info ('  curl "%s" fetched to "%s" (%d ms)', [Url, iOutputFile, iCurlResult.Duration])
+    else
+    begin
+      GlobalLoghandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),
+        vErrorMessage]);
+      iCurlResult.ErrorMessage := vErrorMessage;
+      if FileExists (iOutputFile) then
+      begin
+        tFile.SetLastWriteTime (iOutputFile, Now - 10);
+        vOutputFile := TStringList.Create;
+        try
+          vOutputFile.LoadFromFile (iOutputFile);
+          // if vOutputFile.Count > 0 then
+          // GlobalLoghandler.Debug ('curl result output (%s)', [iOutputFile]);
+          // for s in vOutputFile do
+          // GlobalLoghandler.Debug (s);
+        finally
+          vOutputFile.Free;
+        end;
+      end;
+    end;
+  finally
+    iCurlResult.Generated := Result;
   end;
 end;
 
@@ -1224,97 +1421,11 @@ begin
   Result := oErrorMessage.IsEmpty;
 end;
 
-class function TCurlUtils.Execute (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
-  const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-  iCurlDetailParameterList, iCurlParameterList: tJson2PumlCurlParameterList; iCurlCache: Integer;
-  var oProtocolCurlCommand: string): Boolean;
-var
-  Url: string;
-  Command: string;
-  FilePath: string;
-  FileLastWriteDate: tDateTime;
-  StartTime: tDateTime;
-  vErrorMessage: string;
-  vCommandOutPut, vCommandErrors: TStringList;
-  s: string;
-  vOutputFile: TStringList;
-
+class function TCurlUtils.ReplaceCurlParameterValues (const iValue: string;
+  iCurlParameterList: tJson2PumlCurlParameterList; iCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
+  iCleanUnused: Boolean): string;
 begin
-
-  Result := false;
-  if iOutputFile.Trim.IsEmpty then
-    Exit;
-  Url := FullUrl (iBaseUrl, iUrlParts, iCurlParameterList, iCurlDetailParameterList);
-  if Url.Trim.IsEmpty then
-  begin
-    GlobalLoghandler.Error (jetCurlFileSkippedUrlMissing, [iOutputFile]);
-    Exit;
-  end;
-
-  oProtocolCurlCommand := CalculateCommand (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlParameterList,
-    iCurlDetailParameterList, true);
-  if oProtocolCurlCommand.IsEmpty then
-  begin
-    GlobalLoghandler.Error (jetCurlFileSkippedInvalidCurlCommand, [iOutputFile]);
-    Exit;
-  end;
-  oProtocolCurlCommand := Format ('%s %s', ['curl', oProtocolCurlCommand]);
-
-  Command := CalculateCommandExecute (iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlAuthenticationList,
-    iCurlParameterList, iCurlDetailParameterList, true);
-
-  FilePath := tPath.GetDirectoryName (iOutputFile);
-  if tPath.IsRelativePath (FilePath) or IsLinuxHomeBasedPath (FilePath) then
-    FilePath := ExpandFileName (FilePath);
-  GenerateDirectory (FilePath);
-
-  if (iCurlCache > 0) and FileExists (iOutputFile) then
-  begin
-    FileLastWriteDate := tFile.GetLastWriteTime (iOutputFile);
-    if Now - FileLastWriteDate < iCurlCache / (24 * 60 * 60) then
-    begin
-      GlobalLoghandler.Info (oProtocolCurlCommand);
-      GlobalLoghandler.Info ('  curl skipped - %s is not older then %d seconds.', [iOutputFile, iCurlCache]);
-      Result := true;
-      Exit;
-    end;
-  end;
-
-  if FileExists (iOutputFile) then
-    tFile.Delete (iOutputFile);
-  StartTime := Now;
-  vCommandOutPut := TStringList.Create;
-  vCommandErrors := TStringList.Create;
-  try
-    ExecuteCommand ('curl ' + Command, Format('curl fetch "%s"', [ExtractFileName(iOutputFile)]),
-      oProtocolCurlCommand, vCommandOutPut, vCommandErrors);
-    Result := GetResultFromOutput (iOutputFile, vCommandOutPut, vErrorMessage);
-  finally
-    vCommandOutPut.Free;
-    vCommandErrors.Free;
-  end;
-  if Result then
-    GlobalLoghandler.Info ('  curl "%s" fetched to "%s" (%d ms)',
-      [Url, iOutputFile, MillisecondsBetween(Now, StartTime)])
-  else
-  begin
-    GlobalLoghandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),
-      vErrorMessage]);
-    if FileExists (iOutputFile) then
-    begin
-      tFile.SetLastWriteTime (iOutputFile, Now - 10);
-      vOutputFile := TStringList.Create;
-      try
-        vOutputFile.LoadFromFile (iOutputFile);
-        if vOutputFile.Count > 0 then
-          GlobalLoghandler.Debug ('curl result output (%s)', [iOutputFile]);
-        for s in vOutputFile do
-          GlobalLoghandler.Debug (s);
-      finally
-        vOutputFile.Free;
-      end;
-    end;
-  end;
+  Result := ReplaceCurlParameterValues (iValue, iCurlParameterList, nil, iCurlMappingParameterList, iCleanUnused);
 end;
 
 class function TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue: string): string;
@@ -1347,35 +1458,6 @@ begin
       Value := Value + s.Substring (0, i + 1)
     else
       Value := Value + v;
-    s := s.Substring (i + 1);
-  end;
-  Result := Value;
-end;
-
-class function TCurlUtils.CleanUnusedCurlVariables (iValue: string): string;
-var
-  Value: string;
-  s: string;
-  i: Integer;
-begin
-  s := iValue;
-  Value := '';
-  while not s.IsEmpty do
-  begin
-    i := s.IndexOf ('${');
-    if i < 0 then
-    begin
-      Value := Value + s;
-      Break;
-    end;
-    Value := Value + s.Substring (0, i);
-    s := s.Substring (i);
-    i := s.IndexOf ('}');
-    if i < 0 then
-    begin
-      Value := Value + s;
-      Break;
-    end;
     s := s.Substring (i + 1);
   end;
   Result := Value;

@@ -83,7 +83,6 @@ begin
   Assert.AreEqual(iFormatName, SingleFormat.FormatName, FoundCondition);
   Assert.IsNotEmpty(FoundCondition, 'FoundCondition');
   Assert.Pass(FoundCondition);
-
 end;
 
 initialization

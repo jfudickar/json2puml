@@ -1,7 +1,7 @@
 {
 	"description": {
-		"displayName": null,
-		"description": null
+		"displayName": "SWAPI Film Format definition",
+		"description": "This example is based on the SWAPI API (\"https://swapi.dev\").\n"
 	},
 	"defaultOption": "default",
 	"options":  [

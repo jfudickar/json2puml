@@ -28,6 +28,7 @@ class InputlistDescriptionCurlParameter {
     displayName : String
     description : String
     mandatory : Boolean
+    mandatoryGroup : String
     regularExpression : String
     defaultValue : String
 }
@@ -57,8 +58,18 @@ class InputlistFile  <<Pivot>> {
   curlSpanIdHeader : String
   curlTraceIdHeader : String
   curlUserAgentInformation : String
+  curlMappingParmater : Array of curlMappingParameter
   --
   input : Array of SingleListFile
+}
+
+class curlMappingParameter {
+    name : String
+    prefix : String
+    value : String
+    suffix : String
+    valueIfEmpty : String
+    urlEncodeValue : Boolean
 }
 
 class curlOutputParameter {
@@ -89,6 +100,7 @@ class SingleListFile {
 InputlistFile::input --> SingleListFile::inputFile
 InputlistFile::outputFormats -left-> OutputFormat
 InputlistFile::description -up-> InputlistDescription
+InputlistFile::curlMappingParameter -right-> curlMappingParameter::name
 InputlistDescription::curlParameter -right-> InputlistDescriptionCurlParameter::name
 InputlistDescription::curlAuthenticationParameter -right-> InputlistDescriptionCurlParameter::name
 SingleListFile::curlOutputParameter -right-> curlOutputParameter::name

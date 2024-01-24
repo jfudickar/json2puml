@@ -309,6 +309,10 @@ components:
         mandatory:
           type: boolean
           description: Flag to describe if the curl parameter is optional or mandatory
+        mandatoryGroup:
+          type: string
+          description: Optional parameter to build groups of mandatory values (comma separated list). In the minimum one parameter of a mandatory group must be defined. When no group is defined the parameter is allways mandatory.
+          example: Name,Street
         regularExpression:
           type: string
           description: Optional regular expression which could be used by a UI to validate the curl parameters

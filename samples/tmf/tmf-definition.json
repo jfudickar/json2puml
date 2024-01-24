@@ -703,8 +703,8 @@
 				{"parentProperty": "taxItem", "type": "list"},
 				{"parentProperty": "netAmount", "type": "list"},
 				{"parentProperty": "total*VAT", "type": "list"},
-				{"parentProperty": "outOfBundleAmount", "type": "list", "propertyList": "-@type"},
-				{"parentProperty": "contactMedium.characteristic", "type": "record", "propertyList": "-@type"},
+				{"parentProperty": "outOfBundleAmount", "type": "list", "propertyList": ["*", "-type"]},
+				{"parentProperty": "contactMedium.characteristic", "type": "record", "propertyList": ["*", "-type"]},
 				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner", "*"]}
 		],
 		"hiddenProperties":  [

@@ -3,7 +3,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   Top = 0
   Caption = 'json2puml'
   ClientHeight = 900
-  ClientWidth = 1335
+  ClientWidth = 1357
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -61,7 +61,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object StatusBar: TStatusBar
     Left = 0
     Top = 881
-    Width = 1335
+    Width = 1357
     Height = 19
     Margins.Left = 2
     Margins.Top = 2
@@ -74,7 +74,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object MainActionToolBar: TActionToolBar
     Left = 0
     Top = 50
-    Width = 1335
+    Width = 1357
     Height = 23
     ActionManager = MainActionManager
     AllowHiding = False
@@ -96,7 +96,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object ActionMainMenuBar: TActionMainMenuBar
     Left = 0
     Top = 0
-    Width = 1335
+    Width = 1357
     Height = 25
     UseSystemFont = False
     ActionManager = MainActionManager
@@ -116,7 +116,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object MainPageControl: TPageControl
     Left = 0
     Top = 73
-    Width = 1335
+    Width = 1357
     Height = 808
     ActivePage = LogTabSheet
     Align = alClient
@@ -127,532 +127,589 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object CommandLineEditPanel: TPanel
         Left = 0
         Top = 0
-        Width = 1317
-        Height = 345
+        Width = 1339
+        Height = 353
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
+        OnResize = CommandLineEditPanelResize
         object TLabel
           Left = 648
           Top = 144
           Width = 3
           Height = 13
         end
-        object GroupBox1: TGroupBox
-          Left = 820
-          Top = 216
-          Width = 400
-          Height = 97
-          Caption = 'PlantUML Jar'
-          TabOrder = 5
-          DesignSize = (
-            400
-            97)
-          object PlantUmlJarFileLabel: TLabel
-            Left = 20
-            Top = 19
-            Width = 71
-            Height = 13
-            Caption = '/plantumljarfile'
-            FocusControl = PlantUmlJarFileEdit
-          end
-          object javaruntimeparameterLabel: TLabel
-            Left = 20
-            Top = 71
-            Width = 111
-            Height = 13
-            Caption = '/javaruntimeparameter'
-            FocusControl = javaruntimeparameterEdit
-          end
-          object Label25: TLabel
-            Left = 20
-            Top = 43
-            Width = 110
-            Height = 13
-            Caption = '/plantumlruntimeparam'
-            FocusControl = PlantUmlRuntimeParameterEdit
-          end
-          object PlantUmlJarFileEdit: TEdit
-            Left = 137
-            Top = 16
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 0
-          end
-          object javaruntimeparameterEdit: TEdit
-            Left = 137
-            Top = 67
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 2
-          end
-          object PlantUmlRuntimeParameterEdit: TEdit
-            Left = 137
-            Top = 42
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 1
-          end
-        end
-        object GroupBox2: TGroupBox
-          Left = 8
-          Top = 1
-          Width = 400
-          Height = 210
-          Caption = 'Configuration'
+        object LeftInputPanel: TPanel
+          Left = 0
+          Top = 0
+          Width = 404
+          Height = 353
+          Align = alLeft
+          BevelOuter = bvNone
           TabOrder = 0
           DesignSize = (
-            400
-            210)
-          object Label1: TLabel
-            Left = 12
-            Top = 43
-            Width = 62
-            Height = 13
-            Caption = '/definitionfile'
-            FocusControl = definitionfileEdit
-          end
-          object Label2: TLabel
-            Left = 12
-            Top = 70
-            Width = 48
-            Height = 13
-            Caption = '/optionfile'
-            FocusControl = optionfileEdit
-          end
-          object Label3: TLabel
-            Left = 12
-            Top = 97
-            Width = 34
-            Height = 13
-            Caption = '/option'
-          end
-          object Label18: TLabel
-            Left = 11
-            Top = 125
-            Width = 104
-            Height = 13
-            Caption = '/curlauthenticationfile'
-            FocusControl = CurlAuthenticationFileEdit
-          end
-          object Label20: TLabel
-            Left = 11
-            Top = 152
-            Width = 85
-            Height = 13
-            Caption = '/curlparameterfile'
-            FocusControl = CurlParameterFileEdit
-          end
-          object Label24: TLabel
-            Left = 13
-            Top = 16
-            Width = 68
-            Height = 13
-            Caption = '/parameterfile'
-            FocusControl = parameterFileEdit
-          end
-          object definitionfileEdit: TEdit
-            Left = 129
-            Top = 40
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 1
-          end
-          object optionfileEdit: TEdit
-            Left = 129
-            Top = 67
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 2
-          end
-          object optionComboBox: TComboBox
-            Left = 129
-            Top = 94
-            Width = 255
-            Height = 21
-            TabOrder = 3
-          end
-          object formatDefinitionFilesCheckBox: TCheckBox
-            Left = 129
-            Top = 176
-            Width = 160
-            Height = 17
-            Caption = '/formatdefinitionfiles'
-            TabOrder = 6
-          end
-          object CurlAuthenticationFileEdit: TEdit
-            Left = 129
-            Top = 122
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 4
-          end
-          object CurlParameterFileEdit: TEdit
-            Left = 129
-            Top = 149
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 5
-          end
-          object parameterFileEdit: TEdit
-            Left = 129
-            Top = 13
-            Width = 255
-            Height = 21
+            404
+            353)
+          object CurlParameterPageControl: TPageControl
+            Left = 4
+            Top = 227
+            Width = 400
+            Height = 120
+            ActivePage = CurlParameterTabSheet
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 0
+            object CurlParameterTabSheet: TTabSheet
+              Caption = '/curlparameter'
+              object CurlParameterDBGrid: TDBGrid
+                Left = 0
+                Top = 0
+                Width = 392
+                Height = 92
+                Align = alClient
+                DataSource = CurlParameterDataSource
+                TabOrder = 0
+                TitleFont.Charset = DEFAULT_CHARSET
+                TitleFont.Color = clWindowText
+                TitleFont.Height = -11
+                TitleFont.Name = 'Tahoma'
+                TitleFont.Style = []
+              end
+            end
+            object CurlAuthenticationParameterTabSheet: TTabSheet
+              Caption = '/curlauthenticationparameter'
+              ImageIndex = 1
+              object CurlAuthenticationParameterDBGrid: TDBGrid
+                Left = 0
+                Top = 0
+                Width = 392
+                Height = 92
+                Align = alClient
+                DataSource = CurlAuthenticationParameterDataSource
+                TabOrder = 0
+                TitleFont.Charset = DEFAULT_CHARSET
+                TitleFont.Color = clWindowText
+                TitleFont.Height = -11
+                TitleFont.Name = 'Tahoma'
+                TitleFont.Style = []
+              end
+            end
           end
-        end
-        object GroupBox3: TGroupBox
-          Left = 820
-          Top = 1
-          Width = 400
-          Height = 150
-          Caption = 'Input'
-          TabOrder = 2
-          DesignSize = (
-            400
-            150)
-          object Label4: TLabel
-            Left = 20
-            Top = 78
-            Width = 68
-            Height = 13
-            Caption = '/leadingobject'
-            FocusControl = leadingObjectEdit
-          end
-          object Label5: TLabel
-            Left = 20
-            Top = 51
-            Width = 55
-            Height = 13
-            Caption = '/inputlistfile'
-            FocusControl = inputlistfileEdit
-          end
-          object Label6: TLabel
-            Left = 20
-            Top = 24
-            Width = 42
-            Height = 13
-            Caption = '/inputfile'
-            FocusControl = inputfileEdit
-          end
-          object Label17: TLabel
-            Left = 19
-            Top = 128
-            Width = 65
-            Height = 13
-            Caption = '/splitidentifier'
-            FocusControl = splitIdentifierEdit
-          end
-          object inputfileEdit: TEdit
-            Left = 137
-            Top = 16
-            Width = 255
-            Height = 21
+          object GroupBox2: TGroupBox
+            Left = 0
+            Top = 0
+            Width = 400
+            Height = 210
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 0
-          end
-          object inputlistfileEdit: TEdit
-            Left = 137
-            Top = 43
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Configuration'
             TabOrder = 1
-          end
-          object leadingObjectEdit: TEdit
-            Left = 137
-            Top = 70
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 2
-          end
-          object splitInputFileCheckBox: TCheckBox
-            Left = 137
-            Top = 97
-            Width = 97
-            Height = 17
-            AllowGrayed = True
-            Caption = '/splitinputfile'
-            TabOrder = 3
-          end
-          object splitIdentifierEdit: TEdit
-            Left = 137
-            Top = 120
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 4
+            DesignSize = (
+              400
+              210)
+            object Label1: TLabel
+              Left = 12
+              Top = 43
+              Width = 62
+              Height = 13
+              Caption = '/definitionfile'
+              FocusControl = definitionfileEdit
+            end
+            object Label2: TLabel
+              Left = 12
+              Top = 70
+              Width = 48
+              Height = 13
+              Caption = '/optionfile'
+              FocusControl = optionfileEdit
+            end
+            object Label3: TLabel
+              Left = 12
+              Top = 97
+              Width = 34
+              Height = 13
+              Caption = '/option'
+            end
+            object Label18: TLabel
+              Left = 11
+              Top = 125
+              Width = 104
+              Height = 13
+              Caption = '/curlauthenticationfile'
+              FocusControl = CurlAuthenticationFileEdit
+            end
+            object Label20: TLabel
+              Left = 11
+              Top = 152
+              Width = 85
+              Height = 13
+              Caption = '/curlparameterfile'
+              FocusControl = CurlParameterFileEdit
+            end
+            object Label24: TLabel
+              Left = 13
+              Top = 16
+              Width = 68
+              Height = 13
+              Caption = '/parameterfile'
+              FocusControl = parameterFileEdit
+            end
+            object definitionfileEdit: TEdit
+              Left = 129
+              Top = 40
+              Width = 255
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 1
+            end
+            object optionfileEdit: TEdit
+              Left = 129
+              Top = 67
+              Width = 255
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 2
+            end
+            object optionComboBox: TComboBox
+              Left = 129
+              Top = 94
+              Width = 255
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 3
+            end
+            object formatDefinitionFilesCheckBox: TCheckBox
+              Left = 129
+              Top = 176
+              Width = 160
+              Height = 17
+              Caption = '/formatdefinitionfiles'
+              TabOrder = 6
+            end
+            object CurlAuthenticationFileEdit: TEdit
+              Left = 129
+              Top = 122
+              Width = 255
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 4
+            end
+            object CurlParameterFileEdit: TEdit
+              Left = 129
+              Top = 149
+              Width = 255
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 5
+            end
+            object parameterFileEdit: TEdit
+              Left = 129
+              Top = 13
+              Width = 255
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 0
+            end
           end
         end
-        object GroupBox4: TGroupBox
-          Left = 414
-          Top = -5
-          Width = 400
-          Height = 208
-          Caption = 'Output'
+        object MiddleInputPanel: TPanel
+          Left = 404
+          Top = 0
+          Width = 427
+          Height = 353
+          Align = alLeft
+          BevelOuter = bvNone
           TabOrder = 1
           DesignSize = (
-            400
-            208)
-          object Label7: TLabel
-            Left = 17
-            Top = 100
-            Width = 60
-            Height = 13
-            Caption = '/openoutput'
-            FocusControl = openoutputEdit
-          end
-          object Label8: TLabel
-            Left = 17
-            Top = 19
-            Width = 58
-            Height = 13
-            Caption = '/outputpath'
-            FocusControl = outputpathEdit
-          end
-          object Label9: TLabel
-            Left = 17
-            Top = 73
-            Width = 68
-            Height = 13
-            Caption = '/outputformat'
-            FocusControl = outputformatEdit
-          end
-          object Label12: TLabel
-            Left = 17
-            Top = 156
-            Width = 30
-            Height = 13
-            Caption = '/detail'
-            FocusControl = detailEdit
-          end
-          object Label13: TLabel
-            Left = 17
-            Top = 129
-            Width = 32
-            Height = 13
-            Caption = '/group'
-            FocusControl = groupEdit
-          end
-          object Label23: TLabel
-            Left = 17
-            Top = 46
-            Width = 63
-            Height = 13
-            Caption = '/outputsuffix'
-            FocusControl = outputsuffixEdit
-          end
-          object openoutputEdit: TEdit
-            Left = 134
-            Top = 97
-            Width = 255
-            Height = 21
+            427
+            353)
+          object GroupBox5: TGroupBox
+            Left = 0
+            Top = 233
+            Width = 417
+            Height = 77
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 4
-          end
-          object outputformatEdit: TEdit
-            Left = 134
-            Top = 70
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 2
-          end
-          object outputpathEdit: TEdit
-            Left = 134
-            Top = 13
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Filter'
             TabOrder = 0
+            DesignSize = (
+              417
+              77)
+            object Label14: TLabel
+              Left = 20
+              Top = 51
+              Width = 44
+              Height = 13
+              Caption = '/titlefilter'
+              FocusControl = titlefilterEdit
+            end
+            object Label15: TLabel
+              Left = 20
+              Top = 24
+              Width = 50
+              Height = 13
+              Caption = '/identfilter'
+              FocusControl = identfilterEdit
+            end
+            object titlefilterEdit: TEdit
+              Left = 137
+              Top = 43
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 1
+            end
+            object identfilterEdit: TEdit
+              Left = 137
+              Top = 16
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 0
+            end
           end
-          object detailEdit: TEdit
-            Left = 134
-            Top = 153
-            Width = 255
-            Height = 21
+          object GroupBox4: TGroupBox
+            Left = 0
+            Top = 3
+            Width = 417
+            Height = 208
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 6
-          end
-          object groupEdit: TEdit
-            Left = 134
-            Top = 126
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 5
-          end
-          object generatesummaryCheckBox: TCheckBox
-            Left = 134
-            Top = 180
-            Width = 120
-            Height = 17
-            AllowGrayed = True
-            Caption = '/generatesummary'
-            TabOrder = 8
-          end
-          object generatedetailsCheckBox: TCheckBox
-            Left = 14
-            Top = 180
-            Width = 97
-            Height = 17
-            AllowGrayed = True
-            Caption = '/generatedetails'
-            TabOrder = 7
-          end
-          object OpenOutputAllCheckBox: TCheckBox
-            Left = 83
-            Top = 100
-            Width = 51
-            Height = 17
-            Caption = 'All'
-            TabOrder = 3
-          end
-          object outputsuffixEdit: TEdit
-            Left = 134
-            Top = 43
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Output'
             TabOrder = 1
+            DesignSize = (
+              417
+              208)
+            object Label7: TLabel
+              Left = 17
+              Top = 100
+              Width = 60
+              Height = 13
+              Caption = '/openoutput'
+              FocusControl = openoutputEdit
+            end
+            object Label8: TLabel
+              Left = 17
+              Top = 19
+              Width = 58
+              Height = 13
+              Caption = '/outputpath'
+              FocusControl = outputpathEdit
+            end
+            object Label9: TLabel
+              Left = 17
+              Top = 73
+              Width = 68
+              Height = 13
+              Caption = '/outputformat'
+              FocusControl = outputformatEdit
+            end
+            object Label12: TLabel
+              Left = 17
+              Top = 156
+              Width = 30
+              Height = 13
+              Caption = '/detail'
+              FocusControl = detailEdit
+            end
+            object Label13: TLabel
+              Left = 17
+              Top = 129
+              Width = 32
+              Height = 13
+              Caption = '/group'
+              FocusControl = groupEdit
+            end
+            object Label23: TLabel
+              Left = 17
+              Top = 46
+              Width = 63
+              Height = 13
+              Caption = '/outputsuffix'
+              FocusControl = outputsuffixEdit
+            end
+            object openoutputEdit: TEdit
+              Left = 134
+              Top = 97
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 4
+            end
+            object outputformatEdit: TEdit
+              Left = 134
+              Top = 70
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 2
+            end
+            object outputpathEdit: TEdit
+              Left = 134
+              Top = 13
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 0
+            end
+            object detailEdit: TEdit
+              Left = 134
+              Top = 153
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 6
+            end
+            object groupEdit: TEdit
+              Left = 134
+              Top = 126
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 5
+            end
+            object generatesummaryCheckBox: TCheckBox
+              Left = 134
+              Top = 180
+              Width = 120
+              Height = 17
+              AllowGrayed = True
+              Caption = '/generatesummary'
+              TabOrder = 8
+            end
+            object generatedetailsCheckBox: TCheckBox
+              Left = 14
+              Top = 180
+              Width = 97
+              Height = 17
+              AllowGrayed = True
+              Caption = '/generatedetails'
+              TabOrder = 7
+            end
+            object OpenOutputAllCheckBox: TCheckBox
+              Left = 83
+              Top = 100
+              Width = 51
+              Height = 17
+              Caption = 'All'
+              TabOrder = 3
+            end
+            object outputsuffixEdit: TEdit
+              Left = 134
+              Top = 43
+              Width = 272
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 1
+            end
           end
         end
-        object GroupBox5: TGroupBox
-          Left = 414
-          Top = 233
-          Width = 400
-          Height = 77
-          Caption = 'Filter'
-          TabOrder = 4
+        object RightInputPanel: TPanel
+          Left = 831
+          Top = 0
+          Width = 508
+          Height = 353
+          Align = alClient
+          BevelOuter = bvNone
+          TabOrder = 2
           DesignSize = (
-            400
-            77)
-          object Label14: TLabel
-            Left = 20
-            Top = 51
-            Width = 44
-            Height = 13
-            Caption = '/titlefilter'
-            FocusControl = titlefilterEdit
-          end
-          object Label15: TLabel
-            Left = 20
-            Top = 24
-            Width = 50
-            Height = 13
-            Caption = '/identfilter'
-            FocusControl = identfilterEdit
-          end
-          object titlefilterEdit: TEdit
-            Left = 137
-            Top = 43
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 1
-          end
-          object identfilterEdit: TEdit
-            Left = 137
-            Top = 16
-            Width = 255
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
+            508
+            353)
+          object Button1: TButton
+            Left = 344
+            Top = 319
+            Width = 161
+            Height = 25
+            Action = ReloadAndConvertAction
+            Anchors = [akTop, akRight]
+            Default = True
             TabOrder = 0
           end
-        end
-        object GroupBox6: TGroupBox
-          Left = 820
-          Top = 157
-          Width = 400
-          Height = 53
-          Caption = 'Other'
-          TabOrder = 3
-          object generateoutputdefinitionCheckBox: TCheckBox
-            Left = 137
-            Top = 17
-            Width = 152
-            Height = 14
-            Caption = '/generateoutputdefinition'
+          object GroupBox1: TGroupBox
+            Left = 0
+            Top = 216
+            Width = 506
+            Height = 97
+            Anchors = [akLeft, akTop, akRight]
+            Caption = 'PlantUML Jar'
             TabOrder = 1
-          end
-          object debugCheckBox: TCheckBox
-            Left = 17
-            Top = 17
-            Width = 97
-            Height = 14
-            Caption = '/debug'
-            TabOrder = 0
-          end
-        end
-        object Button1: TButton
-          Left = 1059
-          Top = 317
-          Width = 161
-          Height = 25
-          Action = ReloadAndConvertAction
-          Default = True
-          TabOrder = 6
-        end
-        object CurlParameterPageControl: TPageControl
-          Left = 8
-          Top = 217
-          Width = 400
-          Height = 120
-          ActivePage = CurlParameterTabSheet
-          TabOrder = 7
-          object CurlParameterTabSheet: TTabSheet
-            Caption = '/curlparameter'
-            object CurlParameterDBGrid: TDBGrid
-              Left = 0
-              Top = 0
-              Width = 392
-              Height = 92
-              Align = alClient
-              DataSource = CurlParameterDataSource
+            DesignSize = (
+              506
+              97)
+            object PlantUmlJarFileLabel: TLabel
+              Left = 20
+              Top = 19
+              Width = 71
+              Height = 13
+              Caption = '/plantumljarfile'
+              FocusControl = PlantUmlJarFileEdit
+            end
+            object javaruntimeparameterLabel: TLabel
+              Left = 20
+              Top = 71
+              Width = 111
+              Height = 13
+              Caption = '/javaruntimeparameter'
+              FocusControl = javaruntimeparameterEdit
+            end
+            object Label25: TLabel
+              Left = 20
+              Top = 43
+              Width = 110
+              Height = 13
+              Caption = '/plantumlruntimeparam'
+              FocusControl = PlantUmlRuntimeParameterEdit
+            end
+            object PlantUmlJarFileEdit: TEdit
+              Left = 137
+              Top = 16
+              Width = 361
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
-              TitleFont.Charset = DEFAULT_CHARSET
-              TitleFont.Color = clWindowText
-              TitleFont.Height = -11
-              TitleFont.Name = 'Tahoma'
-              TitleFont.Style = []
+            end
+            object javaruntimeparameterEdit: TEdit
+              Left = 137
+              Top = 67
+              Width = 361
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 2
+            end
+            object PlantUmlRuntimeParameterEdit: TEdit
+              Left = 137
+              Top = 42
+              Width = 361
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 1
             end
           end
-          object CurlAuthenticationParameterTabSheet: TTabSheet
-            Caption = '/curlauthenticationparameter'
-            ImageIndex = 1
-            object CurlAuthenticationParameterDBGrid: TDBGrid
-              Left = 0
-              Top = 0
-              Width = 392
-              Height = 92
-              Align = alClient
-              DataSource = CurlAuthenticationParameterDataSource
-              TabOrder = 0
-              TitleFont.Charset = DEFAULT_CHARSET
-              TitleFont.Color = clWindowText
-              TitleFont.Height = -11
-              TitleFont.Name = 'Tahoma'
-              TitleFont.Style = []
+          object GroupBox6: TGroupBox
+            Left = 0
+            Top = 157
+            Width = 506
+            Height = 53
+            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Other'
+            TabOrder = 2
+            object generateoutputdefinitionCheckBox: TCheckBox
+              Left = 137
+              Top = 17
+              Width = 152
+              Height = 14
+              Caption = '/generateoutputdefinition'
+              TabOrder = 1
             end
+            object debugCheckBox: TCheckBox
+              Left = 17
+              Top = 17
+              Width = 97
+              Height = 14
+              Caption = '/debug'
+              TabOrder = 0
+            end
+          end
+          object GroupBox3: TGroupBox
+            Left = 0
+            Top = 1
+            Width = 506
+            Height = 150
+            Anchors = [akLeft, akTop, akRight]
+            Caption = 'Input'
+            TabOrder = 3
+            DesignSize = (
+              506
+              150)
+            object Label4: TLabel
+              Left = 20
+              Top = 78
+              Width = 68
+              Height = 13
+              Caption = '/leadingobject'
+              FocusControl = leadingObjectEdit
+            end
+            object Label5: TLabel
+              Left = 20
+              Top = 51
+              Width = 55
+              Height = 13
+              Caption = '/inputlistfile'
+              FocusControl = inputlistfileEdit
+            end
+            object Label6: TLabel
+              Left = 20
+              Top = 24
+              Width = 42
+              Height = 13
+              Caption = '/inputfile'
+              FocusControl = inputfileEdit
+            end
+            object Label17: TLabel
+              Left = 19
+              Top = 128
+              Width = 65
+              Height = 13
+              Caption = '/splitidentifier'
+              FocusControl = splitIdentifierEdit
+            end
+            object inputfileEdit: TEdit
+              Left = 137
+              Top = 16
+              Width = 361
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 0
+            end
+            object inputlistfileEdit: TEdit
+              Left = 137
+              Top = 43
+              Width = 361
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 1
+            end
+            object leadingObjectEdit: TEdit
+              Left = 137
+              Top = 70
+              Width = 361
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 2
+            end
+            object splitInputFileCheckBox: TCheckBox
+              Left = 137
+              Top = 97
+              Width = 97
+              Height = 17
+              AllowGrayed = True
+              Caption = '/splitinputfile'
+              TabOrder = 3
+            end
+            object splitIdentifierEdit: TEdit
+              Left = 137
+              Top = 120
+              Width = 361
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 4
+            end
+          end
+          object Button2: TButton
+            Left = 177
+            Top = 319
+            Width = 161
+            Height = 25
+            Action = ReloadAndConvertAction
+            Anchors = [akTop, akRight]
+            Caption = 'Generate Servicelist Results'
+            Default = True
+            TabOrder = 4
           end
         end
       end
       object LogFileDetailPageControl: TPageControl
         Left = 0
-        Top = 345
-        Width = 1317
-        Height = 425
-        ActivePage = ExecutionLogTabSheet
+        Top = 353
+        Width = 1339
+        Height = 417
+        ActivePage = ServiceInputListFileResult
         Align = alClient
         TabOrder = 1
         object ExecutionLogTabSheet: TTabSheet
@@ -660,21 +717,111 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ExecutionLogPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1309
-            Height = 397
+            Width = 1331
+            Height = 389
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
+            object ProgressbarPanel: TPanel
+              Left = 0
+              Top = 0
+              Width = 1331
+              Height = 47
+              Align = alTop
+              TabOrder = 0
+              DesignSize = (
+                1331
+                47)
+              object Label26: TLabel
+                Left = 6
+                Top = 10
+                Width = 36
+                Height = 13
+                Caption = 'Expand'
+              end
+              object Label27: TLabel
+                Left = 6
+                Top = 26
+                Width = 39
+                Height = 13
+                Caption = 'Convert'
+              end
+              object ExpandProgressBar: TProgressBar
+                Left = 51
+                Top = 7
+                Width = 1275
+                Height = 17
+                Anchors = [akLeft, akTop, akRight]
+                Smooth = True
+                TabOrder = 0
+              end
+              object ConvertProgressBar: TProgressBar
+                Left = 51
+                Top = 24
+                Width = 1275
+                Height = 17
+                Anchors = [akLeft, akTop, akRight]
+                Smooth = True
+                TabOrder = 1
+              end
+            end
           end
         end
-        object FileListTabSheet: TTabSheet
+        object CurlFileTabSheet: TTabSheet
+          Caption = 'Curl Files'
+          ImageIndex = 5
+          object CurlFileListDBGrid: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 1331
+            Height = 359
+            Align = alClient
+            DataSource = CurlFileListDataSource
+            ReadOnly = True
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
+            TitleFont.Style = []
+          end
+          object Panel1: TPanel
+            Left = 0
+            Top = 359
+            Width = 1331
+            Height = 30
+            Align = alBottom
+            TabOrder = 1
+            DesignSize = (
+              1331
+              30)
+            object Label28: TLabel
+              Left = 4
+              Top = 9
+              Width = 76
+              Height = 13
+              Caption = 'Curl Command :'
+            end
+            object DBEdit1: TDBEdit
+              Left = 82
+              Top = 4
+              Width = 1247
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              DataField = 'Command'
+              DataSource = CurlFileListDataSource
+              TabOrder = 0
+            end
+          end
+        end
+        object ResultFileListTabSheet: TTabSheet
           Caption = 'Filelist'
           ImageIndex = 1
           object FileListPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1309
-            Height = 397
+            Width = 1331
+            Height = 389
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -686,8 +833,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1309
-            Height = 397
+            Width = 1331
+            Height = 389
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -699,8 +846,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceInputListFileResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1309
-            Height = 397
+            Width = 1331
+            Height = 389
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -712,8 +859,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           object ServiceDefinitionFileResultPanel: TPanel
             Left = 0
             Top = 0
-            Width = 1309
-            Height = 397
+            Width = 1331
+            Height = 389
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -728,7 +875,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object FilePageControl: TPageControl
         Left = 0
         Top = 0
-        Width = 1317
+        Width = 1339
         Height = 770
         Align = alClient
         MultiLine = True
@@ -770,7 +917,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object ActionToolBar5: TActionToolBar
     Left = 0
     Top = 25
-    Width = 1335
+    Width = 1357
     Height = 25
     ActionManager = MainActionManager
     Caption = 'EditToolbar'
@@ -1987,7 +2134,57 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object Taskbar: TTaskbar
     TaskBarButtons = <>
     TabProperties = []
-    Left = 664
-    Top = 456
+    Left = 864
+    Top = 448
+  end
+  object CurlFileListMemTable: TFDMemTable
+    FieldDefs = <>
+    IndexDefs = <>
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    StoreDefs = True
+    Left = 376
+    Top = 649
+    object CurlFileListMemTableLine: TIntegerField
+      FieldName = 'Line'
+    end
+    object CurlFileListMemTableInputFile: TStringField
+      FieldName = 'InputFile'
+      Size = 1000
+    end
+    object CurlFileListMemTableOutputFile: TStringField
+      FieldName = 'OutputFile'
+      Size = 1000
+    end
+    object CurlFileListMemTableUrl: TStringField
+      FieldName = 'Url'
+      Size = 1000
+    end
+    object CurlFileListMemTableGenerated: TBooleanField
+      Alignment = taCenter
+      FieldName = 'Generated'
+    end
+    object CurlFileListMemTableDuration: TStringField
+      Alignment = taRightJustify
+      FieldName = 'Duration'
+    end
+    object CurlFileListMemTableErrorMessage: TStringField
+      FieldName = 'ErrorMessage'
+      Size = 1000
+    end
+    object CurlFileListMemTableCommand: TStringField
+      FieldName = 'Command'
+      Size = 1000
+    end
+  end
+  object CurlFileListDataSource: TDataSource
+    DataSet = CurlFileListMemTable
+    Left = 384
+    Top = 560
   end
 end

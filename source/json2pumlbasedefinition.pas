@@ -32,9 +32,12 @@ type
   tJson2PumlPropertySearchMatchType = (psmExactExact, psmExact, psmMatchMatch, psmMatch, psmExcludeExclude, psmExclude,
     psmNoMatch);
 
+  tJson2PumlNotifyChangeType = (nctExpand, nctConvert);
+
   tJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
     : string of object;
-  tJson2PumlNotifyChangeEvent = procedure(Sender: TObject; ProgressValue, ProgressMaxValue: Integer) of object;
+  tJson2PumlNotifyChangeEvent = procedure(Sender: TObject; ChangeType: tJson2PumlNotifyChangeType; ProgressValue,
+      ProgressMaxValue: Integer; ProgressInfo: string = '') of object;
 
   tJson2PumlOutputFormatHelper = record helper for tJson2PumlOutputFormat
     function FileExtension (iLeadingSeparator: boolean = false): string;
@@ -893,6 +896,7 @@ var
 begin
   ExcludeType := psmNoMatch;
   ExcludeIndex := - 1;
+  oFoundCondition := '';
 
   Result := - 1;
   PropertyIndex := - 1;

@@ -1978,8 +1978,7 @@ function tJson2PumlCharacteristicDefinitionList.GetDefinitionByName (iPropertyNa
 var
   i: Integer;
 begin
-  i := IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType,
-    oFoundCondition);
+  i := IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition);
   if i >= 0 then
     Result := Definition[i]
   else
@@ -2084,8 +2083,7 @@ begin
   end
   else
   begin
-    Result := PropertyList.IndexOfProperty (iPropertyName, iParentPropertyName, '',
-      oFoundCondition) >= 0;
+    Result := PropertyList.IndexOfProperty (iPropertyName, iParentPropertyName, '', oFoundCondition) >= 0;
     if Result then
       exit;
   end;

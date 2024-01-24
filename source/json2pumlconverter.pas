@@ -951,9 +951,8 @@ begin
     else
       vAdd := true;
     Puml.Add (tPumlHelper.TableLine(['<b>Job description'.PadRight(FileLength + 50)]));
-    Puml.Add (tPumlHelper.TableLine([TCurlUtils.CleanUnusedCurlVariables
-      (ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration(InputHandler.CurlParameterList.ReplaceParameterValues
-      (InputHandler.CurrentJobDescription)))]));
+    Puml.Add (tPumlHelper.TableLine([InputHandler.ReplaceCurlParameterValues
+      (InputHandler.CurrentJobDescription, true)]));
   end;
   if Definition.LegendShowObjectFormats then
   begin
@@ -1028,8 +1027,8 @@ begin
       FileDetailRecord := TJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
       Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath
         (FileDetailRecord.Filename)), DateTimeToStr(FileDetailRecord.FileDate),
-        Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12),
-        FileDetailRecord.NoOfLines.ToString.PadLeft(8), FileDetailRecord.NoOfRecords.ToString.PadLeft(12)]));
+        Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12), FileDetailRecord.NoOfLines.ToString.PadLeft(8),
+        FileDetailRecord.NoOfRecords.ToString.PadLeft(12)]));
     end;
   end;
   Puml.Add ('end legend');

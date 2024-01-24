@@ -39,7 +39,8 @@ uses
   Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
   Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
-  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar, Quick.Logger.Provider.StringList;
+  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar, Quick.Logger.Provider.StringList,
+  Vcl.Mask, Vcl.DBCtrls;
 
 type
   tOutputFileFrame = class(TObject)
@@ -56,30 +57,19 @@ type
     Action1: TAction;
     ActionMainMenuBar: TActionMainMenuBar;
     ActionToolBar5: TActionToolBar;
-    Button1: TButton;
     CommandLineEditPanel: TPanel;
     ConvertAllOpenFilesAction: TAction;
     ConvertCurrentFileAction: TAction;
     CopyCurrentPUMLAction: TAction;
-    CurlAuthenticationFileEdit: TEdit;
     CurlAuthenticationParameterDataset: TFDMemTable;
     CurlAuthenticationParameterDataSource: TDataSource;
-    CurlAuthenticationParameterDBGrid: TDBGrid;
-    CurlAuthenticationParameterTabSheet: TTabSheet;
     CurlAuthenticationTabSheet: TTabSheet;
     CurlParameterDataSet: TFDMemTable;
     CurlParameterDataSetName: TStringField;
     CurlParameterDataSetValue: TStringField;
     CurlParameterDataSource: TDataSource;
-    CurlParameterDBGrid: TDBGrid;
-    CurlParameterFileEdit: TEdit;
     CurlParameterFileTabSheet: TTabSheet;
-    CurlParameterPageControl: TPageControl;
-    CurlParameterTabSheet: TTabSheet;
-    debugCheckBox: TCheckBox;
-    definitionfileEdit: TEdit;
     DefinitionFileTabSheet: TTabSheet;
-    detailEdit: TEdit;
     EditCopy1: TEditCopy;
     EditCut1: TEditCut;
     EditPaste1: TEditPaste;
@@ -87,53 +77,18 @@ type
     ExecutionLogTabSheet: TTabSheet;
     ExitAction: TAction;
     FileListPanel: TPanel;
-    FileListTabSheet: TTabSheet;
+    ResultFileListTabSheet: TTabSheet;
     FilePageControl: TPageControl;
-    formatDefinitionFilesCheckBox: TCheckBox;
-    generatedetailsCheckBox: TCheckBox;
-    generateoutputdefinitionCheckBox: TCheckBox;
-    generatesummaryCheckBox: TCheckBox;
     GlobalConfigurationFileTabSheet: TTabSheet;
-    GroupBox1: TGroupBox;
-    GroupBox2: TGroupBox;
-    GroupBox3: TGroupBox;
-    GroupBox4: TGroupBox;
-    GroupBox5: TGroupBox;
-    GroupBox6: TGroupBox;
-    groupEdit: TEdit;
-    identfilterEdit: TEdit;
     ImageList1: TImageList;
     InitialTimer: TTimer;
-    inputfileEdit: TEdit;
-    inputlistfileEdit: TEdit;
     InputListTabSheet: TTabSheet;
-    javaruntimeparameterEdit: TEdit;
-    javaruntimeparameterLabel: TLabel;
     JsonActionList: TActionList;
-    Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
-    Label12: TLabel;
-    Label13: TLabel;
-    Label14: TLabel;
-    Label15: TLabel;
     Label16: TLabel;
-    Label17: TLabel;
-    Label18: TLabel;
     Label19: TLabel;
-    Label2: TLabel;
-    Label20: TLabel;
     Label22: TLabel;
-    Label23: TLabel;
-    Label24: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
-    Label7: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
-    leadingObjectEdit: TEdit;
     LoadFileAction: TAction;
     LogFileDetailPageControl: TPageControl;
     LogTabSheet: TTabSheet;
@@ -141,21 +96,11 @@ type
     MainActionManager: TActionManager;
     MainActionToolBar: TActionToolBar;
     MainPageControl: TPageControl;
-    OpenOutputAllCheckBox: TCheckBox;
-    openoutputEdit: TEdit;
     OpenCurrentPNGAction: TAction;
     OpenCurrentSVGAction: TAction;
-    optionComboBox: TComboBox;
-    optionfileEdit: TEdit;
     OptionFileTabSheet: TTabSheet;
-    outputformatEdit: TEdit;
-    outputpathEdit: TEdit;
-    outputsuffixEdit: TEdit;
     OutputTabsheet: TTabSheet;
-    parameterFileEdit: TEdit;
     ParameterFileTabSheet: TTabSheet;
-    PlantUmlJarFileEdit: TEdit;
-    PlantUmlJarFileLabel: TLabel;
     ReloadAndConvertAction: TAction;
     ReloadFileAction: TAction;
     SaveAsFileAction: TAction;
@@ -174,19 +119,100 @@ type
     ShowOptionFileAction: TAction;
     ShowOutputFilesAction: TAction;
     ShowParameterFileAction: TAction;
-    splitIdentifierEdit: TEdit;
-    splitInputFileCheckBox: TCheckBox;
     StatusBar: TStatusBar;
     StringField3: TStringField;
     StringField4: TStringField;
     TabSheet2: TTabSheet;
-    titlefilterEdit: TEdit;
     OpenCurrentJSONAction: TAction;
     OpenConfigurationFileExternal: TAction;
     Taskbar: TTaskbar;
     Label21: TLabel;
-    PlantUmlRuntimeParameterEdit: TEdit;
+    LeftInputPanel: TPanel;
+    CurlParameterPageControl: TPageControl;
+    CurlParameterTabSheet: TTabSheet;
+    CurlParameterDBGrid: TDBGrid;
+    CurlAuthenticationParameterTabSheet: TTabSheet;
+    CurlAuthenticationParameterDBGrid: TDBGrid;
+    GroupBox2: TGroupBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label18: TLabel;
+    Label20: TLabel;
+    Label24: TLabel;
+    definitionfileEdit: TEdit;
+    optionfileEdit: TEdit;
+    optionComboBox: TComboBox;
+    formatDefinitionFilesCheckBox: TCheckBox;
+    CurlAuthenticationFileEdit: TEdit;
+    CurlParameterFileEdit: TEdit;
+    parameterFileEdit: TEdit;
+    MiddleInputPanel: TPanel;
+    RightInputPanel: TPanel;
+    GroupBox5: TGroupBox;
+    Label14: TLabel;
+    Label15: TLabel;
+    titlefilterEdit: TEdit;
+    identfilterEdit: TEdit;
+    GroupBox4: TGroupBox;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label23: TLabel;
+    openoutputEdit: TEdit;
+    outputformatEdit: TEdit;
+    outputpathEdit: TEdit;
+    detailEdit: TEdit;
+    groupEdit: TEdit;
+    generatesummaryCheckBox: TCheckBox;
+    generatedetailsCheckBox: TCheckBox;
+    OpenOutputAllCheckBox: TCheckBox;
+    outputsuffixEdit: TEdit;
+    Button1: TButton;
+    GroupBox1: TGroupBox;
+    PlantUmlJarFileLabel: TLabel;
+    javaruntimeparameterLabel: TLabel;
     Label25: TLabel;
+    PlantUmlJarFileEdit: TEdit;
+    javaruntimeparameterEdit: TEdit;
+    PlantUmlRuntimeParameterEdit: TEdit;
+    GroupBox6: TGroupBox;
+    generateoutputdefinitionCheckBox: TCheckBox;
+    debugCheckBox: TCheckBox;
+    GroupBox3: TGroupBox;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label17: TLabel;
+    inputfileEdit: TEdit;
+    inputlistfileEdit: TEdit;
+    leadingObjectEdit: TEdit;
+    splitInputFileCheckBox: TCheckBox;
+    splitIdentifierEdit: TEdit;
+    ProgressbarPanel: TPanel;
+    ExpandProgressBar: TProgressBar;
+    ConvertProgressBar: TProgressBar;
+    Label26: TLabel;
+    Label27: TLabel;
+    CurlFileTabSheet: TTabSheet;
+    CurlFileListDBGrid: TDBGrid;
+    CurlFileListMemTable: TFDMemTable;
+    CurlFileListDataSource: TDataSource;
+    CurlFileListMemTableInputFile: TStringField;
+    CurlFileListMemTableOutputFile: TStringField;
+    CurlFileListMemTableUrl: TStringField;
+    CurlFileListMemTableCommand: TStringField;
+    CurlFileListMemTableGenerated: TBooleanField;
+    CurlFileListMemTableDuration: TStringField;
+    CurlFileListMemTableLine: TIntegerField;
+    CurlFileListMemTableErrorMessage: TStringField;
+    Panel1: TPanel;
+    Label28: TLabel;
+    DBEdit1: TDBEdit;
+    Button2: TButton;
+    procedure CommandLineEditPanelResize (Sender: TObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
     procedure CopyCurrentPUMLActionExecute (Sender: TObject);
@@ -230,7 +256,9 @@ type
     FServicedefinitionfileResultLines: TStrings;
     FServiceinputlistfileResultLines: TStrings;
     FServiceResultLines: TStrings;
+{$IFDEF SYNEDIT}
     fSynJSONSyn: TSynJSONSyn;
+{$ENDIF}
     IntConfigFrame: array [tJson2PumlPage] of TJson2PumlConfigurationFrame;
     procedure AfterCreateAllInputHandlerRecords (Sender: TObject);
     procedure AfterCreateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
@@ -245,7 +273,8 @@ type
     function GetCurrentPage: tJson2PumlPage;
     procedure InitFormDefaultLogger;
     procedure InitializeInputHandler;
-    procedure HandleNotifyChange (Sender: TObject; ProgressValue, ProgressMaxValue: Integer);
+    procedure HandleNotifyChange (Sender: TObject; ChangeType: tJson2PumlNotifyChangeType;
+      ProgressValue, ProgressMaxValue: Integer; ProgressInfo: string = '');
     procedure SetCurrentPage (const Value: tJson2PumlPage);
     property CurlAuthenticationFileLines: TStrings read FCurlAuthenticationFileLines write FCurlAuthenticationFileLines;
     property CurlParameterFileLines: TStrings read FCurlParameterFileLines write FCurlParameterFileLines;
@@ -273,6 +302,7 @@ type
     function CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
       var oMemoLines: TStrings; iUseHighlighter, iReadOnly: Boolean): TWinControl;
     procedure EndConvert;
+    procedure FillCurlFileListDataset (ConverterInputList: tJson2PumlInputList);
     procedure FormToCommandline;
     function GetConfigFileName (iPage: tJson2PumlPage): string;
     procedure HandleInputParameter;
@@ -328,7 +358,7 @@ begin
   begin
     if Logger.Providers.IndexOf (LogStringListProvider) >= 0 then
       Logger.Providers.delete (Logger.Providers.IndexOf(LogStringListProvider));
-    //FLogStringListProvider.Free;
+    // FLogStringListProvider.Free;
   end;
   FInputHandler.Free;
   GlobalLogStringListProvider.LogList := nil;
@@ -337,7 +367,6 @@ end;
 
 procedure Tjson2pumlMainForm.AfterCreateAllInputHandlerRecords (Sender: TObject);
 begin
-  LockWindowUpdate (0);
 end;
 
 procedure Tjson2pumlMainForm.AfterCreateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
@@ -348,6 +377,7 @@ end;
 procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: TObject);
 begin
   FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
+  FillCurlFileListDataset (InputHandler.ConverterInputList);
   Taskbar.ProgressState := TTaskBarProgressState.None;
 end;
 
@@ -369,8 +399,10 @@ end;
 
 procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: TObject);
 begin
-  LockWindowUpdate (Handle);
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
+  FillCurlFileListDataset (nil);
+  ConvertProgressBar.Position := 0;
+  ExpandProgressBar.Position := 0;
   Taskbar.ProgressState := TTaskBarProgressState.Normal;
   UpdateAllInfos;
 end;
@@ -694,6 +726,7 @@ begin
   InitialTimer.Enabled := True;
   CreateMemoControls;
   InitFormDefaultLogger;
+  LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
   FInputHandler := TJson2PumlInputHandler.Create (jatUI);
   InputHandler.AfterCreateRecord := AfterCreateInputHandlerRecord;
   InputHandler.AfterUpdateRecord := AfterUpdateInputHandlerRecord;
@@ -852,7 +885,7 @@ begin
   end;
   ReloadFiles;
   UpdateAllInfos;
-  //GenerateServiceListResults;
+  // GenerateServiceListResults;
 end;
 
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;
@@ -978,7 +1011,7 @@ end;
 
 procedure Tjson2pumlMainForm.ReloadAndConvertActionExecute (Sender: TObject);
 begin
-  HandleInputParameter;
+  GenerateServiceListResults;
 end;
 
 procedure Tjson2pumlMainForm.ReloadFileActionExecute (Sender: TObject);
@@ -1154,15 +1187,89 @@ begin
   inherited Destroy;
 end;
 
-procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: TObject; ProgressValue, ProgressMaxValue: Integer);
+procedure Tjson2pumlMainForm.CommandLineEditPanelResize (Sender: TObject);
+begin
+  LeftInputPanel.Width := Round (CommandLineEditPanel.Width / 3) - 1;
+  MiddleInputPanel.Width := LeftInputPanel.Width;
+end;
+
+procedure Tjson2pumlMainForm.FillCurlFileListDataset (ConverterInputList: tJson2PumlInputList);
+var
+  InputFile: tJson2PumlInputFileDefinition;
+  Field: TField;
+  Line: Integer;
+
+  procedure SetField (iFieldName: string; iFieldValue: Variant);
+  var
+    Field: TField;
+  begin
+    Field := CurlFileListMemTable.FieldByName (iFieldName);
+    Field.Value := iFieldValue;
+    if Length (iFieldValue) > Field.DisplayWidth then
+      Field.DisplayWidth := Length (iFieldValue);
+  end;
+
+begin
+  CurlFileListMemTable.Active := True;
+  while CurlFileListMemTable.RecordCount > 0 do
+    CurlFileListMemTable.delete;
+  for Field in CurlFileListMemTable.Fields do
+    Field.DisplayWidth := 5;
+  Line := 1;
+  if Assigned (ConverterInputList) then
+    for InputFile in ConverterInputList do
+    begin
+      if InputFile.IsSummaryFile then
+        Continue;
+      if InputFile.CurlResult.Command.IsEmpty then
+        Continue;
+      CurlFileListMemTable.Append;
+      SetField ('Line', Line);
+      SetField ('InputFile', InputFile.InputFileName);
+      SetField ('OutputFile', InputFile.CurlResult.OutPutFile);
+      SetField ('Url', InputFile.CurlResult.Url);
+      SetField ('Command', InputFile.CurlResult.Command);
+      SetField ('Generated', InputFile.CurlResult.Generated);
+      SetField ('Duration', InputFile.CurlResult.Duration);
+      SetField ('ErrorMessage', InputFile.CurlResult.ErrorMessage);
+      Inc (Line);
+    end;
+end;
+
+procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: TObject; ChangeType: tJson2PumlNotifyChangeType;
+  ProgressValue, ProgressMaxValue: Integer; ProgressInfo: string = '');
 begin
 {$IFDEF SYNEDIT}
   if Assigned (fLogMemo) then
     TSynEdit (fLogMemo).CaretY := TSynEdit (fLogMemo).Lines.Count + 1;
 {$ENDIF}
+  fLogMemo.Update;
+  case ChangeType of
+    nctExpand:
+      begin
+        ExpandProgressBar.Position := ProgressValue;
+        ExpandProgressBar.Max := ProgressMaxValue;
+        ExpandProgressBar.Update;
+      end;
+    nctConvert:
+      begin
+        ConvertProgressBar.Position := ProgressValue;
+        ConvertProgressBar.Max := ProgressMaxValue;
+        ConvertProgressBar.Update;
+      end;
+  end;
+  if ProgressValue = ProgressMaxValue then
+  begin
+    Taskbar.ProgressValue := 0;
+    Taskbar.ProgressMaxValue := 0;
+  end
+  else
+  begin
+    Taskbar.ProgressValue := ProgressValue;
+    Taskbar.ProgressMaxValue := ProgressMaxValue;
+  end;
+  Sleep (1);
   Application.ProcessMessages;
-  Taskbar.ProgressValue := ProgressValue;
-  Taskbar.ProgressMaxValue := ProgressMaxValue;
 end;
 
 end.

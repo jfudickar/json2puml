@@ -1,0 +1,1 @@
+curl -X POST http://localhost:8080/api/json2pumlRequestZip -d @jsonplaceholder_parameter_error_curl.json -v -o result\curl_json2pumlrequestzip_jsonplaceholder_error.json

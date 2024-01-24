@@ -4,10 +4,20 @@
 		"description": "This example is based on the SWAPI API (\"https://swapi.dev\").\nIt delivers a defined film with the characters of the film and the homeworld details of the characters.",
 		"curlParameter":  [
 				{
-					"name": "${id}",
+					"name": "${input.id}",
 					"displayName": "Film ID",
 					"description": "Primary id of the film",
 					"mandatory": true,
+					"mandatoryGroup": "a",
+					"regularExpression": "^[0-9]+$",
+					"defaultValue": null
+				},
+				{
+					"name": "${input.title}",
+					"displayName": "Film Title",
+					"description": "Title of the film",
+					"mandatory": true,
+					"mandatoryGroup": "a",
 					"regularExpression": null,
 					"defaultValue": null
 				}
@@ -16,7 +26,7 @@
 	"definitionFile": "swapi_definition.json",
 	"generateDetails": null,
 	"generateSummary": null,
-	"group": "${id}",
+	"group": "${filegoup}",
 	"detail": null,
 	"option": null,
 	"job": null,
@@ -30,6 +40,40 @@
 	"curlUserAgentInformation": null,
 	"curlSpanIdHeader": null,
 	"curlTraceIdHeader": null,
+	"curlMappingParameter":  [
+			{
+				"name": "${filter.id}",
+				"prefix": null,
+				"value": "${input.id}",
+				"suffix": "/",
+				"valueIfEmpty": null,
+				"urlEncodeValue": false
+			},
+			{
+				"name": "${filter.title}",
+				"prefix": "?search=",
+				"value": "${input.title}",
+				"suffix": null,
+				"valueIfEmpty": null,
+				"urlEncodeValue": true
+			},
+			{
+				"name": "${filter}",
+				"prefix": null,
+				"value": "${filter.id}${filter.title}",
+				"suffix": null,
+				"valueIfEmpty": null,
+				"urlEncodeValue": false
+			},
+			{
+				"name": "${filegoup}",
+				"prefix": null,
+				"value": "${input.id}${input.title}",
+				"suffix": null,
+				"valueIfEmpty": null,
+				"urlEncodeValue": false
+			}
+	],
 	"summaryFile": "${title}",
 	"input":  [
 			{
@@ -37,16 +81,22 @@
 				"leadingObject": "films",
 				"generateOutput": true,
 				"mandatory": false,
-				"curlBaseUrl": "https://swapi.dev/api/films/${id}/",
+				"curlBaseUrl": "https://swapi.dev/api/films/${filter}",
 				"curlCache": 0,
 				"curlExecuteEvaluation": null,
-				"curlFileSuffix": "_${id}",
+				"curlFileSuffix": "_${filegoup}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": null,
 				"curlOutputParameter":  [
 						{
 							"${characters}": "characters"
+						},
+						{
+							"${characters}": "results.characters"
+						},
+						{
+							"${title}": "results.title"
 						},
 						{
 							"${title}": "title"
@@ -62,7 +112,7 @@
 				"mandatory": false,
 				"curlBaseUrl": "${characters}",
 				"curlCache": 0,
-				"curlExecuteEvaluation": null,
+				"curlExecuteEvaluation": "\"${characters}\" <> \"\"",
 				"curlFileSuffix": "_${characters}",
 				"curlFormatOutput": true,
 				"curlOptions": null,
@@ -82,7 +132,7 @@
 				"mandatory": false,
 				"curlBaseUrl": "${planets}",
 				"curlCache": 0,
-				"curlExecuteEvaluation": null,
+				"curlExecuteEvaluation": "\"${planets}\" <> \"\"",
 				"curlFileSuffix": "_${planets}",
 				"curlFormatOutput": true,
 				"curlOptions": null,

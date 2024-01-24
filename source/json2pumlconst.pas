@@ -193,7 +193,7 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-  cCurrentVersion = '2.2.10.106';
+  cCurrentVersion = '2.2.12.108';
 
   cApplicationName = 'json2puml';
 
@@ -208,6 +208,8 @@ const
   JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
     'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];
 
+
 implementation
+
 
 end.

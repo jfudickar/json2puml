@@ -1,3 +1,24 @@
+# **json2puml v2.2.12.108** - 23.01.2024
+## All Editions
+### New Feature
+- InputList.fileDescription.curlParameter : New property mandatoryGroup added (#19)
+  This gives more flexibility in defining mandatory input parameters
+- InputList.curlMappingParameter added (#13)
+  This allows to define additional curl parameter mappings and can be used to combine parameters in one parameter having prefix and suffix (e.g. used for url filter parameters based on input parameters)
+- The InputList.fileDescription.curlParameter will now be used to validate the defined input curlparameters. An error will be raised and the conversion aborted when the parameters are not matching. (#18)
+- All initialy defined curl parameters will be listed at the beginning of the execution log (#21)
+- Improved / updated samples to show the use of the new CurlMappingParameter
+- New Unittests added
+
+## UI Editions
+### New Feature
+- Improved progress when executing the scripts (#20)
+  - Progressbars added for curl and convert 
+  - The execution log will be automatically updated 
+- New "Curl Files" result page
+  - This page shows all executed curl commands and the corresponding results as a comprensed list
+- New button "Generate Servicelist Results" to fill the "get /inputlistfile" and "get /definitionfile" pages  
+
 # **json2puml v2.2.11.107** - 01.01.2024
 ## All Editions
 ### Changed Feature
