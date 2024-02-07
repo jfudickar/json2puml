@@ -212,6 +212,7 @@ type
     Label28: TLabel;
     DBEdit1: TDBEdit;
     Button2: TButton;
+    GenerateServiceListResultsAction: TAction;
     procedure CommandLineEditPanelResize (Sender: TObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
@@ -220,6 +221,7 @@ type
     procedure FormClose (Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery (Sender: TObject; var CanClose: Boolean);
     procedure FormShow (Sender: TObject);
+    procedure GenerateServiceListResultsActionExecute(Sender: TObject);
     procedure InitialTimerTimer (Sender: TObject);
     procedure LoadFileActionExecute (Sender: TObject);
     procedure OpenConfigurationFileExternalExecute (Sender: TObject);
@@ -349,7 +351,8 @@ uses
 constructor Tjson2pumlMainForm.Create (AOwner: TComponent);
 begin
   inherited Create (AOwner);
-
+  FLogStringListProvider := TLogStringListProvider.Create;
+  Logger.Providers.add (LogStringListProvider);
 end;
 
 destructor Tjson2pumlMainForm.Destroy;
@@ -358,7 +361,6 @@ begin
   begin
     if Logger.Providers.IndexOf (LogStringListProvider) >= 0 then
       Logger.Providers.delete (Logger.Providers.IndexOf(LogStringListProvider));
-    // FLogStringListProvider.Free;
   end;
   FInputHandler.Free;
   GlobalLogStringListProvider.LogList := nil;
@@ -798,6 +800,7 @@ begin
   InputHandler.CmdLineParameter.TitleFilter := titlefilterEdit.Text;
   InputHandler.CmdLineParameter.GenerateOutputDefinition := generateoutputdefinitionCheckBox.Checked;
   InputHandler.CmdLineParameter.Debug := debugCheckBox.Checked;
+  GlobalCommandLineParameter.Debug := debugCheckBox.Checked; // Doing it twice to support also the log initialisation
   FillParameterList (InputHandler.CmdLineParameter.CurlParameter, CurlParameterDataSet);
   FillParameterList (InputHandler.CmdLineParameter.CurlAuthenticationParameter, CurlAuthenticationParameterDataset);
 end;
@@ -877,6 +880,7 @@ end;
 procedure Tjson2pumlMainForm.HandleInputParameter;
 begin
   FormToCommandline;
+  InitFormDefaultLogger;
   LogLines.Clear;
   if InputHandler.CmdLineParameter.Failed then
   begin
@@ -892,12 +896,9 @@ procedure Tjson2pumlMainForm.InitFormDefaultLogger;
 begin
   InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false,
     not FindCmdLineSwitch(cNoLogFiles, True));
-  FLogStringListProvider := TLogStringListProvider.Create;
-  Logger.Providers.add (LogStringListProvider);
   LogStringListProvider.ShowTimeStamp := True;
   LogStringListProvider.ShowEventTypes := True;
   LogStringListProvider.LogList := LogLines;
-  LogStringListProvider.LogLevel := LOG_DEBUG;
   SetLogProviderDefaults (LogStringListProvider, jatUI);
   LogStringListProvider.Enabled := True;
 end;
@@ -1011,7 +1012,7 @@ end;
 
 procedure Tjson2pumlMainForm.ReloadAndConvertActionExecute (Sender: TObject);
 begin
-  GenerateServiceListResults;
+  HandleInputParameter;
 end;
 
 procedure Tjson2pumlMainForm.ReloadFileActionExecute (Sender: TObject);
@@ -1234,6 +1235,11 @@ begin
       SetField ('ErrorMessage', InputFile.CurlResult.ErrorMessage);
       Inc (Line);
     end;
+end;
+
+procedure Tjson2pumlMainForm.GenerateServiceListResultsActionExecute(Sender: TObject);
+begin
+  GenerateServiceListResults;
 end;
 
 procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: TObject; ChangeType: tJson2PumlNotifyChangeType;

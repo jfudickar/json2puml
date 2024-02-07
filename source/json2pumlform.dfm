@@ -118,7 +118,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Top = 73
     Width = 1357
     Height = 808
-    ActivePage = LogTabSheet
+    ActivePage = OutputTabsheet
     Align = alClient
     TabOrder = 3
     object LogTabSheet: TTabSheet
@@ -696,9 +696,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Top = 319
             Width = 161
             Height = 25
-            Action = ReloadAndConvertAction
+            Action = GenerateServiceListResultsAction
             Anchors = [akTop, akRight]
-            Caption = 'Generate Servicelist Results'
             Default = True
             TabOrder = 4
           end
@@ -961,8 +960,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
     object ShowCurlParameterAction: TAction
       Category = 'Show'
-      Caption = 'Show Curl Authentication File'
-      ShortCut = 16498
+      Caption = 'Show &Curl Parameter File'
       OnExecute = ShowCurlParameterActionExecute
     end
     object LoadFileAction: TAction
@@ -1010,8 +1008,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
     object ShowExecuteAction: TAction
       Category = 'Show'
-      Caption = 'Show Execute'
-      ShortCut = 16502
+      Caption = 'Show &Execute'
       OnExecute = ShowExecuteActionExecute
     end
     object ConvertCurrentFileAction: TAction
@@ -1022,38 +1019,32 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
     object ShowInputListAction: TAction
       Category = 'Show'
-      Caption = 'Show Input List'
-      ShortCut = 16496
+      Caption = 'Show &Input List'
       OnExecute = ShowInputListActionExecute
     end
     object ShowDefinitionFileAction: TAction
       Category = 'Show'
-      Caption = 'Show Definition File'
-      ShortCut = 16499
+      Caption = 'Show &Definition File'
       OnExecute = ShowDefinitionFileActionExecute
     end
     object ShowOutputFilesAction: TAction
       Category = 'Show'
-      Caption = 'Show Output Files'
-      ShortCut = 16503
+      Caption = 'Show &Result Files'
       OnExecute = ShowOutputFilesActionExecute
     end
     object ShowOptionFileAction: TAction
       Category = 'Show'
-      Caption = 'Show Option File'
-      ShortCut = 16500
+      Caption = 'Show O&ption File'
       OnExecute = ShowOptionFileActionExecute
     end
     object ShowCurlAuthenticationAction: TAction
       Category = 'Show'
-      Caption = 'Show Curl Authentication File'
-      ShortCut = 16497
+      Caption = 'Show Curl &Authentication File'
       OnExecute = ShowCurlAuthenticationActionExecute
     end
     object ShowParameterFileAction: TAction
       Category = 'Show'
-      Caption = 'Show Parameter File'
-      ShortCut = 16501
+      Caption = 'Show P&arameter File'
       OnExecute = ShowParameterFileActionExecute
     end
     object SaveFileAction: TAction
@@ -1077,7 +1068,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
     object ShowGlobalConfigFile: TAction
       Category = 'Show'
-      Caption = 'Show Global Configuration File'
+      Caption = 'Show &Global Configuration File'
     end
     object OpenCurrentJSONAction: TAction
       Category = 'Output Files'
@@ -1090,6 +1081,11 @@ object json2pumlMainForm: Tjson2pumlMainForm
       Caption = 'Open configuration file external'
       OnExecute = OpenConfigurationFileExternalExecute
       OnUpdate = SaveFileActionUpdate
+    end
+    object GenerateServiceListResultsAction: TAction
+      Category = 'Execute'
+      Caption = 'Generate ServiceList Results'
+      OnExecute = GenerateServiceListResultsActionExecute
     end
   end
   object ImageList1: TImageList
@@ -1787,47 +1783,30 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Items = <
               item
                 Action = ShowExecuteAction
-                Caption = 'S&how Execute'
-                ShortCut = 16502
               end
               item
                 Action = ShowOutputFilesAction
-                Caption = 'Show O&utput Files'
-                ShortCut = 16503
-              end
-              item
-                Action = ShowCurlParameterAction
-                Caption = '&Show Curl Authentication File'
-                ShortCut = 16498
-              end
-              item
-                Action = ShowInputListAction
-                Caption = 'Sh&ow Input List'
-                ShortCut = 16496
               end
               item
                 Action = ShowDefinitionFileAction
-                Caption = 'Sho&w Definition File'
-                ShortCut = 16499
-              end
-              item
-                Action = ShowOptionFileAction
-                Caption = 'Show O&ption File'
-                ShortCut = 16500
-              end
-              item
-                Action = ShowCurlAuthenticationAction
-                Caption = 'Show &Curl Authentication File'
-                ShortCut = 16497
               end
               item
                 Action = ShowParameterFileAction
-                Caption = 'Show P&arameter File'
-                ShortCut = 16501
+              end
+              item
+                Action = ShowInputListAction
+              end
+              item
+                Action = ShowCurlAuthenticationAction
+              end
+              item
+                Action = ShowCurlParameterAction
+              end
+              item
+                Action = ShowOptionFileAction
               end
               item
                 Action = ShowGlobalConfigFile
-                Caption = 'Show &Global Configuration File'
               end>
             Caption = '&Show'
           end
@@ -1915,6 +1894,25 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 ShortCut = 120
               end>
             Caption = 'Ou&tput Files'
+          end
+          item
+            Items = <
+              item
+                Action = ConvertAllOpenFilesAction
+                Caption = '&Convert all open files'
+                ImageIndex = 15
+                ShortCut = 116
+              end
+              item
+                Action = ReloadAndConvertAction
+                Caption = '&Reload and convert files'
+                ShortCut = 16466
+              end
+              item
+                Action = GenerateServiceListResultsAction
+                Caption = '&Generate ServiceList Results'
+              end>
+            Caption = 'E&xecute'
           end>
         ActionBar = ActionMainMenuBar
       end

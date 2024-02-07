@@ -1,3 +1,17 @@
+# **json2puml v2.2.13.109** - 07.02.2024
+## All Editions
+### New Feature
+- When a curl command fails but a response has been saved the content of the file is logged as "debug".
+  To see this the debug parameter must be defined
+
+## UI Editions
+### Changed Feature
+- The button "Reload and convert files" is working agian (#22)
+- The execute menu has been restablished
+- Restructured the show menu
+- changing the "debug" flag in the ui now has an influence on the generated log outputs
+
+
 # **json2puml v2.2.12.108** - 23.01.2024
 ## All Editions
 ### New Feature

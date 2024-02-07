@@ -15,14 +15,17 @@ type
   TJson2PumlLoadConfigFileName = procedure(iPage: tJson2PumlPage; iFileName: string) of object;
 
 const
-  cJson2PumlPageTitle: array [tJson2PumlPage] of string = ('Exeute', 'Output Files', 'Definition File', 'Parameter File', 'Input List File', 'Curl Authentication File',
+  cJson2PumlPageTitle: array [tJson2PumlPage] of string = ('Exeute', 'Result Files', 'Definition File', 'Parameter File', 'Input List File', 'Curl Authentication File',
     'Curl Parameter File', 'Option File', 'Global Configuration');
+  cJson2PumlPageActionCaption: array [tJson2PumlPage] of string = ('&Exeute', '&Result Files', '&Definition File', '&Parameter File', 'Input &List File', '&Curl Authentication File',
+    'Curl P&arameter File', 'O&ption File', '&Global Configuration');
   cJson2PumlPageShortCutText: array [tJson2PumlPage] of string = ('Ctrl+F1', 'Ctrl+F2', 'Ctrl+F3', 'Ctrl+F4', 'Ctrl+F5',
     'Ctrl+F6', 'Ctrl+F7', 'Ctrl+F8', 'Ctrl+F9');
   cJson2PumlPageConfig: array [tJson2PumlPage] of Boolean = (false, false, true, true, true, true, true, true, true);
 
 type
   tJson2PumlPageHelper = record helper for tJson2PumlPage
+    function ActionCaption: string;
     procedure SetToShowAction (iAction: TAction);
     function ShortCutText: string;
     function Title: string;
@@ -35,6 +38,11 @@ implementation
 uses
   System.SysUtils, Vcl.Menus;
 
+function tJson2PumlPageHelper.ActionCaption: string;
+begin
+  Result := Format ('Show %s', [cJson2PumlPageActionCaption[self]]);
+end;
+
 function tJson2PumlPageHelper.IsConfig: Boolean;
 begin
   Result := cJson2PumlPageConfig[self];
@@ -44,7 +52,7 @@ procedure tJson2PumlPageHelper.SetToShowAction (iAction: TAction);
 begin
   if not Assigned (iAction) then
     Exit;
-  iAction.Caption := Format ('Show %s', [Title]);
+  iAction.Caption := ActionCaption;
   iAction.ShortCut := TextToShortCut (ShortCutText);
 end;
 

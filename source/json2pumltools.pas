@@ -1285,6 +1285,7 @@ var
   vErrorMessage: string;
   vCommandOutPut, vCommandErrors: TStringList;
   vOutputFile: TStringList;
+  s : String;
 
 begin
 
@@ -1360,10 +1361,10 @@ begin
         vOutputFile := TStringList.Create;
         try
           vOutputFile.LoadFromFile (iOutputFile);
-          // if vOutputFile.Count > 0 then
-          // GlobalLoghandler.Debug ('curl result output (%s)', [iOutputFile]);
-          // for s in vOutputFile do
-          // GlobalLoghandler.Debug (s);
+           if vOutputFile.Count > 0 then
+            GlobalLoghandler.Debug ('curl result output (%s)', [iOutputFile]);
+          for s in vOutputFile do
+            GlobalLoghandler.Debug (s);
         finally
           vOutputFile.Free;
         end;
