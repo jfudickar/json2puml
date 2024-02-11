@@ -27,10 +27,6 @@ unit json2pumltools;
 interface
 
 uses System.Classes, System.SysUtils, json2pumldefinition,
-{$IFDEF LINUX}
-  Posix.Base,
-  Posix.Fcntl,
-{$ENDIF}
   json2pumlloghandler, json2pumlconst, System.Zip;
 
 procedure AddFileToZipFile (iZipFile: TZipFile; iFileName, iRemoveDirectory: string);
@@ -147,31 +143,14 @@ type
     class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
   end;
 
-{$IFDEF LINUX}
-
-type
-  TStreamHandle = pointer;
-
-  TLinuxUtils = class
-  public
-    class function RunCommandLine (ACommand: string; var ResultList: TStringList): Boolean; overload;
-    class function RunCommandLine (ACommand: string; Return: TProc<string>): Boolean; overload;
-    class function findParameter (AParameter: string): Boolean;
-  end;
-
-function popen (const Command: MarshaledAString; const _type: MarshaledAString): TStreamHandle; cdecl;
-  external libc name _PU + 'popen';
-function pclose (filehandle: TStreamHandle): int32; cdecl; external libc name _PU + 'pclose';
-function fgets (buffer: pointer; size: int32; Stream: TStreamHandle): pointer; cdecl; external libc name _PU + 'fgets';
-{$ENDIF}
-
 implementation
 
 uses
 {$IFDEF MSWINDOWS} Winapi.Windows, Winapi.ShellAPI, VCL.Forms, {$ENDIF}
   System.Generics.Collections, System.IOUtils,
   System.Math, System.DateUtils, System.NetEncoding, json2pumlbasedefinition,
-  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression, jsontools;
+  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression, jsontools,
+  commandlinetools;
 
 function ApplicationCompileVersion: string;
 begin
@@ -216,155 +195,6 @@ begin
   end;
 end;
 
-{$IFDEF MSWINDOWS}
-
-function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
-var
-  buffer: array [0 .. 2400] of AnsiChar;
-  BufferStrOutput: string;
-  BufferStrErrors: string;
-  CreationFlags: DWORD;
-  NumberOfBytesRead: DWORD;
-  PipeErrorsRead: THandle;
-  PipeErrorsWrite: THandle;
-  PipeOutputRead: THandle;
-  PipeOutputWrite: THandle;
-  ProcessInfo: TProcessInformation;
-  SecurityAttr: TSecurityAttributes;
-  StartupInfo: TStartupInfo;
-  tmpWaitR: DWORD;
-
-  procedure AddLine (var AString: string; ALines: TStringList);
-  var
-    i: Integer;
-    j: Integer;
-    p, l: Integer;
-
-    function findnewline: Boolean;
-    begin
-      i := pos (#13#10, AString);
-      j := pos (#10, AString);
-      if j = 0 then
-        j := pos (#13, AString);
-      if (i > 0) and (i <= j) then
-      begin
-        p := i;
-        l := 1;
-      end
-      else
-      begin
-        p := j;
-        l := 0;
-      end;
-      Result := p > 0;
-    end;
-
-  begin
-    while findnewline do
-    begin
-      if p > 1 then
-        ALines.Add (copy(AString, 1, p - 1));
-      Delete (AString, 1, p + l);
-    end;
-  end;
-
-begin
-  // Initialisierung ProcessInfo
-  FillChar (ProcessInfo, SizeOf(TProcessInformation), 0);
-
-  // Initialisierung SecurityAttr
-  FillChar (SecurityAttr, SizeOf(TSecurityAttributes), 0);
-  SecurityAttr.nLength := SizeOf (TSecurityAttributes);
-  SecurityAttr.bInheritHandle := true;
-  SecurityAttr.lpSecurityDescriptor := nil;
-
-  // Pipes erzeugen
-  CreatePipe (PipeOutputRead, PipeOutputWrite, @SecurityAttr, 0);
-  CreatePipe (PipeErrorsRead, PipeErrorsWrite, @SecurityAttr, 0);
-
-  // Initialisierung StartupInfo
-  FillChar (StartupInfo, SizeOf(TStartupInfo), 0);
-  StartupInfo.cb := SizeOf (TStartupInfo);
-  StartupInfo.hStdInput := 0;
-  StartupInfo.hStdOutput := PipeOutputWrite;
-  StartupInfo.hStdError := PipeErrorsWrite;
-  StartupInfo.wShowWindow := SW_HIDE;
-  StartupInfo.dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
-
-  CreationFlags := CREATE_DEFAULT_ERROR_MODE or CREATE_NEW_CONSOLE or NORMAL_PRIORITY_CLASS;
-
-  Result := CreateProcessW (nil, (PWideChar(iCommand)), nil, nil, true, CreationFlags, nil, nil, StartupInfo,
-    ProcessInfo);
-  if Result then
-  begin
-    // Write-Pipes schließen
-    CloseHandle (PipeOutputWrite);
-    CloseHandle (PipeErrorsWrite);
-
-    BufferStrOutput := '';
-    BufferStrErrors := '';
-
-    repeat
-      tmpWaitR := WaitForSingleObject (ProcessInfo.hProcess, 100);
-
-      NumberOfBytesRead := 0;
-      // Ausgabe Read-Pipe auslesen
-      if PeekNamedPipe (PipeOutputRead, nil, 0, nil, @NumberOfBytesRead, nil) and (NumberOfBytesRead > 0) then
-      begin
-        while ReadFile (PipeOutputRead, buffer, Length(buffer) - 1, NumberOfBytesRead, nil) do
-        begin
-          buffer[NumberOfBytesRead] := #0;
-          OemToAnsi (buffer, buffer);
-          BufferStrOutput := BufferStrOutput + string(buffer);
-          AddLine (BufferStrOutput, oCommandOutPut);
-          Application.ProcessMessages ();
-        end;
-      end;
-
-      NumberOfBytesRead := 0;
-      if PeekNamedPipe (PipeErrorsRead, nil, 0, nil, @NumberOfBytesRead, nil) and (NumberOfBytesRead > 0) then
-      begin
-        while ReadFile (PipeErrorsRead, buffer, Length(buffer) - 1, NumberOfBytesRead, nil) do
-        begin
-          buffer[NumberOfBytesRead] := #0;
-          OemToAnsi (buffer, buffer);
-          BufferStrErrors := BufferStrErrors + string(buffer);
-          AddLine (BufferStrErrors, oCommandErrors);
-          Application.ProcessMessages ();
-        end;
-      end;
-
-      Application.ProcessMessages ();
-    until (tmpWaitR <> WAIT_TIMEOUT);
-
-    if BufferStrOutput <> '' then
-      oCommandOutPut.Add (BufferStrOutput);
-    if BufferStrErrors <> '' then
-      oCommandErrors.Add (BufferStrErrors);
-
-    CloseHandle (ProcessInfo.hProcess);
-    CloseHandle (ProcessInfo.hThread);
-
-    CloseHandle (PipeOutputRead);
-    CloseHandle (PipeErrorsRead);
-  end
-  else
-  begin
-    // Pipes schließen
-    CloseHandle (PipeOutputRead);
-    CloseHandle (PipeOutputWrite);
-    CloseHandle (PipeErrorsRead);
-    CloseHandle (PipeErrorsWrite);
-  end;
-end;
-{$ELSE}
-
-function ExecuteCommandInternal (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
-begin
-  Result := TLinuxUtils.RunCommandLine (iCommand, oCommandOutPut);
-end;
-{$ENDIF}
-
 function ExecuteCommand (const iCommand: WideString; const iCommandType, iCommandInfo: string): Boolean;
 var
   vCommandOutPut, vCommandErrors: TStringList;
@@ -390,7 +220,7 @@ begin
     GlobalLoghandler.Info ('%s : Execute %s', [iCommandType, iCommandInfo])
   else
     GlobalLoghandler.Info ('Execute %s', [iCommandInfo]);
-  Result := ExecuteCommandInternal (iCommand, oCommandOutPut, oCommandErrors);
+  Result := RunCommandLine (iCommand, oCommandOutPut, oCommandErrors);
   if oCommandOutPut.Count > 0 then
   begin
     GlobalLoghandler.Info ('  StdOut');
@@ -809,6 +639,11 @@ begin
     FreeAndNil (RM);
   end;
 end;
+{$ELSE}
+function GetVersionInfo (AIdent: string): string;
+begin
+  result := '';
+end;
 {$ENDIF}
 
 function IsLinuxHomeBasedPath (iPath: string): Boolean;
@@ -834,11 +669,14 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-
 procedure OpenFile (iFileName: string);
 begin
   if FileExists (iFileName) then
     ShellExecute (0, nil, PChar(iFileName), nil, nil, SW_RESTORE);
+end;
+{$ELSE}
+procedure OpenFile (iFileName: string);
+begin
 end;
 {$ENDIF}
 
@@ -974,85 +812,6 @@ begin
   Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
   Result := GlobalConfigurationDefinition.CurlParameter.ReplaceParameterValues (Result);
 end;
-
-{$IFDEF MSWINDOWS}
-{$ELSE}
-
-class function TLinuxUtils.RunCommandLine (ACommand: string; var ResultList: TStringList): Boolean;
-
-var
-  Handle: TStreamHandle;
-  Data: array [0 .. 511] of uint8;
-  M: TMarshaller;
-
-begin
-  Result := false;
-  if not Assigned (ResultList) then
-    ResultList := TStringList.Create;
-  try
-    Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
-    try
-      while fgets (@Data[0], SizeOf(Data), Handle) <> nil do
-      begin
-        ResultList.Add (copy(UTF8ToString(@Data[0]), 1, UTF8ToString(@Data[0]).Length - 1)); // ,sizeof(Data)));
-      end;
-    finally
-      pclose (Handle);
-    end;
-    Result := true;
-  except
-    on e: exception do
-      ResultList.Add (e.ClassName + ': ' + e.Message);
-  end;
-end;
-
-class function TLinuxUtils.RunCommandLine (ACommand: string; Return: TProc<string>): Boolean;
-var
-  Handle: TStreamHandle;
-  Data: array [0 .. 511] of uint8;
-  M: TMarshaller;
-
-begin
-  Result := false;
-  try
-    Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
-    try
-      while fgets (@Data[0], SizeOf(Data), Handle) <> nil do
-      begin
-        Return (copy(UTF8ToString(@Data[0]), 1, UTF8ToString(@Data[0]).Length - 1)); // ,sizeof(Data)));
-      end;
-    finally
-      pclose (Handle);
-    end;
-  except
-    on e: exception do
-      Return (e.ClassName + ': ' + e.Message);
-  end;
-end;
-
-class function TLinuxUtils.findParameter (AParameter: string): Boolean;
-var
-  i: Integer;
-begin
-  Result := false;
-  for i := 0 to Pred(ParamCount) do
-  begin
-    Result := AParameter.ToUpper = ParamStr (i).ToUpper;
-    if Result then
-      Break;
-  end;
-end;
-
-function GetVersionInfo (AIdent: string): string;
-begin
-
-end;
-
-procedure OpenFile (iFileName: string);
-begin
-end;
-
-{$ENDIF}
 
 class function TCurlUtils.CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
   const iOutputFile: string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
