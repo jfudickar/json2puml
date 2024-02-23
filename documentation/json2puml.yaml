@@ -19,13 +19,12 @@ paths:
       parameters: []
       responses:
         '200':
-          description: OK
           content:
             text/plain:
               schema:
                 type: string
               example: 
-                'json2puml server v2.2.5.96 (Windows 64Bit)'
+                'json2puml server v2.2.13.109 (Windows 64Bit)'
         '500':
           description:  '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
@@ -40,13 +39,10 @@ paths:
       parameters: []
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
-                type: object
-                items:
-                  $ref: '#/components/schemas/ServiceInformationResponse'
+                $ref: '#/components/schemas/ServiceInformationResponse'
         '500':
           description:  '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
@@ -60,7 +56,6 @@ paths:
       parameters: []
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
@@ -78,7 +73,6 @@ paths:
       parameters: []
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
@@ -98,7 +92,6 @@ paths:
       parameters: []
       responses:
         '200':
-          description: OK
           content:
             application/json:
               schema:
@@ -244,27 +237,68 @@ components:
       properties:
         service:
           type: string
-          example: simplelistfile
+          example: json2puml server v2.2.13.109 (Linux 64Bit x86)
           description: Name of the listfile which can be used in the POST /json2pumlRequest parameters
         additionalServiceInformation:
           type: array
           items:
             type : string
+            example:
+              - ...
           description: Optional additional informations which can be configured in the global configuraion file
+        commandLine:
+          type: string
+          example: ./json2puml/bin/json2pumlservice -debug -nologfiles
+          description: Commandline used to start the service application
+        commandLineParameter:
+          type: array
+          items:
+            type : string
+            example:
+              - json2puml server v2.2.13.109 (Linux 64Bit x86)
+              - Command Line Parameter
+              -   debug                         = true
+              -   nologfiles                    = true
+              - Environment Parameter
+              -   configurationfilename         = /json2puml/configuration/json2pumlconfiguration.json
+              - ...
+          description: Detailed list of all identified command line parameters and environment parameters
         plantUmlInformation:
           type: array
           items:
             type : string
+            example:
+              - PlantUML version 1.2024.0 (Thu Feb 01 18:18:54 UTC 2024)
+              - (GPL source distribution)
+              - ...
           description: Output of the plantuml -version call of the configured plantuml jar file
+        globalConfiguration:
+          type: array
+          items:
+            type : string
+            example:
+              - Global Configuration (/json2puml/configuration/json2pumlconfiguration.json)
+              - baseOutputPath                = /json2puml/output
+              - curlAuthenticationFileName    = /json2puml/configuration/json2pumlcurlauthentication.json
+              - ...
+          description: Content of the identified global configuration file
         definitionFiles:
           type: array
           items:
             type : string
+            example:
+              - /json2puml/definition/tmf-definition.json
+              - /json2puml/definition/jsonplaceholderdefinition.json
+              - ...
           description: List of all definition files configured for the system
         inputlistFiles:
           type: array
           items:
             type : string
+            example:
+              - /json2puml/inputlist/placeholderinputlistfull.json
+              - /json2puml/inputlist/placeholderinputlistreduced.json
+              - ...
           description: List of all inputlist files configured for the system
     InputListFileResponse:
       type: object
