@@ -1599,7 +1599,6 @@ begin
       else
         FileName := GetFileNameExpanded(InputFile.InputFileNameExpanded);
       FileName := TCurlUtils.ReplaceCurlParameterValues(FileName, CurlParameterList, CurlMappingParameterList, False);
-      FileName := ReplaceInvalidFileNameChars(FileName);
       NewPath := ExtractFilePath (FileName);
       if findfirst (FileName, faAnyFile, searchResult) = 0 then
       begin
