@@ -118,7 +118,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Top = 73
     Width = 1357
     Height = 808
-    ActivePage = OutputTabsheet
+    ActivePage = LogTabSheet
     Align = alClient
     TabOrder = 3
     object LogTabSheet: TTabSheet
@@ -708,7 +708,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Top = 353
         Width = 1339
         Height = 417
-        ActivePage = ServiceInputListFileResult
+        ActivePage = ExecutionLogTabSheet
         Align = alClient
         TabOrder = 1
         object ExecutionLogTabSheet: TTabSheet
@@ -725,12 +725,12 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Left = 0
               Top = 0
               Width = 1331
-              Height = 47
+              Height = 73
               Align = alTop
               TabOrder = 0
               DesignSize = (
                 1331
-                47)
+                73)
               object Label26: TLabel
                 Left = 6
                 Top = 10
@@ -744,6 +744,14 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 Width = 39
                 Height = 13
                 Caption = 'Convert'
+              end
+              object InputLabel: TLabel
+                Left = 6
+                Top = 51
+                Width = 51
+                Height = 13
+                Caption = 'Execution:'
+                FocusControl = ExecutionLogFileNameEdit
               end
               object ExpandProgressBar: TProgressBar
                 Left = 51
@@ -762,6 +770,15 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 Anchors = [akLeft, akTop, akRight]
                 Smooth = True
                 TabOrder = 1
+              end
+              object ExecutionLogFileNameEdit: TEdit
+                Left = 63
+                Top = 47
+                Width = 1262
+                Height = 23
+                Anchors = [akLeft, akTop, akRight]
+                ReadOnly = True
+                TabOrder = 2
               end
             end
           end
@@ -1798,6 +1815,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               end
               item
                 Action = ShowCurlAuthenticationAction
+                Caption = '&Show Curl Authentication File'
               end
               item
                 Action = ShowCurlParameterAction

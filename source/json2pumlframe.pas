@@ -42,7 +42,6 @@ uses
 type
   TJson2PumlOutputFileFrame = class(TFrame)
     BottomPanel: TPanel;
-    InputLabel: TLabel;
     InputPanel: TPanel;
     Label1: TLabel;
     LeadingObjectEdit: TEdit;
@@ -61,6 +60,9 @@ type
     SVGTabSheet: TTabSheet;
     SVGScrollBox: TScrollBox;
     SVGFileNameEdit: TEdit;
+    Panel2: TPanel;
+    InputLabel: TLabel;
+    InputFileNameEdit: TEdit;
 
   private
     FInputFileName: string;
@@ -165,13 +167,14 @@ end;
 procedure TJson2PumlOutputFileFrame.SetInputFileName (const Value: string);
 begin
   FInputFileName := Value;
-  InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
+  //InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
+  InputFileNameEdit.Text := InputFileName;
 end;
 
 procedure TJson2PumlOutputFileFrame.SetInputGroup (const Value: string);
 begin
   FInputGroup := Value;
-  InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
+//  InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
 end;
 
 procedure TJson2PumlOutputFileFrame.SetJsonInput (const Value: TStrings);

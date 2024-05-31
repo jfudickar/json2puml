@@ -26,28 +26,20 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
       Height = 288
       Align = alTop
       TabOrder = 0
-      object InputLabel: TLabel
-        Left = 1
-        Top = 1
-        Width = 561
-        Height = 15
-        Align = alTop
-        Caption = 'Json &Input'
-        ExplicitWidth = 54
-      end
       object Panel1: TPanel
         Left = 1
-        Top = 16
+        Top = 28
         Width = 561
         Height = 27
         Align = alTop
         BevelOuter = bvNone
+        BorderWidth = 2
         TabOrder = 0
         DesignSize = (
           561
           27)
         object Label1: TLabel
-          Left = 0
+          Left = 2
           Top = 6
           Width = 83
           Height = 15
@@ -55,13 +47,43 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
           FocusControl = LeadingObjectEdit
         end
         object LeadingObjectEdit: TEdit
-          Left = 82
-          Top = 3
-          Width = 475
+          Left = 85
+          Top = 2
+          Width = 474
           Height = 23
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
           Text = 'LeadingObjectEdit'
+        end
+      end
+      object Panel2: TPanel
+        Left = 1
+        Top = 1
+        Width = 561
+        Height = 27
+        Align = alTop
+        BevelOuter = bvNone
+        BorderWidth = 2
+        TabOrder = 1
+        DesignSize = (
+          561
+          27)
+        object InputLabel: TLabel
+          Left = 2
+          Top = 6
+          Width = 57
+          Height = 15
+          Caption = 'Json &Input:'
+          FocusControl = InputFileNameEdit
+        end
+        object InputFileNameEdit: TEdit
+          Left = 65
+          Top = 2
+          Width = 494
+          Height = 23
+          Anchors = [akLeft, akTop, akRight]
+          ReadOnly = True
+          TabOrder = 0
         end
       end
     end

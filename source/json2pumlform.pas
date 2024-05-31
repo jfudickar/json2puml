@@ -213,6 +213,8 @@ type
     DBEdit1: TDBEdit;
     Button2: TButton;
     GenerateServiceListResultsAction: TAction;
+    InputLabel: TLabel;
+    ExecutionLogFileNameEdit: TEdit;
     procedure CommandLineEditPanelResize (Sender: TObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
@@ -402,6 +404,7 @@ end;
 procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: TObject);
 begin
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
+  ExecutionLogFileNameEdit.Text := jofExecuteLog.Filename (InputHandler.CalculateSummaryFileName(jofPUML));
   FillCurlFileListDataset (nil);
   ConvertProgressBar.Position := 0;
   ExpandProgressBar.Position := 0;

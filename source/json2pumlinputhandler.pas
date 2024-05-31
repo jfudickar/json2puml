@@ -168,7 +168,6 @@ type
     function CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension: string;
       iRemoveExtension: Boolean): string;
     function CalculateOutputFileNamePath (iFileName, iSourceFileName: string; iNewFileExtension: string = ''): string;
-    function CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
     procedure ClearAllRecords;
     procedure ConvertAllRecordsInt;
     procedure CreateAllRecords;
@@ -205,6 +204,7 @@ type
     procedure BeginLoadFile;
     function CalculateCurlAdditionalRuntimeOptions: string;
     function CalculateRuntimeJarFile: string;
+    function CalculateSummaryFileName(iOutputFormat: tJson2PumlOutputFormat): string;
     function CalculateSummaryPath: string;
     function CleanSummaryPath (iFileName: string): string;
     procedure Clear;
@@ -761,8 +761,8 @@ begin
       if (jofLog in OutputFormats) then
       begin
         SingleRecord.ConverterLog.SaveToFile (jofLog.Filename(OutputFile));
-        SingleRecord.InputFile.Output.ConverterLogFileName := jofLog.Filename (OutputFile);
       end;
+      SingleRecord.InputFile.Output.ConverterLogFileName := jofLog.Filename (OutputFile);
       if SingleRecord.PUmlOutput.Text.IsEmpty then
         SingleRecord.InputFile.IsConverted := False
       else
