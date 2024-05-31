@@ -4,7 +4,7 @@
 		"description": "Converter definition file to generate plantuml files for TMF based data files.\nYou can find further informations here:\nhttps://www.tmforum.org/oda/about-open-apis/"
 	},
 	"defaultOption": "default",
-	"options":  [
+	"options": [
 			{
 				"option": "compact",
 				"definition": {
@@ -17,39 +17,39 @@
 					"legendShowFileInfos": null,
 					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"id",
 								"*name",
 								"status"
 						]
 					},
-					"objectProperties":  [
+					"objectProperties": [
 					],
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 							"contact*",
 							"metadata*"
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					]
 				}
 			},
@@ -65,13 +65,13 @@
 					"legendShowFileInfos": null,
 					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"*"
 						]
 					},
 					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"geographicAddress",
 								"product",
 								"individual",
@@ -81,30 +81,30 @@
 								"customer"
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 							"metadata*"
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					]
 				}
 			},
@@ -118,34 +118,34 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties":  [
+					"attributeProperties": [
 							"*"
 					],
-					"objectProperties":  [
+					"objectProperties": [
 					],
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -179,38 +179,38 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties":  [
+					"attributeProperties": [
 							"*"
 					],
 					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -246,7 +246,7 @@
 					"legendShowFileInfos": null,
 					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"id",
 								"*name",
 								"status"
@@ -254,37 +254,37 @@
 					},
 					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"product",
 								"customer"
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
 					"objectDetailProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 						]
 					},
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -320,13 +320,13 @@
 					"legendShowFileInfos": null,
 					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"*"
 						]
 					},
 					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"product",
 								"productPrice",
 								"productOffering",
@@ -334,32 +334,32 @@
 								"customer"
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
 					"objectDetailProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 						]
 					},
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					]
 				}
 			},
@@ -375,7 +375,7 @@
 					"legendShowFileInfos": null,
 					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"id",
 								"*name",
 								"status"
@@ -383,34 +383,34 @@
 					},
 					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 							"appliedTax"
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -446,38 +446,38 @@
 					"legendShowFileInfos": null,
 					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"id",
 								"*name",
 								"status"
 						]
 					},
-					"objectProperties":  [
+					"objectProperties": [
 					],
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 							"contactMedium.characteristic"
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -510,7 +510,7 @@
 		"legendShowInfo": true,
 		"legendShowObjectFormats": true,
 		"legendShowFileInfos": true,
-		"attributeProperties":  [
+		"attributeProperties": [
 				"characteristic.*",
 				"id",
 				"*name",
@@ -527,7 +527,7 @@
 				"mediumType",
 				"@referredType"
 		],
-		"objectProperties":  [
+		"objectProperties": [
 				"appointment",
 				"troubleTicket",
 				"partyInteraction",
@@ -566,14 +566,14 @@
 				"subscription",
 				"partyPrivacyProfile"
 		],
-		"objectTypeProperties":  [
+		"objectTypeProperties": [
 				"refType",
 				"externalIdentifierType",
 				"@referredType",
 				"@type",
 				"deserializationType"
 		],
-		"objectTypeRenames":  [
+		"objectTypeRenames": [
 				"compositeProduct=product",
 				"defaultPaymentMethod=paymentMethod",
 				"UrbanPropertyAddress=geographicAddress",
@@ -585,39 +585,39 @@
 				"customerEntity=customer",
 				"billingAccountExtended=billingAccount"
 		],
-		"objectIdentifierProperties":  [
+		"objectIdentifierProperties": [
 				"id",
 				"ticketId",
 				"referenceId"
 		],
-		"objectTitleProperties":  [
+		"objectTitleProperties": [
 				"fullName",
 				"name",
 				"characteristic.contactType",
 				"contactMedium.mediumType"
 		],
-		"objectDetailProperties":  [
+		"objectDetailProperties": [
 				"contactMedium",
 				"totalBalance",
 				"product.productTerm",
 				"orderItem.itemTerm",
 				"xpriceAlteration"
 		],
-		"relationshipProperties":  [
+		"relationshipProperties": [
 				"relatedParty",
 				"engagedParty",
 				"relatedEntity",
 				"place",
 				"productRelationship"
 		],
-		"relationshipTypeProperties":  [
+		"relationshipTypeProperties": [
 				"role",
 				"type",
 				"relationshipType",
 				"characteristic.contactType",
 				"contactMedium.mediumType"
 		],
-		"relationshipTypeArrowFormats":  [
+		"relationshipTypeArrowFormats": [
 				"relatedparty=[dotted]",
 				"relatedparty.customer=[#blue,dotted]",
 				"relatedparty.individual=[#lightgrey,dotted]",
@@ -631,7 +631,7 @@
 				"productrelationship.subscriptionrelation=[#green,dashed]",
 				"productrelationship.orderitem=[#orange,dashed]"
 		],
-		"groupProperties":  [
+		"groupProperties": [
 				"product.productOrder",
 				"individual.*",
 				"contactmedium",
@@ -651,7 +651,7 @@
 				"bankAccountDebit",
 				"partyPrivacyProfile.*"
 		],
-		"characteristicProperties":  [
+		"characteristicProperties": [
 				{"parentProperty": "metadata", "type": "list", "propertyList": ["name", "value", "*"]},
 				{"parentProperty": "modifyReason", "type": "list", "propertyList": ["name", "action", "*"]},
 				{"parentProperty": "stateDate", "type": "list", "propertyList": ["effectiveDate", "*"]},
@@ -707,7 +707,7 @@
 				{"parentProperty": "contactMedium.characteristic", "type": "record", "propertyList": ["*", "-type"]},
 				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner", "*"]}
 		],
-		"hiddenProperties":  [
+		"hiddenProperties": [
 				"characteristicMetadata",
 				"href",
 				"@referredType",
@@ -718,7 +718,7 @@
 				"originalResource",
 				"appliedTax"
 		],
-		"pumlHeaderLines":  [
+		"pumlHeaderLines": [
 				"hide stereotype",
 				"hide empty member",
 				"'left to right direction",
@@ -746,7 +746,7 @@
 				"sortAttributes": true,
 				"valueSplitLength": 50
 			},
-			"formats":  [
+			"formats": [
 					{
 						"formatName": "partyInteraction",
 						"definition": {

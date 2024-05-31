@@ -5,15 +5,15 @@
 	"job": null,
 	"jobDescription": null,
 	"inputListFile": "spacex_inputlist_launches.json",
-	"inputFiles":  [
+	"inputFiles": [
 	],
 	"generateSummary": true,
 	"generateDetails": true,
 	"outputFormats": "svg,puml,json,log,zip",
 	"option": "default",
 	"outputSuffix": ".<option>",
-	"curlParameter":  [
+	"curlParameter": [
 	],
-	"curlAuthenticationParameter":  [
+	"curlAuthenticationParameter": [
 	]
 }

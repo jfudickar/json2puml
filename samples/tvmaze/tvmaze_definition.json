@@ -4,7 +4,7 @@
 		"description": "This example is based on the TVMAZE API (\"https://www.tvmaze.com/api\")."
 	},
 	"defaultOption": "default",
-	"options":  [
+	"options": [
 			{
 				"option": "full",
 				"definition": {
@@ -15,38 +15,38 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties":  [
+					"attributeProperties": [
 							"*"
 					],
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -79,10 +79,10 @@
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
-		"attributeProperties":  [
+		"attributeProperties": [
 				"*"
 		],
-		"objectProperties":  [
+		"objectProperties": [
 				"show",
 				"person",
 				"character",
@@ -90,43 +90,43 @@
 				"network",
 				{"objectName": "cast","generateWithoutIdentifier": "true"}
 		],
-		"objectTypeProperties":  [
+		"objectTypeProperties": [
 		],
-		"objectTypeRenames":  [
+		"objectTypeRenames": [
 		],
-		"objectIdentifierProperties":  [
+		"objectIdentifierProperties": [
 				"id",
 				"country.code"
 		],
-		"objectTitleProperties":  [
+		"objectTitleProperties": [
 				"title",
 				"name"
 		],
-		"objectDetailProperties":  [
+		"objectDetailProperties": [
 		],
-		"relationshipProperties":  [
+		"relationshipProperties": [
 		],
-		"relationshipTypeProperties":  [
+		"relationshipTypeProperties": [
 		],
-		"relationshipTypeArrowFormats":  [
+		"relationshipTypeArrowFormats": [
 		],
-		"groupProperties":  [
+		"groupProperties": [
 				"cast"
 		],
-		"characteristicProperties":  [
-				{"parentProperty": "image", "type": "record"},
-				{"parentProperty": "externals", "type": "record"},
-				{"parentProperty": "embedded", "type": "record"},
-				{"parentProperty": "schedule", "type": "record"},
-				{"parentProperty": "webChannel", "type": "record"},
-				{"parentProperty": "rating", "type": "record"}
+		"characteristicProperties": [
+				"image",
+				"externals",
+				"embedded",
+				"schedule",
+				"webChannel",
+				"rating"
 		],
-		"hiddenProperties":  [
+		"hiddenProperties": [
 				"_links",
 				"resolutions.medium",
 				"image.medium"
 		],
-		"pumlHeaderLines":  [
+		"pumlHeaderLines": [
 				"hide stereotype"
 		],
 		"objectFormats": {
@@ -148,7 +148,7 @@
 				"sortAttributes": null,
 				"valueSplitLength": 100
 			},
-			"formats":  [
+			"formats": [
 					{
 						"formatName": "show",
 						"definition": {

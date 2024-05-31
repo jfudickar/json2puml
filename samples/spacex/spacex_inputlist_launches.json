@@ -2,12 +2,13 @@
 	"description": {
 		"displayName": "SPACE X Latest Launch",
 		"description": "This example is based on the Space X API (\"https://github.com/r-spacex/SpaceX-API\").\nIt delivers a the data of the last Space X launch.",
-		"curlParameter":  [
+		"curlParameter": [
 				{
 					"name": "${launch}",
 					"displayName": "Launch",
 					"description": "Definition of the launch\nPossilbe values: \n- next/\n- latest/\n- ...",
 					"mandatory": true,
+					"mandatoryGroup": null,
 					"regularExpression": null,
 					"defaultValue": "latest"
 				}
@@ -30,8 +31,10 @@
 	"curlUserAgentInformation": null,
 	"curlSpanIdHeader": null,
 	"curlTraceIdHeader": null,
+	"curlMappingParameter": [
+	],
 	"summaryFile": "spacex_launch_${launch}",
-	"input":  [
+	"input": [
 			{
 				"inputFile": "launches.json",
 				"leadingObject": "launch",
@@ -44,7 +47,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v5/launches/${launch}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 						{
 							"${capsule.id}": "capsules"
 						},
@@ -82,7 +85,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/crew/${crew.id}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -99,7 +102,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/capsules/${capsule.id}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -116,7 +119,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/launchpads/${launchpad.id}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -133,7 +136,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/landpads/${landpad.id}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -150,7 +153,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/cores/${core.id}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -167,7 +170,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/payloads/${payload.id}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -184,7 +187,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "v4/rockets/${rocket.id}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false

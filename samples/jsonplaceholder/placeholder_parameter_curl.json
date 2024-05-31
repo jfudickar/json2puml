@@ -5,15 +5,15 @@
 	"job": null,
 	"jobDescription": null,
 	"inputListFile": "placeholder_inputlist_curl.json",
-	"inputFiles":  [
+	"inputFiles": [
 	],
 	"generateSummary": true,
 	"generateDetails": false,
-	"outputFormats": "svg,log,png,json,puml,zip",
+	"outputFormats": "png,svg,puml,json,log,zip",
 	"option": "default",
 	"outputSuffix": null,
-	"curlParameter":  [
+	"curlParameter": [
 	],
-	"curlAuthenticationParameter":  [
+	"curlAuthenticationParameter": [
 	]
 }

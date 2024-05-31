@@ -4,7 +4,7 @@
 		"description": "Converter definition file to generate plantuml files for jsonplaceholder data files.\nThis file is baed on the definitions of the public REST API at \nhttps://jsonplaceholder.typicode.com/ to show the capabilities of JSON2PUML."
 	},
 	"defaultOption": "default",
-	"options":  [
+	"options": [
 			{
 				"option": "compact",
 				"definition": {
@@ -15,60 +15,40 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"id",
 								"*name",
 								"status"
 						]
 					},
-					"objectProperties":  [
+					"objectProperties": [
 					],
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": null,
-							"showFromRelations": null,
-							"showIfEmpty": null,
-							"showNullValues": null,
-							"showToRelations": null,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
-					}
+					"pumlHeaderLines": [
+					]
 				}
 			},
 			{
@@ -81,34 +61,34 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties":  [
+					"attributeProperties": [
 							"*"
 					],
-					"objectProperties":  [
+					"objectProperties": [
 					],
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -142,38 +122,38 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties":  [
+					"attributeProperties": [
 							"*"
 					],
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
+					"pumlHeaderLines": [
 					],
 					"objectFormats": {
 						"baseFormat": {
@@ -207,64 +187,44 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"id",
 								"*name",
 								"status"
 						]
 					},
-					"objectProperties": {
+					"objectProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								{"objectName": "*","generateWithoutIdentifier": "true"}
 						]
 					},
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": null,
-							"showFromRelations": null,
-							"showIfEmpty": null,
-							"showNullValues": null,
-							"showToRelations": null,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
-					}
+					"pumlHeaderLines": [
+					]
 				}
 			},
 			{
@@ -277,60 +237,40 @@
 					"legendShowInfo": null,
 					"legendShowObjectFormats": null,
 					"legendShowFileInfos": null,
-					"attributeProperties": {
+					"attributeProperties":  {
 						"operation": "replace",
-						"list":  [
+						"list": [
 								"id",
 								"*name",
 								"status"
 						]
 					},
-					"objectProperties":  [
+					"objectProperties": [
 					],
-					"objectTypeProperties":  [
+					"objectTypeProperties": [
 					],
-					"objectTypeRenames":  [
+					"objectTypeRenames": [
 					],
-					"objectIdentifierProperties":  [
+					"objectIdentifierProperties": [
 					],
-					"objectTitleProperties":  [
+					"objectTitleProperties": [
 					],
-					"objectDetailProperties":  [
+					"objectDetailProperties": [
 					],
-					"relationshipProperties":  [
+					"relationshipProperties": [
 					],
-					"relationshipTypeProperties":  [
+					"relationshipTypeProperties": [
 					],
-					"relationshipTypeArrowFormats":  [
+					"relationshipTypeArrowFormats": [
 					],
-					"groupProperties":  [
+					"groupProperties": [
 					],
-					"characteristicProperties":  [
+					"characteristicProperties": [
 					],
-					"hiddenProperties":  [
+					"hiddenProperties": [
 					],
-					"pumlHeaderLines":  [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": null,
-							"showFromRelations": null,
-							"showIfEmpty": null,
-							"showNullValues": null,
-							"showToRelations": null,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
-					}
+					"pumlHeaderLines": [
+					]
 				}
 			}
 	],
@@ -342,46 +282,46 @@
 		"legendShowInfo": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
-		"attributeProperties":  [
+		"attributeProperties": [
 				"*"
 		],
-		"objectProperties":  [
+		"objectProperties": [
 				"*"
 		],
-		"objectTypeProperties":  [
+		"objectTypeProperties": [
 		],
-		"objectTypeRenames":  [
+		"objectTypeRenames": [
 				"postId=post",
 				"albumId=album",
 				"userId=user"
 		],
-		"objectIdentifierProperties":  [
+		"objectIdentifierProperties": [
 				"id"
 		],
-		"objectTitleProperties":  [
+		"objectTitleProperties": [
 				"title",
 				"name"
 		],
-		"objectDetailProperties":  [
+		"objectDetailProperties": [
 		],
-		"relationshipProperties":  [
+		"relationshipProperties": [
 				"postId",
 				"albumId",
 				"userId"
 		],
-		"relationshipTypeProperties":  [
+		"relationshipTypeProperties": [
 		],
-		"relationshipTypeArrowFormats":  [
+		"relationshipTypeArrowFormats": [
 		],
-		"groupProperties":  [
+		"groupProperties": [
 		],
-		"characteristicProperties":  [
-				{"parentProperty": "company", "type": "record"},
-				{"parentProperty": "address", "type": "record"}
+		"characteristicProperties": [
+				"company",
+				"address"
 		],
-		"hiddenProperties":  [
+		"hiddenProperties": [
 		],
-		"pumlHeaderLines":  [
+		"pumlHeaderLines": [
 				"hide stereotype"
 		],
 		"objectFormats": {
@@ -403,7 +343,7 @@
 				"sortAttributes": null,
 				"valueSplitLength": null
 			},
-			"formats":  [
+			"formats": [
 					{
 						"formatName": "user",
 						"definition": {

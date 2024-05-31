@@ -2,12 +2,13 @@
 	"description": {
 		"displayName": "Json Placeholder Data",
 		"description": "This example is based on the JsonPlaceHolder API (\"https://jsonplaceholder.typicode.com/\").\nIt delivers data of one test user with corresponding related albums, photos and posts.",
-		"curlParameter":  [
+		"curlParameter": [
 				{
 					"name": "${userid}",
 					"displayName": "UserId",
 					"description": "ID of the user",
 					"mandatory": true,
+					"mandatoryGroup": null,
 					"regularExpression": "^[0-9]+$",
 					"defaultValue": null
 				},
@@ -16,6 +17,7 @@
 					"displayName": "Include Comments",
 					"description": "Flag to define if the comments should be fetched or not",
 					"mandatory": true,
+					"mandatoryGroup": null,
 					"regularExpression": "^[yn]$",
 					"defaultValue": "y"
 				},
@@ -24,6 +26,7 @@
 					"displayName": "Include Photos",
 					"description": "Flag to define if the photos should be fetched or not",
 					"mandatory": true,
+					"mandatoryGroup": null,
 					"regularExpression": "^[yn]$",
 					"defaultValue": "n"
 				}
@@ -46,13 +49,15 @@
 	"curlUserAgentInformation": null,
 	"curlSpanIdHeader": null,
 	"curlTraceIdHeader": null,
+	"curlMappingParameter": [
+	],
 	"summaryFile": "placeholder_summary_${name}",
-	"input":  [
+	"input": [
 			{
 				"inputFile": "users.json",
 				"leadingObject": "user",
 				"generateOutput": true,
-				"mandatory": false,
+				"mandatory": true,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": null,
@@ -60,7 +65,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "/users/${userid}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 						{
 							"${name}": "name"
 						}
@@ -80,7 +85,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "albums?userId=${userid}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 						{
 							"name": "${albumid}",
 							"value": "id",
@@ -102,7 +107,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "photos?albumId=${albumid}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -119,7 +124,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "posts?userId=${userid}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 						{
 							"name": "${postid}",
 							"value": "id",
@@ -141,7 +146,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "comments?postId=${postId}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -158,7 +163,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "todos?userId=${userid}",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false

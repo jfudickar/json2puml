@@ -5,18 +5,15 @@
 	"job": null,
 	"jobDescription": null,
 	"inputListFile": "tvmaze_inputlist_show.json",
-	"inputFiles":  [
+	"inputFiles": [
 	],
 	"generateSummary": true,
 	"generateDetails": false,
 	"outputFormats": "svg,puml,json,log,zip",
 	"option": "default",
 	"outputSuffix": ".<option>",
-	"curlParameter":  [
-			{
-				"${id}": "1"
-			}
+	"curlParameter": [
 	],
-	"curlAuthenticationParameter":  [
+	"curlAuthenticationParameter": [
 	]
 }

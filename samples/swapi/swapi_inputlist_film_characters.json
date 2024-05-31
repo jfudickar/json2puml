@@ -2,7 +2,7 @@
 	"description": {
 		"displayName": "SWAPI Film Character List",
 		"description": "This example is based on the SWAPI API (\"https://swapi.dev\").\nIt delivers a defined film with the characters of the film and the homeworld details of the characters.",
-		"curlParameter":  [
+		"curlParameter": [
 				{
 					"name": "${input.id}",
 					"displayName": "Film ID",
@@ -40,7 +40,7 @@
 	"curlUserAgentInformation": null,
 	"curlSpanIdHeader": null,
 	"curlTraceIdHeader": null,
-	"curlMappingParameter":  [
+	"curlMappingParameter": [
 			{
 				"name": "${filter.id}",
 				"prefix": null,
@@ -75,12 +75,12 @@
 			}
 	],
 	"summaryFile": "${title}",
-	"input":  [
+	"input": [
 			{
 				"inputFile": "films.json",
 				"leadingObject": "films",
 				"generateOutput": true,
-				"mandatory": false,
+				"mandatory": true,
 				"curlBaseUrl": "https://swapi.dev/api/films/${filter}",
 				"curlCache": 0,
 				"curlExecuteEvaluation": null,
@@ -88,7 +88,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": null,
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 						{
 							"${characters}": "characters"
 						},
@@ -117,7 +117,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": null,
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 						{
 							"${planets}": "homeworld"
 						}
@@ -137,7 +137,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": null,
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false

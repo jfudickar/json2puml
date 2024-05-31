@@ -2,7 +2,7 @@
 	"description": {
 		"displayName": "TV MAZE Show List",
 		"description": "This example is based on the TVMAZE API (\"https://www.tvmaze.com/api\").\nIt delivers details of the show and the persons playing in this show.",
-		"curlParameter":  [
+		"curlParameter": [
 				{
 					"name": "${id}",
 					"displayName": "Show ID",
@@ -31,13 +31,15 @@
 	"curlUserAgentInformation": null,
 	"curlSpanIdHeader": null,
 	"curlTraceIdHeader": null,
+	"curlMappingParameter": [
+	],
 	"summaryFile": "${name}",
-	"input":  [
+	"input": [
 			{
 				"inputFile": "show.json",
 				"leadingObject": "show",
 				"generateOutput": true,
-				"mandatory": false,
+				"mandatory": true,
 				"curlBaseUrl": null,
 				"curlCache": 0,
 				"curlExecuteEvaluation": null,
@@ -45,15 +47,13 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "shows/${id}?embed[]=cast&embed[]=nextepisode",
-				"curlOutputParameter":  [
+				"curlOutputParameter": [
 						{
 							"${name}": "name"
 						},
 						{
 							"${person}": "_embedded.cast.person.id"
 						}
-				],
-				"curlInputParameter":  [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
@@ -70,9 +70,7 @@
 				"curlFormatOutput": true,
 				"curlOptions": null,
 				"curlUrl": "people/${person}",
-				"curlOutputParameter":  [
-				],
-				"curlInputParameter":  [
+				"curlOutputParameter": [
 				],
 				"splitIdentifier": null,
 				"splitInputFile": false
