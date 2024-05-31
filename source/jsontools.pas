@@ -743,7 +743,7 @@ end;
 procedure WriteArrayStartToJson (oJsonOutPut: TStrings; iLevel: Integer; iPropertyName: string);
 begin
   if (iLevel > 0) or not iPropertyName.IsEmpty then
-    oJsonOutPut.Add (Format('%s%s [', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName)]))
+    oJsonOutPut.Add (Format('%s%s[', [JsonLinePrefix(iLevel), JsonPropertyName(iPropertyName)]))
   else
     oJsonOutPut.Add ('[');
 end;
