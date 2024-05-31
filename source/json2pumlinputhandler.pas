@@ -27,7 +27,8 @@ unit json2pumlinputhandler;
 interface
 
 uses
-  json2pumldefinition, System.Classes, json2pumlloghandler, json2pumlconst, json2pumlbasedefinition,
+  json2pumldefinition, System.Classes, json2pumlloghandler, json2pumlconst,
+  json2pumlbasedefinition,
   json2pumlconverterdefinition, Quick.Logger.Provider.StringList, Quick.Logger;
 
 type
@@ -204,7 +205,7 @@ type
     procedure BeginLoadFile;
     function CalculateCurlAdditionalRuntimeOptions: string;
     function CalculateRuntimeJarFile: string;
-    function CalculateSummaryFileName(iOutputFormat: tJson2PumlOutputFormat): string;
+    function CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
     function CalculateSummaryPath: string;
     function CleanSummaryPath (iFileName: string): string;
     procedure Clear;
@@ -224,7 +225,7 @@ type
     function LoadOptionFile (iFileName: string = ''): Boolean;
     function LoadParameterFile (iFileName: string = ''): Boolean;
     procedure RecreateAllRecords;
-    function ReplaceCurlParameterValues(const iValue: string; iCleanUnused: Boolean): string;
+    function ReplaceCurlParameterValues (const iValue: string; iCleanUnused: Boolean): string;
     function ValidateCurrentOptions: Boolean;
     property ApplicationType: tJson2PumlApplicationType read FApplicationType;
     property BaseOutputPath: string read GetBaseOutputPath;
@@ -282,7 +283,8 @@ type
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, json2pumltools, json2pumlconverter, jsontools;
+  System.SysUtils, System.IOUtils, json2pumltools, json2pumlconverter,
+  jsontools;
 
 constructor TJson2PumlInputHandlerRecord.Create;
 begin
@@ -583,7 +585,8 @@ begin
     Option := ''
   else
     Option := CurrentOption;
-  if iRemoveExtension then // This allows to have curl variables with a "." and summary file names with a "."
+  if iRemoveExtension then
+    // This allows to have curl variables with a "." and summary file names with a "."
     Filename := tpath.GetFileNameWithoutExtension (ExtractFileName(iFileName))
   else
     Filename := ExtractFileName (iFileName);
@@ -788,8 +791,6 @@ begin
     end;
     if jofZip in OutputFormats then
       GenerateSummaryZipFile;
-    if Assigned (AfterHandleAllRecords) then
-      AfterHandleAllRecords (nil);
     GlobalLoghandler.Info ('Overall Done');
   finally
     Converter.Free;
@@ -807,8 +808,6 @@ var
 begin
   OptionList := TStringList.Create;
   try
-    if Assigned (BeforeCreateAllRecords) then
-      BeforeCreateAllRecords (self);
     LastTraceId := '';
     { TODO : Move Calculate to ExpandInputlist }
     ConverterInputList.curlAdditionalRuntimeOptions := CalculateCurlAdditionalRuntimeOptions;
@@ -1565,10 +1564,17 @@ begin
     end;
 
   end;
-  if not GlobalLoghandler.Failed then
-    CreateAllRecords;
-  if not GlobalLoghandler.Failed then
-    ConvertAllRecordsInt;
+  try
+    if Assigned (BeforeCreateAllRecords) then
+      BeforeCreateAllRecords (nil);
+    if not GlobalLoghandler.Failed then
+      CreateAllRecords;
+    if not GlobalLoghandler.Failed then
+      ConvertAllRecordsInt;
+  finally
+    if Assigned (AfterHandleAllRecords) then
+      AfterHandleAllRecords (nil);
+  end;
 end;
 
 procedure TJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2PumlBaseListClass);
@@ -1612,7 +1618,7 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.ReplaceCurlParameterValues(const iValue: string; iCleanUnused: Boolean): string;
+function TJson2PumlInputHandler.ReplaceCurlParameterValues (const iValue: string; iCleanUnused: Boolean): string;
 begin
   Result := TCurlUtils.ReplaceCurlParameterValues (iValue, CurlParameterList, CurlMappingParameterList, iCleanUnused);
 end;

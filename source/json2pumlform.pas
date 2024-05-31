@@ -32,14 +32,21 @@ uses
 {$IFDEF SYNEDIT}
   SynHighlighterJSON, SynEdit,
 {$ENDIF}
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.ComCtrls, Vcl.ToolWin,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus,
+  Vcl.ComCtrls, Vcl.ToolWin,
   System.ImageList, Vcl.ImgList, Vcl.StdActns, System.Actions, Vcl.ActnList,
-  json2pumlframe, json2pumldefinition, Vcl.ActnMenus, Vcl.ActnMan, Vcl.ActnCtrls,
-  Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
-  Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
-  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar, Quick.Logger.Provider.StringList,
+  json2pumlframe, json2pumldefinition, Vcl.ActnMenus, Vcl.ActnMan,
+  Vcl.ActnCtrls,
+  Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler,
+  Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
+  Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, json2pumlconfigframe,
+  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore,
+  Vcl.Taskbar, Quick.Logger.Provider.StringList,
   Vcl.Mask, Vcl.DBCtrls;
 
 type
@@ -223,7 +230,7 @@ type
     procedure FormClose (Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery (Sender: TObject; var CanClose: Boolean);
     procedure FormShow (Sender: TObject);
-    procedure GenerateServiceListResultsActionExecute(Sender: TObject);
+    procedure GenerateServiceListResultsActionExecute (Sender: TObject);
     procedure InitialTimerTimer (Sender: TObject);
     procedure LoadFileActionExecute (Sender: TObject);
     procedure OpenConfigurationFileExternalExecute (Sender: TObject);
@@ -344,7 +351,8 @@ var
 implementation
 
 uses
-  json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst, System.UITypes,
+  json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst,
+  System.UITypes,
   json2pumlloghandler, Quick.Logger,
   json2pumlconverterdefinition;
 
@@ -380,9 +388,19 @@ end;
 
 procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: TObject);
 begin
-  FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
+  if FileExists (InputHandler.ConverterInputList.FileListFileName) then
+    FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
   FillCurlFileListDataset (InputHandler.ConverterInputList);
-  Taskbar.ProgressState := TTaskBarProgressState.None;
+  if GlobalLogHandler.Failed then
+  begin
+    Taskbar.ProgressState := TTaskBarProgressState.Error;
+    if ExpandProgressBar.Position < ExpandProgressBar.Max then
+      ExpandProgressBar.State := pbsError;
+    if ConvertProgressBar.Position < ConvertProgressBar.Max then
+      ConvertProgressBar.State := pbsError;
+  end
+  else
+    Taskbar.ProgressState := TTaskBarProgressState.None;
 end;
 
 procedure Tjson2pumlMainForm.AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
@@ -408,6 +426,8 @@ begin
   FillCurlFileListDataset (nil);
   ConvertProgressBar.Position := 0;
   ExpandProgressBar.Position := 0;
+  ConvertProgressBar.State := pbsNormal;
+  ExpandProgressBar.State := pbsNormal;
   Taskbar.ProgressState := TTaskBarProgressState.Normal;
   UpdateAllInfos;
 end;
@@ -1240,7 +1260,7 @@ begin
     end;
 end;
 
-procedure Tjson2pumlMainForm.GenerateServiceListResultsActionExecute(Sender: TObject);
+procedure Tjson2pumlMainForm.GenerateServiceListResultsActionExecute (Sender: TObject);
 begin
   GenerateServiceListResults;
 end;

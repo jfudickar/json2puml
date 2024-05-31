@@ -491,8 +491,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
               TabOrder = 3
             end
             object outputsuffixEdit: TEdit
-              Left = 134
-              Top = 43
+              Left = 142
+              Top = 40
               Width = 272
               Height = 21
               Anchors = [akLeft, akTop, akRight]
@@ -775,7 +775,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 Left = 63
                 Top = 47
                 Width = 1262
-                Height = 23
+                Height = 21
                 Anchors = [akLeft, akTop, akRight]
                 ReadOnly = True
                 TabOrder = 2
@@ -2149,7 +2149,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object Taskbar: TTaskbar
     TaskBarButtons = <>
-    TabProperties = []
+    TabProperties = [AppPeekAlways]
     Left = 864
     Top = 448
   end
