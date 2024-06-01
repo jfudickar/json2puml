@@ -2553,6 +2553,7 @@ begin
     GlobalLoghandler.Error (jetCmdLineParameterFileDoesNotExits,
       [cCmdLinePrefix, iParameterName.ToLower.Trim.PadRight(29), ioParameterValue.Trim]);
     ioParameterValue := '';
+    Failed := true;
   end;
 end;
 
