@@ -41,6 +41,7 @@ class CharacteristicProperty {
     type : CharacteristicPropertyType
     propertyList : Array of String
     includeIndex : Boolean
+    sortRows : Boolean
 }
 
 together {

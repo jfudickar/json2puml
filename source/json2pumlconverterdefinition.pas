@@ -276,10 +276,13 @@ type
   private
     FCharacteristicType: tJson2PumlCharacteristicType;
     FIncludeIndexStr: string;
+    FSortRowsStr: string;
     FPropertyList: tJson2PumlBasePropertyList;
     FParentProperty: string;
     function GetIncludeIndex: boolean;
+    function GetSortRows: boolean;
     procedure SetIncludeIndexStr (const Value: string);
+    procedure SetSortRowsStr(const Value: string);
   protected
     function GetIdent: string; override;
     function GetIsValid: boolean; override;
@@ -295,7 +298,9 @@ type
     property CharacteristicType: tJson2PumlCharacteristicType read FCharacteristicType write FCharacteristicType
       default jctList;
     property IncludeIndex: boolean read GetIncludeIndex;
+    property SortRows: boolean read GetSortRows;
     property IncludeIndexStr: string read FIncludeIndexStr write SetIncludeIndexStr;
+    property SortRowsStr: string read FSortRowsStr write SetSortRowsStr;
     property PropertyList: tJson2PumlBasePropertyList read FPropertyList;
     property ParentProperty: string read FParentProperty write FParentProperty;
   end;
@@ -320,8 +325,8 @@ type
     procedure ReadListValueFromJson (iJsonValue: TJSONValue); override;
   public
     constructor Create; override;
-    procedure AddDefinition (iParentProperty: string; iCharacteristicType: tJson2PumlCharacteristicType;
-      iPropertyList: tStringList = nil; iIncludeIndex: string = '');
+    procedure AddDefinition(iParentProperty: string; iCharacteristicType: tJson2PumlCharacteristicType; iPropertyList:
+        tStringList = nil; iIncludeIndex: string = ''; iSortRows: string = '');
     procedure Assign (Source: tPersistent); override;
     function GetDefinitionByName (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): tJson2PumlCharacteristicDefinition;
@@ -1932,8 +1937,8 @@ begin
   ConfigurationPropertyName := 'characteristicProperties';
 end;
 
-procedure tJson2PumlCharacteristicDefinitionList.AddDefinition (iParentProperty: string;
-  iCharacteristicType: tJson2PumlCharacteristicType; iPropertyList: tStringList = nil; iIncludeIndex: string = '');
+procedure tJson2PumlCharacteristicDefinitionList.AddDefinition(iParentProperty: string; iCharacteristicType:
+    tJson2PumlCharacteristicType; iPropertyList: tStringList = nil; iIncludeIndex: string = ''; iSortRows: string = '');
 var
   intDefinition: tJson2PumlCharacteristicDefinition;
   i: Integer;
@@ -1952,6 +1957,7 @@ begin
   if Assigned (iPropertyList) then
     intDefinition.PropertyList.ItemList.Assign (iPropertyList);
   intDefinition.IncludeIndexStr := iIncludeIndex;
+  intDefinition.SortRowsStr := iSortRows;
   intDefinition.CharacteristicType := iCharacteristicType;
 end;
 
@@ -1964,7 +1970,7 @@ begin
     Clear;
     for intDefinition in tJson2PumlCharacteristicDefinitionList (Source) do
       AddDefinition (intDefinition.ParentProperty, intDefinition.CharacteristicType,
-        intDefinition.PropertyList.ItemList, intDefinition.IncludeIndexStr);
+        intDefinition.PropertyList.ItemList, intDefinition.IncludeIndexStr, intDefinition.SortRowsStr);
   end;
 end;
 
@@ -1997,6 +2003,7 @@ var
   TempList: tStringList;
   ParentProperty, IncludeIndex: string;
   cType: tJson2PumlCharacteristicType;
+  SortRows: string;
 begin
   if iJsonValue is TJSONObject then
   begin
@@ -2020,7 +2027,8 @@ begin
         ListProperties.AddStrings (TempList);
       end;
       IncludeIndex := GetJsonStringArray (DefinitionRecord, 'includeIndex');
-      AddDefinition (ParentProperty, cType, ListProperties, IncludeIndex);
+      SortRows := GetJsonStringArray (DefinitionRecord, 'sortRows');
+      AddDefinition (ParentProperty, cType, ListProperties, IncludeIndex, SortRows);
     finally
       ListProperties.Free;
       TempList.Free;
@@ -2068,6 +2076,11 @@ begin
   Result := StringToBoolean (IncludeIndexStr, false);
 end;
 
+function tJson2PumlCharacteristicDefinition.GetSortRows: boolean;
+begin
+  Result := StringToBoolean (SortRowsStr, false);
+end;
+
 function tJson2PumlCharacteristicDefinition.GetIsValid: boolean;
 begin
   Result := not (ParentProperty.IsEmpty);
@@ -2092,6 +2105,11 @@ end;
 procedure tJson2PumlCharacteristicDefinition.SetIncludeIndexStr (const Value: string);
 begin
   FIncludeIndexStr := ValidateBooleanInput (Value);
+end;
+
+procedure tJson2PumlCharacteristicDefinition.SetSortRowsStr(const Value: string);
+begin
+  FSortRowsStr := ValidateBooleanInput (Value);
 end;
 
 procedure tJson2PumlCharacteristicDefinition.SortUsedColumnsByPropertyList (iUsedColumns: tStringList);
@@ -2119,7 +2137,7 @@ var
   IsRecord: boolean;
 begin
   IsRecord := True;
-  if (CharacteristicType = jctRecord) and (not IncludeIndex) and (PropertyList.Count <= 0) then
+  if (CharacteristicType = jctRecord) and (not IncludeIndex) and (not SortRows) and (PropertyList.Count <= 0) then
   begin
     Value := ClearJsonPropertyValue (ParentProperty);
     IsRecord := false;
@@ -2127,7 +2145,8 @@ begin
   else
     Value := JsonAttributeValue ('parentProperty', ParentProperty) + JsonAttributeValue ('type',
       CharacteristicType.ToString) + JsonAttributeValueList ('propertyList', PropertyList.ItemList) +
-      JsonAttributeValue ('includeIndex', IncludeIndexStr, false);
+      JsonAttributeValue ('includeIndex', IncludeIndexStr, false) +
+      JsonAttributeValue ('sortRows', SortRowsStr, false);
   if IsRecord then
     Value := Format ('{%s}', [Value.trimRight([',', ' '])])
   else

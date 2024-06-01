@@ -1293,7 +1293,7 @@ constructor tBasePumlStringList.Create (iParentObject: tBasePumlObject);
 begin
   inherited Create (iParentObject);
   FItemList := TStringList.Create;
-  FItemList.OwnsObjects := True;
+  FItemList.OwnsObjects := true;
 end;
 
 destructor tBasePumlStringList.Destroy;
@@ -1456,9 +1456,9 @@ begin
         tBasePumlObject (Objects[i]).UpdateRedundant;
 end;
 
-constructor tPumlDetailObjectList.Create(iParentObject: tBasePumlObject);
+constructor tPumlDetailObjectList.Create (iParentObject: tBasePumlObject);
 begin
-  inherited Create(iParentObject);
+  inherited Create (iParentObject);
   Sorted := true;
   Duplicates := dupIgnore;
   OwnsObjects := False;
@@ -2080,6 +2080,7 @@ var
   TableRows: TStringList;
   ValueList: TStringList;
   Columns: TStringList;
+  ResultRows: TStringList;
   Row: string;
   Col: string;
   i: Integer;
@@ -2091,6 +2092,7 @@ begin
   Columns := TStringList.Create;
   ValueList := TStringList.Create;
   TableRows := TStringList.Create;
+  ResultRows := TStringList.Create;
   try
     for CharRec in Self do
       CharRec.CalculateTableRows (iDefinition, UsedColumns, TableRows);
@@ -2100,10 +2102,8 @@ begin
     ipuml.add (tPumlHelper.TableLine(UsedColumns, true, False));
     if iDefinition.IncludeIndex then
       UsedColumns.Delete (0); // to prevent empty columns because for idx there is no value
-    r := 0;
     for Row in TableRows do
     begin
-      inc (r);
       if iDefinition.IncludeIndex then
         Columns.add (r.ToString);
       ValueList.Text := Row;
@@ -2115,9 +2115,22 @@ begin
         else
           Columns.add ('');
       end;
-      ipuml.add (tPumlHelper.TableLine(Columns, False));
+      ResultRows.add (tPumlHelper.TableLine(Columns, False));
     end;
+    if iDefinition.SortRows then
+      ResultRows.Sort;
+    r := 0;
+    for Row in ResultRows do
+    begin
+      inc (r);
+      if iDefinition.IncludeIndex then
+        ipuml.add (Format('%s %s %s', [tPumlHelper.TableColumnSeparator, r.ToString, Row]))
+      else
+        ipuml.add (Row);
+    end;
+
   finally
+    ResultRows.Free;
     Columns.Free;
     UsedColumns.Free;
     ValueList.Free;
