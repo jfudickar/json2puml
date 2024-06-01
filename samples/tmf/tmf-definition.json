@@ -668,7 +668,7 @@
 				{"parentProperty": "note", "type": "list", "propertyList": ["date", "author", "text", "*"]},
 				{"parentProperty": "historyChange", "type": "list", "propertyList": ["operation", "path", "oldValue", "newValue", "*"]},
 				{"parentProperty": "actionReason", "type": "list", "propertyList": ["action", "reason", "*"]},
-				{"parentProperty": "*characteristic", "type": "list", "propertyList": ["name", "value", "*", "-metadataType", "-valueMetadata"]},
+				{"parentProperty": "*characteristic", "type": "list", "propertyList": ["name", "value", "*", "-metadataType", "-valueMetadata"],"sortRows": "true"},
 				"tax*Amount",
 				"exemptAmount",
 				"dutyFreeAmount",
@@ -705,7 +705,7 @@
 				{"parentProperty": "total*VAT", "type": "list"},
 				{"parentProperty": "outOfBundleAmount", "type": "list", "propertyList": ["*", "-type"]},
 				{"parentProperty": "contactMedium.characteristic", "type": "record", "propertyList": ["*", "-type"]},
-				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner", "*"]}
+				{"parentProperty": "externalIdentifier", "type": "list", "propertyList": ["externalIdentifierType", "type", "id", "owner", "*"],"sortRows": "true"}
 		],
 		"hiddenProperties": [
 				"characteristicMetadata",
