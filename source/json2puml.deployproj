@@ -5,6 +5,16 @@
     </ProjectExtensions>
     <PropertyGroup/>
     <ItemGroup Condition="'$(Platform)'=='Win64'">
+        <DeployFile Include="Win64\Debug\json2puml.exe" Condition="'$(Config)'=='Debug'">
+            <RemoteDir>json2puml\</RemoteDir>
+            <RemoteName>json2puml.exe</RemoteName>
+            <DeployClass>ProjectOutput</DeployClass>
+            <Operation>0</Operation>
+            <LocalCommand/>
+            <RemoteCommand/>
+            <Overwrite>True</Overwrite>
+            <Required>True</Required>
+        </DeployFile>
         <DeployFile Include="..\documentation\icons\json2puml_icon.png" Condition="'$(Config)'=='Debug'">
             <RemoteDir>json2puml\Assets\</RemoteDir>
             <RemoteName>Logo44x44.png</RemoteName>

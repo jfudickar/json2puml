@@ -1,26 +1,26 @@
-{-------------------------------------------------------------------------------
+{ -------------------------------------------------------------------------------
 
-This file is part of the json2puml project.
+  This file is part of the json2puml project.
 
-Copyright (C) 2023 Jens Fudickar
+  Copyright (C) 2023 Jens Fudickar
 
-This program is free software; you can redistribute it and/or modify it under the
-terms of the GNU General Public License as published by the Free Software Foundation;
-either version 3 of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software Foundation;
+  either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-See the GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program;
-if not, see http://www.gnu.org/licenses/gpl-3.0
+  You should have received a copy of the GNU General Public License along with this program;
+  if not, see http://www.gnu.org/licenses/gpl-3.0
 
-I am available for any questions/requests: jens.fudickar@oratool.de
+  I am available for any questions/requests: jens.fudickar@oratool.de
 
-You may retrieve the latest version of this file at the json2puml home page,
-located at https://github.com/jfudickar/json2puml
+  You may retrieve the latest version of this file at the json2puml home page,
+  located at https://github.com/jfudickar/json2puml
 
--------------------------------------------------------------------------------}
+  ------------------------------------------------------------------------------- }
 
 unit json2pumlframe;
 
@@ -29,13 +29,13 @@ interface
 {$I json2puml.inc}
 
 uses
-  {$IFDEF SVGICONIMAGE}
+{$IFDEF SVGICONIMAGE}
   SVGIconImage,
-  {$ENDIF}
-  {$IFDEF SKIASVG}
+{$ENDIF}
+{$IFDEF SKIASVG}
   System.IOUtils,
   System.Skia, Vcl.Skia,
-  {$ENDIF}
+{$ENDIF}
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, json2pumlvcltools;
 
@@ -74,12 +74,12 @@ type
     FLogList: TStrings;
     FConverterLogFileName: string;
     FSVGFileName: string;
-  {$IFDEF SVGICONIMAGE}
+{$IFDEF SVGICONIMAGE}
     SVGIconImage: TSVGIconImage;
-  {$ENDIF}
-  {$IFDEF SKIASVG}
+{$ENDIF}
+{$IFDEF SKIASVG}
     SkSvg: TSkSvg;
-  {$ENDIF}
+{$ENDIF}
     function GetJsonInput: TStrings;
     function GetLeadingObject: string;
     function GetPUmlOutput: TStrings;
@@ -92,7 +92,7 @@ type
     procedure SetPUmlFileName (const Value: string);
     procedure SetPUmlOutput (const Value: TStrings);
     procedure SetLogList (const Value: TStrings);
-    procedure SetConverterLogFileName(const Value: string);
+    procedure SetConverterLogFileName (const Value: string);
     procedure SetSVGFileName (const Value: string);
   public
     procedure CreateMemos (iCreateMemoProc: TJson2PumlCreateMemoEvent);
@@ -123,25 +123,23 @@ begin
     iCreateMemoProc (LogFileTabSheet, 'LogFileMemo', nil, FLogList, false, true);
   end;
 
-  {$IFDEF SVGICONIMAGE}
-  SVGIconImage := TSVGIconImage.Create(Self);
+{$IFDEF SVGICONIMAGE}
+  SVGIconImage := TSVGIconImage.Create (Self);
 
   SVGIconImage.Name := 'SVGIconImage';
   SVGIconImage.Parent := SVGScrollBox;
-  SVGIconImage.AutoSize := False;
+  SVGIconImage.AutoSize := false;
   SVGIconImage.Align := alClient;
   SVGIconImage.Stretch := false;
   SVGIconImage.Proportional := true;
-  {$ENDIF}
-
-  {$IFDEF SKIASVG}
-  SkSvg := TSkSvg.Create(Self);
+{$ENDIF}
+{$IFDEF SKIASVG}
+  SkSvg := TSkSvg.Create (Self);
 
   SkSvg.Name := 'SkSvg';
   SkSvg.Parent := SVGScrollBox;
   SkSvg.Align := alClient;
-  {$ENDIF}
-
+{$ENDIF}
 end;
 
 function TJson2PumlOutputFileFrame.GetJsonInput: TStrings;
@@ -167,14 +165,14 @@ end;
 procedure TJson2PumlOutputFileFrame.SetInputFileName (const Value: string);
 begin
   FInputFileName := Value;
-  //InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
+  // InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
   InputFileNameEdit.Text := InputFileName;
 end;
 
 procedure TJson2PumlOutputFileFrame.SetInputGroup (const Value: string);
 begin
   FInputGroup := Value;
-//  InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
+  // InputLabel.Caption := Format ('JSON Input [%s]: %s', [InputGroup, InputFileName]);
 end;
 
 procedure TJson2PumlOutputFileFrame.SetJsonInput (const Value: TStrings);
@@ -227,7 +225,7 @@ begin
   FLogList.Assign (Value);
 end;
 
-procedure TJson2PumlOutputFileFrame.SetConverterLogFileName(const Value: string);
+procedure TJson2PumlOutputFileFrame.SetConverterLogFileName (const Value: string);
 begin
   FConverterLogFileName := Value;
   LogFileNameEdit.Text := Value;
@@ -241,22 +239,22 @@ begin
     FSVGFileName := '';
   SVGTabSheet.TabVisible := FileExists (Value);
   SVGFileNameEdit.Text := Value;
-  {$IFDEF SVGICONIMAGE}
+{$IFDEF SVGICONIMAGE}
   if SVGTabSheet.TabVisible then
     ResultPageControl.ActivePage := SVGTabSheet;
   if SVGTabSheet.TabVisible then
   begin
-    SVGIconImage.LoadFromFile(Value);
+    SVGIconImage.LoadFromFile (Value);
   end;
-  {$ENDIF}
-  {$IFDEF SKIASVG}
+{$ENDIF}
+{$IFDEF SKIASVG}
   if SVGTabSheet.TabVisible then
     ResultPageControl.ActivePage := SVGTabSheet;
   if SVGTabSheet.TabVisible then
   begin
-    SkSvg.svg.Source := TFile.ReadAllText(Value);
+    SkSvg.svg.Source := TFile.ReadAllText (Value);
   end;
-  {$ENDIF}
+{$ENDIF}
 end;
 
 end.

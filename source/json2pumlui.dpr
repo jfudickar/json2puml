@@ -39,7 +39,8 @@ uses
   json2pumlbasedefinition in 'json2pumlbasedefinition.pas',
   json2pumlloghandler in 'json2pumlloghandler.pas',
   json2pumlconfigframe in 'json2pumlconfigframe.pas' {Json2PumlConfigurationFrame: TFrame},
-  json2pumlvcltools in 'json2pumlvcltools.pas';
+  json2pumlvcltools in 'json2pumlvcltools.pas',
+  commandlinetools in 'commandlinetools.pas';
 
 {$R *.res}
 

@@ -4,6 +4,5 @@
 /samples-local
 *.mes
 *.log
-*.dsv
-
-
+*dsv
+*.tmp

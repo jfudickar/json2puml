@@ -39,7 +39,8 @@ uses
   json2pumltools in 'json2pumltools.pas',
   jsontools in 'jsontools.pas',
   json2pumlbasedefinition in 'json2pumlbasedefinition.pas',
-  json2pumlconverterdefinition in 'json2pumlconverterdefinition.pas';
+  json2pumlconverterdefinition in 'json2pumlconverterdefinition.pas',
+  commandlinetools in 'commandlinetools.pas';
 
 begin
 {$IFDEF DEBUG}

@@ -147,9 +147,6 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
               Align = alClient
               AutoSize = True
               Proportional = True
-              ExplicitLeft = -2
-              ExplicitTop = -3
-              ExplicitHeight = 328
             end
           end
           object PNGFileNameEdit: TEdit

@@ -3,7 +3,7 @@
 	"baseOutputPath": "e:\\Delphi\\Projects\\json2puml\\runtime\\output\\",
 	"outputPath": "<job>\\<group>\\<file>",
 	"curlAuthenticationFileName": "e:\\Delphi\\Projects\\json2puml\\configuration\\json2pumlcurlauthentication.json",
-	"curlParameter":  [
+	"curlParameter": [
 			{
 				"${json2puml_apigee_url}": "http://jens.com"
 			}

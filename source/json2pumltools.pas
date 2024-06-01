@@ -211,28 +211,40 @@ end;
 
 function ExecuteCommand (const iCommand: WideString; const iCommandType, iCommandInfo: string;
   oCommandOutPut, oCommandErrors: TStringList): Boolean;
-var
-  s: string;
+
+  procedure LogOutputLines (iInfo: string; iOutputLines: TStringList);
+  var
+    lines: TStringList;
+    line: string;
+    OutPut: string;
+  begin
+    if iOutputLines.Count <= 0 then
+      Exit;
+    GlobalLogHandler.Info ('  %s', [iInfo]);
+    lines := TStringList.Create;
+    try
+      for OutPut in iOutputLines do
+      begin
+        lines.Text := OutPut;
+        for line in lines do
+          GlobalLogHandler.Info ('    %s', [line]);
+      end;
+    finally
+      lines.Free;
+    end;
+  end;
+
 begin
   oCommandOutPut.Clear;
   oCommandErrors.Clear;
   if not iCommandType.IsEmpty then
-    GlobalLoghandler.Info ('%s : Execute %s', [iCommandType, iCommandInfo])
+    GlobalLogHandler.Info ('%s : Execute %s', [iCommandType, iCommandInfo])
   else
-    GlobalLoghandler.Info ('Execute %s', [iCommandInfo]);
+    GlobalLogHandler.Info ('Execute %s', [iCommandInfo]);
   Result := RunCommandLine (iCommand, oCommandOutPut, oCommandErrors);
-  if oCommandOutPut.Count > 0 then
-  begin
-    GlobalLoghandler.Info ('  StdOut');
-    for s in oCommandOutPut do
-      GlobalLoghandler.Info ('    %s', [s]);
-  end;
-  if oCommandErrors.Count > 0 then
-  begin
-    GlobalLoghandler.Info ('  ErrOut');
-    for s in oCommandErrors do
-      GlobalLoghandler.Info ('    %s', [s]);
-  end;
+  LogOutputLines ('StdOut', oCommandOutPut);
+  LogOutputLines ('ErrOut', oCommandErrors);
+
 end;
 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -327,17 +339,17 @@ end;
 
 function FileContent (iFileName: string): string;
 var
-  Lines: TStringList;
+  lines: TStringList;
 begin
   Result := '';
   if not FileExists (iFileName) then
     Exit;
-  Lines := TStringList.Create;
+  lines := TStringList.Create;
   try
-    Lines.LoadFromFile (iFileName);
-    Result := Lines.Text;
+    lines.LoadFromFile (iFileName);
+    Result := lines.Text;
   finally
-    Lines.Free;
+    lines.Free;
   end;
 end;
 
@@ -381,10 +393,10 @@ begin
   if not TDirectory.Exists (iDirectory) then
     try
       if not ForceDirectories (iDirectory) then
-        GlobalLoghandler.Error (jetDirectoryCouldNotBeCreated, [iDirectory]);
+        GlobalLogHandler.Error (jetDirectoryCouldNotBeCreated, [iDirectory]);
     except
       on e: exception do
-        GlobalLoghandler.Error (jetDirectoryDeletionFailed, [iDirectory, e.Message]);
+        GlobalLogHandler.Error (jetDirectoryDeletionFailed, [iDirectory, e.Message]);
     end;
 end;
 
@@ -408,7 +420,7 @@ begin
     Exit;
   if not FileExists (iPlantUmlJarFile) then
   begin
-    GlobalLoghandler.Error (jetPlantUmlFileNotFound, [iPlantUmlJarFile]);
+    GlobalLogHandler.Error (jetPlantUmlFileNotFound, [iPlantUmlJarFile]);
     Exit;
   end;
   FileList := '';
@@ -445,7 +457,7 @@ begin
           OpenFile (DestinationFile);
       end
       else
-        GlobalLoghandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.ToString, PumlFile]);
+        GlobalLogHandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.ToString, PumlFile]);
     end;
   end;
   // if Result then
@@ -479,7 +491,7 @@ begin
     Exit;
   if not FileExists (iPlantUmlJarFile) then
   begin
-    GlobalLoghandler.Error (jetPlantUmlFileNotFound, [iPlantUmlJarFile]);
+    GlobalLogHandler.Error (jetPlantUmlFileNotFound, [iPlantUmlJarFile]);
     Exit;
   end;
   DestinationFile := iFormat.FileName (iPlantUmlFile);
@@ -502,7 +514,7 @@ begin
     end;
   end;
   if not Result then
-    GlobalLoghandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.ToString, iPlantUmlFile]);
+    GlobalLogHandler.Error (jetPlantUmlResultGenerationFailed, [iFormat.ToString, iPlantUmlFile]);
 end;
 
 function GenerateOutputsFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter,
@@ -640,9 +652,10 @@ begin
   end;
 end;
 {$ELSE}
+
 function GetVersionInfo (AIdent: string): string;
 begin
-  result := '';
+  Result := '';
 end;
 {$ENDIF}
 
@@ -669,12 +682,14 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
+
 procedure OpenFile (iFileName: string);
 begin
   if FileExists (iFileName) then
     ShellExecute (0, nil, PChar(iFileName), nil, nil, SW_RESTORE);
 end;
 {$ELSE}
+
 procedure OpenFile (iFileName: string);
 begin
 end;
@@ -985,14 +1000,14 @@ begin
   try
     Result := CheckEvaluation (ExecuteEvaluation);
     if not Result then
-      GlobalLoghandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
+      GlobalLogHandler.Info ('curl file %s skipped - validating curlExecuteEvaluation [%s]->[%s] not successful',
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation])
     else if not iExecuteEvaluation.Trim.IsEmpty then
-      GlobalLoghandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
+      GlobalLogHandler.Debug ('curl file %s - validating curlExecuteEvaluation [%s]->[%s] successful',
         [iOutputFile, iExecuteEvaluation, ExecuteEvaluation]);
   except
     on e: exception do
-      GlobalLoghandler.Error (jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
+      GlobalLogHandler.Error (jetCurlFileSkippedValidationException, [iOutputFile, e.Message, iExecuteEvaluation]);
   end;
 end;
 
@@ -1044,7 +1059,7 @@ var
   vErrorMessage: string;
   vCommandOutPut, vCommandErrors: TStringList;
   vOutputFile: TStringList;
-  s : String;
+  s: string;
 
 begin
 
@@ -1057,7 +1072,7 @@ begin
     if Url.Trim.IsEmpty then
     begin
       iCurlResult.ErrorMessage := Format (jetCurlFileSkippedUrlMissing.ErrorMessage, [iOutputFile]);
-      GlobalLoghandler.Error (iCurlResult.ErrorMessage);
+      GlobalLogHandler.Error (iCurlResult.ErrorMessage);
       Exit;
     end;
     iCurlResult.Url := Url;
@@ -1068,7 +1083,7 @@ begin
     if iCurlResult.Command.IsEmpty then
     begin
       iCurlResult.ErrorMessage := Format (jetCurlFileSkippedInvalidCurlCommand.ErrorMessage, [iOutputFile]);
-      GlobalLoghandler.Error (iCurlResult.ErrorMessage);
+      GlobalLogHandler.Error (iCurlResult.ErrorMessage);
       Exit;
     end;
     iCurlResult.Command := Format ('%s %s', ['curl', iCurlResult.Command]);
@@ -1086,8 +1101,8 @@ begin
       FileLastWriteDate := tFile.GetLastWriteTime (iOutputFile);
       if Now - FileLastWriteDate < iCurlCache / (24 * 60 * 60) then
       begin
-        GlobalLoghandler.Info (iCurlResult.Command);
-        GlobalLoghandler.Info ('  curl skipped - %s is not older then %d seconds.', [iOutputFile, iCurlCache]);
+        GlobalLogHandler.Info (iCurlResult.Command);
+        GlobalLogHandler.Info ('  curl skipped - %s is not older then %d seconds.', [iOutputFile, iCurlCache]);
         Result := true;
         Exit;
       end;
@@ -1108,10 +1123,10 @@ begin
     end;
     iCurlResult.Duration := MillisecondsBetween (Now, StartTime);
     if Result then
-      GlobalLoghandler.Info ('  curl "%s" fetched to "%s" (%d ms)', [Url, iOutputFile, iCurlResult.Duration])
+      GlobalLogHandler.Info ('  curl "%s" fetched to "%s" (%d ms)', [Url, iOutputFile, iCurlResult.Duration])
     else
     begin
-      GlobalLoghandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),
+      GlobalLogHandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),
         vErrorMessage]);
       iCurlResult.ErrorMessage := vErrorMessage;
       if FileExists (iOutputFile) then
@@ -1120,10 +1135,10 @@ begin
         vOutputFile := TStringList.Create;
         try
           vOutputFile.LoadFromFile (iOutputFile);
-           if vOutputFile.Count > 0 then
-            GlobalLoghandler.Debug ('curl result output (%s)', [iOutputFile]);
+          if vOutputFile.Count > 0 then
+            GlobalLogHandler.Debug ('curl result output (%s)', [iOutputFile]);
           for s in vOutputFile do
-            GlobalLoghandler.Debug (s);
+            GlobalLogHandler.Debug (s);
         finally
           vOutputFile.Free;
         end;

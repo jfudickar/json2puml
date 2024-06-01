@@ -7,3 +7,7 @@ msbuild json2puml.dproj /p:config=Release /p:platform=Linux64
 msbuild json2pumlservice.dproj /p:config=Release /p:platform=Linux64
 
 cd ..\installation\
+
+set EXE='..\source\win64\release\json2puml.exe'
+for /f %%i in ('powershell "(Get-Item -path %EXE%).VersionInfo.FileVersion"') do set ver=%%i
+echo %ver%
