@@ -282,7 +282,7 @@ type
     function GetIncludeIndex: boolean;
     function GetSortRows: boolean;
     procedure SetIncludeIndexStr (const Value: string);
-    procedure SetSortRowsStr(const Value: string);
+    procedure SetSortRowsStr (const Value: string);
   protected
     function GetIdent: string; override;
     function GetIsValid: boolean; override;
@@ -325,8 +325,8 @@ type
     procedure ReadListValueFromJson (iJsonValue: TJSONValue); override;
   public
     constructor Create; override;
-    procedure AddDefinition(iParentProperty: string; iCharacteristicType: tJson2PumlCharacteristicType; iPropertyList:
-        tStringList = nil; iIncludeIndex: string = ''; iSortRows: string = '');
+    procedure AddDefinition (iParentProperty: string; iCharacteristicType: tJson2PumlCharacteristicType;
+      iPropertyList: tStringList = nil; iIncludeIndex: string = ''; iSortRows: string = '');
     procedure Assign (Source: tPersistent); override;
     function GetDefinitionByName (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): tJson2PumlCharacteristicDefinition;
@@ -1937,8 +1937,9 @@ begin
   ConfigurationPropertyName := 'characteristicProperties';
 end;
 
-procedure tJson2PumlCharacteristicDefinitionList.AddDefinition(iParentProperty: string; iCharacteristicType:
-    tJson2PumlCharacteristicType; iPropertyList: tStringList = nil; iIncludeIndex: string = ''; iSortRows: string = '');
+procedure tJson2PumlCharacteristicDefinitionList.AddDefinition (iParentProperty: string;
+  iCharacteristicType: tJson2PumlCharacteristicType; iPropertyList: tStringList = nil; iIncludeIndex: string = '';
+  iSortRows: string = '');
 var
   intDefinition: tJson2PumlCharacteristicDefinition;
   i: Integer;
@@ -2107,7 +2108,7 @@ begin
   FIncludeIndexStr := ValidateBooleanInput (Value);
 end;
 
-procedure tJson2PumlCharacteristicDefinition.SetSortRowsStr(const Value: string);
+procedure tJson2PumlCharacteristicDefinition.SetSortRowsStr (const Value: string);
 begin
   FSortRowsStr := ValidateBooleanInput (Value);
 end;
@@ -2145,8 +2146,7 @@ begin
   else
     Value := JsonAttributeValue ('parentProperty', ParentProperty) + JsonAttributeValue ('type',
       CharacteristicType.ToString) + JsonAttributeValueList ('propertyList', PropertyList.ItemList) +
-      JsonAttributeValue ('includeIndex', IncludeIndexStr, false) +
-      JsonAttributeValue ('sortRows', SortRowsStr, false);
+      JsonAttributeValue ('includeIndex', IncludeIndexStr, false) + JsonAttributeValue ('sortRows', SortRowsStr, false);
   if IsRecord then
     Value := Format ('{%s}', [Value.trimRight([',', ' '])])
   else
@@ -2304,6 +2304,14 @@ begin
     for i := 0 to OptionList.Count - 1 do
       if Options[i].IsValid then
         OptionsSl.Add (Options[i].OptionName);
+    if OptionsSl.IndexOf ('default') < 0 then
+      OptionsSl.Add ('default');
+    OptionsSl.Sort;
+    i := OptionsSl.IndexOf (DefaultOption);
+    if i < 0 then
+      i := OptionsSl.IndexOf ('default');
+    if i > 0 then
+      OptionsSl.Exchange (0, i);
     WriteToJsonValue (oJsonOutPut, 'options', OptionsSl, iLevel + 1, false, iWriteEmpty);
   finally
     OptionsSl.Free;
