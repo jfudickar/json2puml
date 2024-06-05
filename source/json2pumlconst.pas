@@ -49,7 +49,7 @@ type
     jetCurlFileSkippedUrlMissing, jetCurlFileSkippedInvalidCurlCommand, jetCurlExecutionFailed,
     jetDirectoryCouldNotBeCreated, jetDirectoryCreationFailed, jetFileDeletionFailed, jetDirectoryDeletionFailed,
     jetCmdLineParameterFileDoesNotExits, jetInputFileNotFound, jetMandatoryInputFileNotFound, jetPayLoadIsEmpty,
-    jetInputListCurlFileMissing);
+    jetInputListCurlFileMissing, jetInputLIstCurlFileMandatoryEmpty);
 
   tJson2PumlErrorInformation = record
     EventType: TEventType;
@@ -149,7 +149,10 @@ const
     ErrorDescription: 'The service request payload is empty. The request can not be handled.'),
     { jetInputListCurlFileMissing } (EventType: etError; Errorcode: 'J2P-400-027';
     HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input list file "%s" could not be fetched';
-    ErrorDescription: 'The file defined in the inputlist could not be fetched via curl.'));
+    ErrorDescription: 'The file defined in the inputlist could not be fetched via curl.'),
+    { jetInputLIstCurlFileMandatoryEmpty } (EventType: etError; Errorcode: 'J2P-400-028';
+    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input list file "%s" has no json records';
+    ErrorDescription: 'The file defined in the inputlist has been fetched but now records are found.'));
 
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',
     'zip', 'filelist', 'execute.log');
@@ -193,7 +196,7 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-  cCurrentVersion = '2.2.14.110';
+  cCurrentVersion = '2.2.15.111';
 
   cApplicationName = 'json2puml';
 
@@ -208,8 +211,6 @@ const
   JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
     'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];
 
-
 implementation
-
 
 end.

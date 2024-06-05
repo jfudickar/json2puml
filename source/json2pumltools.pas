@@ -1122,8 +1122,13 @@ begin
       vCommandErrors.Free;
     end;
     iCurlResult.Duration := MillisecondsBetween (Now, StartTime);
+
     if Result then
-      GlobalLogHandler.Info ('  curl "%s" fetched to "%s" (%d ms)', [Url, iOutputFile, iCurlResult.Duration])
+    begin
+      iCurlResult.NoOfRecords := GetJsonFileRecordCount(iOutputFile);
+      iCurlResult.FileSize := TFile.GetSize(iOutputFile);
+      GlobalLogHandler.Info ('  curl "%s" fetched to "%s" (%d ms) [%d Record(s) found]', [Url, iOutputFile, iCurlResult.Duration, iCurlResult.NoOfRecords])
+    end
     else
     begin
       GlobalLogHandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),

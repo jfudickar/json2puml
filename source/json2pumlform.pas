@@ -222,6 +222,8 @@ type
     GenerateServiceListResultsAction: TAction;
     InputLabel: TLabel;
     ExecutionLogFileNameEdit: TEdit;
+    CurlFileListMemTableNoOfRecords: TIntegerField;
+    CurlFileListMemTableFileSizeKB: TFloatField;
     procedure CommandLineEditPanelResize (Sender: TObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
     procedure ConvertCurrentFileActionExecute (Sender: TObject);
@@ -354,7 +356,7 @@ uses
   json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst,
   System.UITypes,
   json2pumlloghandler, Quick.Logger,
-  json2pumlconverterdefinition;
+  json2pumlconverterdefinition, System.Math;
 
 {$R *.dfm}
 
@@ -1255,6 +1257,8 @@ begin
       SetField ('Command', InputFile.CurlResult.Command);
       SetField ('Generated', InputFile.CurlResult.Generated);
       SetField ('Duration', InputFile.CurlResult.Duration);
+      SetField ('NoOfRecords', InputFile.CurlResult.NoOfRecords);
+      SetField ('FileSizeKB', RoundTo(InputFile.CurlResult.FileSize/1024,-2));
       SetField ('ErrorMessage', InputFile.CurlResult.ErrorMessage);
       Inc (Line);
     end;

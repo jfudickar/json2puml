@@ -491,8 +491,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
               TabOrder = 3
             end
             object outputsuffixEdit: TEdit
-              Left = 142
-              Top = 40
+              Left = 134
+              Top = 41
               Width = 272
               Height = 21
               Anchors = [akLeft, akTop, akRight]
@@ -708,7 +708,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Top = 353
         Width = 1339
         Height = 417
-        ActivePage = ExecutionLogTabSheet
+        ActivePage = CurlFileTabSheet
         Align = alClient
         TabOrder = 1
         object ExecutionLogTabSheet: TTabSheet
@@ -2184,6 +2184,12 @@ object json2pumlMainForm: Tjson2pumlMainForm
     object CurlFileListMemTableGenerated: TBooleanField
       Alignment = taCenter
       FieldName = 'Generated'
+    end
+    object CurlFileListMemTableNoOfRecords: TIntegerField
+      FieldName = 'NoOfRecords'
+    end
+    object CurlFileListMemTableFileSizeKB: TFloatField
+      FieldName = 'FileSizeKB'
     end
     object CurlFileListMemTableDuration: TStringField
       Alignment = taRightJustify
