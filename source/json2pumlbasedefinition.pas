@@ -781,7 +781,7 @@ begin
     exit;
   WriteArrayStartToJson (oJsonOutPut, iLevel, iPropertyName);
   for i := 0 to Count - 1 do
-    WriteToJsonItem (oJsonOutPut, '', i, iLevel + 1, iWriteEmpty);
+    WriteToJsonItem (oJsonOutPut, '', i, iLevel, iWriteEmpty);
   WriteArrayEndToJson (oJsonOutPut, iLevel);
 end;
 
