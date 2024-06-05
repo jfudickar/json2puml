@@ -2127,6 +2127,8 @@ begin
     begin
       iUsedColumns.Move (j, i);
       Inc (i);
+      if i >= iUsedColumns.Count then
+        break;
     end;
   end;
 end;
