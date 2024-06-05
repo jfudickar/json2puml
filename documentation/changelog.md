@@ -1,3 +1,45 @@
+# **json2puml v2.2.15.111** - 05.06.2024
+## All Editions
+### New Feature
+- Fileentry Mandatory parameter checks for number or resulted records #29
+
+### Changed Feature
+- Improved json formatting of object based arrays
+- Fixed exception when the characteristic has to be generated with a longer list of leading columns, then the list of actual columns
+
+## UI Editions
+### New Feature
+- Show the name of all files in the ui (#25)
+- Additional columns in the curlfile list : NoOfRecords + FileSizeKB #34
+
+## Service Edition
+### Changed Feature
+- Swagger file updated
+  - Add all possible formats to the outputformats description #33
+  - Change datamodel for get /json2pumlRequestSvg+Png to reflect that some options are not required #32
+  - Additional descriptions
+- service get /definitionfile : change options handling #31
+  - add the default option (the option which is not overwritten)
+  - put the defined default option as top of the resulted list  
+
+# **json2puml v2.2.14.110** - 01.06.2024
+## All Editions
+### New Feature
+- Added option "sortRows" to the CharacteristicProperty which allows to sort the characteristic output rows (#30)
+
+### Changed Feature
+- Include PlantUml v1.2024.5
+- Fixed wrong json output formatting with arrays (#24)
+
+## UI Editions
+### New Feature
+- Show the name of all files in the ui (#25)
+
+### Changed Feature
+- Show an error message in UI Interface when a command line parameter filename is invalid (#28)
+- Taskbar Handling changed, the status is going to error when an stopping error occurred (#27)
+- The curl file list is filled with all handled files, also when an error occurred (#26)
+
 # **json2puml v2.2.13.109** - 07.02.2024
 ## All Editions
 ### New Feature
