@@ -19,6 +19,7 @@ paths:
       parameters: []
       responses:
         '200':
+          description: Successfull heartbeat operation, System is alive :-)
           content:
             text/plain:
               schema:
@@ -39,6 +40,7 @@ paths:
       parameters: []
       responses:
         '200':
+          description: Successful operation, returns informations about the service application
           content:
             application/json:
               schema:
@@ -56,6 +58,7 @@ paths:
       parameters: []
       responses:
         '200':
+          description: Success
           content:
             application/json:
               schema:
@@ -73,6 +76,7 @@ paths:
       parameters: []
       responses:
         '200':
+          description: Successful operation, returns the list of available definition files
           content:
             application/json:
               schema:
@@ -92,6 +96,7 @@ paths:
       parameters: []
       responses:
         '200':
+          description: Successful operation, returns the list of available input files
           content:
             application/json:
               schema:
@@ -110,6 +115,7 @@ paths:
     post:
       description: 'Execute a json2puml curl and generation call'
       requestBody:
+        description: Success
         content:
           application/json:
             schema:
@@ -143,7 +149,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Json2PumlRequest'
+              $ref: '#/components/schemas/Json2PumlRequestBase'
       responses:
         '200':
           description: Successful operation, returns the generated PNG file
@@ -174,7 +180,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Json2PumlRequest'
+              $ref: '#/components/schemas/Json2PumlRequestBase'
       responses:
         '200':
           description: Successful operation, returns the generated SVG file
@@ -379,7 +385,7 @@ components:
             - full
             - default
             - core
-    Json2PumlRequest:
+    Json2PumlRequestBase:
       type: object
       properties:
         definitionFile:
@@ -405,9 +411,11 @@ components:
               - content
         inputlistFile:
           type: string
+          description: Name of the preconfigured list file which input files should be used. Inputfiles can be dynamically fetched via curl.
           example: placeholderinputlistreduced.json
         curlParameter:
           type: array
+          description: List of curl parameters which could be used to filter dynamic curl calls defined within the inputfilelist.       
           items:
             type: object
             properties:
@@ -420,35 +428,38 @@ components:
         option: 
           type: string
           description: The option which should be used to generate the image. The possible options are defined in the definition file.
-          example: full, default, core
+          example: 
+            - full 
+            - default 
+            - core
         description: 
           type: string
           description: The description will be added to the legend of the generated images
           example: Datamodel status after migration of the customer
-        generateDetails: 
-          type: boolean
-          description: Flag to define if for every single result file a image will be generated\nWill be ignored for json2pumlRequestSvg
-        generateSummary: 
-          type: boolean
-          description: Flag to define if a summary file should be generated\nWill be ignored for json2pumlRequestSvg
-        generateSuffix: 
-          type: string
-          description: Suffix to be added at the end of the generated files'
-          example : .<option>
-        outputFormats:
-          type: array
-          description: List of file formats to be calculated and added to the result set
-          items:
-            type: string
-            enum:
-              - svg
-              - png
-              - json
-              - puml
-              - zip
-            example:
-            - svg
-            - png
+    Json2PumlRequest:
+        allOf:
+          - $ref: '#/components/schemas/Json2PumlRequestBase'     
+          - type: object
+            properties:
+              generateSuffix: 
+                type: string
+                description: Suffix to be added at the end of the generated files'
+                example : .<option>
+              generateDetails: 
+                type: boolean
+                description: Flag to define if for every single result file a image will be generated
+              generateSummary: 
+                type: boolean
+                description: Flag to define if a summary file should be generated
+              outputFormats:
+                type: array
+                description: List of file formats to be generated and added to the result set
+                items:
+                  type: string
+                  enum: [svg, png,  json, puml, filelist, log]
+                  example:
+                  - svg
+                  - png
     Json2PumlResponse:
       type: object
       properties:
