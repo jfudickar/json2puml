@@ -20,7 +20,7 @@ del docker\*.url /s
 cd docker
 tar -c -f ..\output\json2puml.docker.%ver%.tar * 
 cd ..\output
-zip json2puml.docker.%ver%.tar.zip json2puml.docker.%ver%.tar
+"c:\Program Files\7-Zip\7z.exe" a -tzip json2puml.docker.%ver%.tar.zip json2puml.docker.%ver%.tar
 cd ..
 
 
