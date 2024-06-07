@@ -347,8 +347,16 @@ begin
         f := InputHandler.ConverterInputList.SummaryInputFile;
         if Assigned (f) and f.Exists and FileExistsMinSize (f.Output.PNGFileName) then
         begin
-          Context.Response.ContentType := TMVCMediaType.IMAGE_PNG;
-          SendFile (f.Output.PNGFileName);
+          if Context.Request.Params['includeFileName'] = 'true' then
+          begin
+            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+            Render (GenerateFileNameContentBinary(f.Output.PNGFileName));
+          end
+          else
+          begin
+            Context.Response.ContentType := TMVCMediaType.IMAGE_PNG;
+            SendFile (f.Output.PNGFileName);
+          end;
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
@@ -394,8 +402,16 @@ begin
         f := InputHandler.ConverterInputList.SummaryInputFile;
         if Assigned (f) and f.Exists and FileExistsMinSize (f.Output.SVGFileName) then
         begin
-          Context.Response.ContentType := TMVCMediaType.APPLICATION_SVG_XML;
-          SendFile (f.Output.SVGFileName);
+          if Context.Request.Params['includeFileName'] = 'true' then
+          begin
+            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+            Render (GenerateFileNameContentBinary(f.Output.SVGFileName));
+          end
+          else
+          begin
+            Context.Response.ContentType := TMVCMediaType.APPLICATION_SVG_XML;
+            SendFile (f.Output.SVGFileName);
+          end;
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else
@@ -438,8 +454,16 @@ begin
           InputHandler.GenerateSummaryZipFile;
         if FileExistsMinSize (InputHandler.ConverterInputList.SummaryZipFileName) then
         begin
-          Context.Response.ContentType := 'application/zip';
-          SendFile (InputHandler.ConverterInputList.SummaryZipFileName);
+          if Context.Request.Params['includeFileName'] = 'true' then
+          begin
+            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+            Render (GenerateFileNameContentBinary(InputHandler.ConverterInputList.SummaryZipFileName));
+          end
+          else
+          begin
+            Context.Response.ContentType := 'application/zip';
+            SendFile (InputHandler.ConverterInputList.SummaryZipFileName);
+          end;
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
         else

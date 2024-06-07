@@ -44,6 +44,7 @@ type
     procedure FromString (aValue: string);
     procedure FromStringExtension (aValue: string);
     function IsPumlOutput: boolean;
+    function IsBinaryOutput: boolean;
     function PumlGenerateFlag: string;
     function ServiceResultName: string;
     function ToString: string;
@@ -275,6 +276,11 @@ end;
 function tJson2PumlOutputFormatHelper.IsPumlOutput: boolean;
 begin
   Result := not self.PumlGenerateFlag.IsEmpty;
+end;
+
+function tJson2PumlOutputFormatHelper.IsBinaryOutput: boolean;
+begin
+  Result := self in [jofPNG, jofSVG, jofPDF, jofZip];
 end;
 
 function tJson2PumlOutputFormatHelper.PumlGenerateFlag: string;

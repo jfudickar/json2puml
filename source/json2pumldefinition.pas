@@ -248,6 +248,7 @@ type
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     procedure AddSourceFile (iFileName: string);
     procedure DeleteGeneratedFiles;
+    function OutputFileName (iOutputFormat: tJson2PumlOutputFormat): string;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
       iWriteEmpty: boolean = false); override;
     property ConverterLogFileName: string read FConverterLogFileName write FConverterLogFileName;
@@ -1322,6 +1323,7 @@ end;
 
 procedure tJson2PumlInputFileDefinition.WriteToJsonServiceResult (oJsonOutPut: TStrings; iPropertyName: string;
   iLevel: Integer; iOutputFormats: tJson2PumlOutputFormats; iWriteEmpty: boolean = false);
+
   procedure WriteFile (iOutputFormat: tJson2PumlOutputFormat; iFileName: string);
   begin
     if not (iOutputFormat in iOutputFormats) then
@@ -1330,11 +1332,8 @@ procedure tJson2PumlInputFileDefinition.WriteToJsonServiceResult (oJsonOutPut: T
       exit;
     if not FileExists (iFileName) then
       exit;
-    WriteObjectStartToJson (oJsonOutPut, iLevel + 1, iOutputFormat.ServiceResultName);
-    WriteToJsonValue (oJsonOutPut, 'outputFileName', ExtractFileName(iFileName), iLevel + 2, iWriteEmpty);
-    WriteToJsonValue (oJsonOutPut, 'fullFileName', iFileName, iLevel + 2, iWriteEmpty);
-    WriteToJsonValue (oJsonOutPut, 'content', ConvertFileToBase64(iFileName), iLevel + 2, iWriteEmpty);
-    WriteObjectEndToJson (oJsonOutPut, iLevel + 1);
+    WriteToJsonFileNameContent (oJsonOutPut, iOutputFormat.ServiceResultName, iLevel + 1, iFileName, true,
+      iOutputFormat.IsBinaryOutput, iWriteEmpty);
   end;
 
 begin
@@ -3594,6 +3593,24 @@ end;
 function tJson2PumlFileOutputDefinition.GetIdent: string;
 begin
   Result := '';
+end;
+
+function tJson2PumlFileOutputDefinition.OutputFileName (iOutputFormat: tJson2PumlOutputFormat): string;
+begin
+  case iOutputFormat of
+    jofPNG:
+      Result := PNGFileName;
+    jofSVG:
+      Result := SVGFileName;
+    jofPDF:
+      Result := PDFFilename;
+    jofPUML:
+      Result := PUmlFileName;
+    jofLog:
+      Result := ConverterLogFileName;
+    else
+      Result := '';
+  end;
 end;
 
 procedure tJson2PumlFileOutputDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;

@@ -9,7 +9,7 @@ info:
 
   contact:
     email: jens.fudickar@oratool.de
-  version: '1.2'
+  version: '1.2.1'
 servers:
   - url: https://api.server.test/v1/api
 paths:
@@ -126,7 +126,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Json2PumlResponse'        
+                $ref: '#/components/schemas/Json2PumlResponseFiles'        
         '400':
           description: '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
@@ -145,6 +145,14 @@ paths:
   /json2pumlRequestPng:
     post:
       description: 'Execute a json2puml curl and generation call and returns the summary PNG file'
+      parameters:
+        - in: query
+          name: includeFileName
+          required: false
+          schema:
+            type: boolean
+            default: false
+            description: If true the datastructure with the filename and the binary content will be returned. If false(default) only the content will be returned.
       requestBody:
         content:
           application/json:
@@ -156,8 +164,10 @@ paths:
           content:
             image/png:
               schema: 
-                type: string
-                format: binary
+                $ref: '#/components/schemas/BinaryFile'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutputFileBinary'
         '400':
           description: '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
@@ -176,6 +186,14 @@ paths:
   /json2pumlRequestSvg:
     post:
       description: 'Execute a json2puml curl and generation call and returns the summary SVG file'
+      parameters:
+        - in: query
+          name: includeFileName
+          required: false
+          schema:
+            type: boolean
+            default: false
+            description: If true the datastructure with the filename and the binary content will be returned. If false(default) only the content will be returned.
       requestBody:
         content:
           application/json:
@@ -187,8 +205,10 @@ paths:
           content:
             image/svg+xml:
               schema: 
-                type: string
-                format: binary
+                $ref: '#/components/schemas/BinaryFile'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutputFileBinary'
         '400':
           description: '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
@@ -206,7 +226,15 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'        
   /json2pumlRequestZip:
     post:
-      description: 'Execute a json2puml curl and generation call and returns a zip file containing all generated filee'
+      description: 'Execute a json2puml curl and generation call and returns a zip file containing all generated files'
+      parameters:
+        - in: query
+          name: includeFileName
+          required: false
+          schema:
+            type: boolean
+            default: false
+            description: If true the datastructure with the filename and the binary content will be returned. If false(default) only the content will be returned.
       requestBody:
         content:
           application/json:
@@ -214,12 +242,14 @@ paths:
               $ref: '#/components/schemas/Json2PumlRequest'
       responses:
         '200':
-          description: Successful operation, returns the generated SVG file
+          description: Successful operation, returns the generated ZIP file
           content:
             application/zip:
               schema: 
-                type: string
-                format: binary
+                $ref: '#/components/schemas/BinaryFile'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OutputFileBinary'
         '400':
           description: '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
@@ -235,6 +265,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'        
+###### 
 components:
   schemas:
     ServiceInformationResponse:
@@ -460,7 +491,7 @@ components:
                   example:
                   - svg
                   - png
-    Json2PumlResponse:
+    Json2PumlResponseFiles:
       type: object
       properties:
         summaryfile:
@@ -469,31 +500,69 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GeneratedOutputFile'
-          
+         
     OutputFile:
       type: object
       properties:
         outputFilename:
           type: string
-        fullFilename:
+          description : Name of the generated file
+    OutputFileFull:
+        allOf:
+          - $ref: '#/components/schemas/OutputFile'     
+          - type: object
+            properties:
+              fullFilename:
+                type: string
+                description : Name of the generated file and path where the file has been generated
+    OutputBinaryContent:            
+      type: object
+      properties:
+        content:
           type: string
-        content:  
+          format: byte
+          description : Binary content of the file. The content is base64 encoded and needs to be decoded before storing
+    OutputStringContent:            
+      type: object
+      properties:
+        content:
           type: string
+          description : Content of the file 
+    OutputFileString:
+      allOf:
+        - $ref: '#/components/schemas/OutputFile'     
+        - $ref: '#/components/schemas/OutputStringContent'     
+    OutputFileBinary:
+      allOf:
+        - $ref: '#/components/schemas/OutputFile'     
+        - $ref: '#/components/schemas/OutputBinaryContent'     
+    OutputFileFullString:
+      allOf:
+        - $ref: '#/components/schemas/OutputFileFull'     
+        - $ref: '#/components/schemas/OutputStringContent'     
+    OutputFileFullBinary:
+      allOf:
+        - $ref: '#/components/schemas/OutputFileFull'     
+        - $ref: '#/components/schemas/OutputBinaryContent'     
+    BinaryFile:
+      type: string
+      format: binary
+      description : Binary content of the file. The content is base64 encoded and needs to be decoded before storing
     GeneratedOutputFile:
       type: object
       properties:
         isSplitFile:
           type: boolean
         pumlFile:
-          $ref: '#/components/schemas/OutputFile'
+          $ref: '#/components/schemas/OutputFileFullString'
         pdfFile:
-          $ref: '#/components/schemas/OutputFile'
+          $ref: '#/components/schemas/OutputFileFullBinary'
         pngFile:
-          $ref: '#/components/schemas/OutputFile'
+          $ref: '#/components/schemas/OutputFileFullBinary'
         svgFile:
-          $ref: '#/components/schemas/OutputFile'
+          $ref: '#/components/schemas/OutputFileFullBinary'
         converterLogFile:
-          $ref: '#/components/schemas/OutputFile'
+          $ref: '#/components/schemas/OutputFileFullString'
     ErrorResponse:
       type: array
       items:       

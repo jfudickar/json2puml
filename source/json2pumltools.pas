@@ -143,6 +143,11 @@ type
     class function ReplaceCurlVariablesFromEnvironment (iValue: string): string;
   end;
 
+function GenerateFileNameContentBinary(iFileName: string): string;
+
+procedure WriteToJsonFileNameContent(oJsonOutPut: TStrings; const iPropertyName: string; iLevel: Integer; iFileName:
+    string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
+
 implementation
 
 uses
@@ -826,6 +831,36 @@ function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (iValue: stri
 begin
   Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
   Result := GlobalConfigurationDefinition.CurlParameter.ReplaceParameterValues (Result);
+end;
+
+function GenerateFileNameContentBinary(iFileName: string): string;
+var sl : TStringList;
+begin
+  sl := TStringList.Create;
+  try
+    WriteToJsonFileNameContent(sl, '', 0, iFileName, false, true);
+    Result := sl.Text;
+  finally
+    sl.Free;
+  end;
+end;
+
+procedure WriteToJsonFileNameContent(oJsonOutPut: TStrings; const iPropertyName: string; iLevel: Integer; iFileName:
+    string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
+begin
+  if iFileName.IsEmpty then
+    exit;
+  if not FileExists (iFileName) then
+    exit;
+  WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
+  WriteToJsonValue (oJsonOutPut, 'outputFileName', ExtractFileName(iFileName), iLevel + 1, iWriteEmpty);
+  if iIncludeFullFilename then
+    WriteToJsonValue (oJsonOutPut, 'fullFileName', iFileName, iLevel + 1, iWriteEmpty);
+  if iBinaryContent then
+    WriteToJsonValue (oJsonOutPut, 'content', ConvertFileToBase64(iFileName), iLevel + 1, iWriteEmpty)
+  else
+    WriteToJsonValue (oJsonOutPut, 'content', FileContent(iFileName), iLevel + 1, iWriteEmpty);
+  WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 
 class function TCurlUtils.CalculateCommand (const iBaseUrl: string; const iUrlParts, iOptions: array of string;
