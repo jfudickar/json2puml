@@ -1,3 +1,17 @@
+# **json2puml v2.2.16.112** - 07.06.2024
+## All Editions
+### Changed Feature
+- Sorting of object attributes fixed. Now also when sort is active the id and name column (if configured and found) wiil be shown first, then all other sorted attributes.
+
+## Service Edition
+### New Feature
+- The operations /json2pumlRequestPng + /json2pumlRequestSvg + /json2pumlRequestZip now have an optional query parameter includeFileName
+  When this parameter is used the result is a json file with the name of the file and a base63 encoded binary content of the file.
+  This can be used to store the files with the internal generated names.
+
+### Changed Feature
+- YAML file further improved with more correct datatypes and descriptions
+
 # **json2puml v2.2.15.111** - 05.06.2024
 ## All Editions
 ### New Feature
