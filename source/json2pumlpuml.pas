@@ -604,8 +604,8 @@ begin
   if (Attributes.Count > 0) and FormatDefinition.ShowAttributes then
   begin
     ipuml.add (tPumlHelper.TableLine(['attribute', 'value'], true));
-    idLine := Attributes.IndexOfName (ObjectIdentProperty);
-    NameLine := Attributes.IndexOfName (ObjectTitleProperty);
+    idLine := Attributes.IndexOf(ObjectIdentProperty);
+    NameLine := Attributes.IndexOf(ObjectTitleProperty);
     if idLine >= 0 then
       Attributes.Value[idLine].GeneratePumlAsRecord (ipuml, False, FormatDefinition.ValueSplitLength);
     if NameLine >= 0 then
