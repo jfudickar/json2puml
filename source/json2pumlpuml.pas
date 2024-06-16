@@ -1911,7 +1911,7 @@ begin
   Result := TableColumnSeparator;
   for i := 0 to high(iColumns) do
     Result := Result + TableColumn ('%s', iHeader);
-  Result := Format (Result, iColumns).Replace ('\n', '\n ');
+  Result := Format (Result, iColumns).Replace ('\n', '\n ').Replace(#13#10, '\n ').Replace(#10, '\n ');
 end;
 
 class function tPumlHelper.TableLine (iColumns: TStringList; iHeader: boolean = False;
