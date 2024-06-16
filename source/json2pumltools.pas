@@ -1137,7 +1137,10 @@ begin
       if Now - FileLastWriteDate < iCurlCache / (24 * 60 * 60) then
       begin
         GlobalLogHandler.Info (iCurlResult.Command);
-        GlobalLogHandler.Info ('  curl skipped - %s is not older then %d seconds.', [iOutputFile, iCurlCache]);
+        iCurlResult.NoOfRecords := GetJsonFileRecordCount(iOutputFile);
+        iCurlResult.FileSize := TFile.GetSize(iOutputFile);
+        iCurlResult.Duration := 0;
+        GlobalLogHandler.Info ('  curl %s reused - not older then %d seconds.  [%d Record(s) found]', [iOutputFile, iCurlCache, iCurlResult.NoOfRecords]);
         Result := true;
         Exit;
       end;
