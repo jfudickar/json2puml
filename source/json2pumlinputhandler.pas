@@ -212,7 +212,7 @@ type
     procedure ConvertAllRecords (iIndex: Integer = - 1);
     procedure DeleteGeneratedFiles;
     procedure EndLoadFile (iAutoStartConvert: Boolean = true);
-    procedure GenerateSummaryZipFile;
+    procedure GenerateSummaryZipFile (iOutputFormats: tJson2PumlOutputFormats);
     function GetConfigurationFileLines: TStrings;
     function GetCurlAuthenticationFileLines: TStrings;
     function LoadConfigurationFile (iFileName: string = ''): Boolean;
@@ -255,6 +255,7 @@ type
     property CurrentJobDescription: string read GetCurrentJobDescription;
     property CurrentJobName: string read GetCurrentJobName;
     property CurrentOption: string read GetCurrentOption;
+    property CurrentOutputFormats: tJson2PumlOutputFormats read GetCurrentOutputFormats;
     property CurrentOutputPath: string read GetCurrentOutputPath;
     property CurrentOutputSuffix: string read GetCurrentOutputSuffix;
     property CurrentPlantUmlJarFileName: string read GetCurrentPlantUmlJarFileName;
@@ -720,7 +721,7 @@ begin
   if HandlerRecordList.Count <= 0 then
     Exit;
   JarFile := CalculateRuntimeJarFile;
-  OutputFormats := GetCurrentOutputFormats;
+  OutputFormats := CurrentOutputFormats;
   Converter := TJson2PumlConverter.Create;
   try
     Converter.InputHandler := self;
@@ -781,7 +782,7 @@ begin
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
     ConverterInputList.WriteToJsonOutputFiles (jofFileList.Filename(CalculateSummaryFileName(jofPUML)));
     // Use PUML to get the Filename with the option included
-    ConverterInputList.WriteToJsonServiceResult (ServerResultLines, GetCurrentOutputFormats, False);
+    ConverterInputList.WriteToJsonServiceResult (ServerResultLines, CurrentOutputFormats, False);
     GlobalLoghandler.Info ('Generation done');
     if (jofLog in OutputFormats) then
     begin
@@ -790,7 +791,7 @@ begin
       ConverterInputList.ExecuteLogFileName := jofExecuteLog.Filename (CalculateSummaryFileName(jofPUML));
     end;
     if jofZip in OutputFormats then
-      GenerateSummaryZipFile;
+      GenerateSummaryZipFile (OutputFormats);
     GlobalLoghandler.Info ('Overall Done');
   finally
     Converter.Free;
@@ -892,7 +893,7 @@ var
   OutputFormats: tJson2PumlOutputFormats;
   FileList: TStringList;
 begin
-  OutputFormats := GetCurrentOutputFormats;
+  OutputFormats := CurrentOutputFormats;
   FileList := TStringList.Create;
   try
     for i := 0 to HandlerRecordList.Count - 1 do
@@ -932,9 +933,9 @@ begin
   end;
 end;
 
-procedure TJson2PumlInputHandler.GenerateSummaryZipFile;
+procedure TJson2PumlInputHandler.GenerateSummaryZipFile (iOutputFormats: tJson2PumlOutputFormats);
 begin
-  ConverterInputList.GenerateSummaryZipFile (CalculateSummaryFileName(jofZip));
+  ConverterInputList.GenerateSummaryZipFile (CalculateSummaryFileName(jofZip), iOutputFormats);
 end;
 
 function TJson2PumlInputHandler.GetBaseOutputPath: string;
@@ -1672,7 +1673,7 @@ begin
   log ('Detail', CurrentDetail);
   log ('OutputPath', CurrentOutputPath);
   log ('OutputSuffix', CurrentOutputSuffix);
-  log ('OutputFormats', GetCurrentOutputFormats.ToString(False));
+  log ('OutputFormats', CurrentOutputFormats.ToString(False));
   log ('GenerateSummary', BooleanToString(CurrentGenerateSummary));
   log ('GenerateDetails', BooleanToString(CurrentGenerateDetails));
   log ('BaseOutputPath', BaseOutputPath);

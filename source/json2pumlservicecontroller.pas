@@ -451,7 +451,7 @@ begin
       if not GlobalLoghandler.Failed then
       begin
         if not FileExistsMinSize (InputHandler.ConverterInputList.SummaryZipFileName) then
-          InputHandler.GenerateSummaryZipFile;
+          InputHandler.GenerateSummaryZipFile (InputHandler.CurrentOutputFormats);
         if FileExistsMinSize (InputHandler.ConverterInputList.SummaryZipFileName) then
         begin
           if Context.Request.Params['includeFileName'] = 'true' then

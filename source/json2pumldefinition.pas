@@ -244,7 +244,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    procedure AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string);
+    procedure AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string; iOutputFormats: tJson2PumlOutputFormats);
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     procedure AddSourceFile (iFileName: string);
     procedure DeleteGeneratedFiles;
@@ -301,7 +301,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    procedure AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string);
+    procedure AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string; iOutputFormats: tJson2PumlOutputFormats);
     procedure AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
     procedure Clear; override;
     procedure DeleteGeneratedFiles;
@@ -534,7 +534,7 @@ type
     procedure Clear; override;
     procedure DeleteGeneratedFiles (const iOutputDir: string);
     procedure ExpandInputList;
-    procedure GenerateSummaryZipfile (iZipfileName: string);
+    procedure GenerateSummaryZipfile (iZipfileName: string; iOutputFormats: tJson2PumlOutputFormats);
     function GetEnumerator: tJson2PumlInputListEnumerator;
     function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
@@ -1012,12 +1012,14 @@ begin
   inherited Destroy;
 end;
 
-procedure tJson2PumlInputFileDefinition.AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string);
+procedure tJson2PumlInputFileDefinition.AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string;
+  iOutputFormats: tJson2PumlOutputFormats);
 begin
   if IncludeIntoOutput then
   begin
-    AddFileToZipFile (iZipFile, OutputFileName, iRemoveDirectory);
-    Output.AddFilesToZipFile (iZipFile, iRemoveDirectory);
+    if jofJSON in iOutputFormats then
+      AddFileToZipFile (iZipFile, OutputFileName, iRemoveDirectory);
+    Output.AddFilesToZipFile (iZipFile, iRemoveDirectory, iOutputFormats);
   end;
 end;
 
@@ -1790,7 +1792,7 @@ begin
 
 end;
 
-procedure tJson2PumlInputList.GenerateSummaryZipfile (iZipfileName: string);
+procedure tJson2PumlInputList.GenerateSummaryZipfile (iZipfileName: string; iOutputFormats: tJson2PumlOutputFormats);
 var
   InputFile: tJson2PumlInputFileDefinition;
   ZipFile: TZipFile;
@@ -1799,10 +1801,12 @@ begin
   ZipFile := TZipFile.Create;
   try
     ZipFile.Open (iZipfileName, zmWrite);
-    AddFileToZipFile (ZipFile, ExecuteLogFileName, ExtractFilePath(iZipfileName));
-    AddFileToZipFile (ZipFile, FileListFileName, ExtractFilePath(iZipfileName));
+    if jofExecuteLog in iOutputFormats then
+      AddFileToZipFile (ZipFile, ExecuteLogFileName, ExtractFilePath(iZipfileName));
+    if jofFileList in iOutputFormats then
+      AddFileToZipFile (ZipFile, FileListFileName, ExtractFilePath(iZipfileName));
     for InputFile in self do
-      InputFile.AddFilesToZipFile (ZipFile, ExtractFilePath(iZipfileName));
+      InputFile.AddFilesToZipFile (ZipFile, ExtractFilePath(iZipfileName), iOutputFormats);
     ZipFile.Close;
     GlobalLoghandler.Info ('Summary Zip File %s generated.', [iZipfileName]);
   finally
@@ -3499,19 +3503,21 @@ begin
   inherited Destroy;
 end;
 
-procedure tJson2PumlFileOutputDefinition.AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string);
+procedure tJson2PumlFileOutputDefinition.AddFilesToZipFile (iZipFile: TZipFile; iRemoveDirectory: string;
+  iOutputFormats: tJson2PumlOutputFormats);
 
-  procedure AddFile (iFileName: string);
+  procedure AddFile (iFileName: string; iOutputFormat: tJson2PumlOutputFormat);
   begin
-    AddFileToZipFile (iZipFile, iFileName, iRemoveDirectory);
+    if iOutputFormat in iOutputFormats then
+      AddFileToZipFile (iZipFile, iFileName, iRemoveDirectory);
   end;
 
 begin
-  AddFile (PDFFilename);
-  AddFile (PNGFileName);
-  AddFile (PUmlFileName);
-  AddFile (SVGFileName);
-  AddFile (ConverterLogFileName);
+  AddFile (PDFFilename, jofPDF);
+  AddFile (PNGFileName, jofPNG);
+  AddFile (PUmlFileName, jofPUML);
+  AddFile (SVGFileName, jofSVG);
+  AddFile (ConverterLogFileName, jofLog);
 end;
 
 procedure tJson2PumlFileOutputDefinition.AddGeneratedFilesToDeleteHandler
