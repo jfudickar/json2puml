@@ -3,7 +3,7 @@
 	"detail": null,
 	"group": null,
 	"job": null,
-	"jobDescription": null,
+	"jobDescription": "This is a multiline description\nto show that this is also working :-)",
 	"inputListFile": "placeholder_inputlist_curl.json",
 	"inputFiles": [
 	],

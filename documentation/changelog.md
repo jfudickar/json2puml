@@ -1,3 +1,10 @@
+# **json2puml v2.2.17.113** - 16.06.2024
+## All Editions
+### Changed Feature
+- Multiline job descriptions are now correctly generated/rendered in the image legend #36
+- Curl mandatory check works now also for cached curl results
+- The content of the generated zip file is now based on the outputformat parameters #35
+
 # **json2puml v2.2.16.112** - 07.06.2024
 ## All Editions
 ### Changed Feature
