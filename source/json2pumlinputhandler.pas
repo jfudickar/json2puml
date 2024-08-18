@@ -27,108 +27,107 @@ unit json2pumlinputhandler;
 interface
 
 uses
-  json2pumldefinition, System.Classes, json2pumlloghandler, json2pumlconst,
-  json2pumlbasedefinition,
+  json2pumldefinition, System.Classes, json2pumlloghandler, json2pumlconst, json2pumlbasedefinition,
   json2pumlconverterdefinition, Quick.Logger.Provider.StringList, Quick.Logger;
 
 type
 
-  TJson2PumlInputHandlerParseFileEvent = procedure of object;
+  tJson2PumlInputHandlerParseFileEvent = procedure of object;
 
-  TJson2PumlInputHandlerRecord = class(tJson2PumlBaseObject)
+  tJson2PumlInputHandlerRecord = class(tJson2PumlBaseObject)
   private
-    FConverterLog: TStrings;
-    FIndex: Integer;
+    FConverterLog: tStrings;
+    FIndex: integer;
     FInputDetail: string;
     FInputFile: tJson2PumlInputFileDefinition;
     FInputGroup: string;
-    FIntConverterLog: TStrings;
-    FIntJsonInput: TStrings;
-    FIntPUmlOutput: TStrings;
-    FJsonInput: TStrings;
-    FPUmlOutput: TStrings;
-    FRelatedObject: TObject;
-    function GetConverterLog: TStrings;
-    function GetJsonInput: TStrings;
-    function GetPUmlOutput: TStrings;
-    procedure SetConverterLog (const Value: TStrings);
-    procedure SetJsonInput (const Value: TStrings);
-    procedure SetPUmlOutput (const Value: TStrings);
+    FIntConverterLog: tStrings;
+    FIntJsonInput: tStrings;
+    FIntPUmlOutput: tStrings;
+    FJsonInput: tStrings;
+    FPUmlOutput: tStrings;
+    FRelatedObject: tObject;
+    function GetConverterLog: tStrings;
+    function GetJsonInput: tStrings;
+    function GetPUmlOutput: tStrings;
+    procedure SetConverterLog (const Value: tStrings);
+    procedure SetJsonInput (const Value: tStrings);
+    procedure SetPUmlOutput (const Value: tStrings);
   protected
     function GetIdent: string; override;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure Clear; override;
-    property index: Integer read FIndex write FIndex;
+    property index: integer read FIndex write FIndex;
     property InputDetail: string read FInputDetail write FInputDetail;
     property InputFile: tJson2PumlInputFileDefinition read FInputFile write FInputFile;
     property InputGroup: string read FInputGroup write FInputGroup;
-    property JsonInput: TStrings read GetJsonInput write SetJsonInput;
-    property PUmlOutput: TStrings read GetPUmlOutput write SetPUmlOutput;
-    property RelatedObject: TObject read FRelatedObject write FRelatedObject;
+    property JsonInput: tStrings read GetJsonInput write SetJsonInput;
+    property PUmlOutput: tStrings read GetPUmlOutput write SetPUmlOutput;
+    property RelatedObject: tObject read FRelatedObject write FRelatedObject;
   published
-    property ConverterLog: TStrings read GetConverterLog write SetConverterLog;
+    property ConverterLog: tStrings read GetConverterLog write SetConverterLog;
   end;
 
-  TJson2PumlInputHandlerList = class(tJson2PumlBaseList)
+  tJson2PumlInputHandlerList = class(tJson2PumlBaseList)
   private
     FExecuteLogFile: string;
-    function GetHandlerRecord (index: Integer): TJson2PumlInputHandlerRecord;
+    function GetHandlerRecord (index: integer): tJson2PumlInputHandlerRecord;
   public
     property ExecuteLogFile: string read FExecuteLogFile write FExecuteLogFile;
-    property HandlerRecord[index: Integer]: TJson2PumlInputHandlerRecord read GetHandlerRecord;
+    property HandlerRecord[index: integer]: tJson2PumlInputHandlerRecord read GetHandlerRecord;
   end;
 
-  TJson2PumlInputHandlerRecordEvent = procedure(InputHandlerRecord: TJson2PumlInputHandlerRecord) of object;
+  tJson2PumlInputHandlerRecordEvent = procedure(InputHandlerRecord: tJson2PumlInputHandlerRecord) of object;
 
-  TJson2PumlInputHandler = class(tPersistent)
+  tJson2PumlInputHandler = class(tPersistent)
   private
-    FAfterCreateAllRecords: TNotifyEvent;
-    FAfterCreateRecord: TJson2PumlInputHandlerRecordEvent;
-    FAfterHandleAllRecords: TNotifyEvent;
-    FAfterUpdateRecord: TJson2PumlInputHandlerRecordEvent;
+    FAfterCreateAllRecords: tNotifyEvent;
+    FAfterCreateRecord: tJson2PumlInputHandlerRecordEvent;
+    FAfterHandleAllRecords: tNotifyEvent;
+    FAfterUpdateRecord: tJson2PumlInputHandlerRecordEvent;
     FApplicationType: tJson2PumlApplicationType;
-    FBeforeCreateAllRecords: TNotifyEvent;
-    FBeforeDeleteAllRecords: TNotifyEvent;
+    FBeforeCreateAllRecords: tNotifyEvent;
+    FBeforeDeleteAllRecords: tNotifyEvent;
     FCmdLineParameter: tJson2PumlCommandLineParameter;
-    FConfigurationFileLines: TStrings;
-    FLoadFileCnt: Integer;
+    FConfigurationFileLines: tStrings;
+    FLoadFileCnt: integer;
     FConverterDefinitionGroup: tJson2PumlConverterGroupDefinition;
     FConverterInputList: tJson2PumlInputList;
-    FCurlAuthenticationFileLines: TStrings;
+    FCurlAuthenticationFileLines: tStrings;
     FCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
-    FCurlParameterFileLines: TStrings;
+    FCurlParameterFileLines: tStrings;
     FCurlParameterList: tJson2PumlCurlParameterList;
     FCurrentConverterDefinition: tJson2PumlConverterDefinition;
-    FCurThreadId: TTHreadId;
-    FDefinitionLines: TStrings;
-    FExecuteLogHandler: TLogStringListProvider;
+    FCurThreadId: tTHreadId;
+    FDefinitionLines: tStrings;
+    FExecuteLogHandler: tLogStringListProvider;
     FGlobalConfiguration: tJson2PumlGlobalDefinition;
-    FHandlerRecordList: TJson2PumlInputHandlerList;
-    FInputListLines: TStrings;
-    FIntConfigurationFileLines: TStrings;
-    FIntCurlAuthenticationFileLines: TStrings;
-    FIntCurlParameterFileLines: TStrings;
-    FIntDefinitionLines: TStrings;
-    FIntInputListLines: TStrings;
-    FIntOptionFileLines: TStrings;
-    FIntParameterFileLines: TStrings;
-    FIntServerResultLines: TStrings;
+    FHandlerRecordList: tJson2PumlInputHandlerList;
+    FInputListLines: tStrings;
+    FIntConfigurationFileLines: tStrings;
+    FIntCurlAuthenticationFileLines: tStrings;
+    FIntCurlParameterFileLines: tStrings;
+    FIntDefinitionLines: tStrings;
+    FIntInputListLines: tStrings;
+    FIntOptionFileLines: tStrings;
+    FIntParameterFileLines: tStrings;
+    FIntServerResultLines: tStrings;
     FLastTraceId: string;
     FOnNotifyChange: tJson2PumlNotifyChangeEvent;
     FOptionFileDefinition: tJson2PumlConverterDefinition;
-    FOptionFileLines: TStrings;
+    FOptionFileLines: tStrings;
     FParameterDefinition: tJson2PumlParameterFileDefinition;
-    FParameterFileLines: TStrings;
-    FServerResultLines: TStrings;
+    FParameterFileLines: tStrings;
+    FServerResultLines: tStrings;
     procedure CalculateCurrentConverterDefinition;
     function CurrentGenerateDetails: Boolean;
     function CurrentGenerateSummary: Boolean;
     function GetBaseOutputPath: string;
-    function GetCount: Integer;
+    function GetCount: integer;
     function GetCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
-    function GetCurlParameterFileLines: TStrings;
+    function GetCurlParameterFileLines: tStrings;
     function GetCurrentApplicationVersion: string;
     function GetCurrentConfigurationFileName: string;
     function GetCurrentCurlAuthenticationFileName: string;
@@ -151,20 +150,20 @@ type
     function GetCurrentPlantUmlJarFileName: string;
     function GetCurrentSummaryFileName: string;
     function GetDefinedOption: string;
-    function GetDefinitionLines: TStrings;
+    function GetDefinitionLines: tStrings;
     function GetGenerateDetails: Boolean;
     function GetGenerateDetailsStr: string;
     function GetGenerateSummary: Boolean;
     function GetGenerateSummaryStr: string;
-    function GetHandlerRecord (index: Integer): TJson2PumlInputHandlerRecord;
-    function GetInputListLines: TStrings;
-    function GetOptionFileLines: TStrings;
-    function GetParameterFileLines: TStrings;
-    function GetServerResultLines: TStrings;
+    function GetHandlerRecord (index: integer): tJson2PumlInputHandlerRecord;
+    function GetInputListLines: tStrings;
+    function GetOptionFileLines: tStrings;
+    function GetParameterFileLines: tStrings;
+    function GetServerResultLines: tStrings;
     procedure SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);
-    function OnFilterLogItem (aLogItem: TLogItem): Boolean;
+    function OnFilterLogItem (aLogItem: tLogItem): Boolean;
   protected
-    procedure BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
+    procedure BuildSummaryFile (iSingleRecord: tJson2PumlInputHandlerRecord);
     function CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
     function CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension: string;
       iRemoveExtension: Boolean): string;
@@ -173,13 +172,13 @@ type
     procedure ConvertAllRecordsInt;
     procedure CreateAllRecords;
     function CreateSingleRecord (iInputFile: tJson2PumlInputFileDefinition; iInputGroup, iInputDetail: string)
-      : TJson2PumlInputHandlerRecord;
+      : tJson2PumlInputHandlerRecord;
     procedure GenerateAllOutputsFromPuml;
     procedure GetFileNameExtension (iFileName, iNewFileExtension: string; var oFileNameExtension: string;
       var oFileFormat: tJson2PumlOutputFormat);
     function IsConverting: Boolean;
-    function LoadFileToStringList (iFileList: TStrings; iFileName, iFileDescription: string;
-      iClass: tJson2PumlBaseObjectClass; iParseProcedure: TJson2PumlInputHandlerParseFileEvent;
+    function LoadFileToStringList (iFileList: tStrings; iFileName, iFileDescription: string;
+      iClass: tJson2PumlBaseObjectClass; iParseProcedure: tJson2PumlInputHandlerParseFileEvent;
       iMandatory: Boolean): Boolean;
     procedure ParseConfigurationFile;
     procedure ParseDefintions;
@@ -190,13 +189,13 @@ type
     function ReplaceFileNameVariables (iReplace, iFileName, iOption: string): string;
     procedure SetFileLoading (iLoading, iAutoStartConvert: Boolean);
     property CurrentDetail: string read GetCurrentDetail;
-    property CurThreadId: TTHreadId read FCurThreadId;
-    property ExecuteLogHandler: TLogStringListProvider read FExecuteLogHandler;
+    property CurThreadId: tTHreadId read FCurThreadId;
+    property ExecuteLogHandler: tLogStringListProvider read FExecuteLogHandler;
     property GenerateDetails: Boolean read GetGenerateDetails;
     property GenerateDetailsStr: string read GetGenerateDetailsStr;
     property GenerateSummary: Boolean read GetGenerateSummary;
     property GenerateSummaryStr: string read GetGenerateSummaryStr;
-    property HandlerRecordList: TJson2PumlInputHandlerList read FHandlerRecordList;
+    property HandlerRecordList: tJson2PumlInputHandlerList read FHandlerRecordList;
     property LastTraceId: string read FLastTraceId write FLastTraceId;
   public
     constructor Create (iApplicationType: tJson2PumlApplicationType);
@@ -209,12 +208,12 @@ type
     function CalculateSummaryPath: string;
     function CleanSummaryPath (iFileName: string): string;
     procedure Clear;
-    procedure ConvertAllRecords (iIndex: Integer = - 1);
+    procedure ConvertAllRecords (iIndex: integer = - 1);
     procedure DeleteGeneratedFiles;
     procedure EndLoadFile (iAutoStartConvert: Boolean = true);
     procedure GenerateSummaryZipFile (iOutputFormats: tJson2PumlOutputFormats);
-    function GetConfigurationFileLines: TStrings;
-    function GetCurlAuthenticationFileLines: TStrings;
+    function GetConfigurationFileLines: tStrings;
+    function GetCurlAuthenticationFileLines: tStrings;
     function LoadConfigurationFile (iFileName: string = ''): Boolean;
     function LoadCurlAuthenticationFile (iFileName: string = ''): Boolean;
     function LoadCurlParameterFile (iFileName: string = ''): Boolean;
@@ -232,11 +231,11 @@ type
     property CmdLineParameter: tJson2PumlCommandLineParameter read FCmdLineParameter;
     property ConverterDefinitionGroup: tJson2PumlConverterGroupDefinition read FConverterDefinitionGroup;
     property ConverterInputList: tJson2PumlInputList read FConverterInputList;
-    property Count: Integer read GetCount;
-    property CurlAuthenticationFileLines: TStrings read GetCurlAuthenticationFileLines
+    property Count: integer read GetCount;
+    property CurlAuthenticationFileLines: tStrings read GetCurlAuthenticationFileLines
       write FCurlAuthenticationFileLines;
     property CurlAuthenticationList: tJson2PumlCurlAuthenticationList read FCurlAuthenticationList;
-    property CurlParameterFileLines: TStrings read GetCurlParameterFileLines write FCurlParameterFileLines;
+    property CurlParameterFileLines: tStrings read GetCurlParameterFileLines write FCurlParameterFileLines;
     property CurlParameterList: tJson2PumlCurlParameterList read FCurlParameterList;
     property CurlMappingParameterList: tJson2PumlCurlMappingParameterList read GetCurlMappingParameterList;
     property CurrentApplicationVersion: string read GetCurrentApplicationVersion;
@@ -261,33 +260,32 @@ type
     property CurrentPlantUmlJarFileName: string read GetCurrentPlantUmlJarFileName;
     property CurrentSummaryFileName: string read GetCurrentSummaryFileName;
     property DefinedOption: string read GetDefinedOption;
-    property HandlerRecord[index: Integer]: TJson2PumlInputHandlerRecord read GetHandlerRecord; default;
-    property AfterCreateAllRecords: TNotifyEvent read FAfterCreateAllRecords write FAfterCreateAllRecords;
-    property AfterCreateRecord: TJson2PumlInputHandlerRecordEvent read FAfterCreateRecord write FAfterCreateRecord;
-    property AfterHandleAllRecords: TNotifyEvent read FAfterHandleAllRecords write FAfterHandleAllRecords;
-    property AfterUpdateRecord: TJson2PumlInputHandlerRecordEvent read FAfterUpdateRecord write FAfterUpdateRecord;
-    property BeforeCreateAllRecords: TNotifyEvent read FBeforeCreateAllRecords write FBeforeCreateAllRecords;
-    property BeforeDeleteAllRecords: TNotifyEvent read FBeforeDeleteAllRecords write FBeforeDeleteAllRecords;
+    property HandlerRecord[index: integer]: tJson2PumlInputHandlerRecord read GetHandlerRecord; default;
+    property AfterCreateAllRecords: tNotifyEvent read FAfterCreateAllRecords write FAfterCreateAllRecords;
+    property AfterCreateRecord: tJson2PumlInputHandlerRecordEvent read FAfterCreateRecord write FAfterCreateRecord;
+    property AfterHandleAllRecords: tNotifyEvent read FAfterHandleAllRecords write FAfterHandleAllRecords;
+    property AfterUpdateRecord: tJson2PumlInputHandlerRecordEvent read FAfterUpdateRecord write FAfterUpdateRecord;
+    property BeforeCreateAllRecords: tNotifyEvent read FBeforeCreateAllRecords write FBeforeCreateAllRecords;
+    property BeforeDeleteAllRecords: tNotifyEvent read FBeforeDeleteAllRecords write FBeforeDeleteAllRecords;
     property OnNotifyChange: tJson2PumlNotifyChangeEvent read FOnNotifyChange write SetOnNotifyChange;
   published
-    property ConfigurationFileLines: TStrings read GetConfigurationFileLines write FConfigurationFileLines;
-    property DefinitionLines: TStrings read GetDefinitionLines write FDefinitionLines;
+    property ConfigurationFileLines: tStrings read GetConfigurationFileLines write FConfigurationFileLines;
+    property DefinitionLines: tStrings read GetDefinitionLines write FDefinitionLines;
     property GlobalConfiguration: tJson2PumlGlobalDefinition read FGlobalConfiguration;
-    property InputListLines: TStrings read GetInputListLines write FInputListLines;
+    property InputListLines: tStrings read GetInputListLines write FInputListLines;
     property OptionFileDefinition: tJson2PumlConverterDefinition read FOptionFileDefinition;
-    property OptionFileLines: TStrings read GetOptionFileLines write FOptionFileLines;
+    property OptionFileLines: tStrings read GetOptionFileLines write FOptionFileLines;
     property ParameterDefinition: tJson2PumlParameterFileDefinition read FParameterDefinition;
-    property ParameterFileLines: TStrings read GetParameterFileLines write FParameterFileLines;
-    property ServerResultLines: TStrings read GetServerResultLines write FServerResultLines;
+    property ParameterFileLines: tStrings read GetParameterFileLines write FParameterFileLines;
+    property ServerResultLines: tStrings read GetServerResultLines write FServerResultLines;
   end;
 
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, json2pumltools, json2pumlconverter,
-  jsontools;
+  System.SysUtils, System.IOUtils, json2pumltools, json2pumlconverter, jsontools;
 
-constructor TJson2PumlInputHandlerRecord.Create;
+constructor tJson2PumlInputHandlerRecord.Create;
 begin
   inherited Create;
   FIntPUmlOutput := TStringList.Create;
@@ -296,7 +294,7 @@ begin
   FIntConverterLog := TStringList.Create ();
 end;
 
-destructor TJson2PumlInputHandlerRecord.Destroy;
+destructor tJson2PumlInputHandlerRecord.Destroy;
 begin
   FIntConverterLog.Free;
   FIntJsonInput.Free;
@@ -306,14 +304,14 @@ begin
   inherited Destroy;
 end;
 
-procedure TJson2PumlInputHandlerRecord.Clear;
+procedure tJson2PumlInputHandlerRecord.Clear;
 begin
   FIntConverterLog.Clear;
   FIntJsonInput.Clear;
   FIntPUmlOutput.Clear;
 end;
 
-function TJson2PumlInputHandlerRecord.GetConverterLog: TStrings;
+function tJson2PumlInputHandlerRecord.GetConverterLog: tStrings;
 begin
   if Assigned (FConverterLog) then
     Result := FConverterLog
@@ -321,12 +319,12 @@ begin
     Result := FIntConverterLog;
 end;
 
-function TJson2PumlInputHandlerRecord.GetIdent: string;
+function tJson2PumlInputHandlerRecord.GetIdent: string;
 begin
   Result := InputFile.InputFileName;
 end;
 
-function TJson2PumlInputHandlerRecord.GetJsonInput: TStrings;
+function tJson2PumlInputHandlerRecord.GetJsonInput: tStrings;
 begin
   if Assigned (FJsonInput) then
     Result := FJsonInput
@@ -334,7 +332,7 @@ begin
     Result := FIntJsonInput;
 end;
 
-function TJson2PumlInputHandlerRecord.GetPUmlOutput: TStrings;
+function tJson2PumlInputHandlerRecord.GetPUmlOutput: tStrings;
 begin
   if Assigned (FPUmlOutput) then
     Result := FPUmlOutput
@@ -342,27 +340,27 @@ begin
     Result := FIntPUmlOutput;
 end;
 
-procedure TJson2PumlInputHandlerRecord.SetConverterLog (const Value: TStrings);
+procedure tJson2PumlInputHandlerRecord.SetConverterLog (const Value: tStrings);
 begin
   FConverterLog := Value;
 end;
 
-procedure TJson2PumlInputHandlerRecord.SetJsonInput (const Value: TStrings);
+procedure tJson2PumlInputHandlerRecord.SetJsonInput (const Value: tStrings);
 begin
   FJsonInput := Value;
 end;
 
-procedure TJson2PumlInputHandlerRecord.SetPUmlOutput (const Value: TStrings);
+procedure tJson2PumlInputHandlerRecord.SetPUmlOutput (const Value: tStrings);
 begin
   FPUmlOutput := Value;
 end;
 
-function TJson2PumlInputHandlerList.GetHandlerRecord (index: Integer): TJson2PumlInputHandlerRecord;
+function tJson2PumlInputHandlerList.GetHandlerRecord (index: integer): tJson2PumlInputHandlerRecord;
 begin
-  Result := TJson2PumlInputHandlerRecord (Objects[index]);
+  Result := tJson2PumlInputHandlerRecord (Objects[index]);
 end;
 
-constructor TJson2PumlInputHandler.Create (iApplicationType: tJson2PumlApplicationType);
+constructor tJson2PumlInputHandler.Create (iApplicationType: tJson2PumlApplicationType);
 begin
   inherited Create;
   FCmdLineParameter := tJson2PumlCommandLineParameter.Create;
@@ -377,7 +375,7 @@ begin
   FInputListLines := nil;
   FDefinitionLines := nil;
 
-  FHandlerRecordList := TJson2PumlInputHandlerList.Create;
+  FHandlerRecordList := tJson2PumlInputHandlerList.Create;
   FHandlerRecordList.OwnsObjects := true;
 
   FIntInputListLines := TStringList.Create;
@@ -392,7 +390,7 @@ begin
   FGlobalConfiguration := tJson2PumlGlobalDefinition.Create ();
   FIntConfigurationFileLines := TStringList.Create;
   FApplicationType := iApplicationType;
-  FExecuteLogHandler := TLogStringListProvider.Create ();
+  FExecuteLogHandler := tLogStringListProvider.Create ();
   ExecuteLogHandler.OnFilterItem := OnFilterLogItem;
   ExecuteLogHandler.Enabled := true;
   SetLogProviderDefaults (ExecuteLogHandler, jatService);
@@ -400,7 +398,7 @@ begin
   FCurThreadId := CurrentThreadId;
 end;
 
-destructor TJson2PumlInputHandler.Destroy;
+destructor tJson2PumlInputHandler.Destroy;
 begin
   ExecuteLogHandler.Enabled := False;
   ExecuteLogHandler.Clear;
@@ -430,13 +428,13 @@ begin
   inherited Destroy;
 end;
 
-procedure TJson2PumlInputHandler.AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
+procedure tJson2PumlInputHandler.AddGeneratedFilesToDeleteHandler (ioDeleteHandler: tJson2PumlFileDeleteHandler);
 begin
   ioDeleteHandler.AddDirectory (BaseOutputPath);
   ConverterInputList.AddGeneratedFilesToDeleteHandler (ioDeleteHandler);
 end;
 
-procedure TJson2PumlInputHandler.BeginLoadFile;
+procedure tJson2PumlInputHandler.BeginLoadFile;
 begin
   Inc (FLoadFileCnt);
   if FLoadFileCnt = 1 then
@@ -447,7 +445,7 @@ begin
   end;
 end;
 
-procedure TJson2PumlInputHandler.BuildSummaryFile (iSingleRecord: TJson2PumlInputHandlerRecord);
+procedure tJson2PumlInputHandler.BuildSummaryFile (iSingleRecord: tJson2PumlInputHandlerRecord);
 var
   LastProperty: string;
   SingleJson: TStringList;
@@ -514,11 +512,11 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.CalculateCurlAdditionalRuntimeOptions: string;
+function tJson2PumlInputHandler.CalculateCurlAdditionalRuntimeOptions: string;
 
   function TraceSpanId: string;
   var
-    id: TGUID;
+    id: tGUID;
   begin
     CreateGUID (id);
     Result := GUIDToString (id).ToLower.Replace ('{', '', [rfReplaceAll]).Replace ('}', '', [rfReplaceAll])
@@ -552,7 +550,7 @@ begin
     CalculateCurlSpanIdHeader]);
 end;
 
-procedure TJson2PumlInputHandler.CalculateCurrentConverterDefinition;
+procedure tJson2PumlInputHandler.CalculateCurrentConverterDefinition;
 begin
   if OptionFileDefinition.IsFilled then
     ConverterDefinitionGroup.FillDefinitionFromOption (FCurrentConverterDefinition, OptionFileDefinition)
@@ -560,7 +558,7 @@ begin
     ConverterDefinitionGroup.FillDefinitionFromOption (FCurrentConverterDefinition, CurrentOption);
 end;
 
-function TJson2PumlInputHandler.CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
+function tJson2PumlInputHandler.CalculateOutputDirectory (iFileName, iOutputPath, iOption: string): string;
 begin
   if iOutputPath.IsEmpty then
     Result := ExtractFilePath (iFileName)
@@ -571,7 +569,7 @@ begin
   Result := ReplaceInvalidPathChars (Result);
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension: string;
+function tJson2PumlInputHandler.CalculateOutputFileName (iFileName, iSourceFileName, iNewFileExtension: string;
   iRemoveExtension: Boolean): string;
 var
   Filename: string;
@@ -602,7 +600,7 @@ begin
   Result := Filename;
 end;
 
-function TJson2PumlInputHandler.CalculateOutputFileNamePath (iFileName, iSourceFileName: string;
+function tJson2PumlInputHandler.CalculateOutputFileNamePath (iFileName, iSourceFileName: string;
   iNewFileExtension: string = ''): string;
 var
   Filename: string;
@@ -623,10 +621,10 @@ begin
   Result := PathCombine (Result, Filename);
 end;
 
-function TJson2PumlInputHandler.CalculateRuntimeJarFile: string;
+function tJson2PumlInputHandler.CalculateRuntimeJarFile: string;
 var
   JarFile: string;
-  i: Integer;
+  i: integer;
 begin
   for i := 1 to 3 do
   begin
@@ -652,7 +650,7 @@ begin
   GlobalLoghandler.Error (jetNoConfiguredPlantUmlFileFound);
 end;
 
-function TJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
+function tJson2PumlInputHandler.CalculateSummaryFileName (iOutputFormat: tJson2PumlOutputFormat): string;
 var
   Filename: string;
 begin
@@ -663,9 +661,9 @@ begin
   Result := ReplaceInvalidPathFileNameChars (Result, true);
 end;
 
-function TJson2PumlInputHandler.CalculateSummaryPath: string;
+function tJson2PumlInputHandler.CalculateSummaryPath: string;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := CurrentFullOutputPath;
   i := Result.IndexOf (jfnrFile.ToString);
@@ -676,7 +674,7 @@ begin
   Result := ReplaceInvalidPathChars (Result, true);
 end;
 
-function TJson2PumlInputHandler.CleanSummaryPath (iFileName: string): string;
+function tJson2PumlInputHandler.CleanSummaryPath (iFileName: string): string;
 var
   SummaryPath: string;
 begin
@@ -687,12 +685,12 @@ begin
     Result := iFileName;
 end;
 
-procedure TJson2PumlInputHandler.Clear;
+procedure tJson2PumlInputHandler.Clear;
 begin
   ClearAllRecords;
 end;
 
-procedure TJson2PumlInputHandler.ClearAllRecords;
+procedure tJson2PumlInputHandler.ClearAllRecords;
 begin
   if Assigned (BeforeDeleteAllRecords) then
     BeforeDeleteAllRecords (self);
@@ -701,18 +699,18 @@ begin
   CurlAuthenticationList.AdditionalCurlParameter.Clear;
 end;
 
-procedure TJson2PumlInputHandler.ConvertAllRecords (iIndex: Integer = - 1);
+procedure tJson2PumlInputHandler.ConvertAllRecords (iIndex: integer = - 1);
 begin
   RecreateAllRecords;
 end;
 
-procedure TJson2PumlInputHandler.ConvertAllRecordsInt;
+procedure tJson2PumlInputHandler.ConvertAllRecordsInt;
 var
-  i: Integer;
-  SingleRecord: TJson2PumlInputHandlerRecord;
+  i: integer;
+  SingleRecord: tJson2PumlInputHandlerRecord;
   OutputFile: string;
   OutputFormats: tJson2PumlOutputFormats;
-  Converter: TJson2PumlConverter;
+  Converter: tJson2PumlConverter;
   JarFile: string;
 begin
   ValidateCurrentOptions;
@@ -722,7 +720,7 @@ begin
     Exit;
   JarFile := CalculateRuntimeJarFile;
   OutputFormats := CurrentOutputFormats;
-  Converter := TJson2PumlConverter.Create;
+  Converter := tJson2PumlConverter.Create;
   try
     Converter.InputHandler := self;
     for i := 0 to HandlerRecordList.Count - 1 do
@@ -800,7 +798,7 @@ begin
     OnNotifyChange (self, nctConvert, HandlerRecordList.Count, HandlerRecordList.Count);
 end;
 
-procedure TJson2PumlInputHandler.CreateAllRecords;
+procedure tJson2PumlInputHandler.CreateAllRecords;
 var
   InputFile: tJson2PumlInputFileDefinition;
   OptionList: TStringList;
@@ -840,12 +838,12 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.CreateSingleRecord (iInputFile: tJson2PumlInputFileDefinition;
-  iInputGroup, iInputDetail: string): TJson2PumlInputHandlerRecord;
+function tJson2PumlInputHandler.CreateSingleRecord (iInputFile: tJson2PumlInputFileDefinition;
+  iInputGroup, iInputDetail: string): tJson2PumlInputHandlerRecord;
 var
-  SingleRecord: TJson2PumlInputHandlerRecord;
+  SingleRecord: tJson2PumlInputHandlerRecord;
 begin
-  SingleRecord := TJson2PumlInputHandlerRecord.Create;
+  SingleRecord := tJson2PumlInputHandlerRecord.Create;
   SingleRecord.index := HandlerRecordList.Count;
   SingleRecord.InputFile := iInputFile;
   SingleRecord.InputDetail := iInputDetail;
@@ -858,7 +856,7 @@ begin
   Result := SingleRecord;
 end;
 
-function TJson2PumlInputHandler.CurrentGenerateDetails: Boolean;
+function tJson2PumlInputHandler.CurrentGenerateDetails: Boolean;
 begin
   if GenerateDetailsStr.IsEmpty or (not GenerateSummary and not GenerateDetails) then
     Result := ConverterInputList.ExecuteCount <= 1
@@ -866,7 +864,7 @@ begin
     Result := GenerateDetails;
 end;
 
-function TJson2PumlInputHandler.CurrentGenerateSummary: Boolean;
+function tJson2PumlInputHandler.CurrentGenerateSummary: Boolean;
 begin
   if GenerateSummaryStr.IsEmpty or (not GenerateSummary and not GenerateDetails) then
     Result := ConverterInputList.ExecuteCount > 1
@@ -874,22 +872,22 @@ begin
     Result := GenerateSummary;
 end;
 
-procedure TJson2PumlInputHandler.DeleteGeneratedFiles;
+procedure tJson2PumlInputHandler.DeleteGeneratedFiles;
 begin
   ConverterInputList.DeleteGeneratedFiles (BaseOutputPath);
 end;
 
-procedure TJson2PumlInputHandler.EndLoadFile (iAutoStartConvert: Boolean = true);
+procedure tJson2PumlInputHandler.EndLoadFile (iAutoStartConvert: Boolean = true);
 begin
   Dec (FLoadFileCnt);
   if FLoadFileCnt = 0 then
     SetFileLoading (False, iAutoStartConvert);
 end;
 
-procedure TJson2PumlInputHandler.GenerateAllOutputsFromPuml;
+procedure tJson2PumlInputHandler.GenerateAllOutputsFromPuml;
 var
-  i: Integer;
-  SingleRecord: TJson2PumlInputHandlerRecord;
+  i: integer;
+  SingleRecord: tJson2PumlInputHandlerRecord;
   OutputFormats: tJson2PumlOutputFormats;
   FileList: TStringList;
 begin
@@ -933,12 +931,12 @@ begin
   end;
 end;
 
-procedure TJson2PumlInputHandler.GenerateSummaryZipFile (iOutputFormats: tJson2PumlOutputFormats);
+procedure tJson2PumlInputHandler.GenerateSummaryZipFile (iOutputFormats: tJson2PumlOutputFormats);
 begin
   ConverterInputList.GenerateSummaryZipFile (CalculateSummaryFileName(jofZip), iOutputFormats);
 end;
 
-function TJson2PumlInputHandler.GetBaseOutputPath: string;
+function tJson2PumlInputHandler.GetBaseOutputPath: string;
 begin
   if not CmdLineParameter.BaseOutputPath.IsEmpty then
     Result := CmdLineParameter.BaseOutputPath
@@ -955,7 +953,7 @@ begin
   Result := PathCombineIfRelative (GetCurrentDir, Result);
 end;
 
-function TJson2PumlInputHandler.GetConfigurationFileLines: TStrings;
+function tJson2PumlInputHandler.GetConfigurationFileLines: tStrings;
 begin
   if Assigned (FConfigurationFileLines) then
     Result := FConfigurationFileLines
@@ -963,12 +961,12 @@ begin
     Result := FIntConfigurationFileLines;
 end;
 
-function TJson2PumlInputHandler.GetCount: Integer;
+function tJson2PumlInputHandler.GetCount: integer;
 begin
   Result := HandlerRecordList.Count;
 end;
 
-function TJson2PumlInputHandler.GetCurlAuthenticationFileLines: TStrings;
+function tJson2PumlInputHandler.GetCurlAuthenticationFileLines: tStrings;
 begin
   if Assigned (FCurlAuthenticationFileLines) then
     Result := FCurlAuthenticationFileLines
@@ -976,12 +974,12 @@ begin
     Result := FIntCurlAuthenticationFileLines;
 end;
 
-function TJson2PumlInputHandler.GetCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
+function tJson2PumlInputHandler.GetCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
 begin
   Result := ConverterInputList.CurlMappingParameterList;
 end;
 
-function TJson2PumlInputHandler.GetCurlParameterFileLines: TStrings;
+function tJson2PumlInputHandler.GetCurlParameterFileLines: tStrings;
 begin
   if Assigned (FCurlParameterFileLines) then
     Result := FCurlParameterFileLines
@@ -989,12 +987,12 @@ begin
     Result := FIntCurlParameterFileLines;
 end;
 
-function TJson2PumlInputHandler.GetCurrentApplicationVersion: string;
+function tJson2PumlInputHandler.GetCurrentApplicationVersion: string;
 begin
   Result := Format ('%s v%s', [ApplicationType.ApplicationName, cCurrentVersion]);
 end;
 
-function TJson2PumlInputHandler.GetCurrentConfigurationFileName: string;
+function tJson2PumlInputHandler.GetCurrentConfigurationFileName: string;
 begin
   if not CmdLineParameter.ConfigurationFileName.IsEmpty then
     Result := CmdLineParameter.ConfigurationFileName
@@ -1002,7 +1000,7 @@ begin
     Result := CmdLineParameter.ConfigurationFileNameEnvironment;
 end;
 
-function TJson2PumlInputHandler.GetCurrentCurlAuthenticationFileName: string;
+function tJson2PumlInputHandler.GetCurrentCurlAuthenticationFileName: string;
 begin
   if not CmdLineParameter.CurlAuthenticationFileName.IsEmpty then
     Result := CmdLineParameter.CurlAuthenticationFileName
@@ -1012,7 +1010,7 @@ begin
     Result := CmdLineParameter.CurlAuthenticationFileNameEnvironment;
 end;
 
-function TJson2PumlInputHandler.GetCurrentCurlSpanIdHeader: string;
+function tJson2PumlInputHandler.GetCurrentCurlSpanIdHeader: string;
 begin
   if not ConverterInputList.CurlSpanIdHeader.IsEmpty then
     Result := ConverterInputList.CurlSpanIdHeader
@@ -1020,7 +1018,7 @@ begin
     Result := GlobalConfigurationDefinition.CurlSpanIdHeader;
 end;
 
-function TJson2PumlInputHandler.GetCurrentCurlTraceIdHeader: string;
+function tJson2PumlInputHandler.GetCurrentCurlTraceIdHeader: string;
 begin
   if not ConverterInputList.CurlTraceIdHeader.IsEmpty then
     Result := ConverterInputList.CurlTraceIdHeader
@@ -1028,7 +1026,7 @@ begin
     Result := GlobalConfigurationDefinition.CurlTraceIdHeader;
 end;
 
-function TJson2PumlInputHandler.GetCurrentCurlUserAgentInformation: string;
+function tJson2PumlInputHandler.GetCurrentCurlUserAgentInformation: string;
 begin
   if not ConverterInputList.CurlUserAgentInformation.IsEmpty then
     Result := ConverterInputList.CurlUserAgentInformation
@@ -1038,7 +1036,7 @@ begin
     Result := Format ('%s - %s', [CurrentApplicationVersion, ExtractFileName(CurrentInputListFileName)]).Trim;
 end;
 
-function TJson2PumlInputHandler.GetCurrentDefinitionFileName: string;
+function tJson2PumlInputHandler.GetCurrentDefinitionFileName: string;
 begin
   if not CmdLineParameter.DefinitionFileName.IsEmpty then
     Result := CmdLineParameter.DefinitionFileName
@@ -1052,7 +1050,7 @@ begin
     Result := CmdLineParameter.DefinitionFileNameEnvironment;
 end;
 
-function TJson2PumlInputHandler.GetCurrentDetail: string;
+function tJson2PumlInputHandler.GetCurrentDetail: string;
 begin
   if not CmdLineParameter.Detail.IsEmpty then
     Result := CmdLineParameter.Detail
@@ -1062,13 +1060,13 @@ begin
     Result := ConverterInputList.Detail;
 end;
 
-function TJson2PumlInputHandler.GetCurrentFullOutputPath: string;
+function tJson2PumlInputHandler.GetCurrentFullOutputPath: string;
 begin
   Result := CurrentOutputPath;
   Result := PathCombineIfRelative (BaseOutputPath, Result);
 end;
 
-function TJson2PumlInputHandler.GetCurrentGroup: string;
+function tJson2PumlInputHandler.GetCurrentGroup: string;
 begin
   if not CmdLineParameter.Group.IsEmpty then
     Result := CmdLineParameter.Group
@@ -1078,7 +1076,7 @@ begin
     Result := ConverterInputList.Group;
 end;
 
-function TJson2PumlInputHandler.GetCurrentInputListFileName: string;
+function tJson2PumlInputHandler.GetCurrentInputListFileName: string;
 begin
   if not CmdLineParameter.InputListFileName.IsEmpty then
     Result := CmdLineParameter.InputListFileName
@@ -1086,7 +1084,7 @@ begin
     Result := ParameterDefinition.InputListFileNameExpanded;
 end;
 
-function TJson2PumlInputHandler.GetCurrentJavaRuntimeParameter: string;
+function tJson2PumlInputHandler.GetCurrentJavaRuntimeParameter: string;
 begin
   if not CmdLineParameter.JavaRuntimeParameter.IsEmpty then
     Result := CmdLineParameter.JavaRuntimeParameter
@@ -1094,7 +1092,7 @@ begin
     Result := GlobalConfiguration.JavaRuntimeParameter;
 end;
 
-function TJson2PumlInputHandler.GetCurrentJobDescription: string;
+function tJson2PumlInputHandler.GetCurrentJobDescription: string;
 begin
   if not CmdLineParameter.JobDescription.IsEmpty then
     Result := CmdLineParameter.JobDescription
@@ -1106,7 +1104,7 @@ begin
     Result := '';
 end;
 
-function TJson2PumlInputHandler.GetCurrentJobName: string;
+function tJson2PumlInputHandler.GetCurrentJobName: string;
 begin
   if not CmdLineParameter.JobName.IsEmpty then
     Result := CmdLineParameter.JobName
@@ -1120,7 +1118,7 @@ begin
     Result := '';
 end;
 
-function TJson2PumlInputHandler.GetCurrentOption: string;
+function tJson2PumlInputHandler.GetCurrentOption: string;
 begin
   if OptionFileDefinition.IsFilled then
     if OptionFileDefinition.OptionName.IsEmpty then
@@ -1133,7 +1131,7 @@ begin
     Result := ConverterDefinitionGroup.DefaultOption;
 end;
 
-function TJson2PumlInputHandler.GetCurrentOutputFormats: tJson2PumlOutputFormats;
+function tJson2PumlInputHandler.GetCurrentOutputFormats: tJson2PumlOutputFormats;
 begin
   if not (CmdLineParameter.OutputFormats = []) then
     Result := CmdLineParameter.OutputFormats
@@ -1145,7 +1143,7 @@ begin
     Result := [jofSvg];
 end;
 
-function TJson2PumlInputHandler.GetCurrentOutputPath: string;
+function tJson2PumlInputHandler.GetCurrentOutputPath: string;
 var
   Dir: string;
 begin
@@ -1170,7 +1168,7 @@ begin
   Result := ReplaceCurlParameterValues (Result, False);
 end;
 
-function TJson2PumlInputHandler.GetCurrentOutputSuffix: string;
+function tJson2PumlInputHandler.GetCurrentOutputSuffix: string;
 begin
   if not (CmdLineParameter.OutputSuffix.IsEmpty) then
     Result := CmdLineParameter.OutputSuffix
@@ -1182,7 +1180,7 @@ begin
     Result := '';
 end;
 
-function TJson2PumlInputHandler.GetCurrentPlantUmlJarFileName: string;
+function tJson2PumlInputHandler.GetCurrentPlantUmlJarFileName: string;
 begin
   if not CmdLineParameter.PlantUmlJarFileName.IsEmpty then
     Result := CmdLineParameter.PlantUmlJarFileName
@@ -1190,7 +1188,7 @@ begin
     Result := GlobalConfiguration.PlantUmlJarFileName;
 end;
 
-function TJson2PumlInputHandler.GetCurrentPlantUmlRuntimeParameter: string;
+function tJson2PumlInputHandler.GetCurrentPlantUmlRuntimeParameter: string;
 begin
   if not CmdLineParameter.PlantUmlRuntimeParameter.IsEmpty then
     Result := CmdLineParameter.PlantUmlRuntimeParameter
@@ -1198,7 +1196,7 @@ begin
     Result := GlobalConfiguration.PlantUmlRuntimeParameter;
 end;
 
-function TJson2PumlInputHandler.GetCurrentSummaryFileName: string;
+function tJson2PumlInputHandler.GetCurrentSummaryFileName: string;
 begin
   if not CmdLineParameter.SummaryFileName.IsEmpty then
     Result := CmdLineParameter.SummaryFileName
@@ -1208,7 +1206,7 @@ begin
     Result := 'summary';
 end;
 
-function TJson2PumlInputHandler.GetDefinedOption: string;
+function tJson2PumlInputHandler.GetDefinedOption: string;
 begin
   if not CmdLineParameter.Option.IsEmpty then
     Result := CmdLineParameter.Option
@@ -1220,7 +1218,7 @@ begin
     Result := ConverterDefinitionGroup.DefaultOption;
 end;
 
-function TJson2PumlInputHandler.GetDefinitionLines: TStrings;
+function tJson2PumlInputHandler.GetDefinitionLines: tStrings;
 begin
   if Assigned (FDefinitionLines) then
     Result := FDefinitionLines
@@ -1228,7 +1226,7 @@ begin
     Result := FIntDefinitionLines;
 end;
 
-procedure TJson2PumlInputHandler.GetFileNameExtension (iFileName, iNewFileExtension: string;
+procedure tJson2PumlInputHandler.GetFileNameExtension (iFileName, iNewFileExtension: string;
   var oFileNameExtension: string; var oFileFormat: tJson2PumlOutputFormat);
 begin
   oFileNameExtension := iNewFileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
@@ -1239,12 +1237,12 @@ begin
   oFileFormat.FromString (oFileNameExtension);
 end;
 
-function TJson2PumlInputHandler.GetGenerateDetails: Boolean;
+function tJson2PumlInputHandler.GetGenerateDetails: Boolean;
 begin
   Result := StringToBoolean (GenerateDetailsStr, False);
 end;
 
-function TJson2PumlInputHandler.GetGenerateDetailsStr: string;
+function tJson2PumlInputHandler.GetGenerateDetailsStr: string;
 begin
   if not CmdLineParameter.GenerateDetailsStr.IsEmpty then
     Result := CmdLineParameter.GenerateDetailsStr
@@ -1254,12 +1252,12 @@ begin
     Result := ConverterInputList.GenerateDetailsStr;
 end;
 
-function TJson2PumlInputHandler.GetGenerateSummary: Boolean;
+function tJson2PumlInputHandler.GetGenerateSummary: Boolean;
 begin
   Result := StringToBoolean (GenerateSummaryStr, False);
 end;
 
-function TJson2PumlInputHandler.GetGenerateSummaryStr: string;
+function tJson2PumlInputHandler.GetGenerateSummaryStr: string;
 begin
   if not CmdLineParameter.GenerateSummaryStr.IsEmpty then
     Result := CmdLineParameter.GenerateSummaryStr
@@ -1269,12 +1267,12 @@ begin
     Result := ConverterInputList.GenerateSummaryStr;
 end;
 
-function TJson2PumlInputHandler.GetHandlerRecord (index: Integer): TJson2PumlInputHandlerRecord;
+function tJson2PumlInputHandler.GetHandlerRecord (index: integer): tJson2PumlInputHandlerRecord;
 begin
-  Result := TJson2PumlInputHandlerRecord (HandlerRecordList.Objects[index]);
+  Result := tJson2PumlInputHandlerRecord (HandlerRecordList.Objects[index]);
 end;
 
-function TJson2PumlInputHandler.GetInputListLines: TStrings;
+function tJson2PumlInputHandler.GetInputListLines: tStrings;
 begin
   if Assigned (FInputListLines) then
     Result := FInputListLines
@@ -1282,7 +1280,7 @@ begin
     Result := FIntInputListLines;
 end;
 
-function TJson2PumlInputHandler.GetOptionFileLines: TStrings;
+function tJson2PumlInputHandler.GetOptionFileLines: tStrings;
 begin
   if Assigned (FOptionFileLines) then
     Result := FOptionFileLines
@@ -1290,7 +1288,7 @@ begin
     Result := FIntOptionFileLines;
 end;
 
-function TJson2PumlInputHandler.GetParameterFileLines: TStrings;
+function tJson2PumlInputHandler.GetParameterFileLines: tStrings;
 begin
   if Assigned (FParameterFileLines) then
     Result := FParameterFileLines
@@ -1298,7 +1296,7 @@ begin
     Result := FIntParameterFileLines;
 end;
 
-function TJson2PumlInputHandler.GetServerResultLines: TStrings;
+function tJson2PumlInputHandler.GetServerResultLines: tStrings;
 begin
   if Assigned (FServerResultLines) then
     Result := FServerResultLines
@@ -1306,12 +1304,12 @@ begin
     Result := FIntServerResultLines;
 end;
 
-function TJson2PumlInputHandler.IsConverting: Boolean;
+function tJson2PumlInputHandler.IsConverting: Boolean;
 begin
   Result := FLoadFileCnt > 0;
 end;
 
-function TJson2PumlInputHandler.LoadConfigurationFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadConfigurationFile (iFileName: string = ''): Boolean;
 begin
   if not iFileName.IsEmpty then
     CmdLineParameter.ConfigurationFileName := iFileName;
@@ -1319,7 +1317,7 @@ begin
     tJson2PumlGlobalDefinition, ParseConfigurationFile, False);
 end;
 
-function TJson2PumlInputHandler.LoadCurlAuthenticationFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadCurlAuthenticationFile (iFileName: string = ''): Boolean;
 begin
   if not iFileName.IsEmpty then
     CmdLineParameter.CurlAuthenticationFileName := iFileName;
@@ -1327,7 +1325,7 @@ begin
     tJson2PumlCurlAuthenticationList, nil, False);
 end;
 
-function TJson2PumlInputHandler.LoadCurlParameterFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadCurlParameterFile (iFileName: string = ''): Boolean;
 begin
   if not iFileName.IsEmpty then
     CmdLineParameter.CurlParameterFileName := iFileName;
@@ -1335,7 +1333,7 @@ begin
     tJson2PumlCurlParameterList, nil, False);
 end;
 
-function TJson2PumlInputHandler.LoadDefinitionFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadDefinitionFile (iFileName: string = ''): Boolean;
 var
   Filename: string;
 begin
@@ -1358,7 +1356,7 @@ begin
     nil, true);
 end;
 
-procedure TJson2PumlInputHandler.LoadDefinitionFiles;
+procedure tJson2PumlInputHandler.LoadDefinitionFiles;
 begin
   BeginLoadFile;
   try
@@ -1376,8 +1374,8 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.LoadFileToStringList (iFileList: TStrings; iFileName, iFileDescription: string;
-  iClass: tJson2PumlBaseObjectClass; iParseProcedure: TJson2PumlInputHandlerParseFileEvent;
+function tJson2PumlInputHandler.LoadFileToStringList (iFileList: tStrings; iFileName, iFileDescription: string;
+  iClass: tJson2PumlBaseObjectClass; iParseProcedure: tJson2PumlInputHandlerParseFileEvent;
   iMandatory: Boolean): Boolean;
 var
   Filename: string;
@@ -1414,7 +1412,7 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.LoadInputFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadInputFile (iFileName: string = ''): Boolean;
 begin
   if not iFileName.IsEmpty then
     CmdLineParameter.InputFileName := iFileName;
@@ -1426,7 +1424,7 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.LoadInputListFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadInputListFile (iFileName: string = ''): Boolean;
 var
   Filename: string;
 begin
@@ -1442,7 +1440,7 @@ begin
     ParseInputListFile, False);
 end;
 
-function TJson2PumlInputHandler.LoadOptionFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadOptionFile (iFileName: string = ''): Boolean;
 begin
   if not iFileName.IsEmpty then
     CmdLineParameter.OptionFileName := iFileName;
@@ -1450,7 +1448,7 @@ begin
     tJson2PumlConverterDefinition, nil, False);
 end;
 
-function TJson2PumlInputHandler.LoadParameterFile (iFileName: string = ''): Boolean;
+function tJson2PumlInputHandler.LoadParameterFile (iFileName: string = ''): Boolean;
 begin
   if not CmdLineParameter.ParameterFileContent.IsEmpty then
   begin
@@ -1467,19 +1465,19 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.OnFilterLogItem (aLogItem: TLogItem): Boolean;
+function tJson2PumlInputHandler.OnFilterLogItem (aLogItem: tLogItem): Boolean;
 begin
   Result := aLogItem.ThreadID = CurThreadId;
 end;
 
-procedure TJson2PumlInputHandler.ParseConfigurationFile;
+procedure tJson2PumlInputHandler.ParseConfigurationFile;
 begin
   if not GlobalConfiguration.ReadFromJson (ConfigurationFileLines.Text, CurrentConfigurationFileName) then
     if not ConfigurationFileLines.Text.IsEmpty then
       GlobalLoghandler.Error (jetFailedParsingFile, ['configuration', CurrentConfigurationFileName]);
 end;
 
-procedure TJson2PumlInputHandler.ParseDefintions;
+procedure tJson2PumlInputHandler.ParseDefintions;
 var
   Parameter: tJson2PumlFileDescriptionParameterDefinition;
 begin
@@ -1513,25 +1511,25 @@ begin
         CurlParameterList.AddParameter (Parameter.Name, Parameter.DefaultValue);
 end;
 
-procedure TJson2PumlInputHandler.ParseInputListFile;
+procedure tJson2PumlInputHandler.ParseInputListFile;
 begin
   if not ConverterInputList.ReadFromJson (InputListLines.Text, CmdLineParameter.InputListFileName) then
     if not InputListLines.Text.IsEmpty then
       GlobalLoghandler.Error (jetFailedParsingFile, ['input list', CmdLineParameter.InputListFileName]);
 end;
 
-procedure TJson2PumlInputHandler.ParseParameterFile;
+procedure tJson2PumlInputHandler.ParseParameterFile;
 begin
   if not ParameterDefinition.ReadFromJson (ParameterFileLines.Text, CmdLineParameter.ParameterFileName) then
     if not ParameterFileLines.Text.IsEmpty then
       GlobalLoghandler.Error (jetFailedParsingFile, ['parameter', CmdLineParameter.ParameterFileName]);
 end;
 
-procedure TJson2PumlInputHandler.RecreateAllRecords;
+procedure tJson2PumlInputHandler.RecreateAllRecords;
 var
   ParameterInputFile: tJson2PumlParameterInputFileDefinition;
   Filename: string;
-  Lines: TStrings;
+  Lines: tStrings;
 begin
   ParseDefintions;
   ConverterInputList.AddInputFileCommandLine (CmdLineParameter.InputFileName, CmdLineParameter.InputFileName,
@@ -1578,7 +1576,7 @@ begin
   end;
 end;
 
-procedure TJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2PumlBaseListClass);
+procedure tJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2PumlBaseListClass);
 var
   FileList: TStringList;
   Definition: tJson2PumlBaseList;
@@ -1598,7 +1596,7 @@ begin
   end;
 end;
 
-procedure TJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2PumlBaseObjectClass);
+procedure tJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2PumlBaseObjectClass);
 var
   FileList: TStringList;
   Definition: tJson2PumlBaseObject;
@@ -1619,12 +1617,12 @@ begin
   end;
 end;
 
-function TJson2PumlInputHandler.ReplaceCurlParameterValues (const iValue: string; iCleanUnused: Boolean): string;
+function tJson2PumlInputHandler.ReplaceCurlParameterValues (const iValue: string; iCleanUnused: Boolean): string;
 begin
   Result := TCurlUtils.ReplaceCurlParameterValues (iValue, CurlParameterList, CurlMappingParameterList, iCleanUnused);
 end;
 
-function TJson2PumlInputHandler.ReplaceFileNameVariables (iReplace, iFileName, iOption: string): string;
+function tJson2PumlInputHandler.ReplaceFileNameVariables (iReplace, iFileName, iOption: string): string;
 begin
   Result := iReplace.Replace (jfnrGroup.ToString, CurrentGroup, [rfIgnoreCase, rfReplaceAll])
     .Replace (jfnrOption.ToString, iOption, [rfIgnoreCase, rfReplaceAll]).Replace (jfnrDetail.ToString, CurrentDetail,
@@ -1639,20 +1637,20 @@ begin
   Result := Result.TrimRight (tpath.DirectorySeparatorChar);
 end;
 
-procedure TJson2PumlInputHandler.SetFileLoading (iLoading, iAutoStartConvert: Boolean);
+procedure tJson2PumlInputHandler.SetFileLoading (iLoading, iAutoStartConvert: Boolean);
 begin
   if not iLoading then
     if iAutoStartConvert then
       RecreateAllRecords;
 end;
 
-procedure TJson2PumlInputHandler.SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);
+procedure tJson2PumlInputHandler.SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);
 begin
   FOnNotifyChange := Value;
   ConverterInputList.OnNotifyChange := Value;
 end;
 
-function TJson2PumlInputHandler.ValidateCurrentOptions: Boolean;
+function tJson2PumlInputHandler.ValidateCurrentOptions: Boolean;
 
   procedure log (iName, iValue: string);
   begin

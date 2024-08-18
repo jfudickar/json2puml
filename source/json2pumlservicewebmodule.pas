@@ -38,23 +38,23 @@ type
   strict private
   protected
   public
-    procedure Debug(const aMessage: string; const aTag: string); overload;
-    procedure Debug(const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
-    procedure DebugFmt(const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
-    procedure Error(const aMessage: string; const aTag: string); overload;
-    procedure Error(const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
-    procedure ErrorFmt(const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
-    procedure Info(const aMessage: string; const aTag: string); overload;
-    procedure Info(const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
-    procedure InfoFmt(const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
-    procedure Log(const aType: TLogType; const aMessage: string; const aTag: string); overload;
-    procedure Log(const aType: TLogType; const aMessage: string; const aParams: array of const; const aTag: string);
-        overload;
-    procedure LogFmt(const aType: TLogType; const aMessage: string; const aParams: array of const; const aTag: string);
-        deprecated;
-    procedure Warn(const aMessage: string; const aTag: string); overload;
-    procedure Warn(const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
-    procedure WarnFmt(const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
+    procedure Debug (const aMessage: string; const aTag: string); overload;
+    procedure Debug (const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
+    procedure DebugFmt (const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
+    procedure Error (const aMessage: string; const aTag: string); overload;
+    procedure Error (const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
+    procedure ErrorFmt (const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
+    procedure Info (const aMessage: string; const aTag: string); overload;
+    procedure Info (const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
+    procedure InfoFmt (const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
+    procedure Log (const aType: TLogType; const aMessage: string; const aTag: string); overload;
+    procedure Log (const aType: TLogType; const aMessage: string; const aParams: array of const;
+      const aTag: string); overload;
+    procedure LogFmt (const aType: TLogType; const aMessage: string; const aParams: array of const; const aTag: string);
+      deprecated;
+    procedure Warn (const aMessage: string; const aTag: string); overload;
+    procedure Warn (const aMessage: string; const aParams: array of TVarRec; const aTag: string); overload;
+    procedure WarnFmt (const aMessage: string; const aParams: array of TVarRec; const aTag: string); deprecated;
   end;
 
   TJson2PumlWebModule = class(TWebModule)
@@ -83,11 +83,17 @@ uses json2pumlservicecontroller,
     MVCFramework.Middleware.Trace,
     MVCFramework.Middleware.CORS,
     MVCFramework.Middleware.ETag,
-    MVCFramework.Middleware.Compression*) , json2pumlloghandler;
+    MVCFramework.Middleware.Compression*) , json2pumlloghandler,
+  MVCFramework.Logger;
+
+function GetLogger: ILogWriter;
+begin
+  // Result := BuildLogWriter([TJson2PumlLoggerProLogWriter.Create], nil, TLogType.Debug);
+end;
 
 procedure TJson2PumlWebModule.WebModuleCreate (Sender: TObject);
 begin
-  FLogWriter := TJson2PumlLoggerProLogWriter.Create;
+  // SetDefaultLogger(GetLogger);
   FMVC := TMVCEngine.Create (Self,
     procedure(Config: TMVCConfig)
     begin
@@ -115,7 +121,7 @@ begin
       Config[TMVCConfigKey.MaxRequestSize] := IntToStr(TMVCConstants.DEFAULT_MAX_REQUEST_SIZE);
       // Server Name
       Config[TMVCConfigKey.ServerName] := 'JSON2PUML Server';
-    end, FLogWriter);
+    end);
   FMVC.AddController (TJson2PumlController);
 
 
@@ -149,96 +155,100 @@ begin
   FLogWriter.Free;
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Debug(const aMessage: string; const aTag: string);
+procedure TJson2PumlLoggerProLogWriter.Debug (const aMessage: string; const aTag: string);
 begin
-  GlobalLogHandler.Debug(aMessage, aTag);
+  GlobalLogHandler.Debug (aMessage, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Debug(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.Debug (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Debug(aMessage, aParams, aTag);
+  GlobalLogHandler.Debug (aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.DebugFmt(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.DebugFmt (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Debug(aMessage, aParams, aTag);
+  GlobalLogHandler.Debug (aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Error(const aMessage: string; const aTag: string);
+procedure TJson2PumlLoggerProLogWriter.Error (const aMessage: string; const aTag: string);
 begin
-  GlobalLogHandler.Error(aMessage, aTag);
+  GlobalLogHandler.Error (aMessage, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Error(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.Error (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Error(aMessage, aParams, aTag);
+  GlobalLogHandler.Error (aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.ErrorFmt(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.ErrorFmt (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Error(aMessage, aParams, aTag);
+  GlobalLogHandler.Error (aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Info(const aMessage: string; const aTag: string);
+procedure TJson2PumlLoggerProLogWriter.Info (const aMessage: string; const aTag: string);
 begin
-  GlobalLogHandler.Info(aMessage, aTag);
+  GlobalLogHandler.Info (aMessage, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Info(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.Info (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Info(aMessage, aParams, aTag);
+  GlobalLogHandler.Info (aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.InfoFmt(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.InfoFmt (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Info(aMessage, aParams, aTag);
+  GlobalLogHandler.Info (aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Log(const aType: TLogType; const aMessage: string; const aTag: string);
+procedure TJson2PumlLoggerProLogWriter.Log (const aType: TLogType; const aMessage: string; const aTag: string);
 begin
   Log (aType, aMessage, [], aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Log(const aType: TLogType; const aMessage: string; const aParams: array of
-    const; const aTag: string);
+procedure TJson2PumlLoggerProLogWriter.Log (const aType: TLogType; const aMessage: string;
+const aParams: array of const; const aTag: string);
 begin
   case aType of
-    TLogType.Debug: GlobalLogHandler.Debug(aMessage, aParams, aTag);
-    TLogType.Info: GlobalLogHandler.Info(aMessage, aParams, aTag);
-    TLogType.Warning: GlobalLogHandler.Warn(aMessage, aParams, aTag);
-    TLogType.Error: GlobalLogHandler.Error(aMessage, aParams, aTag);
-  else
-    GlobalLogHandler.Info(aMessage, aParams, aTag);
+    TLogType.Debug:
+      GlobalLogHandler.Debug (aMessage, aParams, aTag);
+    TLogType.Info:
+      GlobalLogHandler.Info (aMessage, aParams, aTag);
+    TLogType.Warning:
+      GlobalLogHandler.Warn (aMessage, aParams, aTag);
+    TLogType.Error:
+      GlobalLogHandler.Error (aMessage, aParams, aTag);
+    else
+      GlobalLogHandler.Info (aMessage, aParams, aTag);
   end;
 end;
 
-procedure TJson2PumlLoggerProLogWriter.LogFmt(const aType: TLogType; const aMessage: string; const aParams: array of
-    const; const aTag: string);
+procedure TJson2PumlLoggerProLogWriter.LogFmt (const aType: TLogType; const aMessage: string;
+const aParams: array of const; const aTag: string);
 begin
   Log (aType, aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Warn(const aMessage: string; const aTag: string);
+procedure TJson2PumlLoggerProLogWriter.Warn (const aMessage: string; const aTag: string);
 begin
-  GlobalLogHandler.Warn(aMessage, aTag);
+  GlobalLogHandler.Warn (aMessage, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.Warn(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.Warn (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Warn(aMessage, aParams, aTag);
+  GlobalLogHandler.Warn (aMessage, aParams, aTag);
 end;
 
-procedure TJson2PumlLoggerProLogWriter.WarnFmt(const aMessage: string; const aParams: array of TVarRec; const aTag:
-    string);
+procedure TJson2PumlLoggerProLogWriter.WarnFmt (const aMessage: string; const aParams: array of TVarRec;
+const aTag: string);
 begin
-  GlobalLogHandler.Warn(aMessage, aParams, aTag);
+  GlobalLogHandler.Warn (aMessage, aParams, aTag);
 end;
 
 end.

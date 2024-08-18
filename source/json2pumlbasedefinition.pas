@@ -26,7 +26,8 @@ unit json2pumlbasedefinition;
 
 interface
 
-uses System.JSON, System.Classes, json2pumlconst, Quick.Logger;
+uses
+  System.JSON, System.Classes, json2pumlconst, Quick.Logger;
 
 type
   tJson2PumlPropertySearchMatchType = (psmExactExact, psmExact, psmMatchMatch, psmMatch, psmExcludeExclude, psmExclude,
@@ -36,8 +37,8 @@ type
 
   tJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
     : string of object;
-  tJson2PumlNotifyChangeEvent = procedure(Sender: TObject; ChangeType: tJson2PumlNotifyChangeType; ProgressValue,
-      ProgressMaxValue: Integer; ProgressInfo: string = '') of object;
+  tJson2PumlNotifyChangeEvent = procedure(Sender: tObject; ChangeType: tJson2PumlNotifyChangeType;
+    ProgressValue, ProgressMaxValue: integer; ProgressInfo: string = '') of object;
 
   tJson2PumlOutputFormatHelper = record helper for tJson2PumlOutputFormat
     function FileExtension (iLeadingSeparator: boolean = false): string;
@@ -80,10 +81,10 @@ type
     function Errorcode: string;
     function ErrorDescription: string;
     function ErrorMessage: string;
-    function EventType: TEventType;
+    function EventType: tEventType;
     function Failed: boolean;
-    function HttpStatusCode: Integer;
-    procedure RenderErrorResponse (oJson: TStringList; iLevel: Integer; iErrorMessage: string = '');
+    function HttpStatusCode: integer;
+    procedure RenderErrorResponse (oJson: tStringList; iLevel: integer; iErrorMessage: string = '');
   end;
 
   tJson2PumlBaseObject = class(tPersistent)
@@ -96,7 +97,7 @@ type
     function GetIsFilled: boolean; virtual;
     function GetIsValid: boolean; virtual;
     function JsonAttributeValue (iPropertyName, iValue: string; iValueQuotes: boolean = true): string;
-    function JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;
+    function JsonAttributeValueList (iPropertyName: string; iValueList: tStringList): string;
     function MergeValue (iValue, iNewValue: string): string;
     procedure SetSourceFileName (const Value: string); virtual;
   public
@@ -106,10 +107,10 @@ type
     function Clone: tJson2PumlBaseObject; virtual;
     procedure MergeWith (iMergeDefinition: tJson2PumlBaseObject); virtual;
     function ReadFromJson (iJson, iFileName: string): boolean; overload; virtual;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; overload; virtual;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; overload; virtual;
     function ReadFromJsonFile (iFileName: string): boolean; virtual;
-    function SaveToFile (iJsonLines: TStrings; iFileName: string; iWriteEmpty: boolean = false): boolean;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    function SaveToFile (iJsonLines: tStrings; iFileName: string; iWriteEmpty: boolean = false): boolean;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); virtual;
     procedure WriteToJsonFile (iFileName: string; iWriteEmpty: boolean = false); virtual;
     property Ident: string read GetIdent;
@@ -121,83 +122,83 @@ type
 
   tJson2PumlBaseList = class(tJson2PumlBaseObject)
   private
-    FItemList: TStringList;
-    function GetBaseObject (Index: Integer): tJson2PumlBaseObject;
-    function GetCount: Integer;
-    function GetDuplicates: TDuplicates;
-    function GetNames (Index: Integer): string;
-    function GetObjects (Index: Integer): TObject;
+    FItemList: tStringList;
+    function GetBaseObject (Index: integer): tJson2PumlBaseObject;
+    function GetCount: integer;
+    function GetDuplicates: tDuplicates;
+    function GetNames (Index: integer): string;
+    function GetObjects (Index: integer): tObject;
     function GetOwnsObjects: boolean;
     function GetSorted: boolean;
-    function GetStrings (Index: Integer): string;
+    function GetStrings (Index: integer): string;
     function GetText: string;
-    function GetValueFromIndex (Index: Integer): string;
-    procedure SetDuplicates (const Value: TDuplicates);
-    procedure SetObjects (Index: Integer; const Value: TObject);
+    function GetValueFromIndex (Index: integer): string;
+    procedure SetDuplicates (const Value: tDuplicates);
+    procedure SetObjects (Index: integer; const Value: tObject);
     procedure SetOwnsObjects (const Value: boolean);
     procedure SetSorted (const Value: boolean);
-    procedure SetStrings (Index: Integer; const Value: string);
+    procedure SetStrings (Index: integer; const Value: string);
     procedure SetText (const Value: string);
   protected
     function CreateListValueObject: tJson2PumlBaseObject; virtual;
     function GetIdent: string; override;
     function GetIsFilled: boolean; override;
-    procedure ReadListValueFromJson (iJsonValue: TJSONValue); virtual;
+    procedure ReadListValueFromJson (iJsonValue: tJSONValue); virtual;
     procedure SetSourceFileName (const Value: string); override;
-    property BaseObject[index: Integer]: tJson2PumlBaseObject read GetBaseObject;
-    property ValueFromIndex[index: Integer]: string read GetValueFromIndex;
+    property BaseObject[index: integer]: tJson2PumlBaseObject read GetBaseObject;
+    property ValueFromIndex[index: integer]: string read GetValueFromIndex;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure AddBaseObject (iBaseObject: tJson2PumlBaseObject);
-    function AddObject (const S: string; AObject: TObject): Integer;
+    function AddObject (const S: string; AObject: tObject): integer;
     procedure Assign (Source: tPersistent); override;
     procedure Clear; override;
-    procedure Delete (Index: Integer);
-    function IndexOf (S: string): Integer;
-    function IndexOfName (S: string): Integer;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; overload; override;
+    procedure Delete (Index: integer);
+    function IndexOf (S: string): integer;
+    function IndexOfName (S: string): integer;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; overload; override;
     procedure Sort;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
-    procedure WriteToJsonItem (oJsonOutPut: TStrings; iPropertyName: string; iIndex, iLevel: Integer;
+    procedure WriteToJsonItem (oJsonOutPut: tStrings; iPropertyName: string; iIndex, iLevel: integer;
       iWriteEmpty: boolean = false); virtual;
-    property Count: Integer read GetCount;
-    property Duplicates: TDuplicates read GetDuplicates write SetDuplicates;
-    property ItemList: TStringList read FItemList;
-    property Names[index: Integer]: string read GetNames;
-    property Objects[index: Integer]: TObject read GetObjects write SetObjects;
+    property Count: integer read GetCount;
+    property Duplicates: tDuplicates read GetDuplicates write SetDuplicates;
+    property ItemList: tStringList read FItemList;
+    property Names[index: integer]: string read GetNames;
+    property Objects[index: integer]: tObject read GetObjects write SetObjects;
     property OwnsObjects: boolean read GetOwnsObjects write SetOwnsObjects;
     property Sorted: boolean read GetSorted write SetSorted;
-    property Strings[index: Integer]: string read GetStrings write SetStrings; default;
+    property Strings[index: integer]: string read GetStrings write SetStrings; default;
     property Text: string read GetText write SetText;
   end;
 
-  tJson2PumlBasePropertyListEntry = class(TObject)
+  tJson2PumlBasePropertyListEntry = class(tObject)
   private
     FFoundCondition: string;
-    FPropertyIndex: Integer;
+    FPropertyIndex: integer;
   protected
   public
     constructor Create;
     property FoundCondition: string read FFoundCondition write FFoundCondition;
-    property PropertyIndex: Integer read FPropertyIndex write FPropertyIndex default - 1;
+    property PropertyIndex: integer read FPropertyIndex write FPropertyIndex default - 1;
   end;
 
-  tJson2PumlBasePropertyListCache = class(TObject)
+  tJson2PumlBasePropertyListCache = class(tObject)
   private
-    FCacheList: TStringList;
+    FCacheList: tStringList;
   protected
-    property CacheList: TStringList read FCacheList;
+    property CacheList: tStringList read FCacheList;
     function CacheName (const iPropertyName, iParentPropertyName, iParentObjectType: string): string;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Clear;
     function GetCache (const iPropertyName, iParentPropertyName, iParentObjectType: string; var oFoundCondition: string;
-      var oPropertyIndex: Integer): boolean;
+      var oPropertyIndex: integer): boolean;
     procedure AddCache (const iPropertyName, iParentPropertyName, iParentObjectType, iFoundCondition: string;
-      iPropertyIndex: Integer);
+      iPropertyIndex: integer);
   end;
 
   tJson2PumlBasePropertyList = class(tJson2PumlBaseList)
@@ -209,7 +210,7 @@ type
     procedure SetSearchEmpyAsDefault (const Value: boolean);
   protected
     function GetIsValid: boolean; override;
-    procedure OnPropertyListChange (Sender: TObject);
+    procedure OnPropertyListChange (Sender: tObject);
     property PropertyCache: tJson2PumlBasePropertyListCache read FPropertyCache;
   public
     constructor Create; override;
@@ -218,7 +219,7 @@ type
       const iConfigurationPropertyName, iConfiguredValue, iSearchValue: string): string;
     procedure Clear; override;
     function IndexOfProperty (const iPropertyName, iParentPropertyName, iParentObjectType: string;
-      var oFoundCondition: string): Integer;
+      var oFoundCondition: string): integer;
     property ConfigurationPropertyName: string read FConfigurationPropertyName write FConfigurationPropertyName;
     property SearchEmpyAsDefault: boolean read FSearchEmpyAsDefault write SetSearchEmpyAsDefault default false;
     property UseMatch: boolean read FUseMatch write FUseMatch default false;
@@ -230,8 +231,7 @@ type
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks,
-  System.Generics.Collections;
+  System.SysUtils, System.IOUtils, json2pumltools, jsontools, System.Masks, System.Generics.Collections;
 
 function tJson2PumlOutputFormatHelper.FileExtension (iLeadingSeparator: boolean = false): string;
 begin
@@ -301,13 +301,13 @@ end;
 procedure tJson2PumlOutputFormatsHelper.FromString (aValue: string; iPumlOutputOnly: boolean;
   iSupportOutPutAll: boolean);
 var
-  TempList: TStringList;
+  TempList: tStringList;
   S: string;
   f: tJson2PumlOutputFormat;
   allFound: boolean;
 begin
   self := [];
-  TempList := TStringList.Create;
+  TempList := tStringList.Create;
   try
     TempList.LineBreak := ',';
     TempList.Text := aValue.ToLower;
@@ -421,9 +421,9 @@ begin
   Result := Format ('%s, ', [JsonPropertyNameValue(iPropertyName, iValue, iValueQuotes)]);
 end;
 
-function tJson2PumlBaseObject.JsonAttributeValueList (iPropertyName: string; iValueList: TStringList): string;
+function tJson2PumlBaseObject.JsonAttributeValueList (iPropertyName: string; iValueList: tStringList): string;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := '';
   if iPropertyName.IsEmpty or (iValueList.Count <= 0) then
@@ -453,13 +453,13 @@ end;
 
 function tJson2PumlBaseObject.ReadFromJson (iJson, iFileName: string): boolean;
 var
-  JsonValue: TJSONValue;
+  JsonValue: tJSONValue;
 begin
   Result := false;
   Clear;
   if iJson.IsEmpty then
     exit;
-  JsonValue := TJSONObject.ParseJSONValue (iJson) as TJSONValue;
+  JsonValue := tJSONObject.ParseJSONValue (iJson) as tJSONValue;
   if Assigned (JsonValue) then
     try
       SourceFileName := iFileName;
@@ -469,20 +469,20 @@ begin
     end;
 end;
 
-function tJson2PumlBaseObject.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlBaseObject.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 begin
   Result := false;
 end;
 
 function tJson2PumlBaseObject.ReadFromJsonFile (iFileName: string): boolean;
 var
-  Lines: TStringList;
+  Lines: tStringList;
 begin
   Result := false;
   Clear;
   if not FileExists (iFileName) then
     exit;
-  Lines := TStringList.Create;
+  Lines := tStringList.Create;
   try
     Lines.LoadFromFile (iFileName);
     Result := ReadFromJson (Lines.Text, iFileName);
@@ -491,7 +491,7 @@ begin
   end;
 end;
 
-function tJson2PumlBaseObject.SaveToFile (iJsonLines: TStrings; iFileName: string;
+function tJson2PumlBaseObject.SaveToFile (iJsonLines: tStrings; iFileName: string;
   iWriteEmpty: boolean = false): boolean;
 begin
   Result := ReadFromJson (iJsonLines.Text, SourceFileName);
@@ -510,7 +510,7 @@ begin
   FSourceFileNamePath := ExtractFilePath (FSourceFileName);
 end;
 
-procedure tJson2PumlBaseObject.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlBaseObject.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 begin
 
@@ -518,9 +518,9 @@ end;
 
 procedure tJson2PumlBaseObject.WriteToJsonFile (iFileName: string; iWriteEmpty: boolean = false);
 var
-  TempList: TStringList;
+  TempList: tStringList;
 begin
-  TempList := TStringList.Create;
+  TempList := tStringList.Create;
   try
     WriteToJson (TempList, '', 0, iWriteEmpty);
     TempList.SaveToFile (iFileName);
@@ -532,7 +532,7 @@ end;
 constructor tJson2PumlBaseList.Create;
 begin
   inherited Create;
-  FItemList := TStringList.Create ();
+  FItemList := tStringList.Create ();
   FItemList.OwnsObjects := true;
 end;
 
@@ -551,14 +551,14 @@ begin
       iBaseObject.Free;
 end;
 
-function tJson2PumlBaseList.AddObject (const S: string; AObject: TObject): Integer;
+function tJson2PumlBaseList.AddObject (const S: string; AObject: tObject): integer;
 begin
   Result := ItemList.AddObject (S, AObject);
 end;
 
 procedure tJson2PumlBaseList.Assign (Source: tPersistent);
 var
-  i: Integer;
+  i: integer;
 begin
   inherited Assign (Source);
   if Source is tJson2PumlBaseList then
@@ -587,14 +587,14 @@ begin
   Result := nil;
 end;
 
-procedure tJson2PumlBaseList.Delete (Index: Integer);
+procedure tJson2PumlBaseList.Delete (Index: integer);
 begin
   ItemList.Delete (index);
 end;
 
-function tJson2PumlBaseList.GetBaseObject (Index: Integer): tJson2PumlBaseObject;
+function tJson2PumlBaseList.GetBaseObject (Index: integer): tJson2PumlBaseObject;
 var
-  obj: TObject;
+  obj: tObject;
 begin
   obj := ItemList.Objects[index];
   if Assigned (obj) and (obj is tJson2PumlBaseObject) then
@@ -603,12 +603,12 @@ begin
     Result := nil;
 end;
 
-function tJson2PumlBaseList.GetCount: Integer;
+function tJson2PumlBaseList.GetCount: integer;
 begin
   Result := ItemList.Count;
 end;
 
-function tJson2PumlBaseList.GetDuplicates: TDuplicates;
+function tJson2PumlBaseList.GetDuplicates: tDuplicates;
 begin
   Result := ItemList.Duplicates;
 end;
@@ -620,7 +620,7 @@ end;
 
 function tJson2PumlBaseList.GetIsFilled: boolean;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := false;
   for i := 0 to Count - 1 do
@@ -632,12 +632,12 @@ begin
       end;
 end;
 
-function tJson2PumlBaseList.GetNames (Index: Integer): string;
+function tJson2PumlBaseList.GetNames (Index: integer): string;
 begin
   Result := ItemList.Names[index];
 end;
 
-function tJson2PumlBaseList.GetObjects (Index: Integer): TObject;
+function tJson2PumlBaseList.GetObjects (Index: integer): tObject;
 begin
   Result := ItemList.Objects[index];
 end;
@@ -652,7 +652,7 @@ begin
   Result := ItemList.Sorted;
 end;
 
-function tJson2PumlBaseList.GetStrings (Index: Integer): string;
+function tJson2PumlBaseList.GetStrings (Index: integer): string;
 begin
   Result := ItemList[index];
 end;
@@ -662,44 +662,44 @@ begin
   Result := ItemList.Text;
 end;
 
-function tJson2PumlBaseList.GetValueFromIndex (Index: Integer): string;
+function tJson2PumlBaseList.GetValueFromIndex (Index: integer): string;
 begin
   Result := ItemList.ValueFromIndex[index];
 end;
 
-function tJson2PumlBaseList.IndexOf (S: string): Integer;
+function tJson2PumlBaseList.IndexOf (S: string): integer;
 begin
   Result := ItemList.IndexOf (S);
 end;
 
-function tJson2PumlBaseList.IndexOfName (S: string): Integer;
+function tJson2PumlBaseList.IndexOfName (S: string): integer;
 begin
   Result := ItemList.IndexOfName (S);
 end;
 
-function tJson2PumlBaseList.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlBaseList.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 var
-  JsonValue: TJSONValue;
-  JsonArray: TJSONArray;
+  JsonValue: tJSONValue;
+  JsonArray: tJSONArray;
   Value: string;
-  i: Integer;
+  i: integer;
 begin
   Result := false;
   Clear;
   if not Assigned (iJsonValue) then
     exit;
-  if iJsonValue is TJSONArray then
-    JsonValue := TJSONArray (iJsonValue)
-  else if iJsonValue is TJSONObject then
-    JsonValue := TJSONObject (iJsonValue).Values[iPropertyName]
+  if iJsonValue is tJSONArray then
+    JsonValue := tJSONArray (iJsonValue)
+  else if iJsonValue is tJSONObject then
+    JsonValue := tJSONObject (iJsonValue).Values[iPropertyName]
   else
     exit;
   if not Assigned (JsonValue) then
     exit;
   Result := true;
-  if JsonValue is TJSONArray then
+  if JsonValue is tJSONArray then
   begin
-    JsonArray := TJSONArray (JsonValue);
+    JsonArray := tJSONArray (JsonValue);
     for i := 0 to JsonArray.Count - 1 do
     begin
       Value := '';
@@ -711,7 +711,7 @@ begin
     ReadListValueFromJson (JsonValue);
 end;
 
-procedure tJson2PumlBaseList.ReadListValueFromJson (iJsonValue: TJSONValue);
+procedure tJson2PumlBaseList.ReadListValueFromJson (iJsonValue: tJSONValue);
 var
   Value: string;
   ListValueObject: tJson2PumlBaseObject;
@@ -724,21 +724,21 @@ begin
     else
       ListValueObject.Free;
   end
-  else if iJsonValue is TJSONString then
+  else if iJsonValue is tJSONString then
   begin
-    Value := TJSONString (iJsonValue).Value;
+    Value := tJSONString (iJsonValue).Value;
     if (Value.IsEmpty) then
       exit;
     ItemList.add (Value);
   end
 end;
 
-procedure tJson2PumlBaseList.SetDuplicates (const Value: TDuplicates);
+procedure tJson2PumlBaseList.SetDuplicates (const Value: tDuplicates);
 begin
   ItemList.Duplicates := Value;
 end;
 
-procedure tJson2PumlBaseList.SetObjects (Index: Integer; const Value: TObject);
+procedure tJson2PumlBaseList.SetObjects (Index: integer; const Value: tObject);
 begin
   ItemList.Objects[index] := Value;
 end;
@@ -755,7 +755,7 @@ end;
 
 procedure tJson2PumlBaseList.SetSourceFileName (const Value: string);
 var
-  i: Integer;
+  i: integer;
 begin
   inherited SetSourceFileName (Value);
   for i := 0 to Count - 1 do
@@ -763,7 +763,7 @@ begin
       BaseObject[i].SourceFileName := SourceFileName;
 end;
 
-procedure tJson2PumlBaseList.SetStrings (Index: Integer; const Value: string);
+procedure tJson2PumlBaseList.SetStrings (Index: integer; const Value: string);
 begin
   ItemList[index] := Value;
 end;
@@ -778,10 +778,10 @@ begin
   ItemList.Sort;
 end;
 
-procedure tJson2PumlBaseList.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlBaseList.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 var
-  i: Integer;
+  i: integer;
 begin
   if (Count <= 0) and not iWriteEmpty then
     exit;
@@ -791,7 +791,7 @@ begin
   WriteArrayEndToJson (oJsonOutPut, iLevel);
 end;
 
-procedure tJson2PumlBaseList.WriteToJsonItem (oJsonOutPut: TStrings; iPropertyName: string; iIndex, iLevel: Integer;
+procedure tJson2PumlBaseList.WriteToJsonItem (oJsonOutPut: tStrings; iPropertyName: string; iIndex, iLevel: integer;
   iWriteEmpty: boolean = false);
 begin
   if Assigned (BaseObject[iIndex]) then
@@ -842,30 +842,30 @@ begin
 end;
 
 function tJson2PumlBasePropertyList.IndexOfProperty (const iPropertyName, iParentPropertyName,
-  iParentObjectType: string; var oFoundCondition: string): Integer;
+  iParentObjectType: string; var oFoundCondition: string): integer;
 
 var
-  PropertyIndex: Integer;
+  PropertyIndex: integer;
   ExcludeType: tJson2PumlPropertySearchMatchType;
-  ExcludeIndex: Integer;
+  ExcludeIndex: integer;
   ParentPropertyName, ParentName: string;
   CurrentMatchType, OverallMatchType: tJson2PumlPropertySearchMatchType;
   ParentFilled: boolean;
-  i: Integer;
+  i: integer;
 
-  function ListValue (iIndex: Integer): string;
+  function ListValue (iIndex: integer): string;
   begin
     Result := Names[iIndex];
     if Result.IsEmpty then
       Result := ItemList[iIndex];
   end;
 
-  function CalculateMatchType (iIndex: Integer): tJson2PumlPropertySearchMatchType;
+  function CalculateMatchType (iIndex: integer): tJson2PumlPropertySearchMatchType;
   var
     IndexName: string;
     IndexPropertyName: string;
     IndexParentName: string;
-    Splitted: TArray<string>;
+    Splitted: tArray<string>;
   begin
     Result := psmNoMatch;
     IndexName := ListValue (iIndex);
@@ -988,13 +988,13 @@ begin
       end;
     Result := PropertyIndex;
   finally
-    PropertyCache.AddCache(iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition, Result);
+    PropertyCache.AddCache (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition, Result);
   end;
 end;
 
 function tJson2PumlBasePropertyList.GetIsValid: boolean;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := true;
   if Result then
@@ -1007,7 +1007,7 @@ begin
       end;
 end;
 
-procedure tJson2PumlBasePropertyList.OnPropertyListChange (Sender: TObject);
+procedure tJson2PumlBasePropertyList.OnPropertyListChange (Sender: tObject);
 begin
   PropertyCache.Clear;
 end;
@@ -1056,7 +1056,7 @@ begin
   Result := cJson2PumlErrorInformation[self].ErrorMessage;
 end;
 
-function tJson2PumlErrorTypeHelper.EventType: TEventType;
+function tJson2PumlErrorTypeHelper.EventType: tEventType;
 begin
   Result := cJson2PumlErrorInformation[self].EventType;
 end;
@@ -1066,19 +1066,19 @@ begin
   Result := cJson2PumlErrorInformation[self].EventType in [etError, etCritical, etException];
 end;
 
-function tJson2PumlErrorTypeHelper.HttpStatusCode: Integer;
+function tJson2PumlErrorTypeHelper.HttpStatusCode: integer;
 begin
   Result := cJson2PumlErrorInformation[self].HttpStatusCode;
 end;
 
-procedure tJson2PumlErrorTypeHelper.RenderErrorResponse (oJson: TStringList; iLevel: Integer;
+procedure tJson2PumlErrorTypeHelper.RenderErrorResponse (oJson: tStringList; iLevel: integer;
   iErrorMessage: string = '');
 begin
   if Errorcode.IsEmpty then
     exit;
   WriteObjectStartToJson (oJson, iLevel, '');
   WriteToJsonValue (oJson, 'errorCode', Errorcode, iLevel + 1, false);
-  WriteToJsonValue (oJson, 'errorClass', JSON2PUML_EVENTTYPENAMES[Integer(EventType)], iLevel + 1, false);
+  WriteToJsonValue (oJson, 'errorClass', JSON2PUML_EVENTTYPENAMES[integer(EventType)], iLevel + 1, false);
   if iErrorMessage.IsEmpty then
     WriteToJsonValue (oJson, 'message', ErrorMessage, iLevel + 1, false)
   else
@@ -1090,7 +1090,7 @@ end;
 constructor tJson2PumlBasePropertyListCache.Create;
 begin
   inherited Create;
-  FCacheList := TStringList.Create;
+  FCacheList := tStringList.Create;
   FCacheList.OwnsObjects := true;
   FCacheList.Sorted := true;
   FCacheList.Duplicates := dupError;
@@ -1103,7 +1103,7 @@ begin
 end;
 
 procedure tJson2PumlBasePropertyListCache.AddCache (const iPropertyName, iParentPropertyName, iParentObjectType,
-  iFoundCondition: string; iPropertyIndex: Integer);
+  iFoundCondition: string; iPropertyIndex: integer);
 var
   Entry: tJson2PumlBasePropertyListEntry;
 begin
@@ -1125,9 +1125,9 @@ begin
 end;
 
 function tJson2PumlBasePropertyListCache.GetCache (const iPropertyName, iParentPropertyName, iParentObjectType: string;
-  var oFoundCondition: string; var oPropertyIndex: Integer): boolean;
+  var oFoundCondition: string; var oPropertyIndex: integer): boolean;
 var
-  Index: Integer;
+  Index: integer;
   Entry: tJson2PumlBasePropertyListEntry;
 begin
   index := CacheList.IndexOf (CacheName(iPropertyName, iParentPropertyName, iParentObjectType));

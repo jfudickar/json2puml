@@ -26,8 +26,9 @@ unit json2pumlconverter;
 
 interface
 
-uses System.JSON, System.Classes, json2pumldefinition, json2pumlpuml,
-  json2pumlinputhandler, json2pumlloghandler, json2pumlconverterdefinition, json2pumlconst;
+uses
+  System.JSON, System.Classes, json2pumldefinition, json2pumlpuml, json2pumlinputhandler, json2pumlloghandler,
+  json2pumlconverterdefinition, json2pumlconst;
 
 type
 
@@ -46,21 +47,21 @@ type
     ParentRelationshipProperty: string;
     ParentRelationshipType: string;
     ParentRelationShipTypeProperty: string;
-    ParentIsRelationship: Boolean;
-    StopRecursion: Boolean;
-    Level: Integer;
-    ArrayIndex: Integer;
-    ObjectLevel: Integer;
+    ParentIsRelationship: boolean;
+    StopRecursion: boolean;
+    Level: integer;
+    ArrayIndex: integer;
+    ObjectLevel: integer;
     CharacteristicParentPropertyName: string;
     CharacteristicObject: tPumlCharacteristicObject;
     CharacteristicValue: tPumlCharacteristicValue;
     CharacteristicRecord: tPumlCharacteristicRecord;
     procedure Init (iLeadingObject: string);
     function GetParentObjectType: string;
-    function GetInCharacteristicMode: Boolean;
+    function GetInCharacteristicMode: boolean;
     function GetCurrentCharacteristicDefinition: tJson2PumlCharacteristicDefinition;
     function GetCurrentCharacteristicType: tJson2PumlCharacteristicType;
-    property InCharacteristicMode: Boolean read GetInCharacteristicMode;
+    property InCharacteristicMode: boolean read GetInCharacteristicMode;
     property ParentObjectType: string read GetParentObjectType;
     property CurrentCharacteristicDefinition: tJson2PumlCharacteristicDefinition
       read GetCurrentCharacteristicDefinition;
@@ -71,43 +72,43 @@ type
   private
     FCurrentRecursionRecord: tJson2PumlRecursionRecord;
     FDefinition: tJson2PumlConverterDefinition;
-    FInputHandler: TJson2PumlInputHandler;
-    FInputHandlerRecord: TJson2PumlInputHandlerRecord;
+    FInputHandler: tJson2PumlInputHandler;
+    FInputHandlerRecord: tJson2PumlInputHandlerRecord;
     FLeadingObject: string;
     FPumlFile: string;
     FPumlObjects: tPumlObjectList;
     FTitle: string;
     procedure BuildObjectRelationships (iHierarchieParentObject, iPumlObject: tPumlObject;
-      iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty: string; iAllways: Boolean);
-    function GetFileLog: TStrings;
+      iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty: string; iAllways: boolean);
+    function GetFileLog: tStrings;
     function GetInputFilter: tJson2PumlFilterList;
-    function GetJsonInput: TStrings;
-    function GetPuml: TStrings;
+    function GetJsonInput: tStrings;
+    function GetPuml: tStrings;
     property CurrentRecursionRecord: tJson2PumlRecursionRecord read FCurrentRecursionRecord
       write FCurrentRecursionRecord;
   protected
     procedure AddFileLog (iLog: string = ''); overload;
     procedure AddFileLog (iLog: string; const iArgs: array of const); overload;
-    procedure ConvertArray (iJsonArray: TJSONArray; iInfo: tJson2PumlRecursionRecord);
-    procedure ConvertObject (iJsonObject: TJsonObject; iInfo: tJson2PumlRecursionRecord);
-    procedure ConvertValue (iJsonValue: TJSONValue; iInfo: tJson2PumlRecursionRecord;
+    procedure ConvertArray (iJsonArray: tJSONArray; iInfo: tJson2PumlRecursionRecord);
+    procedure ConvertObject (iJsonObject: tJSONObject; iInfo: tJson2PumlRecursionRecord);
+    procedure ConvertValue (iJsonValue: tJSONValue; iInfo: tJson2PumlRecursionRecord;
       iRecursionParent: tJson2PumlRecursionParent);
     procedure DecRecursionRecord (var ioCurrentRecord: tJson2PumlRecursionRecord;
       iSafeCurrentRecord: tJson2PumlRecursionRecord; iParent: tJson2PumlRecursionParent);
     procedure GeneratePuml;
-    function GetObjectIdent (iJsonObject: TJsonObject; iParentProperty: string;
+    function GetObjectIdent (iJsonObject: tJSONObject; iParentProperty: string;
       var oPropertyName, oFoundCondition: string): string;
-    function GetObjectTitleProperties (iJsonObject: TJsonObject; iParentProperty: string;
+    function GetObjectTitleProperties (iJsonObject: tJSONObject; iParentProperty: string;
       var oPropertyName, oFoundCondition: string): string;
-    function GetObjectTypeProperties (iJsonObject: TJsonObject; iParentProperty: string;
+    function GetObjectTypeProperties (iJsonObject: tJSONObject; iParentProperty: string;
       var oFoundCondition: string): string;
     function GetPropertyValueListProperties (iDefinitionList: tJson2PumlPropertyValueDefinitionList;
-      iJsonObject: TJsonObject; iParentProperty, iConfigurationPropertyName: string; var oFoundCondition: string)
+      iJsonObject: tJSONObject; iParentProperty, iConfigurationPropertyName: string; var oFoundCondition: string)
       : string; overload;
     function GetPropertyValueListProperties (iDefinitionList: tJson2PumlPropertyValueDefinitionList;
-      iJsonObject: TJsonObject; iParentProperty, iConfigurationPropertyName: string;
+      iJsonObject: tJSONObject; iParentProperty, iConfigurationPropertyName: string;
       var oPropertyName, oFoundCondition: string): string; overload;
-    procedure GetRelationshipType (iJsonObject: TJsonObject; iPropertyName: string;
+    procedure GetRelationshipType (iJsonObject: tJSONObject; iPropertyName: string;
       var oRelationshipType, oRelationshipTypeProperty: string; var oFoundCondition: string);
     function IncRecursionRecord (var ioCurrentRecord: tJson2PumlRecursionRecord; iParent: tJson2PumlRecursionParent)
       : tJson2PumlRecursionRecord;
@@ -117,17 +118,17 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function Convert: Boolean;
-    procedure GeneratePumlLegend (iUsedFormats: TStrings);
+    function Convert: boolean;
+    procedure GeneratePumlLegend (iUsedFormats: tStrings);
     property LeadingObject: string read FLeadingObject write FLeadingObject;
   published
     property Definition: tJson2PumlConverterDefinition read FDefinition write FDefinition;
-    property FileLog: TStrings read GetFileLog;
+    property FileLog: tStrings read GetFileLog;
     property InputFilter: tJson2PumlFilterList read GetInputFilter;
-    property InputHandler: TJson2PumlInputHandler read FInputHandler write FInputHandler;
-    property InputHandlerRecord: TJson2PumlInputHandlerRecord read FInputHandlerRecord write FInputHandlerRecord;
-    property JsonInput: TStrings read GetJsonInput;
-    property Puml: TStrings read GetPuml;
+    property InputHandler: tJson2PumlInputHandler read FInputHandler write FInputHandler;
+    property InputHandlerRecord: tJson2PumlInputHandlerRecord read FInputHandlerRecord write FInputHandlerRecord;
+    property JsonInput: tStrings read GetJsonInput;
+    property Puml: tStrings read GetPuml;
     property PumlFile: string read FPumlFile write FPumlFile;
     property Title: string read FTitle write FTitle;
   end;
@@ -135,8 +136,7 @@ type
 implementation
 
 uses
-  System.SysUtils,
-  System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, Masks, jsontools,
+  System.SysUtils, System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, Masks, jsontools,
   json2pumlbasedefinition, System.Math;
 
 const
@@ -146,10 +146,10 @@ const
     'ConvertArray', 'ConvertValue');
 
 procedure TJson2PumlConverter.BuildObjectRelationships (iHierarchieParentObject, iPumlObject: tPumlObject;
-  iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty: string; iAllways: Boolean);
+  iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty: string; iAllways: boolean);
 var
-  added: Boolean;
-  GroupObjectFrom, GroupObjectTo: Boolean;
+  added: boolean;
+  GroupObjectFrom, GroupObjectTo: boolean;
   ArrowFormat: string;
   GroupFromCondition, GroupToCondition, ArrowCondition: string;
 begin
@@ -178,7 +178,7 @@ begin
     AddFileLog ('Relationship to "%s" skipped, already existing', [iHierarchieParentObject.ObjectIdentifier]);
 end;
 
-function TJson2PumlConverter.GetFileLog: TStrings;
+function TJson2PumlConverter.GetFileLog: tStrings;
 begin
   Result := InputHandlerRecord.ConverterLog;
 end;
@@ -188,12 +188,12 @@ begin
   Result := InputHandler.CmdLineParameter.InputFilterList;
 end;
 
-function TJson2PumlConverter.GetJsonInput: TStrings;
+function TJson2PumlConverter.GetJsonInput: tStrings;
 begin
   Result := InputHandlerRecord.JsonInput;
 end;
 
-function TJson2PumlConverter.GetPuml: TStrings;
+function TJson2PumlConverter.GetPuml: tStrings;
 begin
   Result := InputHandlerRecord.PUmlOutput;
 end;
@@ -211,9 +211,9 @@ begin
   AddFileLog (Format(iLog, iArgs));
 end;
 
-procedure TJson2PumlConverter.ConvertArray (iJsonArray: TJSONArray; iInfo: tJson2PumlRecursionRecord);
+procedure TJson2PumlConverter.ConvertArray (iJsonArray: tJSONArray; iInfo: tJson2PumlRecursionRecord);
 var
-  i: Integer;
+  i: integer;
   SaveRecursionRecord: tJson2PumlRecursionRecord;
 begin
   if not Assigned (iJsonArray) then
@@ -232,12 +232,12 @@ begin
   end;
 end;
 
-procedure TJson2PumlConverter.ConvertObject (iJsonObject: TJsonObject; iInfo: tJson2PumlRecursionRecord);
+procedure TJson2PumlConverter.ConvertObject (iJsonObject: tJSONObject; iInfo: tJson2PumlRecursionRecord);
 var
-  i: Integer;
+  i: integer;
   PumlObject: tPumlObject;
   SaveRecursionRecord: tJson2PumlRecursionRecord;
-  IsObjectProperty, IsObjectDetail, IsRelationShip, IsCharacteristic: Boolean;
+  IsObjectProperty, IsObjectDetail, IsRelationShip, IsCharacteristic: boolean;
 
   cName: string;
   RelationshipObject: string;
@@ -255,7 +255,7 @@ var
   LogMessage: string;
   FoundCondition: string;
 
-  function CheckObjectIdent (iObjectType: string): Boolean;
+  function CheckObjectIdent (iObjectType: string): boolean;
   begin
     if ObjectIdent.IsEmpty then
       if Assigned (ObjectDefinition) and not ObjectDefinition.GenerateWithoutIdentifier then
@@ -503,20 +503,20 @@ begin
 
 end;
 
-procedure TJson2PumlConverter.ConvertValue (iJsonValue: TJSONValue; iInfo: tJson2PumlRecursionRecord;
+procedure TJson2PumlConverter.ConvertValue (iJsonValue: tJSONValue; iInfo: tJson2PumlRecursionRecord;
   iRecursionParent: tJson2PumlRecursionParent);
 var
   PumlObject: tPumlObject;
   SaveRecursionRecord: tJson2PumlRecursionRecord;
   ObjectTypeRenamed: string;
   Value: string;
-  IsRelationShip: Boolean;
+  IsRelationShip: boolean;
   LogMessage: string;
   FoundCondition: string;
   ValuePropertyName: string;
 
   function IsCharacteristicPropertyAllowed (iPropertyName, iParentPropertyName: string;
-    var oFoundCondition: string): Boolean;
+    var oFoundCondition: string): boolean;
   begin
     Result := iInfo.CurrentCharacteristicDefinition.IsPropertyAllowed (iPropertyName, iParentPropertyName,
       oFoundCondition);
@@ -538,7 +538,7 @@ begin
     ValuePropertyName := '';
   SaveRecursionRecord := IncRecursionRecord (iInfo, trpValue);
   try
-    if iJsonValue is TJSONArray then
+    if iJsonValue is tJSONArray then
     begin
       if iInfo.InCharacteristicMode then
       begin
@@ -546,13 +546,13 @@ begin
         then
         begin
           iInfo.CharacteristicValue := iInfo.CharacteristicRecord.AddValue (ValuePropertyName, '');
-          ConvertArray (iJsonValue as TJSONArray, iInfo);
+          ConvertArray (iJsonValue as tJSONArray, iInfo);
         end;
       end
       else
-        ConvertArray (iJsonValue as TJSONArray, iInfo);
+        ConvertArray (iJsonValue as tJSONArray, iInfo);
     end
-    else if iJsonValue is TJsonObject then
+    else if iJsonValue is tJSONObject then
     begin
       if not iInfo.StopRecursion then
       begin
@@ -563,11 +563,11 @@ begin
           begin
             iInfo.CharacteristicValue := iInfo.CharacteristicRecord.AddValue (ValuePropertyName, '');
             iInfo.CharacteristicRecord := iInfo.CharacteristicValue.AddDetailRecord ( - 1);
-            ConvertObject (iJsonValue as TJsonObject, iInfo)
+            ConvertObject (iJsonValue as tJSONObject, iInfo)
           end;
         end
         else
-          ConvertObject (iJsonValue as TJsonObject, iInfo)
+          ConvertObject (iJsonValue as tJSONObject, iInfo)
       end;
     end
     else if IsJsonSimple (iJsonValue) then
@@ -645,19 +645,19 @@ procedure TJson2PumlConverter.GeneratePuml;
 var
   PumlObject: tPumlObject;
   s: string;
-  Formats: TStringList;
-  GroupList, GroupCountList: TStringList;
+  Formats: tStringList;
+  GroupList, GroupCountList: tStringList;
 begin
   AddFileLog ('Start PUML Generation');
   PumlObjects.UpdateRedundant;
   FCurrentRecursionRecord.Level := FCurrentRecursionRecord.Level + 1;
-  Formats := TStringList.Create;
+  Formats := tStringList.Create;
   Formats.Sorted := true;
   Formats.Duplicates := dupIgnore;
-  GroupList := TStringList.Create;
+  GroupList := tStringList.Create;
   GroupList.Sorted := true;
   GroupList.Duplicates := dupIgnore;
-  GroupCountList := TStringList.Create;
+  GroupCountList := tStringList.Create;
   try
     Puml.Add ('@startuml');
     Puml.Add ('');
@@ -721,21 +721,21 @@ begin
   AddFileLog ('Stop PUML Generation');
 end;
 
-function TJson2PumlConverter.GetObjectIdent (iJsonObject: TJsonObject; iParentProperty: string;
+function TJson2PumlConverter.GetObjectIdent (iJsonObject: tJSONObject; iParentProperty: string;
   var oPropertyName, oFoundCondition: string): string;
 begin
   Result := GetPropertyValueListProperties (Definition.ObjectIdentifierProperties, iJsonObject, iParentProperty,
     'objectIdentifierProperties', oPropertyName, oFoundCondition);
 end;
 
-function TJson2PumlConverter.GetObjectTitleProperties (iJsonObject: TJsonObject; iParentProperty: string;
+function TJson2PumlConverter.GetObjectTitleProperties (iJsonObject: tJSONObject; iParentProperty: string;
   var oPropertyName, oFoundCondition: string): string;
 begin
   Result := GetPropertyValueListProperties (Definition.ObjectTitleProperties, iJsonObject, iParentProperty,
     'objectTitleProperties', oPropertyName, oFoundCondition);
 end;
 
-function TJson2PumlConverter.GetObjectTypeProperties (iJsonObject: TJsonObject; iParentProperty: string;
+function TJson2PumlConverter.GetObjectTypeProperties (iJsonObject: tJSONObject; iParentProperty: string;
   var oFoundCondition: string): string;
 begin
   Result := GetPropertyValueListProperties (Definition.ObjectTypeProperties, iJsonObject, iParentProperty,
@@ -743,7 +743,7 @@ begin
 end;
 
 function TJson2PumlConverter.GetPropertyValueListProperties (iDefinitionList: tJson2PumlPropertyValueDefinitionList;
-  iJsonObject: TJsonObject; iParentProperty, iConfigurationPropertyName: string; var oFoundCondition: string): string;
+  iJsonObject: tJSONObject; iParentProperty, iConfigurationPropertyName: string; var oFoundCondition: string): string;
 var
   PropertyName: string;
 begin
@@ -752,7 +752,7 @@ begin
 end;
 
 function TJson2PumlConverter.GetPropertyValueListProperties (iDefinitionList: tJson2PumlPropertyValueDefinitionList;
-  iJsonObject: TJsonObject; iParentProperty, iConfigurationPropertyName: string;
+  iJsonObject: tJSONObject; iParentProperty, iConfigurationPropertyName: string;
   var oPropertyName, oFoundCondition: string): string;
 var
   Search: string;
@@ -801,7 +801,7 @@ begin
   end;
 end;
 
-procedure TJson2PumlConverter.GetRelationshipType (iJsonObject: TJsonObject; iPropertyName: string;
+procedure TJson2PumlConverter.GetRelationshipType (iJsonObject: tJSONObject; iPropertyName: string;
   var oRelationshipType, oRelationshipTypeProperty: string; var oFoundCondition: string);
 begin
   oRelationshipType := GetPropertyValueListProperties (Definition.RelationshipTypeProperties, iJsonObject,
@@ -829,7 +829,7 @@ end;
 
 procedure TJson2PumlConverter.ReplaceObjectType (iPumlObject: tPumlObject; iObjectType: string);
 var
-  oldIdx, newIdx: Integer;
+  oldIdx, newIdx: integer;
 begin
   if not Assigned (iPumlObject) or iObjectType.IsEmpty or (iPumlObject.ObjectType = iObjectType) then
     Exit;
@@ -864,9 +864,9 @@ begin
   inherited Destroy;
 end;
 
-function TJson2PumlConverter.Convert: Boolean;
+function TJson2PumlConverter.Convert: boolean;
 var
-  JsonValue: TJSONValue;
+  JsonValue: tJSONValue;
   InfoRec: tJson2PumlRecursionRecord;
 begin
   Result := false;
@@ -877,7 +877,7 @@ begin
   if FileExists (PumlFile) then
     tFile.Delete (PumlFile);
 
-  JsonValue := TJsonObject.ParseJSONValue (JsonInput.Text);
+  JsonValue := tJSONObject.ParseJSONValue (JsonInput.Text);
   if not Assigned (JsonValue) then
     GlobalLoghandler.Error (jetUnableToParseInputFileStructure, [InputHandlerRecord.InputFile.OutputFileName])
   else
@@ -892,17 +892,17 @@ begin
 
 end;
 
-procedure TJson2PumlConverter.GeneratePumlLegend (iUsedFormats: TStrings);
+procedure TJson2PumlConverter.GeneratePumlLegend (iUsedFormats: tStrings);
 var
   f, s: string;
-  i: Integer;
-  Colors: TStringList;
+  i: integer;
+  Colors: tStringList;
   ObjectFormat: tJson2PumlSingleFormatDefinition;
-  FileDetailRecord: TJson2PumlFileDetailRecord;
+  FileDetailRecord: tJson2PumlFileDetailRecord;
   Param, Value: string;
-  vAdd: Boolean;
+  vAdd: boolean;
   Line: string;
-  FileLength: Integer;
+  FileLength: integer;
 
   procedure AddFileLine (iFileTitle, iFileName: string);
   begin
@@ -956,7 +956,7 @@ begin
   end;
   if Definition.LegendShowObjectFormats then
   begin
-    Colors := TStringList.Create;
+    Colors := tStringList.Create;
     try
       for f in iUsedFormats do
       begin
@@ -1024,7 +1024,7 @@ begin
     Puml.Add (tPumlHelper.TableLine(['File', 'Date', 'Size (kb)', 'Lines', 'Records'], true));
     for i := 0 to InputHandlerRecord.InputFile.Output.SourceFiles.Count - 1 do
     begin
-      FileDetailRecord := TJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
+      FileDetailRecord := tJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
       Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath
         (FileDetailRecord.Filename)), DateTimeToStr(FileDetailRecord.FileDate),
         Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12), FileDetailRecord.NoOfLines.ToString.PadLeft(8),
@@ -1075,7 +1075,7 @@ begin
     Result := jctUndefined;
 end;
 
-function tJson2PumlRecursionRecord.GetInCharacteristicMode: Boolean;
+function tJson2PumlRecursionRecord.GetInCharacteristicMode: boolean;
 begin
   Result := Assigned (CharacteristicObject);
 end;

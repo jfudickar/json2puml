@@ -52,7 +52,7 @@ type
     jetInputListCurlFileMissing, jetInputLIstCurlFileMandatoryEmpty);
 
   tJson2PumlErrorInformation = record
-    EventType: TEventType;
+    EventType: tEventType;
     Errorcode: string;
     HttpStatusCode: integer;
     ErrorMessage: string;
@@ -196,7 +196,7 @@ const
 {$ELSE}
   cCmdLinePrefix = '-';
 {$ENDIF}
-  cCurrentVersion = '2.2.17.113';
+  cCurrentVersion = '2.2.18.114';
 
   cApplicationName = 'json2puml';
 
@@ -208,7 +208,7 @@ const
   cJson2PumlApplicationTypeName: array [tJson2PumlApplicationType] of string = (cApplicationName + ' command line',
     cApplicationName + ' service', cApplicationName + ' ui', cApplicationName + ' windows service');
 
-  JSON2PUML_EVENTTYPENAMES: TEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
+  JSON2PUML_EVENTTYPENAMES: tEventTypeNames = ['', 'INFO    ', 'SUCCESS ', 'WARNING ', 'ERROR   ', 'CRITICAL',
     'EXCEPT  ', 'DEBUG   ', 'TRACE   ', 'DONE    ', 'CUSTOM1 ', 'CUSTOM2 '];
 
 implementation

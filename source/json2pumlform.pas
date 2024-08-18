@@ -32,31 +32,23 @@ uses
 {$IFDEF SYNEDIT}
   SynHighlighterJSON, SynEdit,
 {$ENDIF}
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
-  System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus,
-  Vcl.ComCtrls, Vcl.ToolWin,
-  System.ImageList, Vcl.ImgList, Vcl.StdActns, System.Actions, Vcl.ActnList,
-  json2pumlframe, json2pumldefinition, Vcl.ActnMenus, Vcl.ActnMan,
-  Vcl.ActnCtrls,
-  Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler,
-  Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
-  Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
-  FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, json2pumlconfigframe,
-  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore,
-  Vcl.Taskbar, Quick.Logger.Provider.StringList,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls,
+  Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.ComCtrls, Vcl.ToolWin, System.ImageList,
+  Vcl.ImgList, Vcl.StdActns, System.Actions, Vcl.ActnList, json2pumlframe, json2pumldefinition, Vcl.ActnMenus,
+  Vcl.ActnMan, Vcl.ActnCtrls, Vcl.ExtDlgs, Vcl.Grids, json2pumlinputhandler, Vcl.PlatformDefaultStyleActnCtrls, Data.DB,
+  Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
+  json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar, Quick.Logger.Provider.StringList,
   Vcl.Mask, Vcl.DBCtrls;
 
 type
-  tOutputFileFrame = class(TObject)
+  tOutputFileFrame = class(tObject)
   private
-    FFrame: TJson2PumlOutputFileFrame;
+    FFrame: tJson2PumlOutputFileFrame;
     FTabSheet: TTabSheet;
   public
     destructor Destroy; override;
-    property Frame: TJson2PumlOutputFileFrame read FFrame write FFrame;
+    property Frame: tJson2PumlOutputFileFrame read FFrame write FFrame;
     property TabSheet: TTabSheet read FTabSheet write FTabSheet;
   end;
 
@@ -224,106 +216,106 @@ type
     ExecutionLogFileNameEdit: TEdit;
     CurlFileListMemTableNoOfRecords: TIntegerField;
     CurlFileListMemTableFileSizeKB: TFloatField;
-    procedure CommandLineEditPanelResize (Sender: TObject);
-    procedure ConvertAllOpenFilesActionExecute (Sender: TObject);
-    procedure ConvertCurrentFileActionExecute (Sender: TObject);
-    procedure CopyCurrentPUMLActionExecute (Sender: TObject);
-    procedure ExitActionExecute (Sender: TObject);
-    procedure FormClose (Sender: TObject; var Action: TCloseAction);
-    procedure FormCloseQuery (Sender: TObject; var CanClose: Boolean);
-    procedure FormShow (Sender: TObject);
-    procedure GenerateServiceListResultsActionExecute (Sender: TObject);
-    procedure InitialTimerTimer (Sender: TObject);
-    procedure LoadFileActionExecute (Sender: TObject);
-    procedure OpenConfigurationFileExternalExecute (Sender: TObject);
-    procedure OpenCurrentJSONActionExecute (Sender: TObject);
-    procedure OpenJsonDetailTabSheetExecute (Sender: TObject);
-    procedure OpenCurrentPNGActionExecute (Sender: TObject);
-    procedure OpenCurrentSVGActionExecute (Sender: TObject);
-    procedure ReloadAndConvertActionExecute (Sender: TObject);
-    procedure ReloadFileActionExecute (Sender: TObject);
-    procedure SaveFileActionExecute (Sender: TObject);
-    procedure SaveFileActionUpdate (Sender: TObject);
-    procedure ShowCurlAuthenticationActionExecute (Sender: TObject);
-    procedure ShowCurlParameterActionExecute (Sender: TObject);
-    procedure ShowDefinitionFileActionExecute (Sender: TObject);
-    procedure ShowExecuteActionExecute (Sender: TObject);
-    procedure ShowInputListActionExecute (Sender: TObject);
-    procedure ShowOptionFileActionExecute (Sender: TObject);
-    procedure ShowOutputFilesActionExecute (Sender: TObject);
-    procedure ShowParameterFileActionExecute (Sender: TObject);
+    procedure CommandLineEditPanelResize (Sender: tObject);
+    procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
+    procedure ConvertCurrentFileActionExecute (Sender: tObject);
+    procedure CopyCurrentPUMLActionExecute (Sender: tObject);
+    procedure ExitActionExecute (Sender: tObject);
+    procedure FormClose (Sender: tObject; var Action: TCloseAction);
+    procedure FormCloseQuery (Sender: tObject; var CanClose: boolean);
+    procedure FormShow (Sender: tObject);
+    procedure GenerateServiceListResultsActionExecute (Sender: tObject);
+    procedure InitialTimerTimer (Sender: tObject);
+    procedure LoadFileActionExecute (Sender: tObject);
+    procedure OpenConfigurationFileExternalExecute (Sender: tObject);
+    procedure OpenCurrentJSONActionExecute (Sender: tObject);
+    procedure OpenJsonDetailTabSheetExecute (Sender: tObject);
+    procedure OpenCurrentPNGActionExecute (Sender: tObject);
+    procedure OpenCurrentSVGActionExecute (Sender: tObject);
+    procedure ReloadAndConvertActionExecute (Sender: tObject);
+    procedure ReloadFileActionExecute (Sender: tObject);
+    procedure SaveFileActionExecute (Sender: tObject);
+    procedure SaveFileActionUpdate (Sender: tObject);
+    procedure ShowCurlAuthenticationActionExecute (Sender: tObject);
+    procedure ShowCurlParameterActionExecute (Sender: tObject);
+    procedure ShowDefinitionFileActionExecute (Sender: tObject);
+    procedure ShowExecuteActionExecute (Sender: tObject);
+    procedure ShowInputListActionExecute (Sender: tObject);
+    procedure ShowOptionFileActionExecute (Sender: tObject);
+    procedure ShowOutputFilesActionExecute (Sender: tObject);
+    procedure ShowParameterFileActionExecute (Sender: tObject);
   private
-    FConvertCnt: Integer;
-    FCurlAuthenticationFileLines: TStrings;
-    FCurlParameterFileLines: TStrings;
-    FDefinitionLines: TStrings;
-    FFileListLines: TStrings;
-    FGlobalConfigurationFileLines: TStrings;
-    FInputHandler: TJson2PumlInputHandler;
-    FInputListLines: TStrings;
-    FLogLines: TStrings;
+    FConvertCnt: integer;
+    FCurlAuthenticationFileLines: tStrings;
+    FCurlParameterFileLines: tStrings;
+    FDefinitionLines: tStrings;
+    FFileListLines: tStrings;
+    FGlobalConfigurationFileLines: tStrings;
+    FInputHandler: tJson2PumlInputHandler;
+    FInputListLines: tStrings;
+    FLogLines: tStrings;
     fLogMemo: TWinControl;
     FLogStringListProvider: TLogStringListProvider;
-    FOptionFileLines: TStrings;
-    FParameterFileLines: TStrings;
-    FServicedefinitionfileResultLines: TStrings;
-    FServiceinputlistfileResultLines: TStrings;
-    FServiceResultLines: TStrings;
+    FOptionFileLines: tStrings;
+    FParameterFileLines: tStrings;
+    FServicedefinitionfileResultLines: tStrings;
+    FServiceinputlistfileResultLines: tStrings;
+    FServiceResultLines: tStrings;
 {$IFDEF SYNEDIT}
     fSynJSONSyn: TSynJSONSyn;
 {$ENDIF}
-    IntConfigFrame: array [tJson2PumlPage] of TJson2PumlConfigurationFrame;
-    procedure AfterCreateAllInputHandlerRecords (Sender: TObject);
-    procedure AfterCreateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
-    procedure AfterHandleAllInputHandlerRecords (Sender: TObject);
-    procedure AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
-    procedure BeforeCreateAllInputHandlerRecords (Sender: TObject);
-    procedure BeforeDeleteAllInputHandlerRecords (Sender: TObject);
-    function CalcTabsheetCaption (iInputHandlerRecord: TJson2PumlInputHandlerRecord): string;
-    procedure CreateOutputFileFrame (iInputHandlerRecord: TJson2PumlInputHandlerRecord);
-    function GetConfigFrame (Page: tJson2PumlPage): TJson2PumlConfigurationFrame;
-    function GetCurrentInputHandlerRecord: TJson2PumlInputHandlerRecord;
+    IntConfigFrame: array [tJson2PumlPage] of tJson2PumlConfigurationFrame;
+    procedure AfterCreateAllInputHandlerRecords (Sender: tObject);
+    procedure AfterCreateInputHandlerRecord (InputHandlerRecord: tJson2PumlInputHandlerRecord);
+    procedure AfterHandleAllInputHandlerRecords (Sender: tObject);
+    procedure AfterUpdateInputHandlerRecord (InputHandlerRecord: tJson2PumlInputHandlerRecord);
+    procedure BeforeCreateAllInputHandlerRecords (Sender: tObject);
+    procedure BeforeDeleteAllInputHandlerRecords (Sender: tObject);
+    function CalcTabsheetCaption (iInputHandlerRecord: tJson2PumlInputHandlerRecord): string;
+    procedure CreateOutputFileFrame (iInputHandlerRecord: tJson2PumlInputHandlerRecord);
+    function GetConfigFrame (Page: tJson2PumlPage): tJson2PumlConfigurationFrame;
+    function GetCurrentInputHandlerRecord: tJson2PumlInputHandlerRecord;
     function GetCurrentPage: tJson2PumlPage;
     procedure InitFormDefaultLogger;
     procedure InitializeInputHandler;
-    procedure HandleNotifyChange (Sender: TObject; ChangeType: tJson2PumlNotifyChangeType;
-      ProgressValue, ProgressMaxValue: Integer; ProgressInfo: string = '');
+    procedure HandleNotifyChange (Sender: tObject; ChangeType: tJson2PumlNotifyChangeType;
+      ProgressValue, ProgressMaxValue: integer; ProgressInfo: string = '');
     procedure SetCurrentPage (const Value: tJson2PumlPage);
-    property CurlAuthenticationFileLines: TStrings read FCurlAuthenticationFileLines write FCurlAuthenticationFileLines;
-    property CurlParameterFileLines: TStrings read FCurlParameterFileLines write FCurlParameterFileLines;
-    property DefinitionLines: TStrings read FDefinitionLines write FDefinitionLines;
-    property FileListLines: TStrings read FFileListLines write FFileListLines;
-    property GlobalConfigurationFileLines: TStrings read FGlobalConfigurationFileLines
+    property CurlAuthenticationFileLines: tStrings read FCurlAuthenticationFileLines write FCurlAuthenticationFileLines;
+    property CurlParameterFileLines: tStrings read FCurlParameterFileLines write FCurlParameterFileLines;
+    property DefinitionLines: tStrings read FDefinitionLines write FDefinitionLines;
+    property FileListLines: tStrings read FFileListLines write FFileListLines;
+    property GlobalConfigurationFileLines: tStrings read FGlobalConfigurationFileLines
       write FGlobalConfigurationFileLines;
-    property InputListLines: TStrings read FInputListLines write FInputListLines;
-    property LogLines: TStrings read FLogLines write FLogLines;
-    property OptionFileLines: TStrings read FOptionFileLines write FOptionFileLines;
-    property ParameterFileLines: TStrings read FParameterFileLines write FParameterFileLines;
-    property ServicedefinitionfileResultLines: TStrings read FServicedefinitionfileResultLines
+    property InputListLines: tStrings read FInputListLines write FInputListLines;
+    property LogLines: tStrings read FLogLines write FLogLines;
+    property OptionFileLines: tStrings read FOptionFileLines write FOptionFileLines;
+    property ParameterFileLines: tStrings read FParameterFileLines write FParameterFileLines;
+    property ServicedefinitionfileResultLines: tStrings read FServicedefinitionfileResultLines
       write FServicedefinitionfileResultLines;
-    property ServiceinputlistfileResultLines: TStrings read FServiceinputlistfileResultLines
+    property ServiceinputlistfileResultLines: tStrings read FServiceinputlistfileResultLines
       write FServiceinputlistfileResultLines;
-    property ServiceResultLines: TStrings read FServiceResultLines write FServiceResultLines;
+    property ServiceResultLines: tStrings read FServiceResultLines write FServiceResultLines;
   protected
     procedure BeginConvert;
     procedure CommandLineToForm;
     procedure ConvertAllFrames;
     procedure ConvertCurrentFrame;
-    procedure CreateConfigFrames (iPage: tJson2PumlPage; var oLines: TStrings; iShowAction: TAction;
+    procedure CreateConfigFrames (iPage: tJson2PumlPage; var oLines: tStrings; iShowAction: TAction;
       iConfigObjectClass: tJson2PumlBaseObjectClass);
     procedure CreateMemoControls;
     function CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
-      var oMemoLines: TStrings; iUseHighlighter, iReadOnly: Boolean): TWinControl;
+      var oMemoLines: tStrings; iUseHighlighter, iReadOnly: boolean): TWinControl;
     procedure EndConvert;
     procedure FillCurlFileListDataset (ConverterInputList: tJson2PumlInputList);
     procedure FormToCommandline;
     function GetConfigFileName (iPage: tJson2PumlPage): string;
     procedure HandleInputParameter;
-    function IsConverting: Boolean;
+    function IsConverting: boolean;
     procedure LoadConfigFileName (iPage: tJson2PumlPage; iFileName: string);
     procedure ReloadFiles;
     procedure SetConfigFileName (iPage: tJson2PumlPage; iFileName: string);
-    procedure SetConverting (Converting: Boolean);
+    procedure SetConverting (Converting: boolean);
     procedure ShowDefinitionTabsheet;
     procedure ShowInputListTabSheet;
     procedure ShowJsonTabSheet;
@@ -331,20 +323,20 @@ type
     function TabSheetByPage (iPage: tJson2PumlPage): TTabSheet;
     procedure UpdateAllInfos;
     property ConfigFileName[Page: tJson2PumlPage]: string read GetConfigFileName write SetConfigFileName;
-    property ConfigFrame[Page: tJson2PumlPage]: TJson2PumlConfigurationFrame read GetConfigFrame;
+    property ConfigFrame[Page: tJson2PumlPage]: tJson2PumlConfigurationFrame read GetConfigFrame;
     property CurrentPage: tJson2PumlPage read GetCurrentPage write SetCurrentPage;
     property LogStringListProvider: TLogStringListProvider read FLogStringListProvider;
   public
     constructor Create (AOwner: TComponent); override;
     destructor Destroy; override;
-    function CalcShortCutStr (iIndex: Integer): string;
+    function CalcShortCutStr (iIndex: integer): string;
     procedure CopyCurrentPUMLToClipboard;
     procedure GenerateServiceListResults;
     procedure OpenCurrentPNGFile;
     procedure OpenCurrentSVGFile;
     procedure OpenCurrentJSONFile;
-    property CurrentInputHandlerRecord: TJson2PumlInputHandlerRecord read GetCurrentInputHandlerRecord;
-    property InputHandler: TJson2PumlInputHandler read FInputHandler;
+    property CurrentInputHandlerRecord: tJson2PumlInputHandlerRecord read GetCurrentInputHandlerRecord;
+    property InputHandler: tJson2PumlInputHandler read FInputHandler;
   end;
 
 var
@@ -353,10 +345,8 @@ var
 implementation
 
 uses
-  json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst,
-  System.UITypes,
-  json2pumlloghandler, Quick.Logger,
-  json2pumlconverterdefinition, System.Math;
+  json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst, System.UITypes, json2pumlloghandler,
+  Quick.Logger, json2pumlconverterdefinition, System.Math;
 
 {$R *.dfm}
 
@@ -379,16 +369,16 @@ begin
   inherited Destroy;
 end;
 
-procedure Tjson2pumlMainForm.AfterCreateAllInputHandlerRecords (Sender: TObject);
+procedure Tjson2pumlMainForm.AfterCreateAllInputHandlerRecords (Sender: tObject);
 begin
 end;
 
-procedure Tjson2pumlMainForm.AfterCreateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
+procedure Tjson2pumlMainForm.AfterCreateInputHandlerRecord (InputHandlerRecord: tJson2PumlInputHandlerRecord);
 begin
   CreateOutputFileFrame (InputHandlerRecord);
 end;
 
-procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: TObject);
+procedure Tjson2pumlMainForm.AfterHandleAllInputHandlerRecords (Sender: tObject);
 begin
   if FileExists (InputHandler.ConverterInputList.FileListFileName) then
     FileListLines.LoadFromFile (InputHandler.ConverterInputList.FileListFileName);
@@ -405,7 +395,7 @@ begin
     Taskbar.ProgressState := TTaskBarProgressState.None;
 end;
 
-procedure Tjson2pumlMainForm.AfterUpdateInputHandlerRecord (InputHandlerRecord: TJson2PumlInputHandlerRecord);
+procedure Tjson2pumlMainForm.AfterUpdateInputHandlerRecord (InputHandlerRecord: tJson2PumlInputHandlerRecord);
 var
   OutputFileFrame: tOutputFileFrame;
 begin
@@ -421,7 +411,7 @@ begin
   OutputFileFrame.Frame.ConverterLogFileName := InputHandlerRecord.InputFile.Output.ConverterLogFileName;
 end;
 
-procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: TObject);
+procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: tObject);
 begin
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
   ExecutionLogFileNameEdit.Text := jofExecuteLog.Filename (InputHandler.CalculateSummaryFileName(jofPUML));
@@ -434,7 +424,7 @@ begin
   UpdateAllInfos;
 end;
 
-procedure Tjson2pumlMainForm.BeforeDeleteAllInputHandlerRecords (Sender: TObject);
+procedure Tjson2pumlMainForm.BeforeDeleteAllInputHandlerRecords (Sender: tObject);
 begin
   try
     LockWindowUpdate (Handle);
@@ -452,7 +442,7 @@ begin
     SetConverting (True);
 end;
 
-function Tjson2pumlMainForm.CalcShortCutStr (iIndex: Integer): string;
+function Tjson2pumlMainForm.CalcShortCutStr (iIndex: integer): string;
 begin
   Result := '';
   if iIndex >= 0 then
@@ -466,7 +456,7 @@ begin
       Result := Format ('Shift+Ctrl+%d', [iIndex - 0]);
 end;
 
-function Tjson2pumlMainForm.CalcTabsheetCaption (iInputHandlerRecord: TJson2PumlInputHandlerRecord): string;
+function Tjson2pumlMainForm.CalcTabsheetCaption (iInputHandlerRecord: tJson2PumlInputHandlerRecord): string;
 var
   Sc: string;
 begin
@@ -544,12 +534,12 @@ begin
   end;
 end;
 
-procedure Tjson2pumlMainForm.ConvertAllOpenFilesActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ConvertAllOpenFilesActionExecute (Sender: tObject);
 begin
   ConvertAllFrames;
 end;
 
-procedure Tjson2pumlMainForm.ConvertCurrentFileActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ConvertCurrentFileActionExecute (Sender: tObject);
 begin
   ConvertCurrentFrame;
 end;
@@ -566,7 +556,7 @@ begin
   end;
 end;
 
-procedure Tjson2pumlMainForm.CopyCurrentPUMLActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.CopyCurrentPUMLActionExecute (Sender: tObject);
 begin
   CopyCurrentPUMLToClipboard;
 end;
@@ -577,10 +567,10 @@ begin
     Clipboard.AsText := CurrentInputHandlerRecord.PUmlOutput.Text;
 end;
 
-procedure Tjson2pumlMainForm.CreateConfigFrames (iPage: tJson2PumlPage; var oLines: TStrings; iShowAction: TAction;
+procedure Tjson2pumlMainForm.CreateConfigFrames (iPage: tJson2PumlPage; var oLines: tStrings; iShowAction: TAction;
   iConfigObjectClass: tJson2PumlBaseObjectClass);
 var
-  Frame: TJson2PumlConfigurationFrame;
+  Frame: tJson2PumlConfigurationFrame;
   TabSheet: TTabSheet;
 begin
   IntConfigFrame[iPage] := nil;
@@ -589,7 +579,7 @@ begin
   TabSheet.Caption := iPage.TabSheetCaption;
   if not iPage.IsConfig then
     Exit;
-  Frame := TJson2PumlConfigurationFrame.Create (TabSheet);
+  Frame := tJson2PumlConfigurationFrame.Create (TabSheet);
   Frame.Parent := TabSheet;
   Frame.Align := alClient;
   Frame.Page := iPage;
@@ -604,9 +594,9 @@ end;
 
 procedure Tjson2pumlMainForm.CreateMemoControls;
 var
-  DummyLines: TStrings;
+  DummyLines: tStrings;
   Page: tJson2PumlPage;
-  i: Integer;
+  i: integer;
 begin
 {$IFDEF SYNEDIT}
   fSynJSONSyn := TSynJSONSyn.Create (self);
@@ -638,7 +628,7 @@ begin
     FServicedefinitionfileResultLines, True, True);
 end;
 
-procedure Tjson2pumlMainForm.CreateOutputFileFrame (iInputHandlerRecord: TJson2PumlInputHandlerRecord);
+procedure Tjson2pumlMainForm.CreateOutputFileFrame (iInputHandlerRecord: tJson2PumlInputHandlerRecord);
 var
   OutputFileFrame: tOutputFileFrame;
   Action: TAction;
@@ -650,7 +640,7 @@ begin
   OutputFileFrame.TabSheet.BorderWidth := 5;
   FilePageControl.ActivePage := OutputFileFrame.TabSheet;
   OutputFileFrame.TabSheet.Caption := CalcTabsheetCaption (iInputHandlerRecord);
-  OutputFileFrame.Frame := TJson2PumlOutputFileFrame.Create (OutputFileFrame.TabSheet);
+  OutputFileFrame.Frame := tJson2PumlOutputFileFrame.Create (OutputFileFrame.TabSheet);
   OutputFileFrame.Frame.Parent := OutputFileFrame.TabSheet;
   OutputFileFrame.Frame.InputFileName := iInputHandlerRecord.InputFile.InputFileName;
   OutputFileFrame.Frame.InputGroup := iInputHandlerRecord.InputGroup;
@@ -675,7 +665,7 @@ begin
 end;
 
 function Tjson2pumlMainForm.CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
-  var oMemoLines: TStrings; iUseHighlighter, iReadOnly: Boolean): TWinControl;
+  var oMemoLines: tStrings; iUseHighlighter, iReadOnly: boolean): TWinControl;
 {$IFDEF SYNEDIT}
 var
   NewEdit: TSynEdit;
@@ -731,30 +721,30 @@ begin
     SetConverting (false);
 end;
 
-procedure Tjson2pumlMainForm.ExitActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ExitActionExecute (Sender: tObject);
 begin
   Close;
 end;
 
-procedure Tjson2pumlMainForm.FormClose (Sender: TObject; var Action: TCloseAction);
+procedure Tjson2pumlMainForm.FormClose (Sender: tObject; var Action: TCloseAction);
 begin
   InputHandler.Clear;
 end;
 
-procedure Tjson2pumlMainForm.FormCloseQuery (Sender: TObject; var CanClose: Boolean);
+procedure Tjson2pumlMainForm.FormCloseQuery (Sender: tObject; var CanClose: boolean);
 begin
   CanClose := not IsConverting;
   if CanClose then
     InputHandler.Clear;
 end;
 
-procedure Tjson2pumlMainForm.FormShow (Sender: TObject);
+procedure Tjson2pumlMainForm.FormShow (Sender: tObject);
 begin
   InitialTimer.Enabled := True;
   CreateMemoControls;
   InitFormDefaultLogger;
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
-  FInputHandler := TJson2PumlInputHandler.Create (jatUI);
+  FInputHandler := tJson2PumlInputHandler.Create (jatUI);
   InputHandler.AfterCreateRecord := AfterCreateInputHandlerRecord;
   InputHandler.AfterUpdateRecord := AfterUpdateInputHandlerRecord;
   InputHandler.AfterCreateAllRecords := AfterCreateAllInputHandlerRecords;
@@ -863,15 +853,15 @@ begin
   end;
 end;
 
-function Tjson2pumlMainForm.GetConfigFrame (Page: tJson2PumlPage): TJson2PumlConfigurationFrame;
+function Tjson2pumlMainForm.GetConfigFrame (Page: tJson2PumlPage): tJson2PumlConfigurationFrame;
 begin
   Result := IntConfigFrame[Page];
 end;
 
-function Tjson2pumlMainForm.GetCurrentInputHandlerRecord: TJson2PumlInputHandlerRecord;
+function Tjson2pumlMainForm.GetCurrentInputHandlerRecord: tJson2PumlInputHandlerRecord;
 var
-  CurrentRecord: TJson2PumlInputHandlerRecord;
-  i: Integer;
+  CurrentRecord: tJson2PumlInputHandlerRecord;
+  i: integer;
 begin
   Result := nil;
   if FilePageControl.ActivePageIndex >= 0 then
@@ -935,7 +925,7 @@ begin
   CommandLineToForm;
 end;
 
-procedure Tjson2pumlMainForm.InitialTimerTimer (Sender: TObject);
+procedure Tjson2pumlMainForm.InitialTimerTimer (Sender: tObject);
 begin
   InitializeInputHandler;
   if InputHandler.CmdLineParameter.Failed then // To prevent the double log output
@@ -946,7 +936,7 @@ begin
   HandleInputParameter;
 end;
 
-function Tjson2pumlMainForm.IsConverting: Boolean;
+function Tjson2pumlMainForm.IsConverting: boolean;
 begin
   Result := FConvertCnt > 0;
 end;
@@ -976,19 +966,19 @@ begin
 
 end;
 
-procedure Tjson2pumlMainForm.LoadFileActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.LoadFileActionExecute (Sender: tObject);
 begin
   if Assigned (ConfigFrame[CurrentPage]) then
     ConfigFrame[CurrentPage].OpenFile;
 end;
 
-procedure Tjson2pumlMainForm.OpenConfigurationFileExternalExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.OpenConfigurationFileExternalExecute (Sender: tObject);
 begin
   if Assigned (ConfigFrame[CurrentPage]) then
     OpenFile (ConfigFrame[CurrentPage].ConfigFileName);
 end;
 
-procedure Tjson2pumlMainForm.OpenCurrentJSONActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.OpenCurrentJSONActionExecute (Sender: tObject);
 begin
   OpenCurrentJSONFile;
 end;
@@ -1005,9 +995,9 @@ begin
     OpenFile (CurrentInputHandlerRecord.InputFile.Output.SVGFileName);
 end;
 
-procedure Tjson2pumlMainForm.OpenJsonDetailTabSheetExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.OpenJsonDetailTabSheetExecute (Sender: tObject);
 var
-  CurrentRecord: TJson2PumlInputHandlerRecord;
+  CurrentRecord: tJson2PumlInputHandlerRecord;
 begin
   if Sender is TAction then
     if (TAction(Sender).Tag >= 0) and (TAction(Sender).Tag < InputHandler.InputListLines.Count) then
@@ -1019,12 +1009,12 @@ begin
     end;
 end;
 
-procedure Tjson2pumlMainForm.OpenCurrentPNGActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.OpenCurrentPNGActionExecute (Sender: tObject);
 begin
   OpenCurrentPNGFile;
 end;
 
-procedure Tjson2pumlMainForm.OpenCurrentSVGActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.OpenCurrentSVGActionExecute (Sender: tObject);
 begin
   OpenCurrentSVGFile;
 end;
@@ -1035,12 +1025,12 @@ begin
     OpenFile (CurrentInputHandlerRecord.InputFile.OutputFileName);
 end;
 
-procedure Tjson2pumlMainForm.ReloadAndConvertActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ReloadAndConvertActionExecute (Sender: tObject);
 begin
   HandleInputParameter;
 end;
 
-procedure Tjson2pumlMainForm.ReloadFileActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ReloadFileActionExecute (Sender: tObject);
 begin
   if Assigned (ConfigFrame[CurrentPage]) then
     ConfigFrame[CurrentPage].ReloadFile;
@@ -1056,13 +1046,13 @@ begin
   end;
 end;
 
-procedure Tjson2pumlMainForm.SaveFileActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.SaveFileActionExecute (Sender: tObject);
 begin
   if Assigned (ConfigFrame[CurrentPage]) then
     ConfigFrame[CurrentPage].SaveFile;
 end;
 
-procedure Tjson2pumlMainForm.SaveFileActionUpdate (Sender: TObject);
+procedure Tjson2pumlMainForm.SaveFileActionUpdate (Sender: tObject);
 begin
   if Sender is TAction then
     TAction (Sender).Enabled := Assigned (ConfigFrame[CurrentPage]);
@@ -1092,9 +1082,9 @@ begin
   end;
 end;
 
-procedure Tjson2pumlMainForm.SetConverting (Converting: Boolean);
+procedure Tjson2pumlMainForm.SetConverting (Converting: boolean);
 var
-  i: Integer;
+  i: integer;
 begin
   if not Converting and (InputHandler.Count > 0) then
     ShowJsonTabSheet
@@ -1111,17 +1101,17 @@ begin
   MainPageControl.ActivePage := TabSheetByPage (Value);
 end;
 
-procedure Tjson2pumlMainForm.ShowCurlAuthenticationActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowCurlAuthenticationActionExecute (Sender: tObject);
 begin
   MainPageControl.ActivePage := CurlAuthenticationTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowCurlParameterActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowCurlParameterActionExecute (Sender: tObject);
 begin
   MainPageControl.ActivePage := CurlParameterFileTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowDefinitionFileActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowDefinitionFileActionExecute (Sender: tObject);
 begin
   ShowDefinitionTabsheet;
 end;
@@ -1131,12 +1121,12 @@ begin
   MainPageControl.ActivePage := DefinitionFileTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowExecuteActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowExecuteActionExecute (Sender: tObject);
 begin
   ShowLogTabsheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowInputListActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowInputListActionExecute (Sender: tObject);
 begin
   ShowInputListTabSheet;
 end;
@@ -1156,17 +1146,17 @@ begin
   MainPageControl.ActivePage := LogTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowOptionFileActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowOptionFileActionExecute (Sender: tObject);
 begin
   MainPageControl.ActivePage := OptionFileTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowOutputFilesActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowOutputFilesActionExecute (Sender: tObject);
 begin
   ShowJsonTabSheet;
 end;
 
-procedure Tjson2pumlMainForm.ShowParameterFileActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.ShowParameterFileActionExecute (Sender: tObject);
 begin
   MainPageControl.ActivePage := ParameterFileTabSheet;
 end;
@@ -1213,7 +1203,7 @@ begin
   inherited Destroy;
 end;
 
-procedure Tjson2pumlMainForm.CommandLineEditPanelResize (Sender: TObject);
+procedure Tjson2pumlMainForm.CommandLineEditPanelResize (Sender: tObject);
 begin
   LeftInputPanel.Width := Round (CommandLineEditPanel.Width / 3) - 1;
   MiddleInputPanel.Width := LeftInputPanel.Width;
@@ -1223,7 +1213,7 @@ procedure Tjson2pumlMainForm.FillCurlFileListDataset (ConverterInputList: tJson2
 var
   InputFile: tJson2PumlInputFileDefinition;
   Field: TField;
-  Line: Integer;
+  Line: integer;
 
   procedure SetField (iFieldName: string; iFieldValue: Variant);
   var
@@ -1258,19 +1248,19 @@ begin
       SetField ('Generated', InputFile.CurlResult.Generated);
       SetField ('Duration', InputFile.CurlResult.Duration);
       SetField ('NoOfRecords', InputFile.CurlResult.NoOfRecords);
-      SetField ('FileSizeKB', RoundTo(InputFile.CurlResult.FileSize/1024,-2));
+      SetField ('FileSizeKB', RoundTo(InputFile.CurlResult.FileSize / 1024, - 2));
       SetField ('ErrorMessage', InputFile.CurlResult.ErrorMessage);
       Inc (Line);
     end;
 end;
 
-procedure Tjson2pumlMainForm.GenerateServiceListResultsActionExecute (Sender: TObject);
+procedure Tjson2pumlMainForm.GenerateServiceListResultsActionExecute (Sender: tObject);
 begin
   GenerateServiceListResults;
 end;
 
-procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: TObject; ChangeType: tJson2PumlNotifyChangeType;
-  ProgressValue, ProgressMaxValue: Integer; ProgressInfo: string = '');
+procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: tObject; ChangeType: tJson2PumlNotifyChangeType;
+  ProgressValue, ProgressMaxValue: integer; ProgressInfo: string = '');
 begin
 {$IFDEF SYNEDIT}
   if Assigned (fLogMemo) then

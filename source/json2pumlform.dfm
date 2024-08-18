@@ -73,7 +73,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object MainActionToolBar: TActionToolBar
     Left = 0
-    Top = 50
+    Top = 55
     Width = 1357
     Height = 23
     ActionManager = MainActionManager
@@ -92,12 +92,13 @@ object json2pumlMainForm: Tjson2pumlMainForm
     ParentFont = False
     PersistentHotKeys = True
     Spacing = 5
+    ExplicitTop = 50
   end
   object ActionMainMenuBar: TActionMainMenuBar
     Left = 0
     Top = 0
     Width = 1357
-    Height = 25
+    Height = 30
     UseSystemFont = False
     ActionManager = MainActionManager
     Caption = 'ActionMainMenuBar'
@@ -112,15 +113,18 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Font.Name = 'Segoe UI'
     Font.Style = []
     Spacing = 0
+    ExplicitHeight = 25
   end
   object MainPageControl: TPageControl
     Left = 0
-    Top = 73
+    Top = 78
     Width = 1357
-    Height = 808
+    Height = 803
     ActivePage = LogTabSheet
     Align = alClient
     TabOrder = 3
+    ExplicitTop = 73
+    ExplicitHeight = 808
     object LogTabSheet: TTabSheet
       BorderWidth = 5
       Caption = 'Execute'
@@ -707,10 +711,11 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Left = 0
         Top = 353
         Width = 1339
-        Height = 417
+        Height = 412
         ActivePage = CurlFileTabSheet
         Align = alClient
         TabOrder = 1
+        ExplicitHeight = 417
         object ExecutionLogTabSheet: TTabSheet
           Caption = 'Execution Log'
           object ExecutionLogPanel: TPanel
@@ -932,7 +937,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object ActionToolBar5: TActionToolBar
     Left = 0
-    Top = 25
+    Top = 30
     Width = 1357
     Height = 25
     ActionManager = MainActionManager
@@ -949,6 +954,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Font.Style = []
     ParentFont = False
     Spacing = 0
+    ExplicitTop = 25
   end
   object MainActionList: TActionList
     Images = ImageList1

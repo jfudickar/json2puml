@@ -8,9 +8,9 @@ uses
 {$IFDEF SYNEDIT}
   SynEdit,
 {$ENDIF}
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ToolWin, Vcl.ActnMan,
-  Vcl.ActnCtrls, json2pumlconst, json2pumlframe, json2pumlbasedefinition, Vcl.ExtDlgs, json2pumlvcltools;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls,
+  Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ToolWin, Vcl.ActnMan, Vcl.ActnCtrls, json2pumlconst,
+  json2pumlframe, json2pumlbasedefinition, Vcl.ExtDlgs, json2pumlvcltools;
 
 type
   TJson2PumlConfigurationFrame = class(TFrame)
@@ -22,10 +22,10 @@ type
     OpenDialog: TOpenTextFileDialog;
   private
     FConfigObjectClass: tJson2PumlBaseObjectClass;
-    FLines: TStrings;
+    FLines: tStrings;
     FMainEditor: TWinControl;
     FPage: tJson2PumlPage;
-    FOnGetConfigFileName: TJson2PumlGetConfigFileName;
+    FOnGetConfigFileName: tJson2PumlGetConfigFileName;
     FOnLoadConfigFileName: TJson2PumlLoadConfigFileName;
     FOnSetConfigFileName: TJson2PumlSetConfigFileName;
 
@@ -36,8 +36,8 @@ type
     function GetMemo: TMemo;
 {$ENDIF}
     procedure SetConfigFileName (const Value: string);
-    procedure SetOnGetConfigFileName (const Value: TJson2PumlGetConfigFileName);
-    procedure SetLines (const Value: TStrings);
+    procedure SetOnGetConfigFileName (const Value: tJson2PumlGetConfigFileName);
+    procedure SetLines (const Value: tStrings);
     procedure SetPage (const Value: tJson2PumlPage);
     { Private declarations }
   protected
@@ -60,8 +60,8 @@ type
     procedure UpdateInfos;
     property ConfigFileName: string read GetConfigFileName write SetConfigFileName;
     property ConfigObjectClass: tJson2PumlBaseObjectClass read FConfigObjectClass write FConfigObjectClass;
-    property OnGetConfigFileName: TJson2PumlGetConfigFileName read FOnGetConfigFileName write SetOnGetConfigFileName;
-    property Lines: TStrings read FLines write SetLines;
+    property OnGetConfigFileName: tJson2PumlGetConfigFileName read FOnGetConfigFileName write SetOnGetConfigFileName;
+    property Lines: tStrings read FLines write SetLines;
     property OnLoadConfigFileName: TJson2PumlLoadConfigFileName read FOnLoadConfigFileName write FOnLoadConfigFileName;
     property Page: tJson2PumlPage read FPage write SetPage;
     property OnSetConfigFileName: TJson2PumlSetConfigFileName read FOnSetConfigFileName write FOnSetConfigFileName;
@@ -185,13 +185,13 @@ begin
     OnSetConfigFileName (Page, Value);
 end;
 
-procedure TJson2PumlConfigurationFrame.SetOnGetConfigFileName (const Value: TJson2PumlGetConfigFileName);
+procedure TJson2PumlConfigurationFrame.SetOnGetConfigFileName (const Value: tJson2PumlGetConfigFileName);
 begin
   FOnGetConfigFileName := Value;
   UpdateInfos;
 end;
 
-procedure TJson2PumlConfigurationFrame.SetLines (const Value: TStrings);
+procedure TJson2PumlConfigurationFrame.SetLines (const Value: tStrings);
 begin
   FLines.Assign (Value);
 end;
@@ -218,7 +218,7 @@ end;
 
 function TJson2PumlConfigurationFrame.GetMemo: TMemo;
 begin
-  // TODO -cMM: TJson2PumlConfigurationFrame.GetMemo default body inserted
+  // TODO -cMM: tJson2PumlConfigurationFrame.GetMemo default body inserted
   Result := TMemo (MainEditor);
 end;
 
