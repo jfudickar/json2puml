@@ -29,8 +29,7 @@ interface
 uses
   System.SysUtils, System.Classes;
 
-function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
-
+function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: tStringList): Boolean;
 
 implementation
 
@@ -38,51 +37,53 @@ uses
 {$IFDEF MSWINDOWS}
   Winapi.Windows,
 {$ELSE}
-  Posix.Base,
-  Posix.Fcntl,
+    Posix.Base, Posix.Fcntl,
 {$ENDIF}
   System.Types;
 
 {$IFDEF MSWINDOWS}
+
 type
   TWindowsUtils = class
   public
-    class function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
+    class function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: tStringList): Boolean;
   end;
 {$ELSE}
-type
-  TStreamHandle = pointer;
 
-  TLinuxUtils = class
+type
+  tStreamHandle = pointer;
+
+  tLinuxUtils = class
   public
-    class function RunCommandLine (ACommand: string; var ResultList: TStringList): Boolean; overload;
-    class function RunCommandLine (ACommand: string; Return: TProc<string>): Boolean; overload;
+    class function RunCommandLine (ACommand: string; var ResultList: tStringList): Boolean; overload;
+    class function RunCommandLine (ACommand: string; Return: tProc<string>): Boolean; overload;
   end;
 
-function popen (const Command: MarshaledAString; const _type: MarshaledAString): TStreamHandle; cdecl;
+function popen (const Command: MarshaledAString; const _type: MarshaledAString): tStreamHandle; cdecl;
   external libc name _PU + 'popen';
-function pclose (filehandle: TStreamHandle): int32; cdecl; external libc name _PU + 'pclose';
-function fgets (buffer: pointer; size: int32; Stream: TStreamHandle): pointer; cdecl; external libc name _PU + 'fgets';
+function pclose (filehandle: tStreamHandle): int32; cdecl; external libc name _PU + 'pclose';
+function fgets (buffer: pointer; size: int32; Stream: tStreamHandle): pointer; cdecl; external libc name _PU + 'fgets';
 {$ENDIF}
-
 {$IFDEF MSWINDOWS}
-class function TWindowsUtils.RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
+
+class function TWindowsUtils.RunCommandLine (const iCommand: WideString;
+  oCommandOutPut, oCommandErrors: tStringList): Boolean;
 var
   buffer: array [0 .. 2400] of AnsiChar;
   BufferStrOutput: string;
   BufferStrErrors: string;
   CreationFlags: DWORD;
   NumberOfBytesRead: DWORD;
-  PipeErrorsRead: THandle;
-  PipeErrorsWrite: THandle;
-  PipeOutputRead: THandle;
-  PipeOutputWrite: THandle;
-  ProcessInfo: TProcessInformation;
-  SecurityAttr: TSecurityAttributes;
-  StartupInfo: TStartupInfo;
+  PipeErrorsRead: tHandle;
+  PipeErrorsWrite: tHandle;
+  PipeOutputRead: tHandle;
+  PipeOutputWrite: tHandle;
+  ProcessInfo: tProcessInformation;
+  SecurityAttr: tSecurityAttributes;
+  StartupInfo: tStartupInfo;
   tmpWaitR: DWORD;
 
-  procedure AddLine (var AString: string; ALines: TStringList);
+  procedure AddLine (var AString: string; ALines: tStringList);
   var
     i: Integer;
     j: Integer;
@@ -118,11 +119,11 @@ var
 
 begin
   // Initialisierung ProcessInfo
-  FillChar (ProcessInfo, SizeOf(TProcessInformation), 0);
+  FillChar (ProcessInfo, SizeOf(tProcessInformation), 0);
 
   // Initialisierung SecurityAttr
-  FillChar (SecurityAttr, SizeOf(TSecurityAttributes), 0);
-  SecurityAttr.nLength := SizeOf (TSecurityAttributes);
+  FillChar (SecurityAttr, SizeOf(tSecurityAttributes), 0);
+  SecurityAttr.nLength := SizeOf (tSecurityAttributes);
   SecurityAttr.bInheritHandle := true;
   SecurityAttr.lpSecurityDescriptor := nil;
 
@@ -131,8 +132,8 @@ begin
   CreatePipe (PipeErrorsRead, PipeErrorsWrite, @SecurityAttr, 0);
 
   // Initialisierung StartupInfo
-  FillChar (StartupInfo, SizeOf(TStartupInfo), 0);
-  StartupInfo.cb := SizeOf (TStartupInfo);
+  FillChar (StartupInfo, SizeOf(tStartupInfo), 0);
+  StartupInfo.cb := SizeOf (tStartupInfo);
   StartupInfo.hStdInput := 0;
   StartupInfo.hStdOutput := PipeOutputWrite;
   StartupInfo.hStdError := PipeErrorsWrite;
@@ -165,7 +166,7 @@ begin
           OemToAnsi (buffer, buffer);
           BufferStrOutput := BufferStrOutput + string(buffer);
           AddLine (BufferStrOutput, oCommandOutPut);
-          //Application.ProcessMessages ();
+          // Application.ProcessMessages ();
         end;
       end;
 
@@ -178,11 +179,11 @@ begin
           OemToAnsi (buffer, buffer);
           BufferStrErrors := BufferStrErrors + string(buffer);
           AddLine (BufferStrErrors, oCommandErrors);
-          //Application.ProcessMessages ();
+          // Application.ProcessMessages ();
         end;
       end;
 
-      //Application.ProcessMessages ();
+      // Application.ProcessMessages ();
     until (tmpWaitR <> WAIT_TIMEOUT);
 
     if BufferStrOutput <> '' then
@@ -206,24 +207,24 @@ begin
   end;
 end;
 
-function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
+function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: tStringList): Boolean;
 begin
   Result := TWindowsUtils.RunCommandLine (iCommand, oCommandOutPut, oCommandErrors);
 end;
 
 {$ELSE}
 
-class function TLinuxUtils.RunCommandLine (ACommand: string; var ResultList: TStringList): Boolean;
+class function tLinuxUtils.RunCommandLine (ACommand: string; var ResultList: tStringList): Boolean;
 
 var
-  Handle: TStreamHandle;
+  Handle: tStreamHandle;
   Data: array [0 .. 511] of uint8;
-  M: TMarshaller;
+  M: tMarshaller;
 
 begin
   Result := false;
   if not Assigned (ResultList) then
-    ResultList := TStringList.Create;
+    ResultList := tStringList.Create;
   try
     Handle := popen (M.AsAnsi(PWideChar(ACommand)).ToPointer, 'r');
     try
@@ -241,11 +242,11 @@ begin
   end;
 end;
 
-class function TLinuxUtils.RunCommandLine (ACommand: string; Return: TProc<string>): Boolean;
+class function tLinuxUtils.RunCommandLine (ACommand: string; Return: tProc<string>): Boolean;
 var
-  Handle: TStreamHandle;
+  Handle: tStreamHandle;
   Data: array [0 .. 511] of uint8;
-  M: TMarshaller;
+  M: tMarshaller;
 
 begin
   Result := false;
@@ -265,12 +266,11 @@ begin
   end;
 end;
 
-function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: TStringList): Boolean;
+function RunCommandLine (const iCommand: WideString; oCommandOutPut, oCommandErrors: tStringList): Boolean;
 begin
-  Result := TLinuxUtils.RunCommandLine (iCommand, oCommandOutPut);
+  Result := tLinuxUtils.RunCommandLine (iCommand, oCommandOutPut);
 end;
 
 {$ENDIF}
-
 
 end.

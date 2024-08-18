@@ -288,10 +288,10 @@ uses
 constructor tJson2PumlInputHandlerRecord.Create;
 begin
   inherited Create;
-  FIntPUmlOutput := TStringList.Create;
-  FIntJsonInput := TStringList.Create;
+  FIntPUmlOutput := tStringList.Create;
+  FIntJsonInput := tStringList.Create;
   FRelatedObject := nil;
-  FIntConverterLog := TStringList.Create ();
+  FIntConverterLog := tStringList.Create ();
 end;
 
 destructor tJson2PumlInputHandlerRecord.Destroy;
@@ -378,17 +378,17 @@ begin
   FHandlerRecordList := tJson2PumlInputHandlerList.Create;
   FHandlerRecordList.OwnsObjects := true;
 
-  FIntInputListLines := TStringList.Create;
-  FIntDefinitionLines := TStringList.Create;
-  FIntOptionFileLines := TStringList.Create;
-  FIntParameterFileLines := TStringList.Create;
-  FIntCurlAuthenticationFileLines := TStringList.Create;
-  FIntCurlParameterFileLines := TStringList.Create;
+  FIntInputListLines := tStringList.Create;
+  FIntDefinitionLines := tStringList.Create;
+  FIntOptionFileLines := tStringList.Create;
+  FIntParameterFileLines := tStringList.Create;
+  FIntCurlAuthenticationFileLines := tStringList.Create;
+  FIntCurlParameterFileLines := tStringList.Create;
   FCurrentConverterDefinition := tJson2PumlConverterDefinition.Create ();
   FParameterDefinition := tJson2PumlParameterFileDefinition.Create ();
-  FIntServerResultLines := TStringList.Create;
+  FIntServerResultLines := tStringList.Create;
   FGlobalConfiguration := tJson2PumlGlobalDefinition.Create ();
-  FIntConfigurationFileLines := TStringList.Create;
+  FIntConfigurationFileLines := tStringList.Create;
   FApplicationType := iApplicationType;
   FExecuteLogHandler := tLogStringListProvider.Create ();
   ExecuteLogHandler.OnFilterItem := OnFilterLogItem;
@@ -448,7 +448,7 @@ end;
 procedure tJson2PumlInputHandler.BuildSummaryFile (iSingleRecord: tJson2PumlInputHandlerRecord);
 var
   LastProperty: string;
-  SingleJson: TStringList;
+  SingleJson: tStringList;
   InputFile: tJson2PumlInputFileDefinition;
   First: Boolean;
 begin
@@ -459,7 +459,7 @@ begin
     Exit;
   ConverterInputList.Sort;
   First := true;
-  SingleJson := TStringList.Create;
+  SingleJson := tStringList.Create;
   try
     iSingleRecord.ConverterLog.Add (Format('Start building summary file"%s"',
       [iSingleRecord.InputFile.OutputFileName]));
@@ -801,11 +801,11 @@ end;
 procedure tJson2PumlInputHandler.CreateAllRecords;
 var
   InputFile: tJson2PumlInputFileDefinition;
-  OptionList: TStringList;
+  OptionList: tStringList;
   GenDetails, GenSummary: Boolean;
 
 begin
-  OptionList := TStringList.Create;
+  OptionList := tStringList.Create;
   try
     LastTraceId := '';
     { TODO : Move Calculate to ExpandInputlist }
@@ -889,10 +889,10 @@ var
   i: integer;
   SingleRecord: tJson2PumlInputHandlerRecord;
   OutputFormats: tJson2PumlOutputFormats;
-  FileList: TStringList;
+  FileList: tStringList;
 begin
   OutputFormats := CurrentOutputFormats;
-  FileList := TStringList.Create;
+  FileList := tStringList.Create;
   try
     for i := 0 to HandlerRecordList.Count - 1 do
     begin
@@ -1548,7 +1548,7 @@ begin
     else
     begin
       Filename := ParameterInputFile.Filename;
-      Lines := TStringList.Create;
+      Lines := tStringList.Create;
       try
         Lines.Text := ParameterInputFile.Content;
         if not IsRelativePath (ExtractFilePath(Filename)) then
@@ -1578,12 +1578,12 @@ end;
 
 procedure tJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2PumlBaseListClass);
 var
-  FileList: TStringList;
+  FileList: tStringList;
   Definition: tJson2PumlBaseList;
 begin
   if not FileExists (iFileName) then
     Exit;
-  FileList := TStringList.Create;
+  FileList := tStringList.Create;
   Definition := iClass.Create;
   try
     FileList.LoadFromFile (iFileName);
@@ -1598,14 +1598,14 @@ end;
 
 procedure tJson2PumlInputHandler.ReformatFile (iFileName: string; iClass: tJson2PumlBaseObjectClass);
 var
-  FileList: TStringList;
+  FileList: tStringList;
   Definition: tJson2PumlBaseObject;
   NewFileName: string;
 begin
   if not FileExists (iFileName) then
     Exit;
   NewFileName := tpath.ChangeExtension (iFileName, 'formatted.json');
-  FileList := TStringList.Create;
+  FileList := tStringList.Create;
   Definition := iClass.Create;
   try
     FileList.LoadFromFile (iFileName);

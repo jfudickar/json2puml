@@ -26,7 +26,8 @@ unit json2pumlpuml;
 
 interface
 
-uses System.JSON, System.Classes, json2pumldefinition, json2pumlconst, json2pumlconverterdefinition,
+uses
+  System.JSON, System.Classes, json2pumldefinition, json2pumlconst, json2pumlconverterdefinition,
   json2pumlbasedefinition;
 
 type
@@ -35,7 +36,7 @@ type
   tPumlHelper = class
   public
     class function CleanCRLF (iValue: string): string;
-    class function CleanValue (iValue: string; iSplitLength: Integer): string;
+    class function CleanValue (iValue: string; iSplitLength: integer): string;
     class function PUmlIdentifier (iIdentifier: string): string;
     class function RelationLine (iFromIdent, iArrowFormat, iToIdent, iComment: string): string;
     class function ReplaceNewLine (iValue: string): string;
@@ -44,7 +45,7 @@ type
     class function TableColumnSeparator: string;
     class function TableColumn (iValue: string; iHeader: boolean = False): string;
     class function TableLine (const iColumns: array of const; iHeader: boolean = False): string; overload;
-    class function TableLine (iColumns: TStringList; iHeader: boolean = False; iClearColumns: boolean = true)
+    class function TableLine (iColumns: tStringList; iHeader: boolean = False; iClearColumns: boolean = true)
       : string; overload;
   end;
 
@@ -68,46 +69,46 @@ type
 
   tBasePumlStringList = class(tBasePumlObject)
   private
-    FItemList: TStringList;
-    function GetBaseObject (Index: Integer): tJson2PumlBaseObject;
-    function GetCount: Integer;
-    function GetDuplicates: TDuplicates;
+    FItemList: tStringList;
+    function GetBaseObject (Index: integer): tJson2PumlBaseObject;
+    function GetCount: integer;
+    function GetDuplicates: tDuplicates;
     function GetFilled: boolean; override;
-    function GetFilledCount: Integer; virtual;
-    function GetNames (Index: Integer): string;
-    function GetObjects (Index: Integer): TObject;
+    function GetFilledCount: integer; virtual;
+    function GetNames (Index: integer): string;
+    function GetObjects (Index: integer): tObject;
     function GetOwnsObjects: boolean;
     function GetSorted: boolean;
-    function GetStrings (Index: Integer): string;
+    function GetStrings (Index: integer): string;
     function GetText: string;
-    procedure SetDuplicates (const Value: TDuplicates);
-    procedure SetObjects (Index: Integer; const Value: TObject);
+    procedure SetDuplicates (const Value: tDuplicates);
+    procedure SetObjects (Index: integer; const Value: tObject);
     procedure SetOwnsObjects (const Value: boolean);
     procedure SetSorted (const Value: boolean);
-    procedure SetStrings (Index: Integer; const Value: string);
+    procedure SetStrings (Index: integer; const Value: string);
     procedure SetText (const Value: string);
   protected
-    property BaseObject[index: Integer]: tJson2PumlBaseObject read GetBaseObject;
+    property BaseObject[index: integer]: tJson2PumlBaseObject read GetBaseObject;
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     destructor Destroy; override;
-    function AddObject (const S: string; AObject: TObject): Integer;
+    function AddObject (const S: string; AObject: tObject): integer;
     procedure Assign (Source: tPersistent); override;
     procedure clear; override;
-    procedure Delete (Index: Integer);
-    function IndexOf (S: string): Integer;
-    function IndexOfName (S: string): Integer;
+    procedure Delete (Index: integer);
+    function IndexOf (S: string): integer;
+    function IndexOfName (S: string): integer;
     procedure Sort;
     procedure UpdateRedundant; override;
-    property Count: Integer read GetCount;
-    property Duplicates: TDuplicates read GetDuplicates write SetDuplicates;
-    property FilledCount: Integer read GetFilledCount;
-    property ItemList: TStringList read FItemList;
-    property Names[index: Integer]: string read GetNames;
-    property Objects[index: Integer]: TObject read GetObjects write SetObjects;
+    property Count: integer read GetCount;
+    property Duplicates: tDuplicates read GetDuplicates write SetDuplicates;
+    property FilledCount: integer read GetFilledCount;
+    property ItemList: tStringList read FItemList;
+    property Names[index: integer]: string read GetNames;
+    property Objects[index: integer]: tObject read GetObjects write SetObjects;
     property OwnsObjects: boolean read GetOwnsObjects write SetOwnsObjects;
     property Sorted: boolean read GetSorted write SetSorted;
-    property Strings[index: Integer]: string read GetStrings write SetStrings; default;
+    property Strings[index: integer]: string read GetStrings write SetStrings; default;
     property Text: string read GetText write SetText;
   end;
 
@@ -137,8 +138,8 @@ type
     function GetRelatedObjectShowObject: boolean;
     function GetRelatedObjectTypeIdent: string;
   public
-    procedure GeneratePumlObjectDetail (ipuml: TStrings);
-    procedure GeneratePumlRelation (ipuml, iGroupList: TStrings);
+    procedure GeneratePumlObjectDetail (ipuml: tStrings);
+    procedure GeneratePumlRelation (ipuml, iGroupList: tStrings);
     property ArrowFormat: string read FArrowFormat write FArrowFormat;
     property Direction: tUmlRelationDirection read FDirection write FDirection;
     property GroupAtObject: boolean read FGroupAtObject write FGroupAtObject;
@@ -161,7 +162,7 @@ type
 
   tPumlObjectRelationshipEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fRelationshipList: tPumlObjectRelationshipList;
   public
     constructor Create (ARelationshipList: tPumlObjectRelationshipList);
@@ -172,26 +173,26 @@ type
 
   tPumlObjectRelationshipList = class(tBasePumlStringList)
   private
-    function GetDirectionCount (iDirection: tUmlRelationDirection; iValidOnly: boolean): Integer;
-    function GetFromCount: Integer;
-    function GetFromCountValid: Integer;
-    function GetRelationship (Index: Integer): tPumlObjectRelationship;
-    function GetToCount: Integer;
-    function GetToCountValid: Integer;
+    function GetDirectionCount (iDirection: tUmlRelationDirection; iValidOnly: boolean): integer;
+    function GetFromCount: integer;
+    function GetFromCountValid: integer;
+    function GetRelationship (Index: integer): tPumlObjectRelationship;
+    function GetToCount: integer;
+    function GetToCountValid: integer;
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     function addRelationship (PropertyName, RelationshipType, RelationshipTypeProperty: string;
       RelatedObject: tPumlObject; iDirection: tUmlRelationDirection; iGroupAtObject, iGroupAtRelatedObject: boolean;
       iArrowFormat: string; iAllways: boolean = true): boolean;
-    procedure GeneratePumlObjectDetail (ipuml: TStrings; iDirection: tUmlRelationDirection; var iAddLine: boolean);
-    procedure GeneratePumlRelation (ipuml, iGroupList: TStrings);
-    procedure GeneratePumlRelationGroup (ipuml, iGroupList, iGroupCountList: TStrings);
+    procedure GeneratePumlObjectDetail (ipuml: tStrings; iDirection: tUmlRelationDirection; var iAddLine: boolean);
+    procedure GeneratePumlRelation (ipuml, iGroupList: tStrings);
+    procedure GeneratePumlRelationGroup (ipuml, iGroupList, iGroupCountList: tStrings);
     function GetEnumerator: tPumlObjectRelationshipEnumerator;
-    property FromCount: Integer read GetFromCount;
-    property FromCountValid: Integer read GetFromCountValid;
-    property Relationship[index: Integer]: tPumlObjectRelationship read GetRelationship; default;
-    property ToCount: Integer read GetToCount;
-    property ToCountValid: Integer read GetToCountValid;
+    property FromCount: integer read GetFromCount;
+    property FromCountValid: integer read GetFromCountValid;
+    property Relationship[index: integer]: tPumlObjectRelationship read GetRelationship; default;
+    property ToCount: integer read GetToCount;
+    property ToCountValid: integer read GetToCountValid;
   end;
 
   tPumlCharacteristicRecord = class;
@@ -211,10 +212,10 @@ type
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     destructor Destroy; override;
-    function AddDetailRecord (iRow: Integer): tPumlCharacteristicRecord;
-    function CalculateRecordLine (iIncludeParent: boolean; iSplitLength: Integer): string;
-    procedure CalculateTableRow (iUsedColumns, iValueList: TStringList);
-    procedure GeneratePumlAsRecord (ipuml: TStrings; iIncludeParent: boolean; iSplitLength: Integer);
+    function AddDetailRecord (iRow: integer): tPumlCharacteristicRecord;
+    function CalculateRecordLine (iIncludeParent: boolean; iSplitLength: integer): string;
+    procedure CalculateTableRow (iUsedColumns, iValueList: tStringList);
+    procedure GeneratePumlAsRecord (ipuml: tStrings; iIncludeParent: boolean; iSplitLength: integer);
     property Attribute: string read FAttribute write FAttribute;
     property DetailRecords: tPumlCharacteristicRecordList read FDetailRecords;
     property ParentCharacteristicName: string read GetParentCharacteristicName;
@@ -226,7 +227,7 @@ type
 
   tPumlCharacteristicValueEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fRecord: tPumlCharacteristicRecord;
   public
     constructor Create (ARecord: tPumlCharacteristicRecord);
@@ -237,7 +238,7 @@ type
 
   tPumlCharacteristicRecord = class(tBasePumlStringList)
   private
-    FRow: Integer;
+    FRow: integer;
     function GetAttribute: string;
     function GetIdent: string; override;
     function GetIncludeParentColumn: boolean;
@@ -245,31 +246,31 @@ type
     function GetParentCharacteristicName: string;
     function GetParentCharacteristicNameIndex: string;
     function GetParentCharacteristicValue: tPumlCharacteristicValue;
-    function GetValue (Index: Integer): tPumlCharacteristicValue;
+    function GetValue (Index: integer): tPumlCharacteristicValue;
   protected
     property IncludeParentColumn: boolean read GetIncludeParentColumn;
-    property Row: Integer read FRow write FRow;
+    property Row: integer read FRow write FRow;
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     function AddValue (iAttribute, iValue: string; iReplace: boolean = true): tPumlCharacteristicValue;
-    procedure AddValues (iValueList: TStringList);
+    procedure AddValues (iValueList: tStringList);
     function CalculateRecordLine: string;
-    procedure CalculateTableRow (iUsedColumns, iValueList: TStringList);
-    procedure GeneratePumlAsRecord (ipuml: TStrings; iIncludeHeader: boolean; iSplitLength: Integer;
+    procedure CalculateTableRow (iUsedColumns, iValueList: tStringList);
+    procedure GeneratePumlAsRecord (ipuml: tStrings; iIncludeHeader: boolean; iSplitLength: integer;
       iSortLines: boolean);
     procedure CalculateTableRows (iDefinition: tJson2PumlCharacteristicDefinition;
-      iUsedColumns, iTableRows: TStringList);
+      iUsedColumns, iTableRows: tStringList);
     function GetEnumerator: tPumlCharacteristicValueEnumerator;
     property Attribute: string read GetAttribute;
     property ParentCharacteristicName: string read GetParentCharacteristicName;
     property ParentCharacteristicNameIndex: string read GetParentCharacteristicNameIndex;
     property ParentCharacteristicValue: tPumlCharacteristicValue read GetParentCharacteristicValue;
-    property Value[index: Integer]: tPumlCharacteristicValue read GetValue; default;
+    property Value[index: integer]: tPumlCharacteristicValue read GetValue; default;
   end;
 
   tPumlCharacteristicRecordEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fRecordList: tPumlCharacteristicRecordList;
   public
     constructor Create (ARecordList: tPumlCharacteristicRecordList);
@@ -282,30 +283,30 @@ type
   private
     function GetFilled: boolean; override;
     function GetParentCharacteristicValue: tPumlCharacteristicValue;
-    function GetRecords (Index: Integer): tPumlCharacteristicRecord;
+    function GetRecords (Index: integer): tPumlCharacteristicRecord;
   public
-    function AddRecord (iRow: Integer): tPumlCharacteristicRecord;
-    procedure GeneratePumlAsRecord (ipuml: TStrings; iIncludeHeader: boolean; iSplitLength: Integer;
+    function AddRecord (iRow: integer): tPumlCharacteristicRecord;
+    procedure GeneratePumlAsRecord (ipuml: tStrings; iIncludeHeader: boolean; iSplitLength: integer;
       iSortLines: boolean);
-    procedure GeneratePumlAsList (ipuml: TStrings; iDefinition: tJson2PumlCharacteristicDefinition;
-      iSplitLength: Integer);
+    procedure GeneratePumlAsList (ipuml: tStrings; iDefinition: tJson2PumlCharacteristicDefinition;
+      iSplitLength: integer);
     function GetEnumerator: tPumlCharacteristicRecordEnumerator;
     property ParentCharacteristicValue: tPumlCharacteristicValue read GetParentCharacteristicValue;
-    property Records[index: Integer]: tPumlCharacteristicRecord read GetRecords; default;
+    property Records[index: integer]: tPumlCharacteristicRecord read GetRecords; default;
   end;
 
   tPumlCharacteristicObject = class(tPumlCharacteristicValue)
   private
     FDefinition: tJson2PumlCharacteristicDefinition;
-    FUsedProperties: TStringList;
+    FUsedProperties: tStringList;
   protected
-    procedure AddUsedProperties (iPropertyList: TStringList);
+    procedure AddUsedProperties (iPropertyList: tStringList);
     procedure AddUsedProperty (iName: string);
-    property UsedProperties: TStringList read FUsedProperties;
+    property UsedProperties: tStringList read FUsedProperties;
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     destructor Destroy; override;
-    procedure GeneratePuml (ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer; iSortLines: boolean);
+    procedure GeneratePuml (ipuml: tStrings; var iAddLine: boolean; iSplitLength: integer; iSortLines: boolean);
   published
     property Definition: tJson2PumlCharacteristicDefinition read FDefinition write FDefinition;
   end;
@@ -315,7 +316,7 @@ type
   tPumlCharacteristicObjectEnumerator = class
   private
     fCharacteristicList: tPumlCharacteristicList;
-    FIndex: Integer;
+    FIndex: integer;
   public
     constructor Create (ACharacteristicList: tPumlCharacteristicList);
     function GetCurrent: tPumlCharacteristicObject;
@@ -325,34 +326,34 @@ type
 
   tPumlCharacteristicList = class(tBasePumlStringList)
   private
-    function GetCharacteristic (Index: Integer): tPumlCharacteristicObject;
+    function GetCharacteristic (Index: integer): tPumlCharacteristicObject;
     function GetIdent: string; override;
   protected
     function AddCharacteristic (iAttribute: string; iCharacteristicDefinition: tJson2PumlCharacteristicDefinition)
       : tPumlCharacteristicObject;
   public
     constructor Create (iParentObject: tBasePumlObject); override;
-    procedure GeneratePuml (ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer; iSortLines: boolean);
+    procedure GeneratePuml (ipuml: tStrings; var iAddLine: boolean; iSplitLength: integer; iSortLines: boolean);
     function GetEnumerator: tPumlCharacteristicObjectEnumerator;
-    property Characteristic[index: Integer]: tPumlCharacteristicObject read GetCharacteristic; default;
+    property Characteristic[index: integer]: tPumlCharacteristicObject read GetCharacteristic; default;
   end;
 
   tPumlDetailObjectList = class(tBasePumlStringList)
   public
     constructor Create(iParentObject: tBasePumlObject); override;
-    procedure GeneratePumlClassList (ipuml: TStrings);
-    procedure GeneratePumlTogether (ipuml: TStrings; iParentObjectName, iParentObjectTitle: string);
+    procedure GeneratePumlClassList (ipuml: tStrings);
+    procedure GeneratePumlTogether (ipuml: tStrings; iParentObjectName, iParentObjectTitle: string);
   end;
 
   tPumlObject = class(tBasePumlObject)
   private
     FAttributes: tPumlCharacteristicRecord;
     FCharacteristics: tPumlCharacteristicList;
-    FChildObjectCount: Integer;
+    FChildObjectCount: integer;
     FDetailObjects: tPumlDetailObjectList;
     FFiltered: boolean;
     FFormatDefinition: tJson2PumlSingleFormatDefinition;
-    FFormatPriority: Integer;
+    FFormatPriority: integer;
     FIdentifyObjectsByTypeAndIdent: boolean;
     FInputFilter: tJson2PumlFilterList;
     FIsObjectDetail: boolean;
@@ -372,7 +373,7 @@ type
     function GetShowObject: boolean;
   protected
     function GeneratePumlClassName: string;
-    property ChildObjectCount: Integer read FChildObjectCount;
+    property ChildObjectCount: integer read FChildObjectCount;
   public
     constructor Create; reintroduce;
     destructor Destroy; override;
@@ -383,7 +384,7 @@ type
       iArrowFormat: string; iAllways: boolean = true): boolean;
     procedure AddValue (iName, iValue: string; iReplace: boolean = true);
     function CalculateChildObjectDefaultIdent (iChildObjectType: string): string;
-    function GeneratePuml (ipuml: TStrings): boolean;
+    function GeneratePuml (ipuml: tStrings): boolean;
     function GeneratePumlColorDefinition: string;
     function IsFiltered: boolean;
     function ObjectCaption (iSeparator: string; iFormat: boolean): string;
@@ -401,7 +402,7 @@ type
     property Attributes: tPumlCharacteristicRecord read FAttributes;
     property Characteristics: tPumlCharacteristicList read FCharacteristics;
     property DetailObjects: tPumlDetailObjectList read FDetailObjects;
-    property FormatPriority: Integer read FFormatPriority write FFormatPriority;
+    property FormatPriority: integer read FFormatPriority write FFormatPriority;
     property IdentifyObjectsByTypeAndIdent: boolean read FIdentifyObjectsByTypeAndIdent
       write FIdentifyObjectsByTypeAndIdent;
     property ObjectIdent: string read FObjectIdent write FObjectIdent;
@@ -417,7 +418,7 @@ type
 
   tPumlObjectEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fObjectList: tPumlObjectList;
   public
     constructor Create (AObjectList: tPumlObjectList);
@@ -430,7 +431,7 @@ type
   private
     FConverterDefinition: tJson2PumlConverterDefinition;
     FInputFilter: tJson2PumlFilterList;
-    function GetPumlObject (Index: Integer): tPumlObject;
+    function GetPumlObject (Index: integer): tPumlObject;
   protected
     procedure addPumlObject (iPumlObject: tPumlObject);
   public
@@ -440,14 +441,14 @@ type
       iFileLogObjectDescription: string = 'object'; iFileLogObjectAddition: string = ''): tPumlObject;
     property ConverterDefinition: tJson2PumlConverterDefinition read FConverterDefinition write FConverterDefinition;
     property InputFilter: tJson2PumlFilterList read FInputFilter write FInputFilter;
-    property PumlObject[index: Integer]: tPumlObject read GetPumlObject; default;
+    property PumlObject[index: integer]: tPumlObject read GetPumlObject; default;
   end;
 
 implementation
 
 uses
-  System.SysUtils,
-  System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, System.Variants, json2pumlloghandler;
+  System.SysUtils, System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, System.Variants,
+  json2pumlloghandler;
 
 constructor tPumlObjectList.Create;
 begin
@@ -467,7 +468,7 @@ begin
   Result := tPumlObjectEnumerator.Create (Self);
 end;
 
-function tPumlObjectList.GetPumlObject (Index: Integer): tPumlObject;
+function tPumlObjectList.GetPumlObject (Index: integer): tPumlObject;
 begin
   Result := tPumlObject (Objects[index]);
 end;
@@ -477,11 +478,11 @@ function tPumlObjectList.SearchCreatePumlObject (iObjectType, iObjectIdent, iPar
   : tPumlObject;
 var
   pObject: tPumlObject;
-  i: Integer;
+  i: integer;
   FormatDefinition: tJson2PumlSingleFormatDefinition;
   Search: string;
   FormatMsg: string;
-  Priority: Integer;
+  Priority: integer;
   FoundCondition: string;
 
 begin
@@ -580,13 +581,13 @@ begin
   Result := Format ('%s_%s_%d', [iChildObjectType, ObjectIdentifier, ChildObjectCount]);
 end;
 
-function tPumlObject.GeneratePuml (ipuml: TStrings): boolean;
+function tPumlObject.GeneratePuml (ipuml: tStrings): boolean;
 var
-  i: Integer;
-  idLine, NameLine: Integer;
+  i: integer;
+  idLine, NameLine: integer;
   AddLine: boolean;
   Color: string;
-  Lines: TStringList;
+  Lines: tStringList;
 
 begin
   Result := ShowObject;
@@ -604,13 +605,13 @@ begin
   if (Attributes.Count > 0) and FormatDefinition.ShowAttributes then
   begin
     ipuml.add (tPumlHelper.TableLine(['attribute', 'value'], true));
-    idLine := Attributes.IndexOf(ObjectIdentProperty);
-    NameLine := Attributes.IndexOf(ObjectTitleProperty);
+    idLine := Attributes.IndexOf (ObjectIdentProperty);
+    NameLine := Attributes.IndexOf (ObjectTitleProperty);
     if idLine >= 0 then
       Attributes.Value[idLine].GeneratePumlAsRecord (ipuml, False, FormatDefinition.ValueSplitLength);
     if NameLine >= 0 then
       Attributes.Value[NameLine].GeneratePumlAsRecord (ipuml, False, FormatDefinition.ValueSplitLength);
-    Lines := TStringList.Create;
+    Lines := tStringList.Create;
     try
       for i := 0 to Attributes.Count - 1 do
         if (i <> idLine) and (i <> NameLine) then
@@ -697,7 +698,7 @@ end;
 function tPumlObject.GetShowObject: boolean;
 var
   r: tPumlObjectRelationship;
-  Cnt: Integer;
+  Cnt: integer;
 begin
   Cnt := 0;
   Result := Filtered;
@@ -739,9 +740,9 @@ end;
 function tPumlObject.ObjectCaption (iSeparator: string; iFormat: boolean): string;
 var
   NewCaption: string;
-  NewCaptionLengh: Integer;
+  NewCaptionLengh: integer;
   NewIdent: string;
-  SplitLength: Integer;
+  SplitLength: integer;
 
   procedure addpart (iValue: string; iFormatChar: string);
   var
@@ -762,7 +763,7 @@ var
     NewCaptionLengh := NewCaptionLengh + Length (iValue);
   end;
 
-  function SplitPosition (S: string): Integer;
+  function SplitPosition (S: string): integer;
   begin
     Result := S.Substring (SplitLength).IndexOf (FormatDefinition.CaptionSplitCharacter);
     if (Result < 0) and (S.Length > round(SplitLength * 1.5)) then
@@ -772,7 +773,7 @@ var
   procedure SplitIdent;
   var
     S: string;
-    i: Integer;
+    i: integer;
   begin
     if (ObjectIdent.Length > SplitLength) and (SplitLength > 0) then
     begin
@@ -817,7 +818,7 @@ begin
   Filtered := IsFiltered;
 end;
 
-procedure tPumlObjectRelationship.GeneratePumlObjectDetail (ipuml: TStrings);
+procedure tPumlObjectRelationship.GeneratePumlObjectDetail (ipuml: tStrings);
 var
   rType: string;
 begin
@@ -836,7 +837,7 @@ begin
       tPumlHelper.CleanCRLF(rType)]));
 end;
 
-procedure tPumlObjectRelationship.GeneratePumlRelation (ipuml, iGroupList: TStrings);
+procedure tPumlObjectRelationship.GeneratePumlRelation (ipuml, iGroupList: tStrings);
 var
   Comment: string;
   FromIdent: string;
@@ -969,11 +970,11 @@ begin
     pumlObjectRelationship.Free;
 end;
 
-procedure tPumlObjectRelationshipList.GeneratePumlObjectDetail (ipuml: TStrings; iDirection: tUmlRelationDirection;
+procedure tPumlObjectRelationshipList.GeneratePumlObjectDetail (ipuml: tStrings; iDirection: tUmlRelationDirection;
   var iAddLine: boolean);
 var
   r: tPumlObjectRelationship;
-  TempList: TStringList;
+  TempList: tStringList;
 begin
   if (GetDirectionCount(iDirection, true) > 0) then
   begin
@@ -989,7 +990,7 @@ begin
       ipuml.add ('<b>relations from</b>');
       ipuml.add (tPumlHelper.TableLine(['object', 'property', 'type'], true));
     end;
-    TempList := TStringList.Create;
+    TempList := tStringList.Create;
     try
       for r in Self do
         if (r.Direction = iDirection) then
@@ -1003,7 +1004,7 @@ begin
   end;
 end;
 
-procedure tPumlObjectRelationshipList.GeneratePumlRelation (ipuml, iGroupList: TStrings);
+procedure tPumlObjectRelationshipList.GeneratePumlRelation (ipuml, iGroupList: tStrings);
 var
   r: tPumlObjectRelationship;
 begin
@@ -1011,13 +1012,13 @@ begin
     r.GeneratePumlRelation (ipuml, iGroupList);
 end;
 
-procedure tPumlObjectRelationshipList.GeneratePumlRelationGroup (ipuml, iGroupList, iGroupCountList: TStrings);
+procedure tPumlObjectRelationshipList.GeneratePumlRelationGroup (ipuml, iGroupList, iGroupCountList: tStrings);
 var
   r: tPumlObjectRelationship;
 
   procedure CheckGroup (iDirection: tUmlRelationDirection);
   var
-    i: Integer;
+    i: integer;
     GroupIdent: string;
     GroupTitle: string;
     ClassIdent: string;
@@ -1077,7 +1078,7 @@ begin
 end;
 
 function tPumlObjectRelationshipList.GetDirectionCount (iDirection: tUmlRelationDirection; iValidOnly: boolean)
-  : Integer;
+  : integer;
 var
   r: tPumlObjectRelationship;
 begin
@@ -1092,27 +1093,27 @@ begin
   Result := tPumlObjectRelationshipEnumerator.Create (Self);
 end;
 
-function tPumlObjectRelationshipList.GetFromCount: Integer;
+function tPumlObjectRelationshipList.GetFromCount: integer;
 begin
   Result := GetDirectionCount (urdFrom, False);
 end;
 
-function tPumlObjectRelationshipList.GetFromCountValid: Integer;
+function tPumlObjectRelationshipList.GetFromCountValid: integer;
 begin
   Result := GetDirectionCount (urdFrom, true);
 end;
 
-function tPumlObjectRelationshipList.GetRelationship (Index: Integer): tPumlObjectRelationship;
+function tPumlObjectRelationshipList.GetRelationship (Index: integer): tPumlObjectRelationship;
 begin
   Result := tPumlObjectRelationship (Objects[index]);
 end;
 
-function tPumlObjectRelationshipList.GetToCount: Integer;
+function tPumlObjectRelationshipList.GetToCount: integer;
 begin
   Result := GetDirectionCount (urdTo, False);
 end;
 
-function tPumlObjectRelationshipList.GetToCountValid: Integer;
+function tPumlObjectRelationshipList.GetToCountValid: integer;
 begin
   Result := GetDirectionCount (urdTo, true);
 end;
@@ -1128,7 +1129,7 @@ end;
 function tPumlCharacteristicList.AddCharacteristic (iAttribute: string;
   iCharacteristicDefinition: tJson2PumlCharacteristicDefinition): tPumlCharacteristicObject;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := tPumlCharacteristicObject.Create (Self);
   Result.Attribute := iAttribute;
@@ -1143,7 +1144,7 @@ begin
   end;
 end;
 
-procedure tPumlCharacteristicList.GeneratePuml (ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer;
+procedure tPumlCharacteristicList.GeneratePuml (ipuml: tStrings; var iAddLine: boolean; iSplitLength: integer;
   iSortLines: boolean);
 var
   Characteristic: tPumlCharacteristicObject;
@@ -1154,7 +1155,7 @@ begin
     Characteristic.GeneratePuml (ipuml, iAddLine, iSplitLength, iSortLines);
 end;
 
-function tPumlCharacteristicList.GetCharacteristic (Index: Integer): tPumlCharacteristicObject;
+function tPumlCharacteristicList.GetCharacteristic (Index: integer): tPumlCharacteristicObject;
 begin
   Result := tPumlCharacteristicObject (Objects[index]);
 end;
@@ -1292,7 +1293,7 @@ end;
 constructor tBasePumlStringList.Create (iParentObject: tBasePumlObject);
 begin
   inherited Create (iParentObject);
-  FItemList := TStringList.Create;
+  FItemList := tStringList.Create;
   FItemList.OwnsObjects := true;
 end;
 
@@ -1302,7 +1303,7 @@ begin
   inherited Destroy;
 end;
 
-function tBasePumlStringList.AddObject (const S: string; AObject: TObject): Integer;
+function tBasePumlStringList.AddObject (const S: string; AObject: tObject): integer;
 begin
   Result := ItemList.AddObject (S, AObject);
 end;
@@ -1320,14 +1321,14 @@ begin
   inherited clear;
 end;
 
-procedure tBasePumlStringList.Delete (Index: Integer);
+procedure tBasePumlStringList.Delete (Index: integer);
 begin
   ItemList.Delete (index);
 end;
 
-function tBasePumlStringList.GetBaseObject (Index: Integer): tJson2PumlBaseObject;
+function tBasePumlStringList.GetBaseObject (Index: integer): tJson2PumlBaseObject;
 var
-  obj: TObject;
+  obj: tObject;
 begin
   obj := ItemList.Objects[index];
   if Assigned (obj) and (obj is tJson2PumlBaseObject) then
@@ -1336,12 +1337,12 @@ begin
     Result := nil;
 end;
 
-function tBasePumlStringList.GetCount: Integer;
+function tBasePumlStringList.GetCount: integer;
 begin
   Result := ItemList.Count;
 end;
 
-function tBasePumlStringList.GetDuplicates: TDuplicates;
+function tBasePumlStringList.GetDuplicates: tDuplicates;
 begin
   Result := ItemList.Duplicates;
 end;
@@ -1351,9 +1352,9 @@ begin
   Result := FilledCount > 0;
 end;
 
-function tBasePumlStringList.GetFilledCount: Integer;
+function tBasePumlStringList.GetFilledCount: integer;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := 0;
   for i := 0 to Count - 1 do
@@ -1370,12 +1371,12 @@ begin
         inc (Result);
 end;
 
-function tBasePumlStringList.GetNames (Index: Integer): string;
+function tBasePumlStringList.GetNames (Index: integer): string;
 begin
   Result := ItemList.Names[index];
 end;
 
-function tBasePumlStringList.GetObjects (Index: Integer): TObject;
+function tBasePumlStringList.GetObjects (Index: integer): tObject;
 begin
   Result := ItemList.Objects[index];
 end;
@@ -1390,7 +1391,7 @@ begin
   Result := ItemList.Sorted;
 end;
 
-function tBasePumlStringList.GetStrings (Index: Integer): string;
+function tBasePumlStringList.GetStrings (Index: integer): string;
 begin
   Result := ItemList[index];
 end;
@@ -1400,22 +1401,22 @@ begin
   Result := ItemList.Text;
 end;
 
-function tBasePumlStringList.IndexOf (S: string): Integer;
+function tBasePumlStringList.IndexOf (S: string): integer;
 begin
   Result := ItemList.IndexOf (S);
 end;
 
-function tBasePumlStringList.IndexOfName (S: string): Integer;
+function tBasePumlStringList.IndexOfName (S: string): integer;
 begin
   Result := ItemList.IndexOfName (S);
 end;
 
-procedure tBasePumlStringList.SetDuplicates (const Value: TDuplicates);
+procedure tBasePumlStringList.SetDuplicates (const Value: tDuplicates);
 begin
   ItemList.Duplicates := Value;
 end;
 
-procedure tBasePumlStringList.SetObjects (Index: Integer; const Value: TObject);
+procedure tBasePumlStringList.SetObjects (Index: integer; const Value: tObject);
 begin
   ItemList.Objects[index] := Value;
 end;
@@ -1430,7 +1431,7 @@ begin
   ItemList.Sorted := Value;
 end;
 
-procedure tBasePumlStringList.SetStrings (Index: Integer; const Value: string);
+procedure tBasePumlStringList.SetStrings (Index: integer; const Value: string);
 begin
   ItemList[index] := Value;
 end;
@@ -1447,7 +1448,7 @@ end;
 
 procedure tBasePumlStringList.UpdateRedundant;
 var
-  i: Integer;
+  i: integer;
 begin
   inherited UpdateRedundant;
   for i := 0 to Count - 1 do
@@ -1464,9 +1465,9 @@ begin
   OwnsObjects := False;
 end;
 
-procedure tPumlDetailObjectList.GeneratePumlClassList (ipuml: TStrings);
+procedure tPumlDetailObjectList.GeneratePumlClassList (ipuml: tStrings);
 var
-  i: Integer;
+  i: integer;
 begin
   if Count <= 0 then
     Exit;
@@ -1482,7 +1483,7 @@ begin
   end;
 end;
 
-procedure tPumlDetailObjectList.GeneratePumlTogether (ipuml: TStrings; iParentObjectName, iParentObjectTitle: string);
+procedure tPumlDetailObjectList.GeneratePumlTogether (ipuml: tStrings; iParentObjectName, iParentObjectTitle: string);
 begin
   if (Count <= 0) then
     Exit;
@@ -1502,7 +1503,7 @@ function tPumlCharacteristicRecord.AddValue (iAttribute, iValue: string; iReplac
   : tPumlCharacteristicValue;
 var
   NewValue: tPumlCharacteristicValue;
-  i: Integer;
+  i: integer;
 begin
   NewValue := tPumlCharacteristicValue.Create (Self);
   NewValue.Attribute := iAttribute;
@@ -1527,9 +1528,9 @@ begin
   end;
 end;
 
-procedure tPumlCharacteristicRecord.AddValues (iValueList: TStringList);
+procedure tPumlCharacteristicRecord.AddValues (iValueList: tStringList);
 var
-  i: Integer;
+  i: integer;
 begin
   for i := 0 to iValueList.Count - 1 do
     AddValue (iValueList.Names[i], iValueList.ValueFromIndex[i]);
@@ -1541,7 +1542,7 @@ begin
 
 end;
 
-procedure tPumlCharacteristicRecord.CalculateTableRow (iUsedColumns, iValueList: TStringList);
+procedure tPumlCharacteristicRecord.CalculateTableRow (iUsedColumns, iValueList: tStringList);
 var
   CharVal: tPumlCharacteristicValue;
 begin
@@ -1550,12 +1551,12 @@ begin
 end;
 
 procedure tPumlCharacteristicRecord.CalculateTableRows (iDefinition: tJson2PumlCharacteristicDefinition;
-  iUsedColumns, iTableRows: TStringList);
+  iUsedColumns, iTableRows: tStringList);
 var
-  ValueList: TStringList;
+  ValueList: tStringList;
   CharVal: tPumlCharacteristicValue;
 begin
-  ValueList := TStringList.Create;
+  ValueList := tStringList.Create;
   try
     for CharVal in Self do
       CharVal.CalculateTableRow (iUsedColumns, ValueList);
@@ -1566,12 +1567,12 @@ begin
   end;
 end;
 
-procedure tPumlCharacteristicRecord.GeneratePumlAsRecord (ipuml: TStrings; iIncludeHeader: boolean;
-  iSplitLength: Integer; iSortLines: boolean);
+procedure tPumlCharacteristicRecord.GeneratePumlAsRecord (ipuml: tStrings; iIncludeHeader: boolean;
+  iSplitLength: integer; iSortLines: boolean);
 var
   CharVal: tPumlCharacteristicValue;
   IncludeParent: boolean;
-  Lines: TStringList;
+  Lines: tStringList;
 begin
   IncludeParent := IncludeParentColumn;
   if iIncludeHeader then
@@ -1582,7 +1583,7 @@ begin
     else
       ipuml.add (tPumlHelper.TableLine(['attribute', 'value'], true));
   end;
-  Lines := TStringList.Create;
+  Lines := tStringList.Create;
   try
     for CharVal in Self do
       CharVal.GeneratePumlAsRecord (Lines, IncludeParent, iSplitLength);
@@ -1678,7 +1679,7 @@ begin
     Result := nil;
 end;
 
-function tPumlCharacteristicRecord.GetValue (Index: Integer): tPumlCharacteristicValue;
+function tPumlCharacteristicRecord.GetValue (Index: integer): tPumlCharacteristicValue;
 begin
   Result := tPumlCharacteristicValue (Objects[index]);
 end;
@@ -1705,7 +1706,7 @@ end;
 constructor tPumlCharacteristicObject.Create (iParentObject: tBasePumlObject);
 begin
   inherited Create (iParentObject);
-  FUsedProperties := TStringList.Create ();
+  FUsedProperties := tStringList.Create ();
 end;
 
 destructor tPumlCharacteristicObject.Destroy;
@@ -1714,9 +1715,9 @@ begin
   inherited Destroy;
 end;
 
-procedure tPumlCharacteristicObject.AddUsedProperties (iPropertyList: TStringList);
+procedure tPumlCharacteristicObject.AddUsedProperties (iPropertyList: tStringList);
 var
-  i: Integer;
+  i: integer;
 begin
   for i := 0 to iPropertyList.Count - 1 do
     AddUsedProperty (iPropertyList.Names[i]);
@@ -1728,12 +1729,12 @@ begin
     UsedProperties.add (iName);
 end;
 
-procedure tPumlCharacteristicObject.GeneratePuml (ipuml: TStrings; var iAddLine: boolean; iSplitLength: Integer;
+procedure tPumlCharacteristicObject.GeneratePuml (ipuml: tStrings; var iAddLine: boolean; iSplitLength: integer;
   iSortLines: boolean);
 // var
 // CharRec: tPumlCharacteristicRecord;
-// Columns: TStringList;
-// Lines: TStringList;
+// Columns: tStringList;
+// Lines: tStringList;
 // PropName: string;
 // i, j: Integer;
 // S: string;
@@ -1814,10 +1815,10 @@ begin
   Result := iValue.TrimRight ([' ', #10, #13, #9]).Replace (#13#10, #10).Replace (#13, #10).Replace (#10, cNewLinePuml);
 end;
 
-class function tPumlHelper.CleanValue (iValue: string; iSplitLength: Integer): string;
+class function tPumlHelper.CleanValue (iValue: string; iSplitLength: integer): string;
 var
   Value: string;
-  i: Integer;
+  i: integer;
 begin
   Value := CleanCRLF (iValue);
   if (Value.IndexOf('https://') = 0) or (Value.IndexOf('http://') = 0) then
@@ -1903,7 +1904,7 @@ end;
 
 class function tPumlHelper.TableLine (const iColumns: array of const; iHeader: boolean = False): string;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := '';
   if high(iColumns) < 0 then
@@ -1911,10 +1912,10 @@ begin
   Result := TableColumnSeparator;
   for i := 0 to high(iColumns) do
     Result := Result + TableColumn ('%s', iHeader);
-  Result := Format (Result, iColumns).Replace ('\n', '\n ').Replace(#13#10, '\n ').Replace(#10, '\n ');
+  Result := Format (Result, iColumns).Replace ('\n', '\n ').Replace (#13#10, '\n ').Replace (#10, '\n ');
 end;
 
-class function tPumlHelper.TableLine (iColumns: TStringList; iHeader: boolean = False;
+class function tPumlHelper.TableLine (iColumns: tStringList; iHeader: boolean = False;
   iClearColumns: boolean = true): string;
 var
   S: string;
@@ -1941,12 +1942,12 @@ begin
   inherited Destroy;
 end;
 
-function tPumlCharacteristicValue.AddDetailRecord (iRow: Integer): tPumlCharacteristicRecord;
+function tPumlCharacteristicValue.AddDetailRecord (iRow: integer): tPumlCharacteristicRecord;
 begin
   Result := DetailRecords.AddRecord (iRow);
 end;
 
-function tPumlCharacteristicValue.CalculateRecordLine (iIncludeParent: boolean; iSplitLength: Integer): string;
+function tPumlCharacteristicValue.CalculateRecordLine (iIncludeParent: boolean; iSplitLength: integer): string;
 begin
   if iIncludeParent then
     Result := tPumlHelper.TableLine ([ParentCharacteristicNameIndex, Attribute, tPumlHelper.CleanValue(Value,
@@ -1955,7 +1956,7 @@ begin
     Result := tPumlHelper.TableLine ([Attribute, tPumlHelper.CleanValue(Value, iSplitLength)]);
 end;
 
-procedure tPumlCharacteristicValue.CalculateTableRow (iUsedColumns, iValueList: TStringList);
+procedure tPumlCharacteristicValue.CalculateTableRow (iUsedColumns, iValueList: tStringList);
 var
   Name: string;
   CharRec: tPumlCharacteristicRecord;
@@ -1974,8 +1975,8 @@ begin
   end;
 end;
 
-procedure tPumlCharacteristicValue.GeneratePumlAsRecord (ipuml: TStrings; iIncludeParent: boolean;
-  iSplitLength: Integer);
+procedure tPumlCharacteristicValue.GeneratePumlAsRecord (ipuml: tStrings; iIncludeParent: boolean;
+  iSplitLength: integer);
 begin
   if DetailRecords.Count > 0 then
     DetailRecords.GeneratePumlAsRecord (ipuml, False, iSplitLength, False)
@@ -2043,10 +2044,10 @@ begin
     inc (FIndex);
 end;
 
-function tPumlCharacteristicRecordList.AddRecord (iRow: Integer): tPumlCharacteristicRecord;
+function tPumlCharacteristicRecordList.AddRecord (iRow: integer): tPumlCharacteristicRecord;
 var
   NewRecord: tPumlCharacteristicRecord;
-  i: Integer;
+  i: integer;
 begin
   NewRecord := tPumlCharacteristicRecord.Create (ParentObject);
   NewRecord.Row := iRow;
@@ -2063,8 +2064,8 @@ begin
   end;
 end;
 
-procedure tPumlCharacteristicRecordList.GeneratePumlAsRecord (ipuml: TStrings; iIncludeHeader: boolean;
-  iSplitLength: Integer; iSortLines: boolean);
+procedure tPumlCharacteristicRecordList.GeneratePumlAsRecord (ipuml: tStrings; iIncludeHeader: boolean;
+  iSplitLength: integer; iSortLines: boolean);
 var
   CharRec: tPumlCharacteristicRecord;
 begin
@@ -2072,27 +2073,27 @@ begin
     CharRec.GeneratePumlAsRecord (ipuml, iIncludeHeader, iSplitLength, iSortLines);
 end;
 
-procedure tPumlCharacteristicRecordList.GeneratePumlAsList (ipuml: TStrings;
-  iDefinition: tJson2PumlCharacteristicDefinition; iSplitLength: Integer);
+procedure tPumlCharacteristicRecordList.GeneratePumlAsList (ipuml: tStrings;
+  iDefinition: tJson2PumlCharacteristicDefinition; iSplitLength: integer);
 var
   CharRec: tPumlCharacteristicRecord;
-  UsedColumns: TStringList;
-  TableRows: TStringList;
-  ValueList: TStringList;
-  Columns: TStringList;
-  ResultRows: TStringList;
+  UsedColumns: tStringList;
+  TableRows: tStringList;
+  ValueList: tStringList;
+  Columns: tStringList;
+  ResultRows: tStringList;
   Row: string;
   Col: string;
-  i: Integer;
-  r: Integer;
+  i: integer;
+  r: integer;
 begin
   ipuml.add (Format('<b>%s</b>', [ParentCharacteristicValue.Attribute]));
 
-  UsedColumns := TStringList.Create;
-  Columns := TStringList.Create;
-  ValueList := TStringList.Create;
-  TableRows := TStringList.Create;
-  ResultRows := TStringList.Create;
+  UsedColumns := tStringList.Create;
+  Columns := tStringList.Create;
+  ValueList := tStringList.Create;
+  TableRows := tStringList.Create;
+  ResultRows := tStringList.Create;
   try
     for CharRec in Self do
       CharRec.CalculateTableRows (iDefinition, UsedColumns, TableRows);
@@ -2164,7 +2165,7 @@ begin
     Result := nil;
 end;
 
-function tPumlCharacteristicRecordList.GetRecords (Index: Integer): tPumlCharacteristicRecord;
+function tPumlCharacteristicRecordList.GetRecords (Index: integer): tPumlCharacteristicRecord;
 begin
   Result := tPumlCharacteristicRecord (Objects[index]);
 end;

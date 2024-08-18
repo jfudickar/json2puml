@@ -218,7 +218,6 @@ end;
 
 function TJson2PumlConfigurationFrame.GetMemo: TMemo;
 begin
-  // TODO -cMM: tJson2PumlConfigurationFrame.GetMemo default body inserted
   Result := TMemo (MainEditor);
 end;
 

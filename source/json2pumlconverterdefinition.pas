@@ -26,8 +26,8 @@ unit json2pumlconverterdefinition;
 
 interface
 
-uses System.JSON, System.Classes, json2pumlconst,
-  json2pumlbasedefinition, json2pumldefinition;
+uses
+  System.JSON, System.Classes, json2pumlconst, json2pumlbasedefinition, json2pumldefinition;
 
 type
   tJson2PumlOperationPropertyList = class(tJson2PumlBasePropertyList)
@@ -36,8 +36,8 @@ type
   public
     constructor Create; override;
     procedure MergeWith (iMergeList: tJson2PumlOperationPropertyList); reintroduce; virtual;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
     property Operation: tJson2PumlListOperation read FOperation write FOperation;
   end;
@@ -51,7 +51,7 @@ type
     function GetIdent: string; override;
   public
     procedure Assign (Source: tPersistent); override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
   published
     property ChildPropertyName: string read FChildPropertyName write FChildPropertyName;
@@ -63,7 +63,7 @@ type
 
   tJson2PumlPropertyValueDefinitionEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fObjectList: tJson2PumlPropertyValueDefinitionList;
   public
     constructor Create (AObjectList: tJson2PumlPropertyValueDefinitionList);
@@ -74,9 +74,9 @@ type
 
   tJson2PumlPropertyValueDefinitionList = class(tJson2PumlOperationPropertyList)
   private
-    function GetDefinition (Index: Integer): tJson2PumlPropertyValueDefinition;
+    function GetDefinition (Index: integer): tJson2PumlPropertyValueDefinition;
   protected
-    procedure ReadListValueFromJson (iJsonValue: TJSONValue); override;
+    procedure ReadListValueFromJson (iJsonValue: tJSONValue); override;
   public
     constructor Create; override;
     procedure AddDefinition (iPropertyName, iChildPropertyName, iNextValueSeparator: string);
@@ -85,7 +85,7 @@ type
       var oFoundCondition: string; iUseMatch: boolean = false; iSearchEmpyAsDefault: boolean = false)
       : tJson2PumlPropertyValueDefinition;
     function GetEnumerator: tJson2PumlPropertyValueDefinitionEnumerator;
-    property Definition[index: Integer]: tJson2PumlPropertyValueDefinition read GetDefinition; default;
+    property Definition[index: integer]: tJson2PumlPropertyValueDefinition read GetDefinition; default;
   end;
 
   tJson2PumlObjectDefinition = class(tJson2PumlBaseObject)
@@ -96,7 +96,7 @@ type
     function GetIdent: string; override;
   public
     procedure Assign (Source: tPersistent); override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
   published
     property GenerateWithoutIdentifier: boolean read FGenerateWithoutIdentifier write FGenerateWithoutIdentifier;
@@ -107,7 +107,7 @@ type
 
   tJson2PumlObjectDefinitionEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fObjectList: tJson2PumlObjectDefinitionList;
   public
     constructor Create (AObjectList: tJson2PumlObjectDefinitionList);
@@ -118,9 +118,9 @@ type
 
   tJson2PumlObjectDefinitionList = class(tJson2PumlOperationPropertyList)
   private
-    function GetDefinition (Index: Integer): tJson2PumlObjectDefinition;
+    function GetDefinition (Index: integer): tJson2PumlObjectDefinition;
   protected
-    procedure ReadListValueFromJson (iJsonValue: TJSONValue); override;
+    procedure ReadListValueFromJson (iJsonValue: tJSONValue); override;
   public
     constructor Create; override;
     procedure AddDefinition (iObjectName: string; iGenerateWithoutIdentifier: boolean);
@@ -128,7 +128,7 @@ type
     function GetDefinitionByName (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): tJson2PumlObjectDefinition;
     function GetEnumerator: tJson2PumlObjectDefinitionEnumerator;
-    property Definition[index: Integer]: tJson2PumlObjectDefinition read GetDefinition; default;
+    property Definition[index: integer]: tJson2PumlObjectDefinition read GetDefinition; default;
   end;
 
   tJson2PumlSingleFormatDefinition = class(tJson2PumlBaseObject)
@@ -153,8 +153,8 @@ type
     function GetCaptionShowIdent: boolean;
     function GetCaptionShowTitle: boolean;
     function GetCaptionShowType: boolean;
-    function GetCaptionSplitLength: Integer;
-    function GetValueSplitLength: Integer;
+    function GetCaptionSplitLength: integer;
+    function GetValueSplitLength: integer;
     function GetShowAttributes: boolean;
     function GetSortAttributes: boolean;
     function GetShowCharacteristics: boolean;
@@ -194,16 +194,16 @@ type
     procedure Assign (Source: tPersistent); override;
     procedure Clear; override;
     procedure MergeWith (iMergeDefinition: tJson2PumlBaseObject); override;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
   published
     property CaptionShowIdent: boolean read GetCaptionShowIdent;
     property CaptionShowTitle: boolean read GetCaptionShowTitle;
     property CaptionShowType: boolean read GetCaptionShowType;
     property CaptionSplitCharacter: string read FCaptionSplitCharacter write FCaptionSplitCharacter;
-    property CaptionSplitLength: Integer read GetCaptionSplitLength;
-    property ValueSplitLength: Integer read GetValueSplitLength;
+    property CaptionSplitLength: integer read GetCaptionSplitLength;
+    property ValueSplitLength: integer read GetValueSplitLength;
     property FormatName: string read FFormatName write FFormatName;
     property IconColor: string read FIconColor write FIconColor;
     property ObjectFilter: tJson2PumlBasePropertyList read FObjectFilter write FObjectFilter;
@@ -221,7 +221,7 @@ type
 
   tJson2PumlFormatDefinitionEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fObjectList: tJson2PumlFormatDefinitionList;
   public
     constructor Create (ACharacteristicList: tJson2PumlFormatDefinitionList);
@@ -232,18 +232,18 @@ type
 
   tJson2PumlFormatDefinitionList = class(tJson2PumlOperationPropertyList)
   private
-    function GetDefinition (Index: Integer): tJson2PumlSingleFormatDefinition;
+    function GetDefinition (Index: integer): tJson2PumlSingleFormatDefinition;
   protected
     function CreateListValueObject: tJson2PumlBaseObject; override;
   public
     constructor Create; override;
     procedure AddDefinition (iDefinition: tJson2PumlSingleFormatDefinition);
     procedure Assign (Source: tPersistent); override;
-    procedure GeneratePuml (ipuml: TStrings);
-    function GetDefinitionByName (iPropertyName, iParentPropertyName: string; var oPriority: Integer;
+    procedure GeneratePuml (ipuml: tStrings);
+    function GetDefinitionByName (iPropertyName, iParentPropertyName: string; var oPriority: integer;
       var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
     function GetEnumerator: tJson2PumlFormatDefinitionEnumerator;
-    property Definition[index: Integer]: tJson2PumlSingleFormatDefinition read GetDefinition; default;
+    property Definition[index: integer]: tJson2PumlSingleFormatDefinition read GetDefinition; default;
   end;
 
   tJson2PumlFormatDefinition = class(tJson2PumlBaseObject)
@@ -261,11 +261,11 @@ type
     destructor Destroy; override;
     procedure Assign (Source: tPersistent); override;
     procedure Clear; override;
-    function GetFormatByName (iPropertyName, iParentPropertyName: string; var oPriority: Integer;
+    function GetFormatByName (iPropertyName, iParentPropertyName: string; var oPriority: integer;
       var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
     procedure MergeWith (iMergeDefinition: tJson2PumlBaseObject); override;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
   published
     property BaseFormat: tJson2PumlSingleFormatDefinition read FBaseFormat;
@@ -290,7 +290,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure Assign (Source: tPersistent); override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
   published
     function IsPropertyAllowed (iPropertyName, iParentPropertyName: string; var oFoundCondition: string): boolean;
@@ -309,7 +309,7 @@ type
 
   tJson2PumlCharacteristicDefinitionEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fObjectList: tJson2PumlCharacteristicDefinitionList;
   public
     constructor Create (ACharacteristicList: tJson2PumlCharacteristicDefinitionList);
@@ -320,9 +320,9 @@ type
 
   tJson2PumlCharacteristicDefinitionList = class(tJson2PumlOperationPropertyList)
   private
-    function GetDefinition (Index: Integer): tJson2PumlCharacteristicDefinition;
+    function GetDefinition (Index: integer): tJson2PumlCharacteristicDefinition;
   protected
-    procedure ReadListValueFromJson (iJsonValue: TJSONValue); override;
+    procedure ReadListValueFromJson (iJsonValue: tJSONValue); override;
   public
     constructor Create; override;
     procedure AddDefinition (iParentProperty: string; iCharacteristicType: tJson2PumlCharacteristicType;
@@ -331,7 +331,7 @@ type
     function GetDefinitionByName (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): tJson2PumlCharacteristicDefinition;
     function GetEnumerator: tJson2PumlCharacteristicDefinitionEnumerator;
-    property Definition[index: Integer]: tJson2PumlCharacteristicDefinition read GetDefinition; default;
+    property Definition[index: integer]: tJson2PumlCharacteristicDefinition read GetDefinition; default;
   end;
 
   tJson2PumlRelationshipTypeArrowFormatList = class(tJson2PumlOperationPropertyList)
@@ -427,10 +427,10 @@ type
     function IsRelationshipTypeProperty (iPropertyName: string; iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): boolean;
     procedure MergeWith (iMergeDefinition: tJson2PumlBaseObject); override;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
     function RenameObjectType (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): string;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
     property OptionName: string read FOptionName write SetOptionName;
     property ShowLegend: boolean read GetShowLegend;
@@ -479,7 +479,7 @@ type
 
   tJson2PumlConverterDefinitionEnumerator = class
   private
-    FIndex: Integer;
+    FIndex: integer;
     fObjectList: tJson2PumlConverterDefinitionList;
   public
     constructor Create (ACharacteristicList: tJson2PumlConverterDefinitionList);
@@ -490,15 +490,15 @@ type
 
   tJson2PumlConverterDefinitionList = class(tJson2PumlBasePropertyList)
   private
-    function GetDefinition (Index: Integer): tJson2PumlConverterDefinition;
+    function GetDefinition (Index: integer): tJson2PumlConverterDefinition;
   public
     constructor Create; override;
     procedure AddDefinition (iDefinition: tJson2PumlConverterDefinition);
     procedure Assign (Source: tPersistent); override;
     function GetDefinitionByName (iOptionName: string): tJson2PumlConverterDefinition;
     function GetEnumerator: tJson2PumlConverterDefinitionEnumerator;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
-    property Definition[index: Integer]: tJson2PumlConverterDefinition read GetDefinition; default;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
+    property Definition[index: integer]: tJson2PumlConverterDefinition read GetDefinition; default;
   end;
 
   tJson2PumlConverterGroupDescriptionDefinition = class(tJson2PumlBaseObject)
@@ -509,8 +509,8 @@ type
     function GetIdent: string; override;
     function GetIsValid: boolean; override;
   public
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
   published
     property Description: string read FDescription write FDescription;
@@ -524,8 +524,8 @@ type
     FDescription: tJson2PumlConverterGroupDescriptionDefinition;
     FOptionList: tJson2PumlConverterDefinitionList;
     function GetOptionByName (name: string): tJson2PumlConverterDefinition;
-    function GetOptionCount: Integer;
-    function GetOptions (Index: Integer): tJson2PumlConverterDefinition;
+    function GetOptionCount: integer;
+    function GetOptions (Index: integer): tJson2PumlConverterDefinition;
     procedure SetDefaultOption (const Value: string);
   protected
     function GetIdent: string; override;
@@ -536,18 +536,18 @@ type
     procedure Clear; override;
     procedure FillDefinitionFromOption (iDefinition: tJson2PumlConverterDefinition; iOption: string); overload;
     procedure FillDefinitionFromOption (iDefinition, iSourceDefinition: tJson2PumlConverterDefinition); overload;
-    function ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean; override;
-    procedure WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
+    procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
-    procedure WriteToJsonServiceListResult (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+    procedure WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); overload;
     property BaseOption: tJson2PumlConverterDefinition read FBaseOption;
     property DefaultOption: string read FDefaultOption write SetDefaultOption;
     property Description: tJson2PumlConverterGroupDescriptionDefinition read FDescription;
     property OptionByName[name: string]: tJson2PumlConverterDefinition read GetOptionByName;
-    property OptionCount: Integer read GetOptionCount;
+    property OptionCount: integer read GetOptionCount;
     property OptionList: tJson2PumlConverterDefinitionList read FOptionList;
-    property Options[index: Integer]: tJson2PumlConverterDefinition read GetOptions;
+    property Options[index: integer]: tJson2PumlConverterDefinition read GetOptions;
   end;
 
 implementation
@@ -737,7 +737,7 @@ end;
 function tJson2PumlConverterDefinition.IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
   var oFoundCondition, oGroupName: string): boolean;
 var
-  Index: Integer;
+  Index: integer;
 begin
   index := GroupProperties.IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition);
   Result := index >= 0;
@@ -852,9 +852,9 @@ begin
 
 end;
 
-function tJson2PumlConverterDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlConverterDefinition.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 var
-  DefinitionRecord: TJSONObject;
+  DefinitionRecord: tJSONObject;
 begin
   Result := false;
   Clear;
@@ -897,7 +897,7 @@ end;
 function tJson2PumlConverterDefinition.RenameObjectType (iPropertyName, iParentPropertyName, iParentObjectType: string;
   var oFoundCondition: string): string;
 var
-  Index: Integer;
+  Index: integer;
 begin
   index := ObjectTypeRenames.IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition);
   Result := ObjectTypeRenames.ValueFromIndex[index];
@@ -1024,10 +1024,10 @@ begin
   FRelationshipTypeProperties.Assign (Value);
 end;
 
-procedure tJson2PumlConverterDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlConverterDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 var
-  Level: Integer;
+  Level: integer;
   PropertyName: string;
   WriteEmpty: boolean;
 begin
@@ -1092,7 +1092,7 @@ end;
 
 procedure tJson2PumlOperationPropertyList.MergeWith (iMergeList: tJson2PumlOperationPropertyList);
 var
-  i, j: Integer;
+  i, j: integer;
 begin
   if iMergeList = self then
     exit;
@@ -1119,35 +1119,35 @@ begin
   end;
 end;
 
-function tJson2PumlOperationPropertyList.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlOperationPropertyList.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 var
-  JsonValue: TJSONValue;
-  DefinitionRecord: TJSONObject;
+  JsonValue: tJSONValue;
+  DefinitionRecord: tJSONObject;
 begin
   Result := false;
   Clear;
   if not Assigned (iJsonValue) then
     exit;
-  if iJsonValue is TJSONArray then
+  if iJsonValue is tJSONArray then
     JsonValue := iJsonValue
-  else if iJsonValue is TJSONObject then
-    JsonValue := TJSONObject (iJsonValue).Values[iPropertyName]
+  else if iJsonValue is tJSONObject then
+    JsonValue := tJSONObject (iJsonValue).Values[iPropertyName]
   else
     exit;
   if not Assigned (JsonValue) then
     exit;
   Result := True;
-  if JsonValue is TJSONArray then
+  if JsonValue is tJSONArray then
     inherited ReadFromJson (JsonValue, iPropertyName)
-  else if JsonValue is TJSONObject then
+  else if JsonValue is tJSONObject then
   begin
-    DefinitionRecord := TJSONObject (JsonValue);
+    DefinitionRecord := tJSONObject (JsonValue);
     Operation.FromString (GetJsonStringValue(DefinitionRecord, 'operation'));
     inherited ReadFromJson (DefinitionRecord, 'list');
   end;
 end;
 
-procedure tJson2PumlOperationPropertyList.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlOperationPropertyList.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 begin
   if (Count <= 0) and (Operation = jloMerge) and not iWriteEmpty then
@@ -1194,7 +1194,7 @@ begin
   end;
 end;
 
-function tJson2PumlPropertyValueDefinitionList.GetDefinition (Index: Integer): tJson2PumlPropertyValueDefinition;
+function tJson2PumlPropertyValueDefinitionList.GetDefinition (Index: integer): tJson2PumlPropertyValueDefinition;
 begin
   Result := tJson2PumlPropertyValueDefinition (Objects[index]);
 end;
@@ -1203,7 +1203,7 @@ function tJson2PumlPropertyValueDefinitionList.GetDefinitionByName (iPropertyNam
   iParentObjectType: string; var oFoundCondition: string; iUseMatch: boolean = false;
   iSearchEmpyAsDefault: boolean = false): tJson2PumlPropertyValueDefinition;
 var
-  i: Integer;
+  i: integer;
 begin
   i := IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition);
   if i >= 0 then
@@ -1217,24 +1217,24 @@ begin
   Result := tJson2PumlPropertyValueDefinitionEnumerator.Create (self);
 end;
 
-procedure tJson2PumlPropertyValueDefinitionList.ReadListValueFromJson (iJsonValue: TJSONValue);
+procedure tJson2PumlPropertyValueDefinitionList.ReadListValueFromJson (iJsonValue: tJSONValue);
 var
-  DefinitionRecord: TJSONObject;
+  DefinitionRecord: tJSONObject;
   PropertyName: string;
   ChildPropertyName: string;
   NextValueSeparator: string;
 begin
-  if iJsonValue is TJSONObject then
+  if iJsonValue is tJSONObject then
   begin
-    DefinitionRecord := TJSONObject (iJsonValue);
+    DefinitionRecord := tJSONObject (iJsonValue);
     PropertyName := GetJsonStringValue (DefinitionRecord, 'propertyName');
     ChildPropertyName := GetJsonStringArray (DefinitionRecord, 'childPropertyName');
     NextValueSeparator := GetJsonStringArray (DefinitionRecord, 'nextValueSeparator');
     AddDefinition (PropertyName, ChildPropertyName, NextValueSeparator);
   end
-  else if iJsonValue is TJSONString then
+  else if iJsonValue is tJSONString then
   begin
-    PropertyName := TJSONString (iJsonValue).Value;
+    PropertyName := tJSONString (iJsonValue).Value;
     if PropertyName.IndexOf ('=') > 0 then
       AddDefinition (PropertyName.Substring(0, PropertyName.IndexOf('=')),
         PropertyName.Substring(PropertyName.IndexOf('=') + 1), '')
@@ -1292,7 +1292,7 @@ begin
   end;
 end;
 
-function tJson2PumlObjectDefinitionList.GetDefinition (Index: Integer): tJson2PumlObjectDefinition;
+function tJson2PumlObjectDefinitionList.GetDefinition (Index: integer): tJson2PumlObjectDefinition;
 begin
   Result := tJson2PumlObjectDefinition (Objects[index]);
 end;
@@ -1300,7 +1300,7 @@ end;
 function tJson2PumlObjectDefinitionList.GetDefinitionByName (iPropertyName, iParentPropertyName,
   iParentObjectType: string; var oFoundCondition: string): tJson2PumlObjectDefinition;
 var
-  i: Integer;
+  i: integer;
 begin
   i := IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition);
   if i >= 0 then
@@ -1314,22 +1314,22 @@ begin
   Result := tJson2PumlObjectDefinitionEnumerator.Create (self);
 end;
 
-procedure tJson2PumlObjectDefinitionList.ReadListValueFromJson (iJsonValue: TJSONValue);
+procedure tJson2PumlObjectDefinitionList.ReadListValueFromJson (iJsonValue: tJSONValue);
 var
-  DefinitionRecord: TJSONObject;
+  DefinitionRecord: tJSONObject;
   ObjectName: string;
   GenerateWithoutIdentifier: boolean;
 begin
-  if iJsonValue is TJSONObject then
+  if iJsonValue is tJSONObject then
   begin
-    DefinitionRecord := TJSONObject (iJsonValue);
+    DefinitionRecord := tJSONObject (iJsonValue);
     ObjectName := GetJsonStringValue (DefinitionRecord, 'objectName');
     GenerateWithoutIdentifier := GetJsonStringValueBoolean (DefinitionRecord, 'generateWithoutIdentifier', false);
     AddDefinition (ObjectName, GenerateWithoutIdentifier);
   end
-  else if iJsonValue is TJSONString then
+  else if iJsonValue is tJSONString then
   begin
-    ObjectName := TJSONString (iJsonValue).Value;
+    ObjectName := tJSONString (iJsonValue).Value;
     AddDefinition (ObjectName, false);
   end;
 end;
@@ -1431,7 +1431,7 @@ begin
   Result := StringToBoolean (CaptionShowTypeStr, True);
 end;
 
-function tJson2PumlSingleFormatDefinition.GetCaptionSplitLength: Integer;
+function tJson2PumlSingleFormatDefinition.GetCaptionSplitLength: integer;
 begin
   if CaptionSplitLengthStr.IsEmpty then
     Result := 0
@@ -1439,7 +1439,7 @@ begin
     Result := CaptionSplitLengthStr.ToInteger;
 end;
 
-function tJson2PumlSingleFormatDefinition.GetValueSplitLength: Integer;
+function tJson2PumlSingleFormatDefinition.GetValueSplitLength: integer;
 begin
   if ValueSplitLengthStr.IsEmpty then
     Result := 0
@@ -1525,9 +1525,9 @@ begin
   ValueSplitLengthStr := MergeValue (ValueSplitLengthStr, Definition.ValueSplitLengthStr);
 end;
 
-function tJson2PumlSingleFormatDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlSingleFormatDefinition.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 var
-  DefinitionRecord: TJSONObject;
+  DefinitionRecord: tJSONObject;
 begin
   Result := false;
   Clear;
@@ -1613,10 +1613,10 @@ begin
   FSkinParams := Value;
 end;
 
-procedure tJson2PumlSingleFormatDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlSingleFormatDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 var
-  Level: Integer;
+  Level: integer;
   PropertyName: string;
 begin
   if not IsFilled then
@@ -1713,9 +1713,9 @@ begin
   Result := tJson2PumlSingleFormatDefinition.Create;
 end;
 
-procedure tJson2PumlFormatDefinitionList.GeneratePuml (ipuml: TStrings);
+procedure tJson2PumlFormatDefinitionList.GeneratePuml (ipuml: tStrings);
 var
-  i: Integer;
+  i: integer;
   ObjectName: string;
   Color: tJson2PumlSingleFormatDefinition;
 
@@ -1737,18 +1737,18 @@ begin
   ipuml.Add ('');
 end;
 
-function tJson2PumlFormatDefinitionList.GetDefinition (Index: Integer): tJson2PumlSingleFormatDefinition;
+function tJson2PumlFormatDefinitionList.GetDefinition (Index: integer): tJson2PumlSingleFormatDefinition;
 begin
   Result := tJson2PumlSingleFormatDefinition (Objects[index]);
 end;
 
 function tJson2PumlFormatDefinitionList.GetDefinitionByName (iPropertyName, iParentPropertyName: string;
-  var oPriority: Integer; var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
+  var oPriority: integer; var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
 var
   Search: string;
   FormatDefinition: tJson2PumlSingleFormatDefinition;
-  i: Integer;
-  l1, l2, l3: Integer;
+  i: integer;
+  l1, l2, l3: integer;
 begin
   Result := nil;
   oFoundCondition := '';
@@ -1850,7 +1850,7 @@ begin
   Formats.Clear;
 end;
 
-function tJson2PumlFormatDefinition.GetFormatByName (iPropertyName, iParentPropertyName: string; var oPriority: Integer;
+function tJson2PumlFormatDefinition.GetFormatByName (iPropertyName, iParentPropertyName: string; var oPriority: integer;
   var oFoundCondition: string): tJson2PumlSingleFormatDefinition;
 begin
   Result := Formats.GetDefinitionByName (iPropertyName, iParentPropertyName, oPriority, oFoundCondition);
@@ -1884,9 +1884,9 @@ begin
   BuildFormatList;
 end;
 
-function tJson2PumlFormatDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlFormatDefinition.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 var
-  DefinitionRecord: TJSONObject;
+  DefinitionRecord: tJSONObject;
 begin
   Result := false;
   Clear;
@@ -1898,7 +1898,7 @@ begin
   BuildFormatList;
 end;
 
-procedure tJson2PumlFormatDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlFormatDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 begin
   if not IsFilled then
@@ -1942,7 +1942,7 @@ procedure tJson2PumlCharacteristicDefinitionList.AddDefinition (iParentProperty:
   iSortRows: string = '');
 var
   intDefinition: tJson2PumlCharacteristicDefinition;
-  i: Integer;
+  i: integer;
 begin
   if iParentProperty.IsEmpty then
     exit;
@@ -1975,7 +1975,7 @@ begin
   end;
 end;
 
-function tJson2PumlCharacteristicDefinitionList.GetDefinition (Index: Integer): tJson2PumlCharacteristicDefinition;
+function tJson2PumlCharacteristicDefinitionList.GetDefinition (Index: integer): tJson2PumlCharacteristicDefinition;
 begin
   Result := tJson2PumlCharacteristicDefinition (Objects[index]);
 end;
@@ -1983,7 +1983,7 @@ end;
 function tJson2PumlCharacteristicDefinitionList.GetDefinitionByName (iPropertyName, iParentPropertyName,
   iParentObjectType: string; var oFoundCondition: string): tJson2PumlCharacteristicDefinition;
 var
-  i: Integer;
+  i: integer;
 begin
   i := IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition);
   if i >= 0 then
@@ -1997,21 +1997,21 @@ begin
   Result := tJson2PumlCharacteristicDefinitionEnumerator.Create (self);
 end;
 
-procedure tJson2PumlCharacteristicDefinitionList.ReadListValueFromJson (iJsonValue: TJSONValue);
+procedure tJson2PumlCharacteristicDefinitionList.ReadListValueFromJson (iJsonValue: tJSONValue);
 var
-  DefinitionRecord: TJSONObject;
+  DefinitionRecord: tJSONObject;
   ListProperties: tStringList;
   TempList: tStringList;
   ParentProperty, IncludeIndex: string;
   cType: tJson2PumlCharacteristicType;
   SortRows: string;
 begin
-  if iJsonValue is TJSONObject then
+  if iJsonValue is tJSONObject then
   begin
     ListProperties := tStringList.Create;
     TempList := tStringList.Create;
     try
-      DefinitionRecord := TJSONObject (iJsonValue);
+      DefinitionRecord := tJSONObject (iJsonValue);
       ParentProperty := GetJsonStringValue (DefinitionRecord, 'parentProperty');
       cType.FromString (GetJsonStringValue(DefinitionRecord, 'type'));
 
@@ -2035,9 +2035,9 @@ begin
       TempList.Free;
     end;
   end
-  else if iJsonValue is TJSONString then
+  else if iJsonValue is tJSONString then
   begin
-    ParentProperty := TJSONString (iJsonValue).Value;
+    ParentProperty := tJSONString (iJsonValue).Value;
     AddDefinition (ParentProperty, jctRecord);
   end;
 end;
@@ -2115,9 +2115,9 @@ end;
 
 procedure tJson2PumlCharacteristicDefinition.SortUsedColumnsByPropertyList (iUsedColumns: tStringList);
 var
-  i: Integer;
+  i: integer;
   col: string;
-  j: Integer;
+  j: integer;
 begin
   i := 0;
   for col in PropertyList.ItemList do
@@ -2133,7 +2133,7 @@ begin
   end;
 end;
 
-procedure tJson2PumlCharacteristicDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlCharacteristicDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 var
   Value: string;
@@ -2170,7 +2170,7 @@ begin
   Result := ObjectName;
 end;
 
-procedure tJson2PumlObjectDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlObjectDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 begin
   if not GenerateWithoutIdentifier then
@@ -2232,7 +2232,7 @@ end;
 
 function tJson2PumlConverterGroupDefinition.GetOptionByName (name: string): tJson2PumlConverterDefinition;
 var
-  i: Integer;
+  i: integer;
 begin
   if name.IsEmpty then
     name := DefaultOption;
@@ -2248,19 +2248,19 @@ begin
   end;
 end;
 
-function tJson2PumlConverterGroupDefinition.GetOptionCount: Integer;
+function tJson2PumlConverterGroupDefinition.GetOptionCount: integer;
 begin
   Result := OptionList.Count;
 end;
 
-function tJson2PumlConverterGroupDefinition.GetOptions (Index: Integer): tJson2PumlConverterDefinition;
+function tJson2PumlConverterGroupDefinition.GetOptions (Index: integer): tJson2PumlConverterDefinition;
 begin
   Result := OptionList.Definition[index];
 end;
 
-function tJson2PumlConverterGroupDefinition.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlConverterGroupDefinition.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 var
-  DefinitionRecord: TJSONObject;
+  DefinitionRecord: tJSONObject;
 begin
   Result := false;
   Clear;
@@ -2278,7 +2278,7 @@ begin
   FDefaultOption := Value.ToLower;
 end;
 
-procedure tJson2PumlConverterGroupDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlConverterGroupDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
@@ -2289,11 +2289,11 @@ begin
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 
-procedure tJson2PumlConverterGroupDefinition.WriteToJsonServiceListResult (oJsonOutPut: TStrings; iPropertyName: string;
-  iLevel: Integer; iWriteEmpty: boolean = false);
+procedure tJson2PumlConverterGroupDefinition.WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string;
+  iLevel: integer; iWriteEmpty: boolean = false);
 var
   OptionsSl: tStringList;
-  i: Integer;
+  i: integer;
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'name', ExtractFileName(SourceFileName), iLevel + 1, iWriteEmpty);
@@ -2365,14 +2365,14 @@ begin
   end;
 end;
 
-function tJson2PumlConverterDefinitionList.GetDefinition (Index: Integer): tJson2PumlConverterDefinition;
+function tJson2PumlConverterDefinitionList.GetDefinition (Index: integer): tJson2PumlConverterDefinition;
 begin
   Result := tJson2PumlConverterDefinition (Objects[index]);
 end;
 
 function tJson2PumlConverterDefinitionList.GetDefinitionByName (iOptionName: string): tJson2PumlConverterDefinition;
 var
-  i: Integer;
+  i: integer;
   FoundCondition: string;
 begin
   i := IndexOfProperty (iOptionName, '', '', FoundCondition);
@@ -2387,37 +2387,37 @@ begin
   Result := tJson2PumlConverterDefinitionEnumerator.Create (self);
 end;
 
-function tJson2PumlConverterDefinitionList.ReadFromJson (iJsonValue: TJSONValue; iPropertyName: string): boolean;
+function tJson2PumlConverterDefinitionList.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
 var
-  JsonValue: TJSONValue;
-  JsonArray: TJSONArray;
-  DefinitionRecord: TJSONObject;
+  JsonValue: tJSONValue;
+  JsonArray: tJSONArray;
+  DefinitionRecord: tJSONObject;
   Definition: tJson2PumlConverterDefinition;
-  i: Integer;
+  i: integer;
 begin
   // inherited ReadFromJson (iJsonValue, iPropertyName);
   Result := false;
   Clear;
   if not Assigned (iJsonValue) then
     exit;
-  if iJsonValue is TJSONArray then
+  if iJsonValue is tJSONArray then
     JsonValue := iJsonValue
-  else if iJsonValue is TJSONObject then
-    JsonValue := TJSONObject (iJsonValue).Values[iPropertyName]
+  else if iJsonValue is tJSONObject then
+    JsonValue := tJSONObject (iJsonValue).Values[iPropertyName]
   else
     exit;
   if not Assigned (JsonValue) then
     exit;
   Result := True;
-  if JsonValue is TJSONArray then
+  if JsonValue is tJSONArray then
   begin
-    JsonArray := TJSONArray (JsonValue);
+    JsonArray := tJSONArray (JsonValue);
     for i := 0 to JsonArray.Count - 1 do
     begin
       JsonValue := JsonArray.Items[i];
-      if JsonValue is TJSONObject then
+      if JsonValue is tJSONObject then
       begin
-        DefinitionRecord := TJSONObject (JsonValue);
+        DefinitionRecord := tJSONObject (JsonValue);
         Definition := tJson2PumlConverterDefinition.Create;
         Definition.ReadFromJson (DefinitionRecord, '');
         AddDefinition (Definition);
@@ -2440,7 +2440,7 @@ begin
   Result := PropertyName;
 end;
 
-procedure tJson2PumlPropertyValueDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string; iLevel: Integer;
+procedure tJson2PumlPropertyValueDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
   iWriteEmpty: boolean = false);
 var
   l: string;
@@ -2482,16 +2482,16 @@ begin
   Result := not Description.IsEmpty;
 end;
 
-function tJson2PumlConverterGroupDescriptionDefinition.ReadFromJson (iJsonValue: TJSONValue;
+function tJson2PumlConverterGroupDescriptionDefinition.ReadFromJson (iJsonValue: tJSONValue;
   iPropertyName: string): boolean;
 var
-  Definition: TJSONObject;
+  Definition: tJSONObject;
 begin
   Result := false;
   Clear;
-  if not (iJsonValue is TJSONObject) then
+  if not (iJsonValue is tJSONObject) then
     exit;
-  Definition := GetJsonObject (TJSONObject(iJsonValue), iPropertyName);
+  Definition := GetJsonObject (tJSONObject(iJsonValue), iPropertyName);
   if not Assigned (Definition) then
     exit;
   Description := GetJsonStringValue (Definition, 'description');
@@ -2499,8 +2499,8 @@ begin
   Result := IsValid;
 end;
 
-procedure tJson2PumlConverterGroupDescriptionDefinition.WriteToJson (oJsonOutPut: TStrings; iPropertyName: string;
-  iLevel: Integer; iWriteEmpty: boolean = false);
+procedure tJson2PumlConverterGroupDescriptionDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string;
+  iLevel: integer; iWriteEmpty: boolean = false);
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'displayName', DisplayName, iLevel + 1, iWriteEmpty);
@@ -2515,7 +2515,7 @@ var
   ArrowFormat: string;
   function Search (iName: string): boolean;
   var
-    i: Integer;
+    i: integer;
   begin
     i := IndexOfName (iName.ToLower);
     Result := i >= 0;

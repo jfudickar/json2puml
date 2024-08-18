@@ -34,35 +34,35 @@ type
   private
     FErrorMessage: string;
     FErrorType: tJson2PumlErrorType;
-    FThreadId: TThreadID;
+    FThreadId: tThreadID;
   public
     property ErrorMessage: string read FErrorMessage write FErrorMessage;
     property ErrorType: tJson2PumlErrorType read FErrorType write FErrorType;
-    property ThreadId: TThreadID read FThreadId write FThreadId;
+    property ThreadId: tThreadID read FThreadId write FThreadId;
   end;
 
-  TJson2PumlErrorList = class(tStringList)
+  tJson2PumlErrorList = class(tStringList)
   private
-    FLock: TCriticalSection;
-    function GetFailed: Boolean;
+    FLock: tCriticalSection;
+    function GetFailed: boolean;
   protected
-    property Lock: TCriticalSection read FLock;
+    property Lock: tCriticalSection read FLock;
   public
     constructor Create;
     destructor Destroy; override;
     procedure AddErrorWarning (const aErrorType: tJson2PumlErrorType; const aMessage: string);
     procedure Clear; override;
-    procedure RenderErrorReponseFromErrorList (var oResponseText: string; var oHttpCode: Integer);
-    property Failed: Boolean read GetFailed;
+    procedure RenderErrorReponseFromErrorList (var oResponseText: string; var oHttpCode: integer);
+    property Failed: boolean read GetFailed;
   end;
 
-  TJson2PumlLogHandler = class(tPersistent)
+  tJson2PumlLogHandler = class(tPersistent)
   private
-    FErrorList: TJson2PumlErrorList;
-    function GetFailed: Boolean;
+    FErrorList: tJson2PumlErrorList;
+    function GetFailed: boolean;
   protected
-    procedure LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: TEventType); overload;
-    procedure LogMsg (const aMsg: string; aEventType: TEventType); overload;
+    procedure LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: tEventType); overload;
+    procedure LogMsg (const aMsg: string; aEventType: tEventType); overload;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -87,37 +87,35 @@ type
     procedure UnhandledException (aException: Exception); virtual;
     procedure Warn (const aMessage: string; const aTag: string = ''); overload;
     procedure Warn (const aMessage: string; const aParams: array of TVarRec; const aTag: string = ''); overload;
-    property ErrorList: TJson2PumlErrorList read FErrorList;
-    property Failed: Boolean read GetFailed;
+    property ErrorList: tJson2PumlErrorList read FErrorList;
+    property Failed: boolean read GetFailed;
   end;
 
-function GlobalLogHandler: TJson2PumlLogHandler;
+function GlobalLogHandler: tJson2PumlLogHandler;
 
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
-  iAllowsConsole, iAllowsLogFile: Boolean);
+  iAllowsConsole, iAllowsLogFile: boolean);
 
-procedure SetLogProviderDefaults (iProvider: TLogProviderBase; iApplicationType: tJson2PumlApplicationType);
+procedure SetLogProviderDefaults (iProvider: tLogProviderBase; iApplicationType: tJson2PumlApplicationType);
 
 implementation
 
 uses
-  Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils,
-  Quick.Logger.Provider.StringList,
+  Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils, Quick.Logger.Provider.StringList,
 {$IFDEF DEBUG} Quick.Logger.ExceptionHook, {$ENDIF}Quick.Logger.UnhandledExceptionHook, Quick.Logger.RuntimeErrorHook,
-  json2pumldefinition, json2pumlbasedefinition, jsontools,
-  MVCFramework.Commons, json2pumltools;
+  json2pumldefinition, json2pumlbasedefinition, jsontools, MVCFramework.Commons, json2pumltools;
 
 var
-  IntGlobalLogHandler: TJson2PumlLogHandler;
+  IntGlobalLogHandler: tJson2PumlLogHandler;
 
-function GlobalLogHandler: TJson2PumlLogHandler;
+function GlobalLogHandler: tJson2PumlLogHandler;
 begin
   Result := IntGlobalLogHandler;
 end;
 
 procedure InitializationGlobalLogHandler;
 begin
-  IntGlobalLogHandler := TJson2PumlLogHandler.Create;
+  IntGlobalLogHandler := tJson2PumlLogHandler.Create;
 end;
 
 procedure FinalizationGlobalLogHandler;
@@ -125,16 +123,16 @@ begin
   IntGlobalLogHandler.Free;
 end;
 
-procedure SetLogProviderEventTypeNames (iProvider: TLogProviderBase);
+procedure SetLogProviderEventTypeNames (iProvider: tLogProviderBase);
 var
-  et: TEventType;
+  et: tEventType;
 begin
-  for et := low(TEventType) to high(TEventType) do
-    iProvider.EventTypeName[et] := JSON2PUML_EVENTTYPENAMES[Integer(et)];
+  for et := low(tEventType) to high(tEventType) do
+    iProvider.EventTypeName[et] := JSON2PUML_EVENTTYPENAMES[integer(et)];
 end;
 
-procedure SetLogProviderDefaults (iProvider: TLogProviderBase; iApplicationType: tJson2PumlApplicationType);
-  procedure SetCustomFormat (iLogProvider: TLogProviderBase);
+procedure SetLogProviderDefaults (iProvider: tLogProviderBase; iApplicationType: tJson2PumlApplicationType);
+  procedure SetCustomFormat (iLogProvider: tLogProviderBase);
   begin
     iLogProvider.CustomMsgOutput := True;
     if iApplicationType in [jatService, jatWinService] then
@@ -159,7 +157,7 @@ begin
 end;
 
 procedure InitDefaultLogger (iLogFilePath: string; iApplicationType: tJson2PumlApplicationType;
-  iAllowsConsole, iAllowsLogFile: Boolean);
+  iAllowsConsole, iAllowsLogFile: boolean);
 
 var
   LogFileName: string;
@@ -213,149 +211,149 @@ begin
     Log ('Console Log Provider activate', etInfo);
 end;
 
-constructor TJson2PumlLogHandler.Create;
+constructor tJson2PumlLogHandler.Create;
 begin
-  FErrorList := TJson2PumlErrorList.Create ();
+  FErrorList := tJson2PumlErrorList.Create ();
   Clear;
 end;
 
-destructor TJson2PumlLogHandler.Destroy;
+destructor tJson2PumlLogHandler.Destroy;
 begin
   FErrorList.Free;
   inherited Destroy;
 end;
 
-procedure TJson2PumlLogHandler.Clear;
+procedure tJson2PumlLogHandler.Clear;
 begin
   ErrorList.Clear;
   GlobalLogStringListProvider.Clear;
 end;
 
-procedure TJson2PumlLogHandler.Debug (const aMessage: string; const aTag: string = '');
+procedure tJson2PumlLogHandler.Debug (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etDebug);
 end;
 
-procedure TJson2PumlLogHandler.Debug (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
+procedure tJson2PumlLogHandler.Debug (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etDebug);
 end;
 
-procedure TJson2PumlLogHandler.DebugParameter (const aParameterPrefix, aParameterName, aParameterValue: string;
+procedure tJson2PumlLogHandler.DebugParameter (const aParameterPrefix, aParameterName, aParameterValue: string;
   const aTag: string = '');
 begin
   LogMsg ('  %-45s %s', [Format('%s%s', [aParameterPrefix, aParameterName]).Trim, aParameterValue], etDebug);
 end;
 
-procedure TJson2PumlLogHandler.Error (const aMessage: string; const aTag: string = '');
+procedure tJson2PumlLogHandler.Error (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etError);
   ErrorList.AddErrorWarning (jetUnknown, aMessage);
 end;
 
-procedure TJson2PumlLogHandler.Error (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
+procedure tJson2PumlLogHandler.Error (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etError);
   ErrorList.AddErrorWarning (jetUnknown, Format(aMessage, aParams));
 end;
 
-procedure TJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aTag: string = '');
+procedure tJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aTag: string = '');
 begin
   LogMsg (aErrorType.ErrorMessage, aErrorType.EventType);
   ErrorList.AddErrorWarning (aErrorType, aErrorType.ErrorMessage);
 end;
 
-procedure TJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aParams: array of TVarRec;
+procedure tJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aParams: array of TVarRec;
   const aTag: string = '');
 begin
   LogMsg (aErrorType.ErrorMessage, aParams, aErrorType.EventType);
   ErrorList.AddErrorWarning (aErrorType, Format(aErrorType.ErrorMessage, aParams));
 end;
 
-function TJson2PumlLogHandler.GetFailed: Boolean;
+function tJson2PumlLogHandler.GetFailed: boolean;
 begin
   Result := ErrorList.Failed;
 end;
 
-procedure TJson2PumlLogHandler.Header (const aMessage: string; const aTag: string = '');
+procedure tJson2PumlLogHandler.Header (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etHeader);
 end;
 
-procedure TJson2PumlLogHandler.Header (const aMessage: string; const aParams: array of TVarRec;
+procedure tJson2PumlLogHandler.Header (const aMessage: string; const aParams: array of TVarRec;
   const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etHeader);
 end;
 
-procedure TJson2PumlLogHandler.Info (const aMessage: string; const aTag: string = '');
+procedure tJson2PumlLogHandler.Info (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etInfo);
 end;
 
-procedure TJson2PumlLogHandler.Info (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
+procedure tJson2PumlLogHandler.Info (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etInfo);
 end;
 
-procedure TJson2PumlLogHandler.InfoParameter (const aParameterPrefix, aParameterName, aParameterValue: string;
+procedure tJson2PumlLogHandler.InfoParameter (const aParameterPrefix, aParameterName, aParameterValue: string;
   const aTag: string = '');
 begin
   LogMsg ('  %-45s %s', [Format('%s%s', [aParameterPrefix, aParameterName]).Trim, aParameterValue], etInfo);
 end;
 
-procedure TJson2PumlLogHandler.LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: TEventType);
+procedure tJson2PumlLogHandler.LogMsg (const aMsg: string; aValues: array of TVarRec; aEventType: tEventType);
 begin
   LogMsg (Format(aMsg, aValues), aEventType);
 end;
 
-procedure TJson2PumlLogHandler.LogMsg (const aMsg: string; aEventType: TEventType);
+procedure tJson2PumlLogHandler.LogMsg (const aMsg: string; aEventType: tEventType);
 begin
-  if aMsg.IndexOf('GET:/api/heartbeat') < 0 then
-  Log (aMsg, aEventType);
+  if aMsg.IndexOf ('GET:/api/heartbeat') < 0 then
+    Log (aMsg, aEventType);
 end;
 
-procedure TJson2PumlLogHandler.Trace (const aMessage: string; const aTag: string = '');
+procedure tJson2PumlLogHandler.Trace (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etTrace);
 end;
 
-procedure TJson2PumlLogHandler.Trace (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
+procedure tJson2PumlLogHandler.Trace (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etTrace);
 end;
 
-procedure TJson2PumlLogHandler.UnhandledException (aException: Exception);
+procedure tJson2PumlLogHandler.UnhandledException (aException: Exception);
 begin
   Error (jetException, [aException.ClassName, aException.Message, aException.StackTrace]);
 end;
 
-procedure TJson2PumlLogHandler.Warn (const aMessage: string; const aTag: string = '');
+procedure tJson2PumlLogHandler.Warn (const aMessage: string; const aTag: string = '');
 begin
   LogMsg (aMessage, etWarning);
   ErrorList.AddErrorWarning (jetWarning, aMessage);
 end;
 
-procedure TJson2PumlLogHandler.Warn (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
+procedure tJson2PumlLogHandler.Warn (const aMessage: string; const aParams: array of TVarRec; const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etWarning);
   ErrorList.AddErrorWarning (jetWarning, Format(aMessage, aParams));
 end;
 
-constructor TJson2PumlErrorList.Create;
+constructor tJson2PumlErrorList.Create;
 begin
   inherited Create;
-  FLock := TCriticalSection.Create ();
+  FLock := tCriticalSection.Create ();
   OwnsObjects := True;
 end;
 
-destructor TJson2PumlErrorList.Destroy;
+destructor tJson2PumlErrorList.Destroy;
 begin
   FLock.Free;
   inherited Destroy;
 end;
 
-procedure TJson2PumlErrorList.AddErrorWarning (const aErrorType: tJson2PumlErrorType; const aMessage: string);
+procedure tJson2PumlErrorList.AddErrorWarning (const aErrorType: tJson2PumlErrorType; const aMessage: string);
 var
   ErrorRecord: tJson2PumlErrorRecord;
 begin
@@ -371,11 +369,11 @@ begin
   end;
 end;
 
-procedure TJson2PumlErrorList.Clear;
+procedure tJson2PumlErrorList.Clear;
 var
-  i: Integer;
+  i: integer;
   ErrorRecord: tJson2PumlErrorRecord;
-  ThreadId: TThreadID;
+  ThreadId: tThreadID;
 begin
   Lock.Acquire;
   try
@@ -394,11 +392,11 @@ begin
   end;
 end;
 
-function TJson2PumlErrorList.GetFailed: Boolean;
+function tJson2PumlErrorList.GetFailed: boolean;
 var
-  i: Integer;
+  i: integer;
   ErrorRecord: tJson2PumlErrorRecord;
-  ThreadId: TThreadID;
+  ThreadId: tThreadID;
 begin
   Lock.Acquire;
   try
@@ -415,13 +413,13 @@ begin
   end;
 end;
 
-procedure TJson2PumlErrorList.RenderErrorReponseFromErrorList (var oResponseText: string; var oHttpCode: Integer);
+procedure tJson2PumlErrorList.RenderErrorReponseFromErrorList (var oResponseText: string; var oHttpCode: integer);
 var
-  MaxHttpCode: Integer;
-  i: Integer;
+  MaxHttpCode: integer;
+  i: integer;
   ErrorRecord: tJson2PumlErrorRecord;
   JsonResult: tStringList;
-  ThreadId: TThreadID;
+  ThreadId: tThreadID;
 
 begin
   Lock.Acquire;
