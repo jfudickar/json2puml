@@ -80,7 +80,7 @@ begin
     GlobalLogHandler.Trace ('CTRL+C to shutdown the server');
     WaitForTerminationSignal;
     EnterInShutdownState;
-    LServer.Active := False;
+    LServer.Active := false;
     GlobalFileDeleteHandler.DeleteFiles;
   finally
     LServer.Free;

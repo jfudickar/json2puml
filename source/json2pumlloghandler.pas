@@ -163,7 +163,7 @@ var
   LogFileName: string;
 
 begin
-  GlobalLogFileProvider.Enabled := False;
+  GlobalLogFileProvider.Enabled := false;
   GlobalLogConsoleProvider.Enabled := not (iApplicationType in [jatUI, jatWinService]);
   if GlobalLogConsoleProvider.Enabled then
   begin
@@ -401,7 +401,7 @@ begin
   Lock.Acquire;
   try
     ThreadId := CurrentThreadId;
-    Result := False;
+    Result := false;
     for i := 0 to Count - 1 do
     begin
       ErrorRecord := tJson2PumlErrorRecord (Objects[i]);

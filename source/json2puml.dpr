@@ -44,7 +44,7 @@ uses
 
 begin
 {$IFDEF DEBUG}
-  ReportMemoryLeaksOnShutdown := True;
+  ReportMemoryLeaksOnShutdown := true;
 {$ENDIF}
   try
     handle_json2puml_commandline;

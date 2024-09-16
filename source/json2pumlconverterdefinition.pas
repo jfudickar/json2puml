@@ -559,7 +559,7 @@ constructor tJson2PumlConverterDefinition.Create;
 begin
   inherited Create;
   FAttributeProperties := tJson2PumlOperationPropertyList.Create;
-  FAttributeProperties.UseMatch := True;
+  FAttributeProperties.UseMatch := true;
   FAttributeProperties.ConfigurationPropertyName := 'attributeProperties';
   FCharacteristicProperties := tJson2PumlCharacteristicDefinitionList.Create;
   FCharacteristicProperties.UseMatch := True;

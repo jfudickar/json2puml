@@ -43,9 +43,9 @@ type
     class function ReplaceTab (iValue: string): string;
     class function ReplaceTabNewLine (iValue: string): string;
     class function TableColumnSeparator: string;
-    class function TableColumn (iValue: string; iHeader: boolean = False): string;
-    class function TableLine (const iColumns: array of const; iHeader: boolean = False): string; overload;
-    class function TableLine (iColumns: tStringList; iHeader: boolean = False; iClearColumns: boolean = true)
+    class function TableColumn (iValue: string; iHeader: boolean = false): string;
+    class function TableLine (const iColumns: array of const; iHeader: boolean = false): string; overload;
+    class function TableLine (iColumns: tStringList; iHeader: boolean = false; iClearColumns: boolean = true)
       : string; overload;
   end;
 
@@ -540,8 +540,8 @@ begin
   FCharacteristics := tPumlCharacteristicList.Create (Self);
   FRelations := tPumlObjectRelationshipList.Create (Self);
   FDetailObjects := tPumlDetailObjectList.Create (Self);
-  FIsObjectDetail := False;
-  FIsRelationship := False;
+  FIsObjectDetail := false;
+  FIsRelationship := false;
   FFiltered := true;
   FChildObjectCount := 0;
   FFormatPriority := MaxInt;
@@ -593,7 +593,7 @@ begin
   Result := ShowObject;
   if not Result then
     Exit;
-  AddLine := False;
+  AddLine := false;
   Color := GeneratePumlColorDefinition;
   ipuml.add (Format('%s %s {', [GeneratePumlClassName, Color]));
   // if not ObjectType.IsEmpty then
@@ -608,14 +608,14 @@ begin
     idLine := Attributes.IndexOf (ObjectIdentProperty);
     NameLine := Attributes.IndexOf (ObjectTitleProperty);
     if idLine >= 0 then
-      Attributes.Value[idLine].GeneratePumlAsRecord (ipuml, False, FormatDefinition.ValueSplitLength);
+      Attributes.Value[idLine].GeneratePumlAsRecord (ipuml, false, FormatDefinition.ValueSplitLength);
     if NameLine >= 0 then
-      Attributes.Value[NameLine].GeneratePumlAsRecord (ipuml, False, FormatDefinition.ValueSplitLength);
+      Attributes.Value[NameLine].GeneratePumlAsRecord (ipuml, false, FormatDefinition.ValueSplitLength);
     Lines := tStringList.Create;
     try
       for i := 0 to Attributes.Count - 1 do
         if (i <> idLine) and (i <> NameLine) then
-          Attributes.Value[i].GeneratePumlAsRecord (Lines, False, FormatDefinition.ValueSplitLength);
+          Attributes.Value[i].GeneratePumlAsRecord (Lines, false, FormatDefinition.ValueSplitLength);
       if FormatDefinition.SortAttributes then
         Lines.Sort;
       ipuml.AddStrings (Lines);
@@ -899,7 +899,7 @@ begin
   if Assigned (RelatedObject) then
     Result := RelatedObject.Filled
   else
-    Result := False;
+    Result := false;
 end;
 
 function tPumlObjectRelationship.GetRelatedObjectFiltered: boolean;
@@ -907,7 +907,7 @@ begin
   if Assigned (RelatedObject) then
     Result := RelatedObject.Filtered
   else
-    Result := False;
+    Result := false;
 end;
 
 function tPumlObjectRelationship.GetRelatedObjectGroupName: string;
@@ -929,7 +929,7 @@ begin
   if Assigned (RelatedObject) then
     Result := RelatedObject.ShowObject
   else
-    Result := False;
+    Result := false;
 end;
 
 function tPumlObjectRelationship.GetRelatedObjectTypeIdent: string;
@@ -1095,7 +1095,7 @@ end;
 
 function tPumlObjectRelationshipList.GetFromCount: integer;
 begin
-  Result := GetDirectionCount (urdFrom, False);
+  Result := GetDirectionCount (urdFrom, false);
 end;
 
 function tPumlObjectRelationshipList.GetFromCountValid: integer;
@@ -1110,7 +1110,7 @@ end;
 
 function tPumlObjectRelationshipList.GetToCount: integer;
 begin
-  Result := GetDirectionCount (urdTo, False);
+  Result := GetDirectionCount (urdTo, false);
 end;
 
 function tPumlObjectRelationshipList.GetToCountValid: integer;
@@ -1462,7 +1462,7 @@ begin
   inherited Create (iParentObject);
   Sorted := true;
   Duplicates := dupIgnore;
-  OwnsObjects := False;
+  OwnsObjects := false;
 end;
 
 procedure tPumlDetailObjectList.GeneratePumlClassList (ipuml: tStrings);
@@ -1631,7 +1631,7 @@ function tPumlCharacteristicRecord.GetFilled: boolean;
 var
   CharValue: tPumlCharacteristicValue;
 begin
-  Result := False;
+  Result := false;
   for CharValue in Self do
   begin
     Result := CharValue.Filled;
@@ -1889,7 +1889,7 @@ begin
   Result := ReplaceTab (ReplaceNewLine(iValue));
 end;
 
-class function tPumlHelper.TableColumn (iValue: string; iHeader: boolean = False): string;
+class function tPumlHelper.TableColumn (iValue: string; iHeader: boolean = false): string;
 begin
   if iHeader then
     Result := Format ('= %s %s', [iValue.Replace('\n', '\n '), TableColumnSeparator])
@@ -1902,7 +1902,7 @@ begin
   Result := '|';
 end;
 
-class function tPumlHelper.TableLine (const iColumns: array of const; iHeader: boolean = False): string;
+class function tPumlHelper.TableLine (const iColumns: array of const; iHeader: boolean = false): string;
 var
   i: integer;
 begin
@@ -1915,7 +1915,7 @@ begin
   Result := Format (Result, iColumns).Replace ('\n', '\n ').Replace (#13#10, '\n ').Replace (#10, '\n ');
 end;
 
-class function tPumlHelper.TableLine (iColumns: tStringList; iHeader: boolean = False;
+class function tPumlHelper.TableLine (iColumns: tStringList; iHeader: boolean = false;
   iClearColumns: boolean = true): string;
 var
   S: string;
@@ -1979,7 +1979,7 @@ procedure tPumlCharacteristicValue.GeneratePumlAsRecord (ipuml: tStrings; iInclu
   iSplitLength: integer);
 begin
   if DetailRecords.Count > 0 then
-    DetailRecords.GeneratePumlAsRecord (ipuml, False, iSplitLength, False)
+    DetailRecords.GeneratePumlAsRecord (ipuml, false, iSplitLength, false)
   else
     ipuml.add (CalculateRecordLine(iIncludeParent, iSplitLength));
 end;
@@ -2100,7 +2100,7 @@ begin
     iDefinition.SortUsedColumnsByPropertyList (UsedColumns);
     if iDefinition.IncludeIndex then
       UsedColumns.Insert (0, 'idx');
-    ipuml.add (tPumlHelper.TableLine(UsedColumns, true, False));
+    ipuml.add (tPumlHelper.TableLine(UsedColumns, true, false));
     if iDefinition.IncludeIndex then
       UsedColumns.Delete (0); // to prevent empty columns because for idx there is no value
     for Row in TableRows do
@@ -2116,7 +2116,7 @@ begin
         else
           Columns.add ('');
       end;
-      ResultRows.add (tPumlHelper.TableLine(Columns, False));
+      ResultRows.add (tPumlHelper.TableLine(Columns, false));
     end;
     if iDefinition.SortRows then
       ResultRows.Sort;
@@ -2148,7 +2148,7 @@ function tPumlCharacteristicRecordList.GetFilled: boolean;
 var
   CharRec: tPumlCharacteristicRecord;
 begin
-  Result := False;
+  Result := false;
   for CharRec in Self do
   begin
     Result := CharRec.Filled;
