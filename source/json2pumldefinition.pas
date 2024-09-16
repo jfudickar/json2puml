@@ -218,7 +218,7 @@ type
     property ServicePortStr: string read FServicePortStr write SetServicePortStr;
   end;
 
-  TJson2PumlFileDetailRecord = class(tPersistent)
+  tJson2PumlFileDetailRecord = class(tPersistent)
   private
     FFileDate: tDateTime;
     FFileName: string;
@@ -3574,7 +3574,7 @@ var
 begin
   if not FileExists (iFileName) then
     exit;
-  FileDetailRecord := TJson2PumlFileDetailRecord.Create;
+  FileDetailRecord := tJson2PumlFileDetailRecord.Create;
   FileDetailRecord.FileName := iFileName;
   FileDetailRecord.FileDate := TFile.GetLastWriteTime (iFileName);
   FileDetailRecord.FileSize := IntFileSize;
@@ -4269,7 +4269,8 @@ end;
 
 function tJson2PumlCurlMappingParameterDefinition.GetCalculatedValue: string;
 begin
-  Result := TCurlUtils.CleanUnusedCurlVariables (Value);
+  Result := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+  Result := TCurlUtils.CleanUnusedCurlVariables (Result);
   if Result.IsEmpty then
     Result := ValueIfEmpty
   else if UrlEncodeValue then
