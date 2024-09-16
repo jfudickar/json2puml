@@ -1196,7 +1196,7 @@ begin
     vCommandOutPut := tStringList.Create;
     vCommandErrors := tStringList.Create;
     try
-      ExecuteCommand ('curl ' + Command, Format('curl fetch "%s"', [ExtractFileName(iOutputFile)]), iCurlResult.Command,
+      ExecuteCommand (Command, Format('curl fetch "%s"', [ExtractFileName(iOutputFile)]), iCurlResult.Command,
         vCommandOutPut, vCommandErrors);
       Result := GetResultFromOutput (iOutputFile, vCommandOutPut, vErrorMessage);
     finally
