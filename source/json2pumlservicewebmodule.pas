@@ -27,11 +27,7 @@ unit json2pumlservicewebmodule;
 interface
 
 uses
-  System.SysUtils,
-  System.Classes,
-  Web.HTTPApp,
-  MVCFramework,
-  LoggerPro;
+  System.SysUtils, System.Classes, Web.HTTPApp, MVCFramework, LoggerPro;
 
 type
   TJson2PumlLoggerProLogWriter = class(TLogWriter, ILogWriter)
@@ -74,26 +70,18 @@ implementation
 
 {$R *.dfm}
 
-uses json2pumlservicecontroller,
-  System.IOUtils,
-  MVCFramework.Commons (*,
-    MVCFramework.Middleware.ActiveRecord,
-    MVCFramework.Middleware.StaticFiles,
-    MVCFramework.Middleware.Analytics,
-    MVCFramework.Middleware.Trace,
-    MVCFramework.Middleware.CORS,
-    MVCFramework.Middleware.ETag,
-    MVCFramework.Middleware.Compression*) , json2pumlloghandler,
+uses
+  json2pumlservicecontroller, System.IOUtils, LoggerPro.Proxy, MVCFramework.Commons, json2pumlloghandler,
   MVCFramework.Logger;
-
-function GetLogger: ILogWriter;
-begin
-  // Result := BuildLogWriter([TJson2PumlLoggerProLogWriter.Create], nil, TLogType.Debug);
-end;
 
 procedure TJson2PumlWebModule.WebModuleCreate (Sender: TObject);
 begin
-  // SetDefaultLogger(GetLogger);
+  SetDefaultLogger (TLogWriterDecorator.Build(CreateLoggerWithDefaultConfiguration,
+    function(const aType: TLogType; const aMessage, aTag: string): Boolean
+    begin
+      Result := false;
+    end));
+
   FMVC := TMVCEngine.Create (Self,
     procedure(Config: TMVCConfig)
     begin
