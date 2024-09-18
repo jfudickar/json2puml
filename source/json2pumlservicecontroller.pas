@@ -28,7 +28,7 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons, System.Classes, System.SyncObjs,
-  json2pumlinputhandler;
+  json2pumlinputhandler, System.Diagnostics;
 
 type
 
@@ -41,8 +41,8 @@ type
     procedure OnAfterAction (Context: TWebContext; const AActionName: string); override;
     procedure GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
     function IsRequestBodyInvalid: Boolean;
-    procedure LogRequestStart (iContext: TWebContext);
-    procedure LogRequestEnd (iContext: TWebContext);
+    procedure LogRequestStart (iContext: TWebContext; var ioStopWatch: tStopwatch);
+    procedure LogRequestEnd (iContext: TWebContext; iStopWatch: tStopwatch);
     procedure RenderErrorReponseFromErrorList;
     function ServerInformation: string;
   public
@@ -87,10 +87,9 @@ type
 implementation
 
 uses
-  System.SysUtils, MVCFramework.Logger, System.StrUtils, json2pumlconverter, json2pumldefinition,
-  json2pumlconst, jsontools, json2pumlbasedefinition,
-  json2pumlconverterdefinition, json2pumltools, json2pumlloghandler, System.IOUtils, IdHTTPWebBrokerBridge,
-  IdHTTPHeaderInfo;
+  System.SysUtils, MVCFramework.Logger, System.StrUtils, json2pumlconverter, json2pumldefinition, json2pumlconst,
+  jsontools, json2pumlbasedefinition, json2pumlconverterdefinition, json2pumltools, json2pumlloghandler, System.IOUtils,
+  IdHTTPWebBrokerBridge, IdHTTPHeaderInfo;
 
 type
   TIdHTTPAppRequestHelper = class helper for TIdHTTPAppRequest
@@ -146,8 +145,9 @@ procedure TJson2PumlController.GetErrorMessages;
 var
   jsonOutput: TStringList;
   ErrorType: tJson2PumlErrorType;
+  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context);
+  LogRequestStart (Context, Stopwatch);
   jsonOutput := TStringList.Create;
   try
     try
@@ -168,14 +168,15 @@ begin
   finally
     jsonOutput.Free;
   end;
-  LogRequestEnd (Context);
+  LogRequestEnd (Context, Stopwatch);
 end;
 
 procedure TJson2PumlController.GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
 var
   jsonOutput: TStringList;
+  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context);
+  LogRequestStart (Context, Stopwatch);
   jsonOutput := TStringList.Create;
   try
     try
@@ -193,7 +194,7 @@ begin
   finally
     jsonOutput.Free;
   end;
-  LogRequestEnd (Context);
+  LogRequestEnd (Context, Stopwatch)
 end;
 
 procedure TJson2PumlController.GetHeartbeat;
@@ -211,8 +212,9 @@ var
   jsonOutput: TStringList;
   InputHandler: TJson2PumlInputHandler;
   InfoList: TStringList;
+  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context);
+  LogRequestStart (Context, Stopwatch);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
 
   InfoList := TStringList.Create;
@@ -268,7 +270,7 @@ begin
     InputHandler.Free;
     InfoList.Free;
   end;
-  LogRequestEnd (Context);
+  LogRequestEnd (Context, Stopwatch)
 end;
 
 procedure TJson2PumlController.Index;
@@ -294,8 +296,9 @@ end;
 procedure TJson2PumlController.HandleJson2PumlRequest;
 var
   InputHandler: TJson2PumlInputHandler;
+  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context);
+  LogRequestStart (Context, Stopwatch);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
     if IsRequestBodyInvalid then
@@ -324,7 +327,7 @@ begin
     end;
   finally
     InputHandler.Free;
-    LogRequestEnd (Context);
+    LogRequestEnd (Context, Stopwatch)
   end;
 end;
 
@@ -332,8 +335,9 @@ procedure TJson2PumlController.HandleJson2PumlRequestPng;
 var
   InputHandler: TJson2PumlInputHandler;
   f: tJson2PumlInputFileDefinition;
+  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context);
+  LogRequestStart (Context, Stopwatch);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
     if IsRequestBodyInvalid then
@@ -379,7 +383,7 @@ begin
     end;
   finally
     InputHandler.Free;
-    LogRequestEnd (Context);
+    LogRequestEnd (Context, Stopwatch)
   end;
 end;
 
@@ -387,8 +391,9 @@ procedure TJson2PumlController.HandleJson2PumlRequestSvg;
 var
   InputHandler: TJson2PumlInputHandler;
   f: tJson2PumlInputFileDefinition;
+  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context);
+  LogRequestStart (Context, Stopwatch);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
     if IsRequestBodyInvalid then
@@ -434,15 +439,16 @@ begin
     end;
   finally
     InputHandler.Free;
-    LogRequestEnd (Context);
+    LogRequestEnd (Context, Stopwatch)
   end;
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestZip;
 var
   InputHandler: TJson2PumlInputHandler;
+  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context);
+  LogRequestStart (Context, Stopwatch);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
   try
     if IsRequestBodyInvalid then
@@ -488,7 +494,7 @@ begin
     end;
   finally
     InputHandler.Free;
-    LogRequestEnd (Context);
+    LogRequestEnd (Context, Stopwatch)
   end;
 end;
 
@@ -502,18 +508,21 @@ begin
   end;
 end;
 
-procedure TJson2PumlController.LogRequestEnd (iContext: TWebContext);
+procedure TJson2PumlController.LogRequestEnd (iContext: TWebContext; iStopWatch: tStopwatch);
 begin
-  GlobalLoghandler.Trace ('%s stopped - Result : %d', [Context.Request.PathInfo, Context.Response.StatusCode]);
+  iStopWatch.Stop;
+  GlobalLoghandler.Trace ('%s stopped - Result : %d - Time : %d (ms)',
+    [Context.Request.PathInfo, Context.Response.StatusCode, iStopWatch.ElapsedMilliseconds]);
   GlobalLoghandler.Trace (''.PadLeft(60, '-'));
 end;
 
-procedure TJson2PumlController.LogRequestStart (iContext: TWebContext);
+procedure TJson2PumlController.LogRequestStart (iContext: TWebContext; var ioStopWatch: tStopwatch);
 // var
 // Name: string;
 // I: Integer;
 begin
   GlobalLoghandler.Trace ('%s started', [Context.Request.PathInfo]);
+  ioStopWatch := tStopwatch.StartNew;
   if Context.Request.RawWebRequest is TIdHTTPAppRequest then
   begin
     // Deactivated because of critical data which can be in header or body (e.g. Curl Authentication Parameter)
