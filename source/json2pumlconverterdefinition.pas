@@ -562,31 +562,31 @@ begin
   FAttributeProperties.UseMatch := true;
   FAttributeProperties.ConfigurationPropertyName := 'attributeProperties';
   FCharacteristicProperties := tJson2PumlCharacteristicDefinitionList.Create;
-  FCharacteristicProperties.UseMatch := True;
+  FCharacteristicProperties.UseMatch := true;
   FCharacteristicProperties.ConfigurationPropertyName := 'characteristicProperties';
   FGroupProperties := tJson2PumlOperationPropertyList.Create ();
-  FGroupProperties.UseMatch := True;
+  FGroupProperties.UseMatch := true;
   FGroupProperties.ConfigurationPropertyName := 'groupProperties';
   FHiddenProperties := tJson2PumlOperationPropertyList.Create;
-  FHiddenProperties.UseMatch := True;
+  FHiddenProperties.UseMatch := true;
   FHiddenProperties.ConfigurationPropertyName := 'hiddenProperties';
   FObjectDetailProperties := tJson2PumlOperationPropertyList.Create;
-  FObjectDetailProperties.UseMatch := True;
+  FObjectDetailProperties.UseMatch := true;
   FObjectDetailProperties.ConfigurationPropertyName := 'objectDetailProperties';
   FObjectFormats := tJson2PumlFormatDefinition.Create;
   FObjectIdentifierProperties := tJson2PumlPropertyValueDefinitionList.Create;
   FObjectDetailProperties.ConfigurationPropertyName := 'objectIdentifierProperties';
   FObjectProperties := tJson2PumlObjectDefinitionList.Create;
-  FObjectProperties.UseMatch := True;
+  FObjectProperties.UseMatch := true;
   FObjectProperties.ConfigurationPropertyName := 'objectProperties';
   FObjectTitleProperties := tJson2PumlPropertyValueDefinitionList.Create ();
   FObjectTypeProperties := tJson2PumlPropertyValueDefinitionList.Create;
   FObjectTypeRenames := tJson2PumlOperationPropertyList.Create;
-  FObjectTypeRenames.UseMatch := True;
+  FObjectTypeRenames.UseMatch := true;
   FObjectTypeRenames.ConfigurationPropertyName := 'objectTypeRenames';
   FPUMLHeaderLines := tJson2PumlOperationPropertyList.Create ();
   FRelationshipProperties := tJson2PumlOperationPropertyList.Create;
-  FRelationshipProperties.UseMatch := True;
+  FRelationshipProperties.UseMatch := true;
   FRelationshipProperties.ConfigurationPropertyName := 'relationshipProperties';
   FRelationshipTypeArrowFormats := tJson2PumlRelationshipTypeArrowFormatList.Create;
   FRelationshipTypeProperties := tJson2PumlPropertyValueDefinitionList.Create;
@@ -683,7 +683,7 @@ end;
 
 function tJson2PumlConverterDefinition.GetHideDuplicateRelations: boolean;
 begin
-  Result := StringToBoolean (HideDuplicateRelationsStr, True);
+  Result := StringToBoolean (HideDuplicateRelationsStr, true);
 end;
 
 function tJson2PumlConverterDefinition.GetIdent: string;
@@ -693,22 +693,22 @@ end;
 
 function tJson2PumlConverterDefinition.GetIdentifyObjectsByTypeAndIdent: boolean;
 begin
-  Result := StringToBoolean (IdentifyObjectsByTypeAndIdentStr, True);
+  Result := StringToBoolean (IdentifyObjectsByTypeAndIdentStr, true);
 end;
 
 function tJson2PumlConverterDefinition.GetLegendShowFileInfos: boolean;
 begin
-  Result := StringToBoolean (LegendShowFileInfosStr, True);
+  Result := StringToBoolean (LegendShowFileInfosStr, true);
 end;
 
 function tJson2PumlConverterDefinition.GetLegendShowInfo: boolean;
 begin
-  Result := StringToBoolean (LegendShowInfoStr, True);
+  Result := StringToBoolean (LegendShowInfoStr, true);
 end;
 
 function tJson2PumlConverterDefinition.GetLegendShowObjectFormats: boolean;
 begin
-  Result := StringToBoolean (LegendShowObjectFormatsStr, True);
+  Result := StringToBoolean (LegendShowObjectFormatsStr, true);
 end;
 
 function tJson2PumlConverterDefinition.GetShowLegend: boolean;
@@ -781,7 +781,7 @@ begin
     Result := ObjectProperties.IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType,
       oFoundCondition) >= 0
   else
-    Result := True;
+    Result := true;
 end;
 
 function tJson2PumlConverterDefinition.IsPropertyAllowed (iPropertyName: string;
@@ -791,7 +791,7 @@ begin
     Result := AttributeProperties.IndexOfProperty (iPropertyName, iParentPropertyName, iParentObjectType,
       oFoundCondition) >= 0
   else
-    Result := True;
+    Result := true;
 end;
 
 function tJson2PumlConverterDefinition.IsPropertyHidden (iPropertyName: string;
@@ -861,7 +861,7 @@ begin
   DefinitionRecord := GetJsonObject (iJsonValue, iPropertyName);
   if not Assigned (DefinitionRecord) then
     exit;
-  Result := True;
+  Result := true;
   if ExistsJsonProperty (DefinitionRecord, 'definition') and ExistsJsonProperty (DefinitionRecord, 'option') then
   begin
     OptionName := GetJsonStringValue (DefinitionRecord, 'option');
@@ -1043,7 +1043,7 @@ begin
   begin
     PropertyName := iPropertyName;
     Level := iLevel;
-    WriteEmpty := True;
+    WriteEmpty := true;
   end;
 
   WriteObjectStartToJson (oJsonOutPut, Level, PropertyName);
@@ -1136,7 +1136,7 @@ begin
     exit;
   if not Assigned (JsonValue) then
     exit;
-  Result := True;
+  Result := true;
   if JsonValue is tJSONArray then
     inherited ReadFromJson (JsonValue, iPropertyName)
   else if JsonValue is tJSONObject then
@@ -1166,8 +1166,8 @@ end;
 constructor tJson2PumlPropertyValueDefinitionList.Create;
 begin
   inherited;
-  OwnsObjects := True;
-  UseMatch := True;
+  OwnsObjects := true;
+  UseMatch := true;
 end;
 
 procedure tJson2PumlPropertyValueDefinitionList.AddDefinition (iPropertyName, iChildPropertyName,
@@ -1265,8 +1265,8 @@ end;
 constructor tJson2PumlObjectDefinitionList.Create;
 begin
   inherited;
-  OwnsObjects := True;
-  UseMatch := True;
+  OwnsObjects := true;
+  UseMatch := true;
   ConfigurationPropertyName := 'objectProperties';
 end;
 
@@ -1357,10 +1357,10 @@ constructor tJson2PumlSingleFormatDefinition.Create;
 begin
   inherited Create;
   FSkinParams := tStringList.Create ();
-  FSkinParams.OwnsObjects := True;
+  FSkinParams.OwnsObjects := true;
   FObjectFilter := tJson2PumlBasePropertyList.Create;
-  FObjectFilter.OwnsObjects := True;
-  FObjectFilter.UseMatch := True;
+  FObjectFilter.OwnsObjects := true;
+  FObjectFilter.UseMatch := true;
   FObjectFilter.ConfigurationPropertyName := 'formats.definition.objectFilter';
 end;
 
@@ -1418,17 +1418,17 @@ end;
 
 function tJson2PumlSingleFormatDefinition.GetCaptionShowIdent: boolean;
 begin
-  Result := StringToBoolean (CaptionShowIdentStr, True);
+  Result := StringToBoolean (CaptionShowIdentStr, true);
 end;
 
 function tJson2PumlSingleFormatDefinition.GetCaptionShowTitle: boolean;
 begin
-  Result := StringToBoolean (CaptionShowTitleStr, True);
+  Result := StringToBoolean (CaptionShowTitleStr, true);
 end;
 
 function tJson2PumlSingleFormatDefinition.GetCaptionShowType: boolean;
 begin
-  Result := StringToBoolean (CaptionShowTypeStr, True);
+  Result := StringToBoolean (CaptionShowTypeStr, true);
 end;
 
 function tJson2PumlSingleFormatDefinition.GetCaptionSplitLength: integer;
@@ -1454,17 +1454,17 @@ end;
 
 function tJson2PumlSingleFormatDefinition.GetShowAttributes: boolean;
 begin
-  Result := StringToBoolean (ShowAttributesStr, True);
+  Result := StringToBoolean (ShowAttributesStr, true);
 end;
 
 function tJson2PumlSingleFormatDefinition.GetShowCharacteristics: boolean;
 begin
-  Result := StringToBoolean (ShowCharacteristicsStr, True);
+  Result := StringToBoolean (ShowCharacteristicsStr, true);
 end;
 
 function tJson2PumlSingleFormatDefinition.GetShowFromRelations: boolean;
 begin
-  Result := StringToBoolean (ShowFromRelationsStr, True);
+  Result := StringToBoolean (ShowFromRelationsStr, true);
 end;
 
 function tJson2PumlSingleFormatDefinition.GetShowIfEmpty: boolean;
@@ -1474,7 +1474,7 @@ end;
 
 function tJson2PumlSingleFormatDefinition.GetShowToRelations: boolean;
 begin
-  Result := StringToBoolean (ShowToRelationsStr, True);
+  Result := StringToBoolean (ShowToRelationsStr, true);
 end;
 
 function tJson2PumlSingleFormatDefinition.GetIsFilled: boolean;
@@ -1494,7 +1494,7 @@ end;
 
 function tJson2PumlSingleFormatDefinition.GetSortAttributes: boolean;
 begin
-  Result := StringToBoolean (SortAttributesStr, True);
+  Result := StringToBoolean (SortAttributesStr, true);
 end;
 
 procedure tJson2PumlSingleFormatDefinition.MergeWith (iMergeDefinition: tJson2PumlBaseObject);
@@ -1534,7 +1534,7 @@ begin
   DefinitionRecord := GetJsonObject (iJsonValue, iPropertyName);
   if not Assigned (DefinitionRecord) then
     exit;
-  Result := True;
+  Result := true;
   if ExistsJsonProperty (DefinitionRecord, 'definition') and ExistsJsonProperty (DefinitionRecord, 'formatName') then
   begin
     FormatName := GetJsonStringValue (DefinitionRecord, 'formatName');
@@ -1635,9 +1635,9 @@ begin
   end;
 
   WriteObjectStartToJson (oJsonOutPut, Level, PropertyName);
-  WriteToJsonValue (oJsonOutPut, 'objectFilter', ObjectFilter.ItemList, Level + 1, True, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'objectFilter', ObjectFilter.ItemList, Level + 1, true, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'iconColor', IconColor, Level + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'skinParams', SkinParams, Level + 1, True, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'skinParams', SkinParams, Level + 1, true, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'captionShowIdent', CaptionShowIdentStr, Level + 1, iWriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'captionShowTitle', CaptionShowTitleStr, Level + 1, iWriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'captionShowType', CaptionShowTypeStr, Level + 1, iWriteEmpty, false);
@@ -1684,7 +1684,7 @@ end;
 constructor tJson2PumlFormatDefinitionList.Create;
 begin
   inherited;
-  OwnsObjects := True;
+  OwnsObjects := true;
 end;
 
 procedure tJson2PumlFormatDefinitionList.AddDefinition (iDefinition: tJson2PumlSingleFormatDefinition);
@@ -1932,8 +1932,8 @@ end;
 constructor tJson2PumlCharacteristicDefinitionList.Create;
 begin
   inherited;
-  OwnsObjects := True;
-  UseMatch := True;
+  OwnsObjects := true;
+  UseMatch := true;
   ConfigurationPropertyName := 'characteristicProperties';
 end;
 
@@ -2047,7 +2047,7 @@ begin
   inherited Create;
   FCharacteristicType := jctList;
   FPropertyList := tJson2PumlBasePropertyList.Create ();
-  FPropertyList.UseMatch := True;
+  FPropertyList.UseMatch := true;
   FPropertyList.ConfigurationPropertyName := 'characteristicProperties.propertyList';
 end;
 
@@ -2093,7 +2093,7 @@ begin
   if PropertyList.Count <= 0 then
   begin
     oFoundCondition := 'propertyList empty';
-    Result := True
+    Result := true
   end
   else
   begin
@@ -2139,7 +2139,7 @@ var
   Value: string;
   IsRecord: boolean;
 begin
-  IsRecord := True;
+  IsRecord := true;
   if (CharacteristicType = jctRecord) and (not IncludeIndex) and (not SortRows) and (PropertyList.Count <= 0) then
   begin
     Value := ClearJsonPropertyValue (ParentProperty);
@@ -2285,7 +2285,7 @@ begin
   Description.WriteToJson (oJsonOutPut, 'description', iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'defaultOption', DefaultOption, iLevel + 1, iWriteEmpty);
   OptionList.WriteToJson (oJsonOutPut, 'options', iLevel + 1, iWriteEmpty);
-  BaseOption.WriteToJson (oJsonOutPut, 'baseOption', iLevel + 1, True);
+  BaseOption.WriteToJson (oJsonOutPut, 'baseOption', iLevel + 1, true);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 
@@ -2343,9 +2343,9 @@ end;
 constructor tJson2PumlConverterDefinitionList.Create;
 begin
   inherited;
-  Sorted := True;
+  Sorted := true;
   Duplicates := dupIgnore;
-  OwnsObjects := True;
+  OwnsObjects := true;
 end;
 
 procedure tJson2PumlConverterDefinitionList.AddDefinition (iDefinition: tJson2PumlConverterDefinition);
@@ -2408,7 +2408,7 @@ begin
     exit;
   if not Assigned (JsonValue) then
     exit;
-  Result := True;
+  Result := true;
   if JsonValue is tJSONArray then
   begin
     JsonArray := tJSONArray (JsonValue);

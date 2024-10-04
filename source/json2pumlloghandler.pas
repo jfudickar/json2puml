@@ -134,7 +134,7 @@ end;
 procedure SetLogProviderDefaults (iProvider: tLogProviderBase; iApplicationType: tJson2PumlApplicationType);
   procedure SetCustomFormat (iLogProvider: tLogProviderBase);
   begin
-    iLogProvider.CustomMsgOutput := True;
+    iLogProvider.CustomMsgOutput := true;
     if iApplicationType in [jatService, jatWinService] then
     begin
       iLogProvider.IncludedInfo := iLogProvider.IncludedInfo + [iiThreadId];
@@ -149,7 +149,7 @@ begin
     iProvider.LogLevel := LOG_DEBUG
   else
     iProvider.LogLevel := LOG_TRACE;
-  iProvider.TimePrecission := True;
+  iProvider.TimePrecission := true;
   iProvider.IncludedInfo := [iiAppName, iiHost, iiUserName, iiEnvironment, iiPlatform, iiOSVersion, iiExceptionInfo,
     iiExceptionStackTrace];
   SetLogProviderEventTypeNames (iProvider);
@@ -163,6 +163,7 @@ var
   LogFileName: string;
 
 begin
+
   GlobalLogFileProvider.Enabled := false;
   GlobalLogConsoleProvider.Enabled := not (iApplicationType in [jatUI, jatWinService]);
   if GlobalLogConsoleProvider.Enabled then
@@ -194,11 +195,11 @@ begin
 
     LogFileName := ExpandFileName (tPath.Combine(LogFileName, ChangeFileExt(ExtractFileName(ParamStr(0)), '.log')));
     GlobalLogFileProvider.FileName := LogFileName;
-    GlobalLogFileProvider.DailyRotate := True;
+    GlobalLogFileProvider.DailyRotate := true;
     GlobalLogFileProvider.DailyRotateFileDateFormat := 'yyyymmdd';
     GlobalLogFileProvider.MaxFileSizeInMB := 50;
     GlobalLogFileProvider.MaxRotateFiles := 20;
-    GlobalLogFileProvider.AutoFlush := True;
+    GlobalLogFileProvider.AutoFlush := true;
     SetLogProviderDefaults (GlobalLogFileProvider, iApplicationType);
   end;
   GlobalLogFileProvider.Enabled := iAllowsLogFile;
@@ -240,7 +241,7 @@ begin
 end;
 
 procedure tJson2PumlLogHandler.DebugParameter (const aParameterPrefix, aParameterName, aParameterValue: string;
-  const aTag: string = '');
+const aTag: string = '');
 begin
   LogMsg ('  %-45s %s', [Format('%s%s', [aParameterPrefix, aParameterName]).Trim, aParameterValue], etDebug);
 end;
@@ -264,7 +265,7 @@ begin
 end;
 
 procedure tJson2PumlLogHandler.Error (const aErrorType: tJson2PumlErrorType; const aParams: array of TVarRec;
-  const aTag: string = '');
+const aTag: string = '');
 begin
   LogMsg (aErrorType.ErrorMessage, aParams, aErrorType.EventType);
   ErrorList.AddErrorWarning (aErrorType, Format(aErrorType.ErrorMessage, aParams));
@@ -281,7 +282,7 @@ begin
 end;
 
 procedure tJson2PumlLogHandler.Header (const aMessage: string; const aParams: array of TVarRec;
-  const aTag: string = '');
+const aTag: string = '');
 begin
   LogMsg (aMessage, aParams, etHeader);
 end;
@@ -297,7 +298,7 @@ begin
 end;
 
 procedure tJson2PumlLogHandler.InfoParameter (const aParameterPrefix, aParameterName, aParameterValue: string;
-  const aTag: string = '');
+const aTag: string = '');
 begin
   LogMsg ('  %-45s %s', [Format('%s%s', [aParameterPrefix, aParameterName]).Trim, aParameterValue], etInfo);
 end;
@@ -344,7 +345,7 @@ constructor tJson2PumlErrorList.Create;
 begin
   inherited Create;
   FLock := tCriticalSection.Create ();
-  OwnsObjects := True;
+  OwnsObjects := true;
 end;
 
 destructor tJson2PumlErrorList.Destroy;
