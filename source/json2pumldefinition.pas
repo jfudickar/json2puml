@@ -315,7 +315,7 @@ type
     function HandleCurl (const iBaseUrl: string; iUrlAddon: string; const iOptions: array of string;
       iExecuteCurlParameterList, ioResultCurlParameterList: tJson2PumlCurlParameterList;
       iCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
-      iCurlAuthenticationList: tJson2PumlCurlAuthenticationList): boolean;
+      iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iIgnoreCurlCache: boolean): boolean;
     function HasValidCurl: boolean;
     function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
@@ -522,7 +522,8 @@ type
     function AddInputFileSummary (const iInputFileName: string): tJson2PumlInputFileDefinition;
     function CalculateOutputFileName (iFileName, iSourceFileName: string): string;
     function CreateListValueObject: tJson2PumlBaseObject; override;
-    function ExpandInputListCurlFile (iCurrentInputFile: tJson2PumlInputFileDefinition): boolean;
+    function ExpandInputListCurlFile (iCurrentInputFile: tJson2PumlInputFileDefinition;
+      iIgnoreCurlCache: boolean): boolean;
     function ExpandInputListSplitFile (iInputFile: tJson2PumlInputFileDefinition): boolean;
     function GetIsValid: boolean; override;
     procedure ValidateCurlParameter;
@@ -537,7 +538,7 @@ type
     procedure AddSummaryFile (const iFileName: string);
     procedure Clear; override;
     procedure DeleteGeneratedFiles (const iOutputDir: string);
-    procedure ExpandInputList;
+    procedure ExpandInputList (iIgnoreCurlCache: boolean);
     procedure GenerateSummaryZipfile (iZipfileName: string; iOutputFormats: tJson2PumlOutputFormats);
     function GetEnumerator: tJson2PumlInputListEnumerator;
     function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
@@ -601,14 +602,14 @@ type
     FConfigurationFileNameEnvironment: string;
     FCurlAuthenticationFileName: string;
     FCurlAuthenticationFileNameEnvironment: string;
-    FCurlParameter: tJson2PumlCurlParameterList;
     FCurlAuthenticationParameter: tJson2PumlCurlParameterList;
+    FCurlIgnoreCache: boolean;
+    FCurlParameter: tJson2PumlCurlParameterList;
     FCurlParameterFileName: string;
     FCurlPassThroughHeader: string;
     FDebug: boolean;
     FDefinitionFileName: string;
     FDefinitionFileNameEnvironment: string;
-    FJobDescription: string;
     FDetail: string;
     FFailed: boolean;
     FFormatDefinitionFiles: boolean;
@@ -622,6 +623,7 @@ type
     FInputFilterList: tJson2PumlFilterList;
     FInputListFileName: string;
     FJavaRuntimeParameter: string;
+    FJobDescription: string;
     FJobname: string;
     FLeadingObject: string;
     FNoLogFiles: boolean;
@@ -653,7 +655,6 @@ type
     procedure SetOutputSuffix (const Value: string);
     procedure SetServicePortStr (const Value: string);
     procedure SetTitleFilter (const Value: string);
-  strict protected
   protected
     function ExistsSingleInputParameter (iParameterName: string): boolean;
     procedure HandleGenerateDefaultConfiguration;
@@ -676,8 +677,8 @@ type
     procedure WriteHelpLine (iParameter: string = ''; iDescription: string = ''; iParameterLength: integer = 31;
       iLineLength: integer = 111);
     procedure WriteHelpScreen;
-    property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
+    property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlPassThroughHeader: string read FCurlPassThroughHeader write FCurlPassThroughHeader;
     property GenerateDefaultConfiguration: boolean read FGenerateDefaultConfiguration
       write FGenerateDefaultConfiguration;
@@ -695,12 +696,12 @@ type
     property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
     property CurlAuthenticationFileNameEnvironment: string read FCurlAuthenticationFileNameEnvironment
       write FCurlAuthenticationFileNameEnvironment;
+    property CurlIgnoreCache: boolean read FCurlIgnoreCache write FCurlIgnoreCache;
     property CurlParameterFileName: string read FCurlParameterFileName write FCurlParameterFileName;
     property Debug: boolean read FDebug write FDebug;
     property DefinitionFileName: string read FDefinitionFileName write FDefinitionFileName;
     property DefinitionFileNameEnvironment: string read FDefinitionFileNameEnvironment
       write FDefinitionFileNameEnvironment;
-    property JobDescription: string read FJobDescription write FJobDescription;
     property Detail: string read FDetail write FDetail;
     property Failed: boolean read FFailed write FFailed;
     property FormatDefinitionFiles: boolean read FFormatDefinitionFiles write FFormatDefinitionFiles;
@@ -713,6 +714,7 @@ type
     property InputFileName: string read FInputFileName write FInputFileName;
     property InputListFileName: string read FInputListFileName write FInputListFileName;
     property JavaRuntimeParameter: string read FJavaRuntimeParameter write FJavaRuntimeParameter;
+    property JobDescription: string read FJobDescription write FJobDescription;
     property Jobname: string read FJobname write FJobname;
     property LeadingObject: string read FLeadingObject write FLeadingObject;
     property NoLogFiles: boolean read FNoLogFiles write FNoLogFiles;
@@ -1186,14 +1188,19 @@ end;
 function tJson2PumlInputFileDefinition.HandleCurl (const iBaseUrl: string; iUrlAddon: string;
   const iOptions: array of string; iExecuteCurlParameterList, ioResultCurlParameterList: tJson2PumlCurlParameterList;
   iCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
-  iCurlAuthenticationList: tJson2PumlCurlAuthenticationList): boolean;
+  iCurlAuthenticationList: tJson2PumlCurlAuthenticationList; iIgnoreCurlCache: boolean): boolean;
 var
   BaseUrl: string;
   Options: array of string;
+  Cache: integer;
 begin
   Result := false;
   if not HasValidCurl then
     exit;
+  if iIgnoreCurlCache then
+    Cache := 0
+  else
+    Cache := CurlCache;
   if CurlBaseUrl.Trim.IsEmpty then
     BaseUrl := iBaseUrl
   else
@@ -1205,7 +1212,7 @@ begin
   begin
     Result := TCurlUtils.Execute (GlobalConfigurationDefinition.CurlCommand, BaseUrl, [CurlUrl.Trim, iUrlAddon.Trim],
       Options, OutputFileName, iCurlAuthenticationList, iExecuteCurlParameterList, ioResultCurlParameterList,
-      iCurlMappingParameterList, CurlCache, CurlResult);
+      iCurlMappingParameterList, Cache, CurlResult);
     if Result then
     begin
       Result := true;
@@ -1571,7 +1578,7 @@ begin
       end;
 end;
 
-procedure tJson2PumlInputList.ExpandInputList;
+procedure tJson2PumlInputList.ExpandInputList (iIgnoreCurlCache: boolean);
 var
   InputFile: tJson2PumlInputFileDefinition;
   searchResult: tSearchRec;
@@ -1593,7 +1600,7 @@ begin
       OnNotifyChange (self, nctExpand, Curr, Count);
     if not InputFile.IsOriginal then
       Continue;
-    if ExpandInputListCurlFile (InputFile) then
+    if ExpandInputListCurlFile (InputFile, iIgnoreCurlCache) then
       Continue;
     if InputFile.Exists then
     begin
@@ -1653,7 +1660,8 @@ begin
   end;
 end;
 
-function tJson2PumlInputList.ExpandInputListCurlFile (iCurrentInputFile: tJson2PumlInputFileDefinition): boolean;
+function tJson2PumlInputList.ExpandInputListCurlFile (iCurrentInputFile: tJson2PumlInputFileDefinition;
+  iIgnoreCurlCache: boolean): boolean;
 var
   CurlParameterMatrix: tJson2PumlCurlFileParameterListMatrix;
   SaveFileName: string;
@@ -1673,7 +1681,8 @@ begin
       begin
         SaveFileName := iCurrentInputFile.OutputFileName;
         iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon, [CurlOptions, curlAdditionalRuntimeOptions],
-          CurlParameterMatrix.RowParameterList[i], CurlParameterList, CurlMappingParameterList, CurlAuthenticationList);
+          CurlParameterMatrix.RowParameterList[i], CurlParameterList, CurlMappingParameterList, CurlAuthenticationList,
+          iIgnoreCurlCache);
         AddInputFileAfterCurl (iCurrentInputFile);
         iCurrentInputFile.OutputFileName := SaveFileName;
         iCurrentInputFile.CurlResult.Clear;
@@ -1685,7 +1694,7 @@ begin
     else
     begin
       iCurrentInputFile.IsInputFileUsable := iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, '', CurlOptions,
-        CurlParameterList, CurlParameterList, CurlMappingParameterList, CurlAuthenticationList);
+        CurlParameterList, CurlParameterList, CurlMappingParameterList, CurlAuthenticationList, iIgnoreCurlCache);
     end;
     if GlobalLoghandler.Failed then
       exit;
@@ -2202,11 +2211,90 @@ begin
   inherited Destroy;
 end;
 
+function tJson2PumlCommandLineParameter.CommandLineParameterStr (iIncludeProgram: boolean): string;
+var
+  i: integer;
+begin
+  if iIncludeProgram then
+    Result := ParamStr (0) + ' '
+  else
+    Result := '';
+  for i := 1 to ParamCount do
+    Result := Result + ParamStr (i) + ' ';
+  Result := Result.Trim;
+end;
+
 function tJson2PumlCommandLineParameter.ExistsSingleInputParameter (iParameterName: string): boolean;
 begin
   Result := FindCmdLineSwitch (iParameterName);
   if Result then
     LogParameterValue (iParameterName, Result);
+end;
+
+procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStringList);
+
+  procedure AddLine (iName, iValue: string);
+  var
+    envValue: string;
+  begin
+    if not iValue.IsEmpty then
+    begin
+      envValue := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
+      if iValue <> envValue then
+        iLogList.Add (Format('  %s%-30s: %s (%s)', [cCmdLinePrefix, iName.ToLower, iValue, envValue]))
+      else
+        iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, iValue]));
+    end;
+  end;
+  procedure AddLineBool (iName: string; iValue: boolean);
+  begin
+    if iValue then
+      iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, cTrue]));
+  end;
+
+begin
+  iLogList.Clear;
+  iLogList.Add ('Command Line Parameter ');
+  AddLine ('BaseOutputPath', BaseOutputPath);
+  AddLine ('ConfigurationFileName', ConfigurationFileName);
+  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileName);
+  AddLineBool ('CurlIgnoreCache', CurlIgnoreCache);
+  AddLine ('CurlParameterFileName', CurlParameterFileName);
+  AddLineBool ('Debug', Debug);
+  AddLine ('DefinitionFileName', DefinitionFileName);
+  AddLine ('JobDescription', JobDescription);
+  AddLine ('Detail', Detail);
+  AddLineBool ('FormatDefinitionFiles', FormatDefinitionFiles);
+  AddLineBool ('GenerateDetails', GenerateDetails);
+  AddLineBool ('GenerateOutputDefinition', GenerateOutputDefinition);
+  AddLineBool ('GenerateSummary', GenerateSummary);
+  AddLine ('Group', Group);
+  AddLine ('IdentFilter', IdentFilter);
+  AddLine ('InputFileName', InputFileName);
+  AddLine ('InputListFileName', InputListFileName);
+  AddLine ('JavaRuntimeParameter', JavaRuntimeParameter);
+  AddLine ('Jobname', Jobname);
+  AddLine ('LeadingObject', LeadingObject);
+  AddLineBool ('NoLogFiles', NoLogFiles);
+  AddLine ('OpenOutputs', OpenOutputsStr);
+  AddLine ('Option', Option);
+  AddLine ('OptionFileName', OptionFileName);
+  AddLine ('OutputFormat', OutputFormatStr);
+  AddLine ('OutputPath', OutputPath);
+  AddLine ('OutputSuffix', OutputSuffix);
+  AddLine ('ParameterFileName', ParameterFileName);
+  AddLine ('PlantUmlJarFileName', PlantUmlJarFileName);
+  AddLine ('PlantUmlRuntimeParameter', PlantUmlRuntimeParameter);
+  AddLine ('ServicePort', ServicePortStr);
+  AddLine ('SplitIdentifier', SplitIdentifier);
+  AddLine ('SplitInputFile', SplitInputFileStr);
+  AddLine ('SummaryFileName', SummaryFileName);
+  AddLine ('TitleFilter', TitleFilter);
+  iLogList.Add ('Environment Parameter ');
+  AddLine ('ConfigurationFileName', ConfigurationFileNameEnvironment);
+  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileNameEnvironment);
+  AddLine ('DefinitionFileName', DefinitionFileNameEnvironment);
+  AddLine ('PlantUmlJarFileName', PlantUmlJarFileNameEnvironment);
 end;
 
 function tJson2PumlCommandLineParameter.GetGenerateDetails: boolean;
@@ -2433,6 +2521,7 @@ begin
   DefinitionFileNameEnvironment := ReadSingleInputParameterEnvironment (cDefinitionFileRegistry);
   CurlAuthenticationFileName := ReadSingleInputParameterFile ('CurlAuthenticationfile');
   CurlAuthenticationFileNameEnvironment := ReadSingleInputParameterEnvironment (cCurlAuthenticationFileRegistry);
+  CurlIgnoreCache := ExistsSingleInputParameter ('curlIgnoreCache');
   CurlParameterFileName := ReadSingleInputParameterFile ('CurlParameterfile');
   // Do not use ReadSingleInputParameter so that later the globalconfiguration.InputlistFileSearchFolder can be used
   InputListFileName := ReadSingleInputParameter ('InputListfile');
@@ -2628,6 +2717,8 @@ begin
   WriteHelpLine ('curlauthenticationfile:<file>',
     'CurlAuthenticationFileName which contains the central authentication configuration ' +
     'when using the curl automations');
+  WriteHelpLine ('curlignorecache',
+    'Flag to ignore the curl cache. Every file will allways be refetched, independent if there is a cache definition.');
   WriteHelpLine ('curlparameterfile:<file>',
     'CurlParameterFileName which contains additional variables to enable a dynamic configuration ' +
     'when using the curl automations');
@@ -2681,84 +2772,6 @@ begin
   WriteHelpLine ('jobdescription',
     'Job description of the generated result. This information will be put into the legend of the image.');
   WriteHelpLine;
-end;
-
-function tJson2PumlCommandLineParameter.CommandLineParameterStr (iIncludeProgram: boolean): string;
-var
-  i: integer;
-begin
-  if iIncludeProgram then
-    Result := ParamStr (0) + ' '
-  else
-    Result := '';
-  for i := 1 to ParamCount do
-    Result := Result + ParamStr (i) + ' ';
-  Result := Result.Trim;
-end;
-
-procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStringList);
-
-  procedure AddLine (iName, iValue: string);
-  var
-    envValue: string;
-  begin
-    if not iValue.IsEmpty then
-    begin
-      envValue := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
-      if iValue <> envValue then
-        iLogList.Add (Format('  %s%-30s: %s (%s)', [cCmdLinePrefix, iName.ToLower, iValue, envValue]))
-      else
-        iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, iValue]));
-    end;
-  end;
-  procedure AddLineBool (iName: string; iValue: boolean);
-  begin
-    if iValue then
-      iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, cTrue]));
-  end;
-
-begin
-  iLogList.Clear;
-  iLogList.Add ('Command Line Parameter ');
-  AddLine ('BaseOutputPath', BaseOutputPath);
-  AddLine ('ConfigurationFileName', ConfigurationFileName);
-  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileName);
-  AddLine ('CurlParameterFileName', CurlParameterFileName);
-  AddLineBool ('Debug', Debug);
-  AddLine ('DefinitionFileName', DefinitionFileName);
-  AddLine ('JobDescription', JobDescription);
-  AddLine ('Detail', Detail);
-  AddLineBool ('FormatDefinitionFiles', FormatDefinitionFiles);
-  AddLineBool ('GenerateDetails', GenerateDetails);
-  AddLineBool ('GenerateOutputDefinition', GenerateOutputDefinition);
-  AddLineBool ('GenerateSummary', GenerateSummary);
-  AddLine ('Group', Group);
-  AddLine ('IdentFilter', IdentFilter);
-  AddLine ('InputFileName', InputFileName);
-  AddLine ('InputListFileName', InputListFileName);
-  AddLine ('JavaRuntimeParameter', JavaRuntimeParameter);
-  AddLine ('Jobname', Jobname);
-  AddLine ('LeadingObject', LeadingObject);
-  AddLineBool ('NoLogFiles', NoLogFiles);
-  AddLine ('OpenOutputs', OpenOutputsStr);
-  AddLine ('Option', Option);
-  AddLine ('OptionFileName', OptionFileName);
-  AddLine ('OutputFormat', OutputFormatStr);
-  AddLine ('OutputPath', OutputPath);
-  AddLine ('OutputSuffix', OutputSuffix);
-  AddLine ('ParameterFileName', ParameterFileName);
-  AddLine ('PlantUmlJarFileName', PlantUmlJarFileName);
-  AddLine ('PlantUmlRuntimeParameter', PlantUmlRuntimeParameter);
-  AddLine ('ServicePort', ServicePortStr);
-  AddLine ('SplitIdentifier', SplitIdentifier);
-  AddLine ('SplitInputFile', SplitInputFileStr);
-  AddLine ('SummaryFileName', SummaryFileName);
-  AddLine ('TitleFilter', TitleFilter);
-  iLogList.Add ('Environment Parameter ');
-  AddLine ('ConfigurationFileName', ConfigurationFileNameEnvironment);
-  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileNameEnvironment);
-  AddLine ('DefinitionFileName', DefinitionFileNameEnvironment);
-  AddLine ('PlantUmlJarFileName', PlantUmlJarFileNameEnvironment);
 end;
 
 constructor tJson2PumlGlobalDefinition.Create;

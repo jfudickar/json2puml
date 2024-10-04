@@ -809,7 +809,7 @@ begin
   try
     LastTraceId := '';
     ConverterInputList.curlAdditionalRuntimeOptions := CalculateCurlAdditionalRuntimeOptions;
-    ConverterInputList.ExpandInputList;
+    ConverterInputList.ExpandInputList (CmdLineParameter.CurlIgnoreCache);
     GenSummary := CurrentGenerateSummary;
     GenDetails := CurrentGenerateDetails;
     if ConverterInputList.ExecuteCount <= 0 then

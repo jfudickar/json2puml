@@ -84,7 +84,7 @@ type
     function EventType: tEventType;
     function Failed: boolean;
     function HttpStatusCode: integer;
-    procedure RenderErrorResponse (oJson: tStringList; iLevel: integer; iErrorMessage: string = '');
+    procedure RenderErrorResponse(oJson: tStrings; iLevel: integer; iErrorMessage: string = '');
   end;
 
   tJson2PumlBaseObject = class(tPersistent)
@@ -1071,8 +1071,7 @@ begin
   Result := cJson2PumlErrorInformation[self].HttpStatusCode;
 end;
 
-procedure tJson2PumlErrorTypeHelper.RenderErrorResponse (oJson: tStringList; iLevel: integer;
-  iErrorMessage: string = '');
+procedure tJson2PumlErrorTypeHelper.RenderErrorResponse(oJson: tStrings; iLevel: integer; iErrorMessage: string = '');
 begin
   if Errorcode.IsEmpty then
     exit;

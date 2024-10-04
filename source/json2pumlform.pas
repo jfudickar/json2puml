@@ -224,6 +224,7 @@ type
     ServiceInformationResultPanel: TPanel;
     ServiceErrorMessageResultPanel: TPanel;
     LogFileDetailPageControl: TPageControl;
+    curlIgnoreCacheCheckBox: TCheckBox;
     procedure CommandLineEditPanelResize (Sender: tObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
     procedure ConvertCurrentFileActionExecute (Sender: tObject);
@@ -511,6 +512,7 @@ begin
   PlantUmlRuntimeParameterEdit.Text := InputHandler.CmdLineParameter.PlantUmlRuntimeParameter;
   javaruntimeparameterEdit.Text := InputHandler.CmdLineParameter.JavaRuntimeParameter;
   CurlAuthenticationFileEdit.Text := InputHandler.CmdLineParameter.CurlAuthenticationFileName;
+  curlIgnoreCacheCheckBox.Checked := InputHandler.CmdLineParameter.CurlIgnoreCache;
   CurlParameterFileEdit.Text := InputHandler.CmdLineParameter.CurlParameterFileName;
   definitionfileEdit.Text := InputHandler.CmdLineParameter.DefinitionFileName;
   parameterFileEdit.Text := InputHandler.CmdLineParameter.ParameterFileName;
@@ -816,6 +818,7 @@ begin
   InputHandler.CmdLineParameter.PlantUmlRuntimeParameter := PlantUmlRuntimeParameterEdit.Text;
   InputHandler.CmdLineParameter.JavaRuntimeParameter := javaruntimeparameterEdit.Text;
   InputHandler.CmdLineParameter.CurlAuthenticationFileName := CurlAuthenticationFileEdit.Text;
+  InputHandler.CmdLineParameter.CurlIgnoreCache := curlIgnoreCacheCheckBox.Checked;
   InputHandler.CmdLineParameter.CurlParameterFileName := CurlParameterFileEdit.Text;
   InputHandler.CmdLineParameter.DefinitionFileName := definitionfileEdit.Text;
   InputHandler.CmdLineParameter.ParameterFileName := parameterFileEdit.Text;

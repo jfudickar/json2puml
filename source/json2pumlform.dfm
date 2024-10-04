@@ -289,7 +289,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Width = 160
               Height = 17
               Caption = '/formatdefinitionfiles'
-              TabOrder = 6
+              TabOrder = 7
             end
             object CurlAuthenticationFileEdit: TButtonedEdit
               Left = 129
@@ -314,6 +314,14 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
+            end
+            object curlIgnoreCacheCheckBox: TCheckBox
+              Left = 12
+              Top = 176
+              Width = 111
+              Height = 17
+              Caption = 'curlIgnoreCache'
+              TabOrder = 6
             end
           end
         end
