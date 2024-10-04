@@ -138,41 +138,41 @@ type
     FCaptionShowTypeStr: string;
     FCaptionSplitCharacter: string;
     FCaptionSplitLengthStr: string;
-    FValueSplitLengthStr: string;
     FFormatName: string;
     FIconColor: string;
     FObjectFilter: tJson2PumlBasePropertyList;
     FShowAttributesStr: string;
-    FSortAttributesStr: string;
     FShowCharacteristicsStr: string;
     FShowFromRelationsStr: string;
     FShowIfEmptyStr: string;
     FShowNullValuesStr: string;
     FShowToRelationsStr: string;
     FSkinParams: tStringList;
+    FSortAttributesStr: string;
+    FValueSplitLengthStr: string;
     function GetCaptionShowIdent: boolean;
     function GetCaptionShowTitle: boolean;
     function GetCaptionShowType: boolean;
     function GetCaptionSplitLength: integer;
-    function GetValueSplitLength: integer;
     function GetShowAttributes: boolean;
-    function GetSortAttributes: boolean;
     function GetShowCharacteristics: boolean;
     function GetShowFromRelations: boolean;
     function GetShowIfEmpty: boolean;
     function GetShowNullValues: boolean;
     function GetShowToRelations: boolean;
+    function GetSortAttributes: boolean;
+    function GetValueSplitLength: integer;
     procedure SetCaptionShowIdentStr (const Value: string);
     procedure SetCaptionShowTitleStr (const Value: string);
     procedure SetCaptionShowTypeStr (const Value: string);
     procedure SetShowAttributesStr (const Value: string);
-    procedure SetSortAttributesStr (const Value: string);
     procedure SetShowCharacteristicsStr (const Value: string);
     procedure SetShowFromRelationsStr (const Value: string);
     procedure SetShowIfEmptyStr (const Value: string);
     procedure SetShowNullValuesStr (const Value: string);
     procedure SetShowToRelationsStr (const Value: string);
     procedure SetSkinParams (const Value: tStringList);
+    procedure SetSortAttributesStr (const Value: string);
   protected
     function GetIdent: string; override;
     function GetIsFilled: boolean; override;
@@ -180,14 +180,14 @@ type
     property CaptionShowTitleStr: string read FCaptionShowTitleStr write SetCaptionShowTitleStr;
     property CaptionShowTypeStr: string read FCaptionShowTypeStr write SetCaptionShowTypeStr;
     property CaptionSplitLengthStr: string read FCaptionSplitLengthStr write FCaptionSplitLengthStr;
-    property ValueSplitLengthStr: string read FValueSplitLengthStr write FValueSplitLengthStr;
     property ShowAttributesStr: string read FShowAttributesStr write SetShowAttributesStr;
-    property SortAttributesStr: string read FSortAttributesStr write SetSortAttributesStr;
     property ShowCharacteristicsStr: string read FShowCharacteristicsStr write SetShowCharacteristicsStr;
     property ShowFromRelationsStr: string read FShowFromRelationsStr write SetShowFromRelationsStr;
     property ShowIfEmptyStr: string read FShowIfEmptyStr write SetShowIfEmptyStr;
     property ShowNullValuesStr: string read FShowNullValuesStr write SetShowNullValuesStr;
     property ShowToRelationsStr: string read FShowToRelationsStr write SetShowToRelationsStr;
+    property SortAttributesStr: string read FSortAttributesStr write SetSortAttributesStr;
+    property ValueSplitLengthStr: string read FValueSplitLengthStr write FValueSplitLengthStr;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -203,18 +203,18 @@ type
     property CaptionShowType: boolean read GetCaptionShowType;
     property CaptionSplitCharacter: string read FCaptionSplitCharacter write FCaptionSplitCharacter;
     property CaptionSplitLength: integer read GetCaptionSplitLength;
-    property ValueSplitLength: integer read GetValueSplitLength;
     property FormatName: string read FFormatName write FFormatName;
     property IconColor: string read FIconColor write FIconColor;
     property ObjectFilter: tJson2PumlBasePropertyList read FObjectFilter write FObjectFilter;
     property ShowAttributes: boolean read GetShowAttributes;
-    property SortAttributes: boolean read GetSortAttributes;
     property ShowCharacteristics: boolean read GetShowCharacteristics;
     property ShowFromRelations: boolean read GetShowFromRelations;
     property ShowIfEmpty: boolean read GetShowIfEmpty;
     property ShowNullValues: boolean read GetShowNullValues;
     property ShowToRelations: boolean read GetShowToRelations;
     property SkinParams: tStringList read FSkinParams write SetSkinParams;
+    property SortAttributes: boolean read GetSortAttributes;
+    property ValueSplitLength: integer read GetValueSplitLength;
   end;
 
   tJson2PumlFormatDefinitionList = class;
@@ -276,9 +276,9 @@ type
   private
     FCharacteristicType: tJson2PumlCharacteristicType;
     FIncludeIndexStr: string;
-    FSortRowsStr: string;
-    FPropertyList: tJson2PumlBasePropertyList;
     FParentProperty: string;
+    FPropertyList: tJson2PumlBasePropertyList;
+    FSortRowsStr: string;
     function GetIncludeIndex: boolean;
     function GetSortRows: boolean;
     procedure SetIncludeIndexStr (const Value: string);
@@ -298,11 +298,11 @@ type
     property CharacteristicType: tJson2PumlCharacteristicType read FCharacteristicType write FCharacteristicType
       default jctList;
     property IncludeIndex: boolean read GetIncludeIndex;
-    property SortRows: boolean read GetSortRows;
     property IncludeIndexStr: string read FIncludeIndexStr write SetIncludeIndexStr;
-    property SortRowsStr: string read FSortRowsStr write SetSortRowsStr;
-    property PropertyList: tJson2PumlBasePropertyList read FPropertyList;
     property ParentProperty: string read FParentProperty write FParentProperty;
+    property PropertyList: tJson2PumlBasePropertyList read FPropertyList;
+    property SortRows: boolean read GetSortRows;
+    property SortRowsStr: string read FSortRowsStr write SetSortRowsStr;
   end;
 
   tJson2PumlCharacteristicDefinitionList = class;
@@ -351,6 +351,7 @@ type
     FIdentifyObjectsByTypeAndIdentStr: string;
     FLegendShowFileInfosStr: string;
     FLegendShowInfoStr: string;
+    FLegendShowObjectCountStr: string;
     FLegendShowObjectFormatsStr: string;
     FObjectDetailProperties: tJson2PumlOperationPropertyList;
     FObjectFormats: tJson2PumlFormatDefinition;
@@ -370,6 +371,7 @@ type
     function GetIdentifyObjectsByTypeAndIdent: boolean;
     function GetLegendShowFileInfos: boolean;
     function GetLegendShowInfo: boolean;
+    function GetLegendShowObjectCount: boolean;
     function GetLegendShowObjectFormats: boolean;
     function GetShowLegend: boolean;
     procedure SetAttributeProperties (const Value: tJson2PumlOperationPropertyList);
@@ -382,6 +384,7 @@ type
     procedure SetIdentifyObjectsByTypeAndIdentStr (const Value: string);
     procedure SetLegendShowFileInfosStr (const Value: string);
     procedure SetLegendShowInfoStr (const Value: string);
+    procedure SetLegendShowObjectCountStr(const Value: string);
     procedure SetLegendShowObjectFormatsStr (const Value: string);
     procedure SetObjectDetailProperties (const Value: tJson2PumlOperationPropertyList);
     procedure SetObjectFormats (const Value: tJson2PumlFormatDefinition);
@@ -400,6 +403,7 @@ type
     function GetIsFilled: boolean; override;
     property LegendShowFileInfosStr: string read FLegendShowFileInfosStr write SetLegendShowFileInfosStr;
     property LegendShowInfoStr: string read FLegendShowInfoStr write SetLegendShowInfoStr;
+    property LegendShowObjectCountStr: string read FLegendShowObjectCountStr write SetLegendShowObjectCountStr;
     property LegendShowObjectFormatsStr: string read FLegendShowObjectFormatsStr write SetLegendShowObjectFormatsStr;
   public
     constructor Create; override;
@@ -409,9 +413,9 @@ type
     function IsCharacteristicProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): boolean;
     function IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
-      var oFoundCondition, oGroupName: string): boolean; overload;
-    function IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): boolean; overload;
+    function IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
+      var oFoundCondition, oGroupName: string): boolean; overload;
     function IsObjectDetailProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
       var oFoundCondition: string): boolean;
     function IsObjectIdentifierProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
@@ -454,6 +458,7 @@ type
       write SetIdentifyObjectsByTypeAndIdentStr;
     property LegendShowFileInfos: boolean read GetLegendShowFileInfos;
     property LegendShowInfo: boolean read GetLegendShowInfo;
+    property LegendShowObjectCount: boolean read GetLegendShowObjectCount;
     property LegendShowObjectFormats: boolean read GetLegendShowObjectFormats;
     property ObjectDetailProperties: tJson2PumlOperationPropertyList read FObjectDetailProperties
       write SetObjectDetailProperties;
@@ -623,6 +628,7 @@ begin
     ContinueAfterUnhandledObjectsStr := tJson2PumlConverterDefinition (Source).ContinueAfterUnhandledObjectsStr;
     LegendShowFileInfosStr := tJson2PumlConverterDefinition (Source).LegendShowFileInfosStr;
     LegendShowInfoStr := tJson2PumlConverterDefinition (Source).LegendShowInfoStr;
+    LegendShowObjectCountStr := tJson2PumlConverterDefinition (Source).LegendShowObjectCountStr;
     LegendShowObjectFormatsStr := tJson2PumlConverterDefinition (Source).LegendShowObjectFormatsStr;
     GroupDetailObjectsTogetherStr := tJson2PumlConverterDefinition (Source).GroupDetailObjectsTogetherStr;
     GroupProperties := tJson2PumlConverterDefinition (Source).GroupProperties;
@@ -656,6 +662,7 @@ begin
   IdentifyObjectsByTypeAndIdentStr := '';
   LegendShowFileInfosStr := '';
   LegendShowInfoStr := '';
+  LegendShowObjectCountStr := '';
   LegendShowObjectFormatsStr := '';
   ObjectDetailProperties.Clear;
   ObjectFormats.Clear;
@@ -696,6 +703,17 @@ begin
   Result := StringToBoolean (IdentifyObjectsByTypeAndIdentStr, true);
 end;
 
+function tJson2PumlConverterDefinition.GetIsFilled: boolean;
+begin
+  Result := (AttributeProperties.Count > 0) or (AttributeProperties.Count > 0) or (CharacteristicProperties.Count > 0)
+    or (HiddenProperties.Count > 0) or not LegendShowFileInfosStr.IsEmpty or not LegendShowInfoStr.IsEmpty or not LegendShowObjectCountStr.IsEmpty or
+    not LegendShowObjectFormatsStr.IsEmpty or (ObjectFormats.Formats.Count > 0) or (ObjectDetailProperties.Count > 0) or
+    (ObjectIdentifierProperties.Count > 0) or (ObjectProperties.Count > 0) or (ObjectTypeRenames.Count > 0) or
+    (PUMLHeaderLines.Count > 0) or (ObjectTypeProperties.Count > 0) or (ObjectTitleProperties.Count > 0) or
+    (RelationshipProperties.Count > 0) or (RelationshipTypeArrowFormats.Count > 0) or
+    (RelationshipTypeProperties.Count > 0) or not ContinueAfterUnhandledObjectsStr.IsEmpty;
+end;
+
 function tJson2PumlConverterDefinition.GetLegendShowFileInfos: boolean;
 begin
   Result := StringToBoolean (LegendShowFileInfosStr, true);
@@ -704,6 +722,11 @@ end;
 function tJson2PumlConverterDefinition.GetLegendShowInfo: boolean;
 begin
   Result := StringToBoolean (LegendShowInfoStr, true);
+end;
+
+function tJson2PumlConverterDefinition.GetLegendShowObjectCount: boolean;
+begin
+  Result := StringToBoolean (LegendShowObjectCountStr, true);
 end;
 
 function tJson2PumlConverterDefinition.GetLegendShowObjectFormats: boolean;
@@ -723,15 +746,12 @@ begin
     oFoundCondition) >= 0;
 end;
 
-function tJson2PumlConverterDefinition.GetIsFilled: boolean;
+function tJson2PumlConverterDefinition.IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
+  var oFoundCondition: string): boolean;
+var
+  GroupName: string;
 begin
-  Result := (AttributeProperties.Count > 0) or (AttributeProperties.Count > 0) or (CharacteristicProperties.Count > 0)
-    or (HiddenProperties.Count > 0) or not LegendShowFileInfosStr.IsEmpty or not LegendShowInfoStr.IsEmpty or
-    not LegendShowObjectFormatsStr.IsEmpty or (ObjectFormats.Formats.Count > 0) or (ObjectDetailProperties.Count > 0) or
-    (ObjectIdentifierProperties.Count > 0) or (ObjectProperties.Count > 0) or (ObjectTypeRenames.Count > 0) or
-    (PUMLHeaderLines.Count > 0) or (ObjectTypeProperties.Count > 0) or (ObjectTitleProperties.Count > 0) or
-    (RelationshipProperties.Count > 0) or (RelationshipTypeArrowFormats.Count > 0) or
-    (RelationshipTypeProperties.Count > 0) or not ContinueAfterUnhandledObjectsStr.IsEmpty;
+  Result := IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition, GroupName);
 end;
 
 function tJson2PumlConverterDefinition.IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
@@ -747,14 +767,6 @@ begin
     if oGroupName.IsEmpty then
       oGroupName := iPropertyName;
   end;
-end;
-
-function tJson2PumlConverterDefinition.IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType: string;
-  var oFoundCondition: string): boolean;
-var
-  GroupName: string;
-begin
-  Result := IsGroupProperty (iPropertyName, iParentPropertyName, iParentObjectType, oFoundCondition, GroupName);
 end;
 
 function tJson2PumlConverterDefinition.IsObjectDetailProperty (iPropertyName, iParentPropertyName,
@@ -830,6 +842,7 @@ begin
     Definition.IdentifyObjectsByTypeAndIdentStr);
   LegendShowFileInfosStr := MergeValue (LegendShowFileInfosStr, Definition.LegendShowFileInfosStr);
   LegendShowInfoStr := MergeValue (LegendShowInfoStr, Definition.LegendShowInfoStr);
+  LegendShowObjectCountStr := MergeValue (LegendShowObjectCountStr, Definition.LegendShowObjectCountStr);
   LegendShowObjectFormatsStr := MergeValue (LegendShowObjectFormatsStr, Definition.LegendShowObjectFormatsStr);
   OptionName := MergeValue (OptionName, Definition.OptionName);
 
@@ -875,6 +888,7 @@ begin
   IdentifyObjectsByTypeAndIdentStr := GetJsonStringValueBoolean (DefinitionRecord, 'identifyObjectsByTypeAndIdent', '');
   LegendShowInfoStr := GetJsonStringValueBoolean (DefinitionRecord, 'legendShowInfo', '');
   LegendShowFileInfosStr := GetJsonStringValueBoolean (DefinitionRecord, 'legendShowFileInfos', '');
+  LegendShowObjectCountStr := GetJsonStringValueBoolean (DefinitionRecord, 'legendShowObjectCount', '');
   LegendShowObjectFormatsStr := GetJsonStringValueBoolean (DefinitionRecord, 'legendShowObjectFormats', '');
   AttributeProperties.ReadFromJson (DefinitionRecord, 'attributeProperties');
   CharacteristicProperties.ReadFromJson (DefinitionRecord, 'characteristicProperties');
@@ -954,6 +968,11 @@ end;
 procedure tJson2PumlConverterDefinition.SetLegendShowInfoStr (const Value: string);
 begin
   FLegendShowInfoStr := ValidateBooleanInput (Value);
+end;
+
+procedure tJson2PumlConverterDefinition.SetLegendShowObjectCountStr(const Value: string);
+begin
+  FLegendShowObjectCountStr := ValidateBooleanInput (Value);
 end;
 
 procedure tJson2PumlConverterDefinition.SetLegendShowObjectFormatsStr (const Value: string);
@@ -1056,6 +1075,7 @@ begin
   WriteToJsonValue (oJsonOutPut, 'identifyObjectsByTypeAndIdent', IdentifyObjectsByTypeAndIdentStr, Level + 1,
     WriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'legendShowInfo', LegendShowInfoStr, Level + 1, WriteEmpty, false);
+  WriteToJsonValue (oJsonOutPut, 'legendShowObjectCount', LegendShowObjectCountStr, Level + 1, WriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'legendShowObjectFormats', LegendShowObjectFormatsStr, Level + 1, WriteEmpty, false);
   WriteToJsonValue (oJsonOutPut, 'legendShowFileInfos', LegendShowFileInfosStr, Level + 1, WriteEmpty, false);
   AttributeProperties.WriteToJson (oJsonOutPut, 'attributeProperties', Level + 1, WriteEmpty);
@@ -1439,17 +1459,19 @@ begin
     Result := CaptionSplitLengthStr.ToInteger;
 end;
 
-function tJson2PumlSingleFormatDefinition.GetValueSplitLength: integer;
-begin
-  if ValueSplitLengthStr.IsEmpty then
-    Result := 0
-  else
-    Result := ValueSplitLengthStr.ToInteger;
-end;
-
 function tJson2PumlSingleFormatDefinition.GetIdent: string;
 begin
   Result := FormatName;
+end;
+
+function tJson2PumlSingleFormatDefinition.GetIsFilled: boolean;
+begin
+  Result := not CaptionShowIdentStr.IsEmpty or not CaptionShowTitleStr.IsEmpty or not CaptionShowTypeStr.IsEmpty or
+    not CaptionSplitCharacter.IsEmpty or not CaptionSplitLengthStr.IsEmpty or not IconColor.IsEmpty or
+    (ObjectFilter.Count > 0) or not ShowAttributesStr.IsEmpty or not ShowCharacteristicsStr.IsEmpty or
+    not ShowIfEmptyStr.IsEmpty or not ShowFromRelationsStr.IsEmpty or not ShowNullValuesStr.IsEmpty or
+    not ShowToRelationsStr.IsEmpty or not SortAttributesStr.IsEmpty or (SkinParams.Count > 0) or
+    not ValueSplitLengthStr.IsEmpty;
 end;
 
 function tJson2PumlSingleFormatDefinition.GetShowAttributes: boolean;
@@ -1472,29 +1494,27 @@ begin
   Result := StringToBoolean (ShowIfEmptyStr, false);
 end;
 
-function tJson2PumlSingleFormatDefinition.GetShowToRelations: boolean;
-begin
-  Result := StringToBoolean (ShowToRelationsStr, true);
-end;
-
-function tJson2PumlSingleFormatDefinition.GetIsFilled: boolean;
-begin
-  Result := not CaptionShowIdentStr.IsEmpty or not CaptionShowTitleStr.IsEmpty or not CaptionShowTypeStr.IsEmpty or
-    not CaptionSplitCharacter.IsEmpty or not CaptionSplitLengthStr.IsEmpty or not IconColor.IsEmpty or
-    (ObjectFilter.Count > 0) or not ShowAttributesStr.IsEmpty or not ShowCharacteristicsStr.IsEmpty or
-    not ShowIfEmptyStr.IsEmpty or not ShowFromRelationsStr.IsEmpty or not ShowNullValuesStr.IsEmpty or
-    not ShowToRelationsStr.IsEmpty or not SortAttributesStr.IsEmpty or (SkinParams.Count > 0) or
-    not ValueSplitLengthStr.IsEmpty;
-end;
-
 function tJson2PumlSingleFormatDefinition.GetShowNullValues: boolean;
 begin
   Result := StringToBoolean (ShowNullValuesStr, false);
 end;
 
+function tJson2PumlSingleFormatDefinition.GetShowToRelations: boolean;
+begin
+  Result := StringToBoolean (ShowToRelationsStr, true);
+end;
+
 function tJson2PumlSingleFormatDefinition.GetSortAttributes: boolean;
 begin
   Result := StringToBoolean (SortAttributesStr, true);
+end;
+
+function tJson2PumlSingleFormatDefinition.GetValueSplitLength: integer;
+begin
+  if ValueSplitLengthStr.IsEmpty then
+    Result := 0
+  else
+    Result := ValueSplitLengthStr.ToInteger;
 end;
 
 procedure tJson2PumlSingleFormatDefinition.MergeWith (iMergeDefinition: tJson2PumlBaseObject);
@@ -1578,11 +1598,6 @@ begin
   FShowAttributesStr := ValidateBooleanInput (Value);
 end;
 
-procedure tJson2PumlSingleFormatDefinition.SetSortAttributesStr (const Value: string);
-begin
-  FSortAttributesStr := ValidateBooleanInput (Value);
-end;
-
 procedure tJson2PumlSingleFormatDefinition.SetShowCharacteristicsStr (const Value: string);
 begin
   FShowCharacteristicsStr := ValidateBooleanInput (Value);
@@ -1611,6 +1626,11 @@ end;
 procedure tJson2PumlSingleFormatDefinition.SetSkinParams (const Value: tStringList);
 begin
   FSkinParams := Value;
+end;
+
+procedure tJson2PumlSingleFormatDefinition.SetSortAttributesStr (const Value: string);
+begin
+  FSortAttributesStr := ValidateBooleanInput (Value);
 end;
 
 procedure tJson2PumlSingleFormatDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
@@ -2077,14 +2097,14 @@ begin
   Result := StringToBoolean (IncludeIndexStr, false);
 end;
 
-function tJson2PumlCharacteristicDefinition.GetSortRows: boolean;
-begin
-  Result := StringToBoolean (SortRowsStr, false);
-end;
-
 function tJson2PumlCharacteristicDefinition.GetIsValid: boolean;
 begin
   Result := not (ParentProperty.IsEmpty);
+end;
+
+function tJson2PumlCharacteristicDefinition.GetSortRows: boolean;
+begin
+  Result := StringToBoolean (SortRowsStr, false);
 end;
 
 function tJson2PumlCharacteristicDefinition.IsPropertyAllowed (iPropertyName, iParentPropertyName: string;

@@ -80,6 +80,9 @@ type
     FTitle: string;
     procedure BuildObjectRelationships (iHierarchieParentObject, iPumlObject: tPumlObject;
       iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty: string; iAllways: boolean);
+    procedure GeneratePumlLegendFileInfo (vAdd: boolean);
+    procedure GeneratePumlLegendObjectCount (var vAdd: boolean);
+    procedure GeneratePumlLegendObjectFormats (var vAdd: boolean; iUsedFormats: tStrings);
     function GetFileLog: tStrings;
     function GetInputFilter: tJson2PumlFilterList;
     function GetJsonInput: tStrings;
@@ -145,6 +148,31 @@ const
   cJson2PumlRecursionParentFunction: array [tJson2PumlRecursionParent] of string = ('Start', 'ConvertObject',
     'ConvertArray', 'ConvertValue');
 
+constructor TJson2PumlConverter.Create;
+begin
+  inherited Create;
+  FPumlObjects := tPumlObjectList.Create ();
+end;
+
+destructor TJson2PumlConverter.Destroy;
+begin
+  FPumlObjects.Free;
+  inherited Destroy;
+end;
+
+procedure TJson2PumlConverter.AddFileLog (iLog: string = '');
+var
+  p: string;
+begin
+  p := p.PadRight (CurrentRecursionRecord.Level, #9);
+  FileLog.Add (Format('%s%s', [p, iLog]));
+end;
+
+procedure TJson2PumlConverter.AddFileLog (iLog: string; const iArgs: array of const);
+begin
+  AddFileLog (Format(iLog, iArgs));
+end;
+
 procedure TJson2PumlConverter.BuildObjectRelationships (iHierarchieParentObject, iPumlObject: tPumlObject;
   iRelationshipProperty, iRelationshipType, iRelationshipTypeProperty: string; iAllways: boolean);
 var
@@ -178,37 +206,32 @@ begin
     AddFileLog ('Relationship to "%s" skipped, already existing', [iHierarchieParentObject.ObjectIdentifier]);
 end;
 
-function TJson2PumlConverter.GetFileLog: tStrings;
-begin
-  Result := InputHandlerRecord.ConverterLog;
-end;
-
-function TJson2PumlConverter.GetInputFilter: tJson2PumlFilterList;
-begin
-  Result := InputHandler.CmdLineParameter.InputFilterList;
-end;
-
-function TJson2PumlConverter.GetJsonInput: tStrings;
-begin
-  Result := InputHandlerRecord.JsonInput;
-end;
-
-function TJson2PumlConverter.GetPuml: tStrings;
-begin
-  Result := InputHandlerRecord.PUmlOutput;
-end;
-
-procedure TJson2PumlConverter.AddFileLog (iLog: string = '');
+function TJson2PumlConverter.Convert: boolean;
 var
-  p: string;
+  JsonValue: tJSONValue;
+  InfoRec: tJson2PumlRecursionRecord;
 begin
-  p := p.PadRight (CurrentRecursionRecord.Level, #9);
-  FileLog.Add (Format('%s%s', [p, iLog]));
-end;
+  Result := false;
+  Puml.Clear;
+  PumlObjects.Clear;
+  PumlObjects.ConverterDefinition := Definition;
+  PumlObjects.InputFilter := InputFilter;
+  if FileExists (PumlFile) then
+    tFile.Delete (PumlFile);
 
-procedure TJson2PumlConverter.AddFileLog (iLog: string; const iArgs: array of const);
-begin
-  AddFileLog (Format(iLog, iArgs));
+  JsonValue := tJSONObject.ParseJSONValue (JsonInput.Text);
+  if not Assigned (JsonValue) then
+    GlobalLoghandler.Error (jetUnableToParseInputFileStructure, [InputHandlerRecord.InputFile.OutputFileName])
+  else
+    try
+      InfoRec.Init (LeadingObject);
+      ConvertValue (JsonValue, InfoRec, trpStart);
+      GeneratePuml;
+      Result := true;
+    finally
+      JsonValue.Free;
+    end;
+
 end;
 
 procedure TJson2PumlConverter.ConvertArray (iJsonArray: tJSONArray; iInfo: tJson2PumlRecursionRecord);
@@ -721,6 +744,217 @@ begin
   AddFileLog ('Stop PUML Generation');
 end;
 
+procedure TJson2PumlConverter.GeneratePumlLegend (iUsedFormats: tStrings);
+var
+  i: integer;
+  vAdd: boolean;
+  FileLength: integer;
+
+  procedure AddFileLine (iFileTitle, iFileName: string);
+  begin
+    Puml.Add (tPumlHelper.TableLine([iFileTitle,
+      tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(iFileName))]));
+    FileLength := Max (FileLength, tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(iFileName)).length);
+  end;
+
+begin
+  if not Definition.ShowLegend then
+    Exit;
+  vAdd := false;
+  Puml.Add ('');
+  Puml.Add ('legend');
+  FileLength := 0;
+  if Definition.LegendShowInfo then
+  begin
+    vAdd := true;
+    Puml.Add (tPumlHelper.TableLine(['<b>json2puml', '<b>' + FileVersion]));
+    Puml.Add (tPumlHelper.TableLine(['Generated at', Format('%s %s', [DateTostr(Now), TimetoStr(Now)])]));
+    AddFileLine ('Definition File', InputHandler.CurrentDefinitionFileName);
+    if not InputHandler.CmdLineParameter.InputFileName.IsEmpty then
+    begin
+      AddFileLine ('Input File', InputHandlerRecord.InputFile.OutputFileName);
+      if not InputHandler.CmdLineParameter.LeadingObject.IsEmpty then
+        Puml.Add (tPumlHelper.TableLine(['Leading Object', InputHandler.CmdLineParameter.LeadingObject]));
+    end;
+    if not InputHandler.CurrentInputListFileName.IsEmpty then
+      AddFileLine ('Input List File', InputHandler.CurrentInputListFileName);
+    Puml.Add (tPumlHelper.TableLine(['Definition Option', Definition.OptionName]));
+    for i := 0 to InputFilter.IdentFilter.Count - 1 do
+      if i = 0 then
+        Puml.Add (tPumlHelper.TableLine(['Ident Filter', InputFilter.IdentFilter[i]]))
+      else
+        Puml.Add (tPumlHelper.TableLine(['', InputFilter.IdentFilter[i]]));
+    for i := 0 to InputFilter.TitleFilter.Count - 1 do
+      if i = 0 then
+        Puml.Add (tPumlHelper.TableLine(['Title Filter', InputFilter.TitleFilter[i]]))
+      else
+        Puml.Add (tPumlHelper.TableLine(['', InputFilter.TitleFilter[i]]));
+  end;
+  if not InputHandler.CurrentJobDescription.IsEmpty then
+  begin
+    if vAdd then
+      Puml.Add ('')
+    else
+      vAdd := true;
+    Puml.Add (tPumlHelper.TableLine(['<b>Job description'.PadRight(FileLength + 50)]));
+    Puml.Add (tPumlHelper.TableLine([InputHandler.ReplaceCurlParameterValues
+      (InputHandler.CurrentJobDescription, true)]));
+  end;
+  GeneratePumlLegendObjectFormats (vAdd, iUsedFormats);
+  GeneratePumlLegendObjectCount (vAdd);
+  GeneratePumlLegendFileInfo (vAdd);
+  Puml.Add ('end legend');
+  Puml.Add ('');
+end;
+
+procedure TJson2PumlConverter.GeneratePumlLegendFileInfo (vAdd: boolean);
+var
+  FileDetailRecord: tJson2PumlFileDetailRecord;
+  i: integer;
+begin
+  if (InputHandlerRecord.InputFile.Output.SourceFiles.Count > 0) and Definition.LegendShowFileInfos then
+  begin
+    if vAdd then
+      Puml.Add ('');
+    Puml.Add (tPumlHelper.TableLine(['File', 'Date', 'Size (kb)', 'Lines', 'Records'], true));
+    for i := 0 to InputHandlerRecord.InputFile.Output.SourceFiles.Count - 1 do
+    begin
+      FileDetailRecord := tJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
+      Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath
+        (FileDetailRecord.Filename)), DateTimeToStr(FileDetailRecord.FileDate),
+        Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12), FileDetailRecord.NoOfLines.ToString.PadLeft(8),
+        FileDetailRecord.NoOfRecords.ToString.PadLeft(12)]));
+    end;
+  end;
+end;
+
+procedure TJson2PumlConverter.GeneratePumlLegendObjectCount (var vAdd: boolean);
+var
+  ObjectCount: tStringList;
+  PumlObject: tPumlObject;
+  i: integer;
+begin
+  if Definition.LegendShowObjectCount then
+  begin
+    ObjectCount := tStringList.Create;
+    try
+      for PumlObject in PumlObjects do
+        if PumlObject.ShowObject and not PumlObject.IsObjectDetail then
+        begin
+          i := ObjectCount.IndexOfName (PumlObject.ObjectType);
+          if i < 0 then
+            ObjectCount.AddPair (PumlObject.ObjectType, '1')
+          else
+            ObjectCount.Values[PumlObject.ObjectType] := (ObjectCount.ValueFromIndex[i].ToInteger + 1).ToString;
+        end;
+      if ObjectCount.Count > 0 then
+      begin
+        ObjectCount.Sort;
+        if vAdd then
+          Puml.Add ('')
+        else
+          vAdd := true;;
+        Puml.Add (tPumlHelper.TableLine(['Objecttype', 'Count'], true));
+        for i := 0 to ObjectCount.Count - 1 do
+          Puml.Add (tPumlHelper.TableLine([ObjectCount.Names[i], ObjectCount.ValueFromIndex[i].PadLeft(8)], false));
+      end;
+    finally
+      ObjectCount.Free;
+    end;
+    vAdd := true;
+  end;
+end;
+
+procedure TJson2PumlConverter.GeneratePumlLegendObjectFormats (var vAdd: boolean; iUsedFormats: tStrings);
+var
+  Colors: tStringList;
+  f: string;
+  ObjectFormat: tJson2PumlSingleFormatDefinition;
+  s: string;
+  Param: string;
+  Value: string;
+  Line: string;
+  i: integer;
+  i1: integer;
+begin
+  if Definition.LegendShowObjectFormats then
+  begin
+    Colors := tStringList.Create;
+    try
+      for f in iUsedFormats do
+      begin
+        if Definition.ObjectFormats.Formats.IndexOf (f) < 0 then
+          Continue;
+        ObjectFormat := Definition.ObjectFormats.Formats[Definition.ObjectFormats.Formats.IndexOf(f)];
+        for s in ObjectFormat.SkinParams do
+        begin
+          i := s.IndexOf ('=');
+          if i < 0 then
+            Continue
+          else
+          begin
+            Param := s.Substring (0, i);
+            Value := s.Substring (i + 1);
+            if Param.Trim.ToLower.Equals ('backgroundcolor') then
+              Colors.AddPair (ObjectFormat.FormatName, Value);
+          end;
+        end;
+      end;
+      if Colors.Count > 0 then
+      begin
+        if vAdd then
+          Puml.Add ('');
+        Line := '|';
+        for i := 1 to min(5, Colors.Count) do
+          if i = 1 then
+            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('Objectformat', true)
+          else
+            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('', true);
+        Puml.Add (Line);
+        Line := '|';
+        i := 0;
+        while Colors.Count > 0 do
+        begin
+          inc (i);
+          if i > 5 then
+          begin
+            Puml.Add (Line);
+            Line := '|';
+            i := 0;
+          end;
+          Line := Line + tPumlHelper.TableColumn (Format('<back:%s>   </back>', [Colors.ValueFromIndex[0]]));
+          Line := Line + tPumlHelper.TableColumn (Colors.Names[0]);
+          Colors.Delete (0);
+        end;
+        if i > 0 then
+        begin
+          for i1 := 1 to 5 - Colors.Count do
+            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('  ', true);
+          Puml.Add (Line);
+        end;
+      end;
+    finally
+      Colors.Free;
+    end;
+    vAdd := true;
+  end;
+end;
+
+function TJson2PumlConverter.GetFileLog: tStrings;
+begin
+  Result := InputHandlerRecord.ConverterLog;
+end;
+
+function TJson2PumlConverter.GetInputFilter: tJson2PumlFilterList;
+begin
+  Result := InputHandler.CmdLineParameter.InputFilterList;
+end;
+
+function TJson2PumlConverter.GetJsonInput: tStrings;
+begin
+  Result := InputHandlerRecord.JsonInput;
+end;
+
 function TJson2PumlConverter.GetObjectIdent (iJsonObject: tJSONObject; iParentProperty: string;
   var oPropertyName, oFoundCondition: string): string;
 begin
@@ -801,6 +1035,11 @@ begin
   end;
 end;
 
+function TJson2PumlConverter.GetPuml: tStrings;
+begin
+  Result := InputHandlerRecord.PUmlOutput;
+end;
+
 procedure TJson2PumlConverter.GetRelationshipType (iJsonObject: tJSONObject; iPropertyName: string;
   var oRelationshipType, oRelationshipTypeProperty: string; var oFoundCondition: string);
 begin
@@ -850,189 +1089,6 @@ begin
       iPumlObject.ObjectType := iObjectType;
     end;
   end;
-end;
-
-constructor TJson2PumlConverter.Create;
-begin
-  inherited Create;
-  FPumlObjects := tPumlObjectList.Create ();
-end;
-
-destructor TJson2PumlConverter.Destroy;
-begin
-  FPumlObjects.Free;
-  inherited Destroy;
-end;
-
-function TJson2PumlConverter.Convert: boolean;
-var
-  JsonValue: tJSONValue;
-  InfoRec: tJson2PumlRecursionRecord;
-begin
-  Result := false;
-  Puml.Clear;
-  PumlObjects.Clear;
-  PumlObjects.ConverterDefinition := Definition;
-  PumlObjects.InputFilter := InputFilter;
-  if FileExists (PumlFile) then
-    tFile.Delete (PumlFile);
-
-  JsonValue := tJSONObject.ParseJSONValue (JsonInput.Text);
-  if not Assigned (JsonValue) then
-    GlobalLoghandler.Error (jetUnableToParseInputFileStructure, [InputHandlerRecord.InputFile.OutputFileName])
-  else
-    try
-      InfoRec.Init (LeadingObject);
-      ConvertValue (JsonValue, InfoRec, trpStart);
-      GeneratePuml;
-      Result := true;
-    finally
-      JsonValue.Free;
-    end;
-
-end;
-
-procedure TJson2PumlConverter.GeneratePumlLegend (iUsedFormats: tStrings);
-var
-  f, s: string;
-  i: integer;
-  Colors: tStringList;
-  ObjectFormat: tJson2PumlSingleFormatDefinition;
-  FileDetailRecord: tJson2PumlFileDetailRecord;
-  Param, Value: string;
-  vAdd: boolean;
-  Line: string;
-  FileLength: integer;
-
-  procedure AddFileLine (iFileTitle, iFileName: string);
-  begin
-    Puml.Add (tPumlHelper.TableLine([iFileTitle,
-      tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(iFileName))]));
-    FileLength := Max (FileLength, tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(iFileName)).length);
-  end;
-
-begin
-  if not Definition.ShowLegend then
-    Exit;
-  vAdd := false;
-  Puml.Add ('');
-  Puml.Add ('legend');
-  FileLength := 0;
-  if Definition.LegendShowInfo then
-  begin
-    vAdd := true;
-    Puml.Add (tPumlHelper.TableLine(['<b>json2puml', '<b>' + FileVersion]));
-    Puml.Add (tPumlHelper.TableLine(['Generated at', Format('%s %s', [DateTostr(Now), TimetoStr(Now)])]));
-    AddFileLine ('Definition File', InputHandler.CurrentDefinitionFileName);
-    if not InputHandler.CmdLineParameter.InputFileName.IsEmpty then
-    begin
-      AddFileLine ('Input File', InputHandlerRecord.InputFile.OutputFileName);
-      if not InputHandler.CmdLineParameter.LeadingObject.IsEmpty then
-        Puml.Add (tPumlHelper.TableLine(['Leading Object', InputHandler.CmdLineParameter.LeadingObject]));
-    end;
-    if not InputHandler.CurrentInputListFileName.IsEmpty then
-      AddFileLine ('Input List File', InputHandler.CurrentInputListFileName);
-    Puml.Add (tPumlHelper.TableLine(['Definition Option', Definition.OptionName]));
-    for i := 0 to InputFilter.IdentFilter.Count - 1 do
-      if i = 0 then
-        Puml.Add (tPumlHelper.TableLine(['Ident Filter', InputFilter.IdentFilter[i]]))
-      else
-        Puml.Add (tPumlHelper.TableLine(['', InputFilter.IdentFilter[i]]));
-    for i := 0 to InputFilter.TitleFilter.Count - 1 do
-      if i = 0 then
-        Puml.Add (tPumlHelper.TableLine(['Title Filter', InputFilter.TitleFilter[i]]))
-      else
-        Puml.Add (tPumlHelper.TableLine(['', InputFilter.TitleFilter[i]]));
-  end;
-  if not InputHandler.CurrentJobDescription.IsEmpty then
-  begin
-    if vAdd then
-      Puml.Add ('')
-    else
-      vAdd := true;
-    Puml.Add (tPumlHelper.TableLine(['<b>Job description'.PadRight(FileLength + 50)]));
-    Puml.Add (tPumlHelper.TableLine([InputHandler.ReplaceCurlParameterValues
-      (InputHandler.CurrentJobDescription, true)]));
-  end;
-  if Definition.LegendShowObjectFormats then
-  begin
-    Colors := tStringList.Create;
-    try
-      for f in iUsedFormats do
-      begin
-        if Definition.ObjectFormats.Formats.IndexOf (f) < 0 then
-          Continue;
-        ObjectFormat := Definition.ObjectFormats.Formats[Definition.ObjectFormats.Formats.IndexOf(f)];
-        for s in ObjectFormat.SkinParams do
-        begin
-          i := s.IndexOf ('=');
-          if i < 0 then
-            Continue
-          else
-          begin
-            Param := s.Substring (0, i);
-            Value := s.Substring (i + 1);
-            if Param.Trim.ToLower.Equals ('backgroundcolor') then
-              Colors.AddPair (ObjectFormat.FormatName, Value);
-          end;
-        end;
-      end;
-      if Colors.Count > 0 then
-      begin
-        if vAdd then
-          Puml.Add ('');
-
-        Line := '|';
-        for i := 1 to min(5, Colors.Count) do
-          if i = 1 then
-            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('Objectformat', true)
-          else
-            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('', true);
-        Puml.Add (Line);
-        Line := '|';
-
-        i := 0;
-        while Colors.Count > 0 do
-        begin
-          inc (i);
-          if i > 5 then
-          begin
-            Puml.Add (Line);
-            Line := '|';
-            i := 0;
-          end;
-          Line := Line + tPumlHelper.TableColumn (Format('<back:%s>   </back>', [Colors.ValueFromIndex[0]]));
-          Line := Line + tPumlHelper.TableColumn (Colors.Names[0]);
-          Colors.Delete (0);
-        end;
-        if i > 0 then
-        begin
-          for i := 1 to 5 - Colors.Count do
-            Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('  ', true);
-          Puml.Add (Line);
-        end;
-      end;
-    finally
-      Colors.Free;
-    end;
-    vAdd := true;
-  end;
-  if (InputHandlerRecord.InputFile.Output.SourceFiles.Count > 0) and Definition.LegendShowFileInfos then
-  begin
-    if vAdd then
-      Puml.Add ('');
-    Puml.Add (tPumlHelper.TableLine(['File', 'Date', 'Size (kb)', 'Lines', 'Records'], true));
-    for i := 0 to InputHandlerRecord.InputFile.Output.SourceFiles.Count - 1 do
-    begin
-      FileDetailRecord := tJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
-      Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath
-        (FileDetailRecord.Filename)), DateTimeToStr(FileDetailRecord.FileDate),
-        Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12), FileDetailRecord.NoOfLines.ToString.PadLeft(8),
-        FileDetailRecord.NoOfRecords.ToString.PadLeft(12)]));
-    end;
-  end;
-  Puml.Add ('end legend');
-  Puml.Add ('');
 end;
 
 function tJson2PumlRecursionParentHelper.OperationName: string;
