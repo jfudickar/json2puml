@@ -76,7 +76,7 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
           Caption = 'Json &Input:'
           FocusControl = InputFileNameEdit
         end
-        object InputFileNameEdit: TEdit
+        object InputFileNameEdit: TButtonedEdit
           Left = 65
           Top = 2
           Width = 494
@@ -104,7 +104,7 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
         TabOrder = 0
         object PumlTabSheet: TTabSheet
           Caption = 'PUML Output'
-          object PUMLFileNameEdit: TEdit
+          object PUMLFileNameEdit: TButtonedEdit
             Left = 0
             Top = 0
             Width = 553
@@ -117,7 +117,7 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
         object LogFileTabSheet: TTabSheet
           Caption = 'Converter Log'
           ImageIndex = 2
-          object LogFileNameEdit: TEdit
+          object LogFileNameEdit: TButtonedEdit
             Left = 0
             Top = 0
             Width = 553
@@ -149,7 +149,7 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
               Proportional = True
             end
           end
-          object PNGFileNameEdit: TEdit
+          object PNGFileNameEdit: TButtonedEdit
             Left = 0
             Top = 0
             Width = 553
@@ -170,7 +170,7 @@ object Json2PumlOutputFileFrame: TJson2PumlOutputFileFrame
             Align = alClient
             TabOrder = 0
           end
-          object SVGFileNameEdit: TEdit
+          object SVGFileNameEdit: TButtonedEdit
             Left = 0
             Top = 0
             Width = 553

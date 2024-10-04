@@ -1,7 +1,7 @@
 object json2pumlMainForm: Tjson2pumlMainForm
   Left = 0
   Top = 0
-  Caption = 'json2puml'
+  Caption = 'pop'
   ClientHeight = 900
   ClientWidth = 1357
   Color = clBtnFace
@@ -70,6 +70,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     AutoHint = True
     Panels = <>
     SimplePanel = True
+    ExplicitTop = 880
+    ExplicitWidth = 1353
   end
   object MainActionToolBar: TActionToolBar
     Left = 0
@@ -92,7 +94,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     ParentFont = False
     PersistentHotKeys = True
     Spacing = 5
-    ExplicitTop = 50
+    ExplicitWidth = 1353
   end
   object ActionMainMenuBar: TActionMainMenuBar
     Left = 0
@@ -113,7 +115,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Font.Name = 'Segoe UI'
     Font.Style = []
     Spacing = 0
-    ExplicitHeight = 25
+    ExplicitWidth = 1353
   end
   object MainPageControl: TPageControl
     Left = 0
@@ -123,8 +125,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     ActivePage = LogTabSheet
     Align = alClient
     TabOrder = 3
-    ExplicitTop = 73
-    ExplicitHeight = 808
+    ExplicitWidth = 1353
+    ExplicitHeight = 802
     object LogTabSheet: TTabSheet
       BorderWidth = 5
       Caption = 'Execute'
@@ -137,6 +139,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         BevelOuter = bvNone
         TabOrder = 0
         OnResize = CommandLineEditPanelResize
+        ExplicitWidth = 1335
         object TLabel
           Left = 648
           Top = 144
@@ -249,14 +252,14 @@ object json2pumlMainForm: Tjson2pumlMainForm
               FocusControl = CurlParameterFileEdit
             end
             object Label24: TLabel
-              Left = 13
+              Left = 12
               Top = 16
               Width = 68
               Height = 13
               Caption = '/parameterfile'
               FocusControl = parameterFileEdit
             end
-            object definitionfileEdit: TEdit
+            object definitionfileEdit: TButtonedEdit
               Left = 129
               Top = 40
               Width = 255
@@ -264,7 +267,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
             end
-            object optionfileEdit: TEdit
+            object optionfileEdit: TButtonedEdit
               Left = 129
               Top = 67
               Width = 255
@@ -288,7 +291,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Caption = '/formatdefinitionfiles'
               TabOrder = 6
             end
-            object CurlAuthenticationFileEdit: TEdit
+            object CurlAuthenticationFileEdit: TButtonedEdit
               Left = 129
               Top = 122
               Width = 255
@@ -296,7 +299,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 4
             end
-            object CurlParameterFileEdit: TEdit
+            object CurlParameterFileEdit: TButtonedEdit
               Left = 129
               Top = 149
               Width = 255
@@ -304,7 +307,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 5
             end
-            object parameterFileEdit: TEdit
+            object parameterFileEdit: TButtonedEdit
               Left = 129
               Top = 13
               Width = 255
@@ -352,7 +355,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Caption = '/identfilter'
               FocusControl = identfilterEdit
             end
-            object titlefilterEdit: TEdit
+            object titlefilterEdit: TButtonedEdit
               Left = 137
               Top = 43
               Width = 272
@@ -360,7 +363,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
             end
-            object identfilterEdit: TEdit
+            object identfilterEdit: TButtonedEdit
               Left = 137
               Top = 16
               Width = 272
@@ -512,6 +515,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitWidth = 504
           DesignSize = (
             508
             353)
@@ -524,6 +528,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 0
+            ExplicitLeft = 340
           end
           object GroupBox1: TGroupBox
             Left = 0
@@ -533,6 +538,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akLeft, akTop, akRight]
             Caption = 'PlantUML Jar'
             TabOrder = 1
+            ExplicitWidth = 502
             DesignSize = (
               506
               97)
@@ -560,29 +566,32 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Caption = '/plantumlruntimeparam'
               FocusControl = PlantUmlRuntimeParameterEdit
             end
-            object PlantUmlJarFileEdit: TEdit
+            object PlantUmlJarFileEdit: TButtonedEdit
               Left = 137
               Top = 16
               Width = 361
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
+              ExplicitWidth = 357
             end
-            object javaruntimeparameterEdit: TEdit
+            object javaruntimeparameterEdit: TButtonedEdit
               Left = 137
               Top = 67
               Width = 361
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
+              ExplicitWidth = 357
             end
-            object PlantUmlRuntimeParameterEdit: TEdit
+            object PlantUmlRuntimeParameterEdit: TButtonedEdit
               Left = 137
               Top = 42
               Width = 361
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
+              ExplicitWidth = 357
             end
           end
           object GroupBox6: TGroupBox
@@ -593,6 +602,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Other'
             TabOrder = 2
+            ExplicitWidth = 502
             object generateoutputdefinitionCheckBox: TCheckBox
               Left = 137
               Top = 17
@@ -618,6 +628,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Input'
             TabOrder = 3
+            ExplicitWidth = 502
             DesignSize = (
               506
               150)
@@ -653,21 +664,23 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Caption = '/splitidentifier'
               FocusControl = splitIdentifierEdit
             end
-            object inputfileEdit: TEdit
+            object inputfileEdit: TButtonedEdit
               Left = 137
               Top = 16
               Width = 361
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
+              ExplicitWidth = 357
             end
-            object inputlistfileEdit: TEdit
+            object inputlistfileEdit: TButtonedEdit
               Left = 137
               Top = 43
               Width = 361
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
+              ExplicitWidth = 357
             end
             object leadingObjectEdit: TEdit
               Left = 137
@@ -676,6 +689,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
+              ExplicitWidth = 357
             end
             object splitInputFileCheckBox: TCheckBox
               Left = 137
@@ -693,6 +707,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 4
+              ExplicitWidth = 357
             end
           end
           object Button2: TButton
@@ -704,6 +719,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 4
+            ExplicitLeft = 173
           end
         end
       end
@@ -715,14 +731,15 @@ object json2pumlMainForm: Tjson2pumlMainForm
         ActivePage = CurlFileTabSheet
         Align = alClient
         TabOrder = 1
-        ExplicitHeight = 417
+        ExplicitWidth = 1335
+        ExplicitHeight = 411
         object ExecutionLogTabSheet: TTabSheet
           Caption = 'Execution Log'
           object ExecutionLogPanel: TPanel
             Left = 0
             Top = 0
             Width = 1331
-            Height = 389
+            Height = 384
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -776,7 +793,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 Smooth = True
                 TabOrder = 1
               end
-              object ExecutionLogFileNameEdit: TEdit
+              object ExecutionLogFileNameEdit: TButtonedEdit
                 Left = 63
                 Top = 47
                 Width = 1262
@@ -795,7 +812,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1331
-            Height = 359
+            Height = 312
             Align = alClient
             DataSource = CurlFileListDataSource
             ReadOnly = True
@@ -808,14 +825,14 @@ object json2pumlMainForm: Tjson2pumlMainForm
           end
           object Panel1: TPanel
             Left = 0
-            Top = 359
+            Top = 312
             Width = 1331
-            Height = 30
+            Height = 72
             Align = alBottom
             TabOrder = 1
             DesignSize = (
               1331
-              30)
+              72)
             object Label28: TLabel
               Left = 4
               Top = 9
@@ -823,15 +840,26 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 13
               Caption = 'Curl Command :'
             end
-            object DBEdit1: TDBEdit
-              Left = 82
-              Top = 4
-              Width = 1247
-              Height = 21
+            object CurlCommandDBEdit: TDBMemo
+              Left = 117
+              Top = 5
+              Width = 1212
+              Height = 60
               Anchors = [akLeft, akTop, akRight]
               DataField = 'Command'
               DataSource = CurlFileListDataSource
+              ReadOnly = True
               TabOrder = 0
+            end
+            object CurlCommandCopyBitBtn: TBitBtn
+              Left = 86
+              Top = 2
+              Width = 25
+              Height = 25
+              ImageIndex = 2
+              Images = MainImageList
+              TabOrder = 1
+              OnClick = CurlCommandCopyBitBtnClick
             end
           end
         end
@@ -842,7 +870,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1331
-            Height = 389
+            Height = 384
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -855,7 +883,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1331
-            Height = 389
+            Height = 384
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -868,7 +896,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1331
-            Height = 389
+            Height = 384
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -881,7 +909,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Left = 0
             Top = 0
             Width = 1331
-            Height = 389
+            Height = 384
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
@@ -897,7 +925,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Left = 0
         Top = 0
         Width = 1339
-        Height = 770
+        Height = 765
         Align = alClient
         MultiLine = True
         TabOrder = 0
@@ -954,10 +982,10 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Font.Style = []
     ParentFont = False
     Spacing = 0
-    ExplicitTop = 25
+    ExplicitWidth = 1353
   end
   object MainActionList: TActionList
-    Images = ImageList1
+    Images = MainImageList
     Left = 904
     Top = 600
     object EditCut1: TEditCut
@@ -1111,7 +1139,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
       OnExecute = GenerateServiceListResultsActionExecute
     end
   end
-  object ImageList1: TImageList
+  object MainImageList: TImageList
     Left = 640
     Top = 624
     Bitmap = {
@@ -2214,5 +2242,22 @@ object json2pumlMainForm: Tjson2pumlMainForm
     DataSet = CurlFileListMemTable
     Left = 384
     Top = 560
+  end
+  object FileEditActionList: TActionList
+    Images = MainImageList
+    Left = 904
+    Top = 728
+    object FileEditCopyFilenameAction: TAction
+      Caption = 'Copy Filename'
+      Hint = 'Copy the filename to the clipboard'
+      ImageIndex = 1
+      OnExecute = FileEditCopyFilenameActionExecute
+    end
+    object FileEditOpenFileAction: TAction
+      Caption = 'Open File'
+      Hint = 'Open the current file in the corresponding external file editor'
+      ImageIndex = 7
+      OnExecute = FileEditOpenFileActionExecute
+    end
   end
 end

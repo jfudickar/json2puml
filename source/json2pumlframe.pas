@@ -46,22 +46,22 @@ type
     LeadingObjectEdit: TEdit;
     NamePanel: TPanel;
     Panel1: TPanel;
-    PNGFileNameEdit: TEdit;
+    PNGFileNameEdit: TButtonedEdit;
     PNGTabSheet: TTabSheet;
-    PUMLFileNameEdit: TEdit;
+    PUMLFileNameEdit: TButtonedEdit;
     PumlTabSheet: TTabSheet;
     ResultImage: TImage;
     ResultPageControl: TPageControl;
     PNGScrollBox: TScrollBox;
     Splitter1: TSplitter;
     LogFileTabSheet: TTabSheet;
-    LogFileNameEdit: TEdit;
+    LogFileNameEdit: TButtonedEdit;
     SVGTabSheet: TTabSheet;
     SVGScrollBox: TScrollBox;
-    SVGFileNameEdit: TEdit;
+    SVGFileNameEdit: TButtonedEdit;
     Panel2: TPanel;
     InputLabel: TLabel;
-    InputFileNameEdit: TEdit;
+    InputFileNameEdit: TButtonedEdit;
 
   private
     FInputFileName: string;

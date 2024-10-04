@@ -17,7 +17,7 @@ type
     EditPanel: TPanel;
     TopPanel: TPanel;
     FileLabel: TLabel;
-    FileNameEdit: TEdit;
+    FileNameEdit: TButtonedEdit;
     SaveDialog: TSaveTextFileDialog;
     OpenDialog: TOpenTextFileDialog;
   private

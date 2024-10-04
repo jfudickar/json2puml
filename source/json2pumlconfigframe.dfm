@@ -32,7 +32,7 @@ object Json2PumlConfigurationFrame: TJson2PumlConfigurationFrame
       Caption = 'File:'
       FocusControl = FileNameEdit
     end
-    object FileNameEdit: TEdit
+    object FileNameEdit: TButtonedEdit
       Left = 29
       Top = 6
       Width = 611

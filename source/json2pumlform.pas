@@ -39,7 +39,7 @@ uses
   Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
   json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar, Quick.Logger.Provider.StringList,
-  Vcl.Mask, Vcl.DBCtrls;
+  Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons;
 
 type
   tOutputFileFrame = class(tObject)
@@ -79,7 +79,7 @@ type
     ResultFileListTabSheet: TTabSheet;
     FilePageControl: TPageControl;
     GlobalConfigurationFileTabSheet: TTabSheet;
-    ImageList1: TImageList;
+    MainImageList: TImageList;
     InitialTimer: TTimer;
     InputListTabSheet: TTabSheet;
     JsonActionList: TActionList;
@@ -139,20 +139,20 @@ type
     Label18: TLabel;
     Label20: TLabel;
     Label24: TLabel;
-    definitionfileEdit: TEdit;
-    optionfileEdit: TEdit;
+    definitionfileEdit: TButtonedEdit;
+    optionfileEdit: TButtonedEdit;
     optionComboBox: TComboBox;
     formatDefinitionFilesCheckBox: TCheckBox;
-    CurlAuthenticationFileEdit: TEdit;
-    CurlParameterFileEdit: TEdit;
-    parameterFileEdit: TEdit;
+    CurlAuthenticationFileEdit: TButtonedEdit;
+    CurlParameterFileEdit: TButtonedEdit;
+    parameterFileEdit: TButtonedEdit;
     MiddleInputPanel: TPanel;
     RightInputPanel: TPanel;
     GroupBox5: TGroupBox;
     Label14: TLabel;
     Label15: TLabel;
-    titlefilterEdit: TEdit;
-    identfilterEdit: TEdit;
+    titlefilterEdit: TButtonedEdit;
+    identfilterEdit: TButtonedEdit;
     GroupBox4: TGroupBox;
     Label7: TLabel;
     Label8: TLabel;
@@ -174,9 +174,9 @@ type
     PlantUmlJarFileLabel: TLabel;
     javaruntimeparameterLabel: TLabel;
     Label25: TLabel;
-    PlantUmlJarFileEdit: TEdit;
-    javaruntimeparameterEdit: TEdit;
-    PlantUmlRuntimeParameterEdit: TEdit;
+    PlantUmlJarFileEdit: TButtonedEdit;
+    javaruntimeparameterEdit: TButtonedEdit;
+    PlantUmlRuntimeParameterEdit: TButtonedEdit;
     GroupBox6: TGroupBox;
     generateoutputdefinitionCheckBox: TCheckBox;
     debugCheckBox: TCheckBox;
@@ -185,8 +185,8 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label17: TLabel;
-    inputfileEdit: TEdit;
-    inputlistfileEdit: TEdit;
+    inputfileEdit: TButtonedEdit;
+    inputlistfileEdit: TButtonedEdit;
     leadingObjectEdit: TEdit;
     splitInputFileCheckBox: TCheckBox;
     splitIdentifierEdit: TEdit;
@@ -209,18 +209,25 @@ type
     CurlFileListMemTableErrorMessage: TStringField;
     Panel1: TPanel;
     Label28: TLabel;
-    DBEdit1: TDBEdit;
+    CurlCommandDBEdit: TDBMemo;
     Button2: TButton;
     GenerateServiceListResultsAction: TAction;
     InputLabel: TLabel;
-    ExecutionLogFileNameEdit: TEdit;
+    ExecutionLogFileNameEdit: TButtonedEdit;
     CurlFileListMemTableNoOfRecords: TIntegerField;
     CurlFileListMemTableFileSizeKB: TFloatField;
+    FileEditActionList: TActionList;
+    FileEditCopyFilenameAction: TAction;
+    FileEditOpenFileAction: TAction;
+    CurlCommandCopyBitBtn: TBitBtn;
     procedure CommandLineEditPanelResize (Sender: tObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
     procedure ConvertCurrentFileActionExecute (Sender: tObject);
     procedure CopyCurrentPUMLActionExecute (Sender: tObject);
+    procedure CurlCommandCopyBitBtnClick (Sender: tObject);
     procedure ExitActionExecute (Sender: tObject);
+    procedure FileEditCopyFilenameActionExecute (Sender: tObject);
+    procedure FileEditOpenFileActionExecute (Sender: tObject);
     procedure FormClose (Sender: tObject; var Action: TCloseAction);
     procedure FormCloseQuery (Sender: tObject; var CanClose: boolean);
     procedure FormShow (Sender: tObject);
@@ -311,6 +318,8 @@ type
     procedure FormToCommandline;
     function GetConfigFileName (iPage: tJson2PumlPage): string;
     procedure HandleInputParameter;
+    procedure InitializeAllTButtonedEdit (iParentControl: TWinControl);
+    procedure InitializeTButtonedEdit (iButtonedEdit: TButtonedEdit);
     function IsConverting: boolean;
     procedure LoadConfigFileName (iPage: tJson2PumlPage; iFileName: string);
     procedure ReloadFiles;
@@ -439,7 +448,7 @@ procedure Tjson2pumlMainForm.BeginConvert;
 begin
   Inc (FConvertCnt);
   if FConvertCnt = 1 then
-    SetConverting (True);
+    SetConverting (true);
 end;
 
 function Tjson2pumlMainForm.CalcShortCutStr (iIndex: integer): string;
@@ -480,7 +489,7 @@ procedure Tjson2pumlMainForm.CommandLineToForm;
   var
     Parameter: tJson2PumlCurlParameterDefinition;
   begin
-    iDataset.Active := True;
+    iDataset.Active := true;
     while iDataset.RecordCount > 0 do
       iDataset.delete;
     for Parameter in iCurlParameter do
@@ -590,6 +599,7 @@ begin
   Frame.OnLoadConfigFileName := LoadConfigFileName;
   oLines := Frame.Lines;
   IntConfigFrame[iPage] := Frame;
+  InitializeAllTButtonedEdit (Frame);
 end;
 
 procedure Tjson2pumlMainForm.CreateMemoControls;
@@ -619,13 +629,13 @@ begin
     Inc (i);
   end;
 
-  fLogMemo := CreateSingleMemoControl (ExecutionLogPanel, 'ExecutionLogMemo', nil, FLogLines, false, True);
-  CreateSingleMemoControl (FileListPanel, 'FileListMemo', nil, FFileListLines, True, True);
-  CreateSingleMemoControl (ServiceResultPanel, 'ServiceResultMemo', nil, FServiceResultLines, True, True);
+  fLogMemo := CreateSingleMemoControl (ExecutionLogPanel, 'ExecutionLogMemo', nil, FLogLines, false, true);
+  CreateSingleMemoControl (FileListPanel, 'FileListMemo', nil, FFileListLines, true, true);
+  CreateSingleMemoControl (ServiceResultPanel, 'ServiceResultMemo', nil, FServiceResultLines, true, true);
   CreateSingleMemoControl (ServiceInputListFileResultPanel, 'ServiceResultMemo', nil, FServiceinputlistfileResultLines,
-    True, True);
+    true, true);
   CreateSingleMemoControl (ServiceDefinitionFileResultPanel, 'ServiceResultMemo', nil,
-    FServicedefinitionfileResultLines, True, True);
+    FServicedefinitionfileResultLines, true, true);
 end;
 
 procedure Tjson2pumlMainForm.CreateOutputFileFrame (iInputHandlerRecord: tJson2PumlInputHandlerRecord);
@@ -650,6 +660,7 @@ begin
   OutputFileFrame.Frame.LeadingObject := iInputHandlerRecord.InputFile.LeadingObject;
   OutputFileFrame.Frame.Align := alClient;
   OutputFileFrame.Frame.CreateMemos (CreateSingleMemoControl);
+  InitializeAllTButtonedEdit (OutputFileFrame.Frame);
   Action := TAction.Create (OutputFileFrame.TabSheet);
   Action.ActionList := JsonActionList;
   Action.Tag := iInputHandlerRecord.Index;
@@ -676,8 +687,8 @@ begin
   NewEdit.Parent := iParentControl;
   NewEdit.Align := alClient;
   NewEdit.TabOrder := 1;
-  NewEdit.Gutter.ShowLineNumbers := True;
-  NewEdit.UseCodeFolding := True;
+  NewEdit.Gutter.ShowLineNumbers := true;
+  NewEdit.UseCodeFolding := true;
   if iUseHighlighter then
     NewEdit.Highlighter := fSynJSONSyn;
   NewEdit.Lines.Clear;
@@ -703,7 +714,7 @@ begin
   NewMemo.ParentFont := false;
   NewMemo.ScrollBars := ssBoth;
   NewMemo.TabOrder := 0;
-  NewMemo.WantTabs := True;
+  NewMemo.WantTabs := true;
   NewMemo.WordWrap := false;
   NewMemo.Font.Name := 'Courier New';
   NewMemo.Text := '';
@@ -740,8 +751,9 @@ end;
 
 procedure Tjson2pumlMainForm.FormShow (Sender: tObject);
 begin
-  InitialTimer.Enabled := True;
+  InitialTimer.Enabled := true;
   CreateMemoControls;
+  InitializeAllTButtonedEdit (MainPageControl);
   InitFormDefaultLogger;
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
   FInputHandler := tJson2PumlInputHandler.Create (jatUI);
@@ -823,7 +835,7 @@ end;
 procedure Tjson2pumlMainForm.GenerateServiceListResults;
 begin
   GetServiceFileListResponse (ServiceinputlistfileResultLines,
-    InputHandler.GlobalConfiguration.InputListFileSearchFolder, True);
+    InputHandler.GlobalConfiguration.InputListFileSearchFolder, true);
   GetServiceFileListResponse (ServicedefinitionfileResultLines,
     InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false);
 end;
@@ -910,12 +922,12 @@ end;
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;
 begin
   InitDefaultLogger (GlobalConfigurationDefinition.LogFileOutputPath, jatUI, false,
-    not FindCmdLineSwitch(cNoLogFiles, True));
-  LogStringListProvider.ShowTimeStamp := True;
-  LogStringListProvider.ShowEventTypes := True;
+    not FindCmdLineSwitch(cNoLogFiles, true));
+  LogStringListProvider.ShowTimeStamp := true;
+  LogStringListProvider.ShowEventTypes := true;
   LogStringListProvider.LogList := LogLines;
   SetLogProviderDefaults (LogStringListProvider, jatUI);
-  LogStringListProvider.Enabled := True;
+  LogStringListProvider.Enabled := true;
 end;
 
 procedure Tjson2pumlMainForm.InitializeInputHandler;
@@ -1209,6 +1221,25 @@ begin
   MiddleInputPanel.Width := LeftInputPanel.Width;
 end;
 
+procedure Tjson2pumlMainForm.CurlCommandCopyBitBtnClick (Sender: tObject);
+begin
+  FileEditCopyFilenameActionExecute (CurlCommandDBEdit);
+end;
+
+procedure Tjson2pumlMainForm.FileEditCopyFilenameActionExecute (Sender: tObject);
+begin
+  if Sender is TCustomEdit then
+    if TCustomEdit (Sender).Text <> '' then
+      Clipboard.AsText := TCustomEdit (Sender).Text;
+end;
+
+procedure Tjson2pumlMainForm.FileEditOpenFileActionExecute (Sender: tObject);
+begin
+  if Sender is TCustomEdit then
+    if TCustomEdit (Sender).Text <> '' then
+      OpenFile (TCustomEdit(Sender).Text);
+end;
+
 procedure Tjson2pumlMainForm.FillCurlFileListDataset (ConverterInputList: tJson2PumlInputList);
 var
   InputFile: tJson2PumlInputFileDefinition;
@@ -1226,7 +1257,7 @@ var
   end;
 
 begin
-  CurlFileListMemTable.Active := True;
+  CurlFileListMemTable.Active := true;
   while CurlFileListMemTable.RecordCount > 0 do
     CurlFileListMemTable.delete;
   for Field in CurlFileListMemTable.Fields do
@@ -1293,6 +1324,34 @@ begin
   end;
   Sleep (1);
   Application.ProcessMessages;
+end;
+
+procedure Tjson2pumlMainForm.InitializeAllTButtonedEdit (iParentControl: TWinControl);
+var
+  i: integer;
+begin
+  if not Assigned (iParentControl) then
+    Exit;
+  if iParentControl is TButtonedEdit then
+    InitializeTButtonedEdit (TButtonedEdit(iParentControl))
+  else
+    for i := 0 to iParentControl.ControlCount - 1 do
+      if iParentControl.Controls[i] is TWinControl then
+        InitializeAllTButtonedEdit (TWinControl(iParentControl.Controls[i]));
+end;
+
+procedure Tjson2pumlMainForm.InitializeTButtonedEdit (iButtonedEdit: TButtonedEdit);
+begin
+  if not Assigned (iButtonedEdit) then
+    Exit;
+  iButtonedEdit.LeftButton.Visible := true;
+  iButtonedEdit.LeftButton.ImageIndex := 2;
+  iButtonedEdit.OnLeftButtonClick := FileEditCopyFilenameActionExecute;
+  iButtonedEdit.RightButton.Visible := true;
+  iButtonedEdit.RightButton.ImageIndex := 7;
+  iButtonedEdit.OnRightButtonClick := FileEditOpenFileActionExecute;
+  iButtonedEdit.OnDblClick := FileEditOpenFileActionExecute;
+  iButtonedEdit.Images := MainImageList;
 end;
 
 end.
