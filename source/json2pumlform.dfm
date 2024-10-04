@@ -711,15 +711,14 @@ object json2pumlMainForm: Tjson2pumlMainForm
             end
           end
           object Button2: TButton
-            Left = 177
+            Left = 192
             Top = 319
-            Width = 161
+            Width = 146
             Height = 25
             Action = GenerateServiceListResultsAction
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 4
-            ExplicitLeft = 173
           end
         end
       end
@@ -728,11 +727,9 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Top = 353
         Width = 1339
         Height = 412
-        ActivePage = CurlFileTabSheet
+        ActivePage = TabSheet1
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 1335
-        ExplicitHeight = 411
         object ExecutionLogTabSheet: TTabSheet
           Caption = 'Execution Log'
           object ExecutionLogPanel: TPanel
@@ -906,6 +903,32 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Caption = 'get /definitionfile'
           ImageIndex = 4
           object ServiceDefinitionFileResultPanel: TPanel
+            Left = 0
+            Top = 0
+            Width = 1331
+            Height = 384
+            Align = alClient
+            BevelOuter = bvNone
+            TabOrder = 0
+          end
+        end
+        object ServiceInformationResultTabSheet: TTabSheet
+          Caption = 'get /serviceInformation'
+          ImageIndex = 6
+          object ServiceInformationResultPanel: TPanel
+            Left = 0
+            Top = 0
+            Width = 1331
+            Height = 384
+            Align = alClient
+            BevelOuter = bvNone
+            TabOrder = 0
+          end
+        end
+        object TabSheet1: TTabSheet
+          Caption = 'get /errorMessages'
+          ImageIndex = 7
+          object ServiceErrorMessageResultPanel: TPanel
             Left = 0
             Top = 0
             Width = 1331
@@ -1135,7 +1158,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
     object GenerateServiceListResultsAction: TAction
       Category = 'Execute'
-      Caption = 'Generate ServiceList Results'
+      Caption = 'Generate Service Results'
       OnExecute = GenerateServiceListResultsActionExecute
     end
   end
@@ -1962,7 +1985,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
               end
               item
                 Action = GenerateServiceListResultsAction
-                Caption = '&Generate ServiceList Results'
               end>
             Caption = 'E&xecute'
           end>

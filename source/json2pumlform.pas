@@ -89,7 +89,6 @@ type
     Label19: TLabel;
     Label22: TLabel;
     LoadFileAction: TAction;
-    LogFileDetailPageControl: TPageControl;
     LogTabSheet: TTabSheet;
     MainActionList: TActionList;
     MainActionManager: TActionManager;
@@ -220,6 +219,11 @@ type
     FileEditCopyFilenameAction: TAction;
     FileEditOpenFileAction: TAction;
     CurlCommandCopyBitBtn: TBitBtn;
+    ServiceInformationResultTabSheet: TTabSheet;
+    TabSheet1: TTabSheet;
+    ServiceInformationResultPanel: TPanel;
+    ServiceErrorMessageResultPanel: TPanel;
+    LogFileDetailPageControl: TPageControl;
     procedure CommandLineEditPanelResize (Sender: tObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
     procedure ConvertCurrentFileActionExecute (Sender: tObject);
@@ -267,6 +271,8 @@ type
     FParameterFileLines: tStrings;
     FServicedefinitionfileResultLines: tStrings;
     FServiceinputlistfileResultLines: tStrings;
+    FServiceInformationResultLines: tStrings;
+    FServiceErrorMessagesResultLines: tStrings;
     FServiceResultLines: tStrings;
 {$IFDEF SYNEDIT}
     fSynJSONSyn: TSynJSONSyn;
@@ -302,6 +308,10 @@ type
       write FServicedefinitionfileResultLines;
     property ServiceinputlistfileResultLines: tStrings read FServiceinputlistfileResultLines
       write FServiceinputlistfileResultLines;
+    property ServiceInformationResultLines: tStrings read FServiceInformationResultLines
+      write FServiceInformationResultLines;
+    property ServiceErrorMessagesResultLines: tStrings read FServiceErrorMessagesResultLines
+      write FServiceErrorMessagesResultLines;
     property ServiceResultLines: tStrings read FServiceResultLines write FServiceResultLines;
   protected
     procedure BeginConvert;
@@ -340,7 +350,7 @@ type
     destructor Destroy; override;
     function CalcShortCutStr (iIndex: integer): string;
     procedure CopyCurrentPUMLToClipboard;
-    procedure GenerateServiceListResults;
+    procedure GenerateServiceResults (iInputHandler: tJson2PumlInputHandler);
     procedure OpenCurrentPNGFile;
     procedure OpenCurrentSVGFile;
     procedure OpenCurrentJSONFile;
@@ -636,6 +646,10 @@ begin
     true, true);
   CreateSingleMemoControl (ServiceDefinitionFileResultPanel, 'ServiceResultMemo', nil,
     FServicedefinitionfileResultLines, true, true);
+  CreateSingleMemoControl (ServiceInformationResultPanel, 'ServiceResultMemo', nil, FServiceInformationResultLines,
+    true, true);
+  CreateSingleMemoControl (ServiceErrorMessageResultPanel, 'ServiceResultMemo', nil, FServiceErrorMessagesResultLines,
+    true, true);
 end;
 
 procedure Tjson2pumlMainForm.CreateOutputFileFrame (iInputHandlerRecord: tJson2PumlInputHandlerRecord);
@@ -832,12 +846,14 @@ begin
   FillParameterList (InputHandler.CmdLineParameter.CurlAuthenticationParameter, CurlAuthenticationParameterDataset);
 end;
 
-procedure Tjson2pumlMainForm.GenerateServiceListResults;
+procedure Tjson2pumlMainForm.GenerateServiceResults (iInputHandler: tJson2PumlInputHandler);
 begin
   GetServiceFileListResponse (ServiceinputlistfileResultLines,
     InputHandler.GlobalConfiguration.InputListFileSearchFolder, true);
   GetServiceFileListResponse (ServicedefinitionfileResultLines,
     InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false);
+  GetServiceInformationResponse (ServiceInformationResultLines, iInputHandler);
+  GetServiceErrorMessageResponse (ServiceErrorMessagesResultLines);
 end;
 
 function Tjson2pumlMainForm.GetConfigFileName (iPage: tJson2PumlPage): string;
@@ -916,7 +932,7 @@ begin
   end;
   ReloadFiles;
   UpdateAllInfos;
-  // GenerateServiceListResults;
+  // GenerateServiceResults;
 end;
 
 procedure Tjson2pumlMainForm.InitFormDefaultLogger;
@@ -1287,7 +1303,7 @@ end;
 
 procedure Tjson2pumlMainForm.GenerateServiceListResultsActionExecute (Sender: tObject);
 begin
-  GenerateServiceListResults;
+  GenerateServiceResults (InputHandler);
 end;
 
 procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: tObject; ChangeType: tJson2PumlNotifyChangeType;

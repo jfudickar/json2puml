@@ -27,7 +27,8 @@ unit json2pumltools;
 interface
 
 uses
-  System.Classes, System.SysUtils, json2pumldefinition, json2pumlloghandler, json2pumlconst, System.Zip;
+  System.Classes, System.SysUtils, json2pumldefinition, json2pumlloghandler, json2pumlconst, System.Zip,
+  json2pumlinputhandler;
 
 procedure AddFileToZipFile (iZipFile: tZipFile; iFileName, iRemoveDirectory: string);
 
@@ -70,6 +71,9 @@ function GetPlantUmlVersion (iPlantUmlJarFile, iJavaRuntimeParameter: string): s
 function GetJavaVersion: string;
 
 function GetServiceFileListResponse (oJsonOutPut: tStrings; iFolderList: tStringList; iInputList: boolean): integer;
+procedure GetServiceInformationResponse (oJsonOutPut: tStrings; iInputHandler: TJson2PumlInputHandler;
+  iServerInformation: string = '');
+procedure GetServiceErrorMessageResponse (oJsonOutPut: tStrings);
 
 function GetVersionInfo (AIdent: string): string;
 
@@ -892,6 +896,57 @@ begin
     vCommandErrors.Free;
   end;
 
+end;
+
+procedure GetServiceInformationResponse (oJsonOutPut: tStrings; iInputHandler: TJson2PumlInputHandler;
+  iServerInformation: string = '');
+var
+  InfoList: tStringList;
+begin
+  oJsonOutPut.Clear;
+  InfoList := tStringList.Create;
+  try
+    WriteObjectStartToJson (oJsonOutPut, 0, '');
+    if not iServerInformation.IsEmpty then
+      WriteToJsonValue (oJsonOutPut, 'service', iServerInformation, 1, true);
+    InfoList.Text := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
+      (iInputHandler.GlobalConfiguration.AdditionalServiceInformation.replace('\n', #13#10));
+    WriteToJsonValue (oJsonOutPut, 'additionalServiceInformation', InfoList, 1, false, false);
+    WriteToJsonValue (oJsonOutPut, 'commandLine', iInputHandler.CmdLineParameter.CommandLineParameterStr(true),
+      1, false);
+    iInputHandler.CmdLineParameter.GenerateLogParameters (InfoList);
+    WriteToJsonValue (oJsonOutPut, 'commandLineParameter', InfoList, 1, false, false);
+    InfoList.Text := GetJavaVersion;
+    WriteToJsonValue (oJsonOutPut, 'javaInformation', InfoList, 1, false, false);
+    InfoList.Text := GetPlantUmlVersion (iInputHandler.CalculateRuntimeJarFile,
+      iInputHandler.CurrentJavaRuntimeParameter);
+    WriteToJsonValue (oJsonOutPut, 'plantUmlInformation', InfoList, 1, false, false);
+    InfoList.Text := TCurlUtils.GetCurlVersion (GlobalConfigurationDefinition.CurlCommand);
+    WriteToJsonValue (oJsonOutPut, 'curlInformation', InfoList, 1, false, false);
+    iInputHandler.GlobalConfiguration.GenerateLogConfiguration (InfoList);
+    WriteToJsonValue (oJsonOutPut, 'globalConfiguration', InfoList, 1, false, false);
+
+    iInputHandler.GlobalConfiguration.FindFilesInFolderList (InfoList,
+      iInputHandler.GlobalConfiguration.DefinitionFileSearchFolder);
+    WriteToJsonValue (oJsonOutPut, 'definitionFiles', InfoList, 1, false, false);
+    iInputHandler.GlobalConfiguration.FindFilesInFolderList (InfoList,
+      iInputHandler.GlobalConfiguration.InputListFileSearchFolder);
+    WriteToJsonValue (oJsonOutPut, 'inputlistFiles', InfoList, 1, false, false);
+    WriteObjectEndToJson (oJsonOutPut, 0);
+  finally
+    InfoList.Free;
+  end;
+end;
+
+procedure GetServiceErrorMessageResponse (oJsonOutPut: tStrings);
+var
+  ErrorType: tJson2PumlErrorType;
+begin
+  oJsonOutPut.Clear;
+  WriteArrayStartToJson (oJsonOutPut, 0, '');
+  for ErrorType := low(tJson2PumlErrorType) to high(tJson2PumlErrorType) do
+    ErrorType.RenderErrorResponse (oJsonOutPut, 1);
+  WriteArrayEndToJson (oJsonOutPut, 0);
 end;
 
 class function TCurlUtils.CalculateCommand (const iCurlCommand, iBaseUrl: string;

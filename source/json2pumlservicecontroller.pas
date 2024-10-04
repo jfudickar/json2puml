@@ -152,10 +152,7 @@ begin
   try
     try
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-      WriteArrayStartToJson (jsonOutput, 0, '');
-      for ErrorType := low(tJson2PumlErrorType) to high(tJson2PumlErrorType) do
-        ErrorType.RenderErrorResponse (jsonOutput, 1);
-      WriteArrayEndToJson (jsonOutput, 0);
+      GetServiceErrorMessageResponse (jsonOutput);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
     except
@@ -211,13 +208,10 @@ procedure TJson2PumlController.GetServiceInformation;
 var
   jsonOutput: TStringList;
   InputHandler: TJson2PumlInputHandler;
-  InfoList: TStringList;
   Stopwatch: tStopwatch;
 begin
   LogRequestStart (Context, Stopwatch);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
-
-  InfoList := TStringList.Create;
 
   jsonOutput := TStringList.Create;
   try
@@ -230,32 +224,7 @@ begin
         InputHandler.EndLoadFile (false);
       end;
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-      WriteObjectStartToJson (jsonOutput, 0, '');
-      WriteToJsonValue (jsonOutput, 'service', ServerInformation, 1, true);
-      InfoList.Text := ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
-        (InputHandler.GlobalConfiguration.AdditionalServiceInformation.Replace('\n', #13#10));
-      WriteToJsonValue (jsonOutput, 'additionalServiceInformation', InfoList, 1, false, false);
-      WriteToJsonValue (jsonOutput, 'commandLine', InputHandler.CmdLineParameter.CommandLineParameterStr(true),
-        1, false);
-      InputHandler.CmdLineParameter.GenerateLogParameters (InfoList);
-      WriteToJsonValue (jsonOutput, 'commandLineParameter', InfoList, 1, false, false);
-      InfoList.Text := GetJavaVersion;
-      WriteToJsonValue (jsonOutput, 'javaInformation', InfoList, 1, false, false);
-      InfoList.Text := GetPlantUmlVersion (InputHandler.CalculateRuntimeJarFile,
-        InputHandler.CurrentJavaRuntimeParameter);
-      WriteToJsonValue (jsonOutput, 'plantUmlInformation', InfoList, 1, false, false);
-      InfoList.Text := TCurlUtils.GetCurlVersion (GlobalConfigurationDefinition.CurlCommand);
-      WriteToJsonValue (jsonOutput, 'curlInformation', InfoList, 1, false, false);
-      InputHandler.GlobalConfiguration.GenerateLogConfiguration (InfoList);
-      WriteToJsonValue (jsonOutput, 'globalConfiguration', InfoList, 1, false, false);
-
-      InputHandler.GlobalConfiguration.FindFilesInFolderList (InfoList,
-        InputHandler.GlobalConfiguration.DefinitionFileSearchFolder);
-      WriteToJsonValue (jsonOutput, 'definitionFiles', InfoList, 1, false, false);
-      InputHandler.GlobalConfiguration.FindFilesInFolderList (InfoList,
-        InputHandler.GlobalConfiguration.InputListFileSearchFolder);
-      WriteToJsonValue (jsonOutput, 'inputlistFiles', InfoList, 1, false, false);
-      WriteObjectEndToJson (jsonOutput, 0);
+      GetServiceInformationResponse(jsonOutput, InputHandler, ServerInformation);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
     except
@@ -268,7 +237,6 @@ begin
   finally
     jsonOutput.Free;
     InputHandler.Free;
-    InfoList.Free;
   end;
   LogRequestEnd (Context, Stopwatch)
 end;
