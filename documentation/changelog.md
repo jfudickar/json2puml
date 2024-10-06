@@ -1,3 +1,23 @@
+# **json2puml v2.2.18.114** - 06.10.2024
+## All Editions
+### New Feature
+- New option "legendShowObjectCount" to include the number generated objects per object type into the legend
+- Added a new commandline option "curlIgnoreCache" #37  
+
+### Changed Feature
+- Changed handling of how properties can be identified in the configured property lists.
+  Not the "-" overwrites allways a normal property. To have the option with fixed properties which resistent against "-" there is not the option to define additional "+" properties. #41
+- CurlMappingParameter now supports environment variables #39
+
+## UI Editiion
+### New Feature
+- Added the option to get the service information and service error messages as additional result page
+- Added additional buttons/actions to the edit controls to copy the content and to open the related file #40
+
+## Service Edition
+### New Feature
+- Add the execution time of the web-service calls to the log file
+
 # **json2puml v2.2.17.113** - 16.06.2024
 ## All Editions
 ### Changed Feature

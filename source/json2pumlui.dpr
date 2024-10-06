@@ -25,7 +25,6 @@ located at https://github.com/jfudickar/json2puml
 program json2pumlui;
 
 uses
-  madExcept,
   Vcl.Forms,
   json2pumldefinition in 'json2pumldefinition.pas',
   json2pumlconverter in 'json2pumlconverter.pas',
@@ -47,7 +46,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.MainFormOnTaskbar := True;
+  Application.MainFormOnTaskbar := true;
   Application.CreateForm(Tjson2pumlMainForm, json2pumlMainForm);
   Application.Run;
 end.

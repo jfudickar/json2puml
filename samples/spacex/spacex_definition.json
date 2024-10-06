@@ -5,233 +5,237 @@
 	},
 	"defaultOption": "default",
 	"options": [
-			{
-				"option": "compact",
-				"definition": {
-					"continueAfterUnhandledObjects": false,
-					"groupDetailObjectsTogether": null,
-					"hideDuplicateRelations": null,
-					"identifyObjectsByTypeAndIdent": null,
-					"legendShowInfo": null,
-					"legendShowObjectFormats": null,
-					"legendShowFileInfos": null,
-					"attributeProperties": [
-							"*"
-					],
-					"objectProperties": [
-					],
-					"objectTypeProperties": [
-					],
-					"objectTypeRenames": [
-					],
-					"objectIdentifierProperties": [
-					],
-					"objectTitleProperties": [
-					],
-					"objectDetailProperties":  {
-						"operation": "replace",
-						"list": [
-						]
-					},
-					"relationshipProperties": [
-					],
-					"relationshipTypeProperties": [
-					],
-					"relationshipTypeArrowFormats": [
-					],
-					"groupProperties": [
-					],
-					"characteristicProperties": [
-					],
-					"hiddenProperties": [
-							"links",
-							"*image*",
-							"details",
-							"wikipedia",
-							"description"
-					],
-					"pumlHeaderLines": [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": false,
-							"showFromRelations": false,
-							"showIfEmpty": false,
-							"showNullValues": null,
-							"showToRelations": false,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
-					}
-				}
-			},
-			{
-				"option": "default",
-				"definition": {
-					"continueAfterUnhandledObjects": null,
-					"groupDetailObjectsTogether": null,
-					"hideDuplicateRelations": null,
-					"identifyObjectsByTypeAndIdent": null,
-					"legendShowInfo": null,
-					"legendShowObjectFormats": null,
-					"legendShowFileInfos": null,
-					"attributeProperties": [
-							"*"
-					],
-					"objectProperties": [
-					],
-					"objectTypeProperties": [
-					],
-					"objectTypeRenames": [
-					],
-					"objectIdentifierProperties": [
-					],
-					"objectTitleProperties": [
-					],
-					"objectDetailProperties": [
-					],
-					"relationshipProperties": [
-					],
-					"relationshipTypeProperties": [
-					],
-					"relationshipTypeArrowFormats": [
-					],
-					"groupProperties": [
-					],
-					"characteristicProperties": [
-					],
-					"hiddenProperties": [
-					],
-					"pumlHeaderLines": [
+		{
+			"option": "compact",
+			"definition": {
+				"continueAfterUnhandledObjects": false,
+				"groupDetailObjectsTogether": null,
+				"hideDuplicateRelations": null,
+				"identifyObjectsByTypeAndIdent": null,
+				"legendShowInfo": null,
+				"legendShowObjectCount": null,
+				"legendShowObjectFormats": null,
+				"legendShowFileInfos": null,
+				"attributeProperties": [
+					"*"
+				],
+				"objectProperties": [
+				],
+				"objectTypeProperties": [
+				],
+				"objectTypeRenames": [
+				],
+				"objectIdentifierProperties": [
+				],
+				"objectTitleProperties": [
+				],
+				"objectDetailProperties":  {
+					"operation": "replace",
+					"list": [
 					]
-				}
-			},
-			{
-				"option": "full",
-				"definition": {
-					"continueAfterUnhandledObjects": true,
-					"groupDetailObjectsTogether": null,
-					"hideDuplicateRelations": null,
-					"identifyObjectsByTypeAndIdent": null,
-					"legendShowInfo": null,
-					"legendShowObjectFormats": null,
-					"legendShowFileInfos": null,
-					"attributeProperties": [
-							"*"
-					],
-					"objectProperties":  {
-						"operation": "replace",
-						"list": [
-								{"objectName": "*","generateWithoutIdentifier": "true"}
-						]
-					},
-					"objectTypeProperties": [
-					],
-					"objectTypeRenames": [
-					],
-					"objectIdentifierProperties": [
-					],
-					"objectTitleProperties": [
-					],
-					"objectDetailProperties": [
-					],
-					"relationshipProperties": [
-					],
-					"relationshipTypeProperties": [
-					],
-					"relationshipTypeArrowFormats": [
-					],
-					"groupProperties": [
-					],
-					"characteristicProperties": [
-					],
-					"hiddenProperties": [
-					],
-					"pumlHeaderLines": [
-					],
-					"objectFormats": {
-						"baseFormat": {
-							"objectFilter": [],
-							"iconColor": null,
-							"skinParams": [],
-							"captionShowIdent": null,
-							"captionShowTitle": null,
-							"captionShowType": null,
-							"captionSplitCharacter": null,
-							"captionSplitLength": null,
-							"showAttributes": null,
-							"showCharacteristics": null,
-							"showFromRelations": true,
-							"showIfEmpty": true,
-							"showNullValues": true,
-							"showToRelations": true,
-							"sortAttributes": null,
-							"valueSplitLength": null
-						}
+				},
+				"relationshipProperties": [
+				],
+				"relationshipTypeProperties": [
+				],
+				"relationshipTypeArrowFormats": [
+				],
+				"groupProperties": [
+				],
+				"characteristicProperties": [
+				],
+				"hiddenProperties": [
+					"links",
+					"*image*",
+					"details",
+					"wikipedia",
+					"description"
+				],
+				"pumlHeaderLines": [
+				],
+				"objectFormats": {
+					"baseFormat": {
+						"objectFilter": [],
+						"iconColor": null,
+						"skinParams": [],
+						"captionShowIdent": null,
+						"captionShowTitle": null,
+						"captionShowType": null,
+						"captionSplitCharacter": null,
+						"captionSplitLength": null,
+						"showAttributes": null,
+						"showCharacteristics": false,
+						"showFromRelations": false,
+						"showIfEmpty": false,
+						"showNullValues": null,
+						"showToRelations": false,
+						"sortAttributes": null,
+						"valueSplitLength": null
 					}
-				}
-			},
-			{
-				"option": "launch-crew-rocket",
-				"definition": {
-					"continueAfterUnhandledObjects": null,
-					"groupDetailObjectsTogether": null,
-					"hideDuplicateRelations": null,
-					"identifyObjectsByTypeAndIdent": null,
-					"legendShowInfo": null,
-					"legendShowObjectFormats": null,
-					"legendShowFileInfos": null,
-					"attributeProperties": [
-							"*"
-					],
-					"objectProperties":  {
-						"operation": "replace",
-						"list": [
-								"launch",
-								"rocket",
-								"crew",
-								{"objectName": "launchcrew","generateWithoutIdentifier": "true"}
-						]
-					},
-					"objectTypeProperties": [
-					],
-					"objectTypeRenames": [
-					],
-					"objectIdentifierProperties": [
-					],
-					"objectTitleProperties": [
-					],
-					"objectDetailProperties": [
-					],
-					"relationshipProperties": [
-					],
-					"relationshipTypeProperties": [
-					],
-					"relationshipTypeArrowFormats": [
-					],
-					"groupProperties": [
-					],
-					"characteristicProperties": [
-					],
-					"hiddenProperties": [
-							"links",
-							"*image*",
-							"details",
-							"wikipedia"
-					],
-					"pumlHeaderLines": [
-					]
 				}
 			}
+		},
+		{
+			"option": "default",
+			"definition": {
+				"continueAfterUnhandledObjects": null,
+				"groupDetailObjectsTogether": null,
+				"hideDuplicateRelations": null,
+				"identifyObjectsByTypeAndIdent": null,
+				"legendShowInfo": null,
+				"legendShowObjectCount": null,
+				"legendShowObjectFormats": null,
+				"legendShowFileInfos": null,
+				"attributeProperties": [
+					"*"
+				],
+				"objectProperties": [
+				],
+				"objectTypeProperties": [
+				],
+				"objectTypeRenames": [
+				],
+				"objectIdentifierProperties": [
+				],
+				"objectTitleProperties": [
+				],
+				"objectDetailProperties": [
+				],
+				"relationshipProperties": [
+				],
+				"relationshipTypeProperties": [
+				],
+				"relationshipTypeArrowFormats": [
+				],
+				"groupProperties": [
+				],
+				"characteristicProperties": [
+				],
+				"hiddenProperties": [
+				],
+				"pumlHeaderLines": [
+				]
+			}
+		},
+		{
+			"option": "full",
+			"definition": {
+				"continueAfterUnhandledObjects": true,
+				"groupDetailObjectsTogether": null,
+				"hideDuplicateRelations": null,
+				"identifyObjectsByTypeAndIdent": null,
+				"legendShowInfo": null,
+				"legendShowObjectCount": null,
+				"legendShowObjectFormats": null,
+				"legendShowFileInfos": null,
+				"attributeProperties": [
+					"*"
+				],
+				"objectProperties":  {
+					"operation": "replace",
+					"list": [
+						{"objectName": "*","generateWithoutIdentifier": "true"}
+					]
+				},
+				"objectTypeProperties": [
+				],
+				"objectTypeRenames": [
+				],
+				"objectIdentifierProperties": [
+				],
+				"objectTitleProperties": [
+				],
+				"objectDetailProperties": [
+				],
+				"relationshipProperties": [
+				],
+				"relationshipTypeProperties": [
+				],
+				"relationshipTypeArrowFormats": [
+				],
+				"groupProperties": [
+				],
+				"characteristicProperties": [
+				],
+				"hiddenProperties": [
+				],
+				"pumlHeaderLines": [
+				],
+				"objectFormats": {
+					"baseFormat": {
+						"objectFilter": [],
+						"iconColor": null,
+						"skinParams": [],
+						"captionShowIdent": null,
+						"captionShowTitle": null,
+						"captionShowType": null,
+						"captionSplitCharacter": null,
+						"captionSplitLength": null,
+						"showAttributes": null,
+						"showCharacteristics": null,
+						"showFromRelations": true,
+						"showIfEmpty": true,
+						"showNullValues": true,
+						"showToRelations": true,
+						"sortAttributes": null,
+						"valueSplitLength": null
+					}
+				}
+			}
+		},
+		{
+			"option": "launch-crew-rocket",
+			"definition": {
+				"continueAfterUnhandledObjects": null,
+				"groupDetailObjectsTogether": null,
+				"hideDuplicateRelations": null,
+				"identifyObjectsByTypeAndIdent": null,
+				"legendShowInfo": null,
+				"legendShowObjectCount": null,
+				"legendShowObjectFormats": null,
+				"legendShowFileInfos": null,
+				"attributeProperties": [
+					"*"
+				],
+				"objectProperties":  {
+					"operation": "replace",
+					"list": [
+						"launch",
+						"rocket",
+						"crew",
+						{"objectName": "launchcrew","generateWithoutIdentifier": "true"}
+					]
+				},
+				"objectTypeProperties": [
+				],
+				"objectTypeRenames": [
+				],
+				"objectIdentifierProperties": [
+				],
+				"objectTitleProperties": [
+				],
+				"objectDetailProperties": [
+				],
+				"relationshipProperties": [
+				],
+				"relationshipTypeProperties": [
+				],
+				"relationshipTypeArrowFormats": [
+				],
+				"groupProperties": [
+				],
+				"characteristicProperties": [
+				],
+				"hiddenProperties": [
+					"links",
+					"*image*",
+					"details",
+					"wikipedia"
+				],
+				"pumlHeaderLines": [
+				]
+			}
+		}
 	],
 	"baseOption": {
 		"continueAfterUnhandledObjects": true,
@@ -239,97 +243,98 @@
 		"hideDuplicateRelations": null,
 		"identifyObjectsByTypeAndIdent": false,
 		"legendShowInfo": null,
+		"legendShowObjectCount": null,
 		"legendShowObjectFormats": null,
 		"legendShowFileInfos": null,
 		"attributeProperties": [
-				"*"
+			"*"
 		],
 		"objectProperties": [
-				"launch",
-				"crew",
-				{"objectName": "launchcrew","generateWithoutIdentifier": "true"},
-				{"objectName": "launchcore","generateWithoutIdentifier": "true"},
-				"capsule",
-				"payload",
-				"core",
-				"launchpad",
-				"landpad",
-				"rocket"
+			"launch",
+			"crew",
+			{"objectName": "launchcrew","generateWithoutIdentifier": "true"},
+			{"objectName": "launchcore","generateWithoutIdentifier": "true"},
+			"capsule",
+			"payload",
+			"core",
+			"launchpad",
+			"landpad",
+			"rocket"
 		],
 		"objectTypeProperties": [
 		],
 		"objectTypeRenames": [
-				"launches=launch",
-				"launch.crew=launchcrew",
-				"launch.cores=launchcore",
-				"rockets=rocket",
-				"capsules=capsule",
-				"payloads=payload",
-				"ships=ship"
+			"launches=launch",
+			"launch.crew=launchcrew",
+			"launch.cores=launchcore",
+			"rockets=rocket",
+			"capsules=capsule",
+			"payloads=payload",
+			"ships=ship"
 		],
 		"objectIdentifierProperties": [
-				"id"
+			"id"
 		],
 		"objectTitleProperties": [
-				"full_name",
-				"flight_number",
-				"name"
+			"full_name",
+			"flight_number",
+			"name"
 		],
 		"objectDetailProperties": [
-				"dragon",
-				"composite_fairing"
+			"dragon",
+			"composite_fairing"
 		],
 		"relationshipProperties": [
-				"launches",
-				"launch",
-				"rockets",
-				"rocket",
-				"crew.crew",
-				"dragon.capsule",
-				"capsules",
-				"payloads",
-				"ships",
-				"core",
-				"cores",
-				"landpad",
-				"launchpad"
+			"launches",
+			"launch",
+			"rockets",
+			"rocket",
+			"crew.crew",
+			"dragon.capsule",
+			"capsules",
+			"payloads",
+			"ships",
+			"core",
+			"cores",
+			"landpad",
+			"launchpad"
 		],
 		"relationshipTypeProperties": [
-				"role"
+			"role"
 		],
 		"relationshipTypeArrowFormats": [
 		],
 		"groupProperties": [
-				"launchcrew",
-				"launchcore"
+			"launchcrew",
+			"launchcore"
 		],
 		"characteristicProperties": [
-				"*pad.images",
-				"height",
-				"launchcore",
-				"landing_legs",
-				"mass",
-				"diameter",
-				"thrust",
-				"composite_fairing",
-				"thrust_vacuum",
-				"thrust_sea_level",
-				"isp",
-				"flickr",
-				"patch",
-				"reddit",
-				"norad_ids",
-				"links",
-				"engines",
-				"rocket.*stage",
-				{"parentProperty": "payload_weights", "type": "list", "propertyList": ["name", "kg", "lb"]}
+			"*pad.images",
+			"height",
+			"launchcore",
+			"landing_legs",
+			"mass",
+			"diameter",
+			"thrust",
+			"composite_fairing",
+			"thrust_vacuum",
+			"thrust_sea_level",
+			"isp",
+			"flickr",
+			"patch",
+			"reddit",
+			"norad_ids",
+			"links",
+			"engines",
+			"rocket.*stage",
+			{"parentProperty": "payload_weights", "type": "list", "propertyList": ["name", "kg", "lb"]}
 		],
 		"hiddenProperties": [
-				"*.launches"
+			"*.launches"
 		],
 		"pumlHeaderLines": [
-				"hide stereotype",
-				"hide empty member"
+			"hide stereotype",
+			"hide empty member"
 		],
 		"objectFormats": {
 			"baseFormat": {
@@ -351,69 +356,69 @@
 				"valueSplitLength": 100
 			},
 			"formats": [
-					{
-						"formatName": "launch",
-						"definition": {
-							"objectFilter": [
-								"launch",
-								"launch.*"
-							],
-							"iconColor": "IndianRed",
-							"skinParams": ["BackgroundColor=DarkSalmon"]
-						}
-					},
-					{
-						"formatName": "crew",
-						"definition": {
-							"objectFilter": [
-								"crew",
-								"launchcrew"
-							],
-							"iconColor": "purple",
-							"skinParams": ["BackgroundColor=plum"]
-						}
-					},
-					{
-						"formatName": "pads",
-						"definition": {
-							"objectFilter": [
-								"launchpad",
-								"launchpad.*",
-								"landpad",
-								"landpad.*"
-							],
-							"iconColor": "DeepSkyBlue",
-							"skinParams": ["BackgroundColor=LightSkyBlue"]
-						}
-					},
-					{
-						"formatName": "hardware",
-						"definition": {
-							"objectFilter": [
-								"rocket",
-								"core",
-								"cores",
-								"capsule",
-								"payload",
-								"dragon"
-							],
-							"iconColor": "orange",
-							"skinParams": ["BackgroundColor=orange"]
-						}
-					},
-					{
-						"formatName": "hardware-details",
-						"definition": {
-							"objectFilter": [
-								"rocket.*",
-								"dragon.*",
-								"second_stage.payload",
-								"composite_fairing"
-							],
-							"iconColor": "orangeRed",
-							"skinParams": ["BackgroundColor=orangeRed"]
-						}
+				{
+					"formatName": "launch",
+					"definition": {
+						"objectFilter": [
+							"launch",
+							"launch.*"
+						],
+						"iconColor": "IndianRed",
+						"skinParams": ["BackgroundColor=DarkSalmon"]
 					}
+				},
+				{
+					"formatName": "crew",
+					"definition": {
+						"objectFilter": [
+							"crew",
+							"launchcrew"
+						],
+						"iconColor": "purple",
+						"skinParams": ["BackgroundColor=plum"]
+					}
+				},
+				{
+					"formatName": "pads",
+					"definition": {
+						"objectFilter": [
+							"launchpad",
+							"launchpad.*",
+							"landpad",
+							"landpad.*"
+						],
+						"iconColor": "DeepSkyBlue",
+						"skinParams": ["BackgroundColor=LightSkyBlue"]
+					}
+				},
+				{
+					"formatName": "hardware",
+					"definition": {
+						"objectFilter": [
+							"rocket",
+							"core",
+							"cores",
+							"capsule",
+							"payload",
+							"dragon"
+						],
+						"iconColor": "orange",
+						"skinParams": ["BackgroundColor=orange"]
+					}
+				},
+				{
+					"formatName": "hardware-details",
+					"definition": {
+						"objectFilter": [
+							"rocket.*",
+							"dragon.*",
+							"second_stage.payload",
+							"composite_fairing"
+						],
+						"iconColor": "orangeRed",
+						"skinParams": ["BackgroundColor=orangeRed"]
+					}
+				}
 			]
 		}
 	}

@@ -1,4 +1,4 @@
-call "C:\Program Files (x86)\Embarcadero\Studio\23.0\bin\rsvars.bat"
+call "C:\Program Files (x86)\Embarcadero\Studio\22.0\bin\rsvars.bat"
 cd ..\source\
 
 msbuild json2pumlapps.groupproj /p:config=Release /p:platform=Win32

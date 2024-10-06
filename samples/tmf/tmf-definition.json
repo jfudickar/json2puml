@@ -600,8 +600,7 @@
 			"contactMedium",
 			"totalBalance",
 			"product.productTerm",
-			"orderItem.itemTerm",
-			"xpriceAlteration"
+			"orderItem.itemTerm"
 		],
 		"relationshipProperties": [
 			"relatedParty",
