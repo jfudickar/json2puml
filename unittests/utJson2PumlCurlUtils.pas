@@ -30,11 +30,12 @@ type
     [TearDown]
     procedure TearDown;
   published
-    [TestCase('a/bc', 'a,b,c,,,--url "a/bc"')]
-    [TestCase('a/b/c', 'a,/b,/c,,,--url "a/b/c"')]
-    [TestCase('a/b/c', 'a,/b,/c,x,,--url "a/b/c" x')]
-    [TestCase('a/b/c', 'a,/b,/c,x,test.json,--url "a/b/c" x --output "test.json"')]
-    procedure TestCalculateCommand (iBaseUrl, iUrlPart1, iUrlPart2, iOption, iOutputFile, iExpectedCommand: string);
+    [TestCase('a/bc',  ',a,b,c,,,curl --url "a/bc"')]
+    [TestCase('a/b/c', 'curl,a,/b,/c,,,curl --url "a/b/c"')]
+    [TestCase('a/b/c', 'curl,a,/b,/c,x,,curl --url "a/b/c" x')]
+    [TestCase('a/b/c', 'xcurl,a,/b,/c,x,test.json,xcurl --url "a/b/c" x --output "test.json"')]
+    procedure TestCalculateCommand(iCurlCommand, iBaseUrl, iUrlPart1, iUrlPart2, iOption, iOutputFile, iExpectedCommand:
+        string);
     [TestCase('a/b/c/${nofilm}', 'a/b/c/${nofilm},,,a/b/c/')]
     [TestCase('/a/', '/a/,,,/a/')]
     [TestCase('a/bc', 'a,b,c,a/bc')]
@@ -99,8 +100,8 @@ begin
   fCurlMappingParameterList.free;
 end;
 
-procedure tJson2PumlCurlUtils.TestCalculateCommand (iBaseUrl, iUrlPart1, iUrlPart2, iOption, iOutputFile,
-  iExpectedCommand: string);
+procedure tJson2PumlCurlUtils.TestCalculateCommand(iCurlCommand, iBaseUrl, iUrlPart1, iUrlPart2, iOption, iOutputFile,
+    iExpectedCommand: string);
 var
   ReturnValue: string;
   iOptions: array of string;
@@ -111,7 +112,7 @@ begin
   iUrlParts[1] := iUrlPart2;
   SetLength (iOptions, 1);
   iOptions[0] := iOption;
-  ReturnValue := TCurlUtils.CalculateCommand (iBaseUrl, iUrlParts, iOptions, iOutputFile, fCurlParameterList,
+  ReturnValue := TCurlUtils.CalculateCommand (iCurlCommand, iBaseUrl, iUrlParts, iOptions, iOutputFile, fCurlParameterList,
     fCurlDetailParameterList, fCurlMappingParameterList, false);
   Assert.AreEqual (iExpectedCommand, ReturnValue);
 end;
