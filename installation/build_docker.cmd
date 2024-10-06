@@ -1,4 +1,4 @@
-set EXE='..\source\win64\release\json2puml.exe'
+set EXE='..\source\win64\release\json2pumlui.exe'
 for /f %%i in ('powershell "(Get-Item -path %EXE%).VersionInfo.FileVersion"') do set ver=%%i
 echo %ver%
 
