@@ -30,8 +30,8 @@ uses
   System.JSON, System.Classes, json2pumlconst, Quick.Logger;
 
 type
-  tJson2PumlPropertySearchMatchType = (psmExactExact, psmExact, psmMatchMatch, psmMatch, psmExcludeExclude, psmExclude,
-    psmNoMatch);
+  tJson2PumlPropertySearchMatchType = (psmExactExactPlus, psmExactPlus, psmExactExact, psmExact, psmMatchMatchPlus,
+    psmMatchPlus, psmMatchMatch, psmMatch, psmExcludeExclude, psmExclude, psmNoMatch);
 
   tJson2PumlNotifyChangeType = (nctExpand, nctConvert);
 
@@ -84,7 +84,7 @@ type
     function EventType: tEventType;
     function Failed: boolean;
     function HttpStatusCode: integer;
-    procedure RenderErrorResponse(oJson: tStrings; iLevel: integer; iErrorMessage: string = '');
+    procedure RenderErrorResponse (oJson: tStrings; iLevel: integer; iErrorMessage: string = '');
   end;
 
   tJson2PumlBaseObject = class(tPersistent)
@@ -821,10 +821,10 @@ function tJson2PumlBasePropertyList.BuildFoundCondition (iMatchType: tJson2PumlP
   const iConfigurationPropertyName, iConfiguredValue, iSearchValue: string): string;
 begin
   case iMatchType of
-    psmExactExact, psmExact:
+    psmExactExactPlus, psmExactPlus, psmExactExact, psmExact:
       Result := Format ('- ["%s" : Exact Match : Configured "%s" : Search "%s"]',
         [iConfigurationPropertyName, iConfiguredValue, iSearchValue]);
-    psmMatchMatch, psmMatch:
+    psmMatchMatchPlus, psmMatchPlus, psmMatchMatch, psmMatch:
       Result := Format ('- ["%s" : Wildcard match : Configured "%s" : Search "%s"]',
         [iConfigurationPropertyName, iConfiguredValue, iSearchValue]);
     psmExcludeExclude, psmExclude:
@@ -871,11 +871,17 @@ var
     IndexName := ListValue (iIndex);
     if ParentFilled and (IndexName = ParentPropertyName) then
       Result := psmExactExact
+    else if ParentFilled and (IndexName = '+' + ParentPropertyName) then
+      Result := psmExactExactPlus
     else if IndexName = iPropertyName then
       Result := psmExact
+    else if IndexName = '+' + iPropertyName then
+      Result := psmExactPlus
     else if UseMatch then
       if MatchesMask (iPropertyName, IndexName) then
         Result := psmMatch
+      else if MatchesMask ('+' + iPropertyName, IndexName) then
+        Result := psmMatchPlus
       else if MatchesMask ('-' + iPropertyName, IndexName) then
         Result := psmExclude
       else if ParentFilled then
@@ -887,6 +893,9 @@ var
           IndexParentName := Splitted[0];
           if MatchesMask (ParentName, IndexParentName) and MatchesMask (iPropertyName, IndexPropertyName) then
             Result := psmMatchMatch
+          else if MatchesMask ('+' + ParentName, IndexParentName) and MatchesMask (iPropertyName, IndexPropertyName)
+          then
+            Result := psmMatchMatchPlus
           else if MatchesMask ('-' + ParentName, IndexParentName) and MatchesMask (iPropertyName, IndexPropertyName)
           then
             Result := psmExcludeExclude
@@ -929,7 +938,8 @@ begin
     begin
       CurrentMatchType := CalculateMatchType (i);
       case CurrentMatchType of
-        psmExactExact, psmExact, psmMatchMatch, psmMatch:
+        psmExactExactPlus, psmExactPlus, psmExactExact, psmExact, psmMatchMatchPlus, psmMatchPlus,
+          psmMatchMatch, psmMatch:
           begin
             if CurrentMatchType < OverallMatchType then
             begin
@@ -950,7 +960,7 @@ begin
         break;
     end;
 
-    if (OverallMatchType in [psmMatchMatch, psmMatch]) and (ExcludeType <> psmNoMatch) then
+    if (OverallMatchType in [psmExactExact, psmExact, psmMatchMatch, psmMatch]) and (ExcludeType <> psmNoMatch) then
     begin
       OverallMatchType := ExcludeType;
       PropertyIndex := - 1;
@@ -967,10 +977,10 @@ begin
     end
     else
       case OverallMatchType of
-        psmExactExact, psmMatchMatch:
+        psmExactExactPlus, psmExactExact, psmMatchMatchPlus, psmMatchMatch:
           oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, ListValue(PropertyIndex),
             ParentPropertyName);
-        psmExact, psmMatch:
+        psmExactPlus, psmExact, psmMatchPlus, psmMatch:
           oFoundCondition := BuildFoundCondition (OverallMatchType, ConfigurationPropertyName, ListValue(PropertyIndex),
             iPropertyName);
         psmExcludeExclude:
@@ -1071,7 +1081,7 @@ begin
   Result := cJson2PumlErrorInformation[self].HttpStatusCode;
 end;
 
-procedure tJson2PumlErrorTypeHelper.RenderErrorResponse(oJson: tStrings; iLevel: integer; iErrorMessage: string = '');
+procedure tJson2PumlErrorTypeHelper.RenderErrorResponse (oJson: tStrings; iLevel: integer; iErrorMessage: string = '');
 begin
   if Errorcode.IsEmpty then
     exit;

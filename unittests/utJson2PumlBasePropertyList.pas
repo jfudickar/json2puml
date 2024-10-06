@@ -37,6 +37,7 @@ type
     [TestCase('charge', 'charge,,<NF>')]
     [TestCase('product.charge', 'charge,product,<NF>')]
     [TestCase('productlist.amount', 'amount,productlist,<NF>')]
+    [TestCase('productParameter', 'productParameter,,productParameter')]
     procedure TestIndexOfPropertyExact(const iPropertyName, iParentPropertyName, iResultName: String);
     [Category('Match')]
     [TestCase('x', 'x,,<NF>')]
@@ -53,6 +54,10 @@ type
     [TestCase('product.charge', 'charge,product,product*.*')]
     [TestCase('productlist.amount', 'amount,productlist,<NF>')]
     [TestCase('productOffering', 'productOffering,,<NF>')]
+    [TestCase('productParameter', 'productParameter,,<NF>')]
+    [TestCase('shoppingCard', 'shoppingCard,,shopping*')]
+    [TestCase('shoppingCardTotalPrice', 'shoppingCardTotalPrice,,+shopping*TotalPrice')]
+    [TestCase('shoppingCardEstimatedPrice', 'shoppingCardEstimatedPrice,,<NF>')]
     procedure TestIndexOfPropertyMatch(const iPropertyName, iParentPropertyName, iResultName: String);
 
     property PropertyList: tJson2PumlBasePropertyList read FPropertyList
@@ -90,6 +95,7 @@ begin
   FPropertyList.ConfigurationPropertyName := 'Unittest';
   FPropertyList.ItemList.Add('product*=value');
   FPropertyList.ItemList.Add('-productList');
+  FPropertyList.ItemList.Add('-productP*');
   FPropertyList.ItemList.Add('product');
   FPropertyList.ItemList.Add('productParameter');
   FPropertyList.ItemList.Add('order=value');
@@ -97,9 +103,13 @@ begin
   FPropertyList.ItemList.Add('product*.*');
   FPropertyList.ItemList.Add('product.price');
   FPropertyList.ItemList.Add('-product*.a*');
-  FPropertyList.ItemList.Add('-*Offer*');
   FPropertyList.ItemList.Add('item');
   FPropertyList.ItemList.Add('product.item');
+  FPropertyList.ItemList.Add('bill');
+  FPropertyList.ItemList.Add('-*offer*');
+  FPropertyList.ItemList.Add('shopping*');
+  FPropertyList.ItemList.Add('-shopping*Price');
+  FPropertyList.ItemList.Add('+shopping*TotalPrice');
   FPropertyList.ItemList.Add('bill');
   FPropertyList.ItemList.Add('');
 end;

@@ -384,7 +384,7 @@ type
     procedure SetIdentifyObjectsByTypeAndIdentStr (const Value: string);
     procedure SetLegendShowFileInfosStr (const Value: string);
     procedure SetLegendShowInfoStr (const Value: string);
-    procedure SetLegendShowObjectCountStr(const Value: string);
+    procedure SetLegendShowObjectCountStr (const Value: string);
     procedure SetLegendShowObjectFormatsStr (const Value: string);
     procedure SetObjectDetailProperties (const Value: tJson2PumlOperationPropertyList);
     procedure SetObjectFormats (const Value: tJson2PumlFormatDefinition);
@@ -706,12 +706,12 @@ end;
 function tJson2PumlConverterDefinition.GetIsFilled: boolean;
 begin
   Result := (AttributeProperties.Count > 0) or (AttributeProperties.Count > 0) or (CharacteristicProperties.Count > 0)
-    or (HiddenProperties.Count > 0) or not LegendShowFileInfosStr.IsEmpty or not LegendShowInfoStr.IsEmpty or not LegendShowObjectCountStr.IsEmpty or
-    not LegendShowObjectFormatsStr.IsEmpty or (ObjectFormats.Formats.Count > 0) or (ObjectDetailProperties.Count > 0) or
-    (ObjectIdentifierProperties.Count > 0) or (ObjectProperties.Count > 0) or (ObjectTypeRenames.Count > 0) or
-    (PUMLHeaderLines.Count > 0) or (ObjectTypeProperties.Count > 0) or (ObjectTitleProperties.Count > 0) or
-    (RelationshipProperties.Count > 0) or (RelationshipTypeArrowFormats.Count > 0) or
-    (RelationshipTypeProperties.Count > 0) or not ContinueAfterUnhandledObjectsStr.IsEmpty;
+    or (HiddenProperties.Count > 0) or not LegendShowFileInfosStr.IsEmpty or not LegendShowInfoStr.IsEmpty or
+    not LegendShowObjectCountStr.IsEmpty or not LegendShowObjectFormatsStr.IsEmpty or (ObjectFormats.Formats.Count > 0)
+    or (ObjectDetailProperties.Count > 0) or (ObjectIdentifierProperties.Count > 0) or (ObjectProperties.Count > 0) or
+    (ObjectTypeRenames.Count > 0) or (PUMLHeaderLines.Count > 0) or (ObjectTypeProperties.Count > 0) or
+    (ObjectTitleProperties.Count > 0) or (RelationshipProperties.Count > 0) or (RelationshipTypeArrowFormats.Count > 0)
+    or (RelationshipTypeProperties.Count > 0) or not ContinueAfterUnhandledObjectsStr.IsEmpty;
 end;
 
 function tJson2PumlConverterDefinition.GetLegendShowFileInfos: boolean;
@@ -970,7 +970,7 @@ begin
   FLegendShowInfoStr := ValidateBooleanInput (Value);
 end;
 
-procedure tJson2PumlConverterDefinition.SetLegendShowObjectCountStr(const Value: string);
+procedure tJson2PumlConverterDefinition.SetLegendShowObjectCountStr (const Value: string);
 begin
   FLegendShowObjectCountStr := ValidateBooleanInput (Value);
 end;
