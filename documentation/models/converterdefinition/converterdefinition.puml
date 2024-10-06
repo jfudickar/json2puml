@@ -106,6 +106,7 @@ class SingleOption {
     objectFormats : FormatDefinition
     ---
     legendShowInfo : Boolean
+    legendShowObjectCount : Boolean
     legendShowObjectFormats : Boolean
     legendShowFileInfos : Boolean
     ---

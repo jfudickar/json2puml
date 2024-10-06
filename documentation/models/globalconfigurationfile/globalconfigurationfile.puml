@@ -20,6 +20,7 @@ class GlobalConfiguration <<Pivot>>{
    baseOutputPath : String
    outputPath : String
    curlAuthenticationFileName : String
+   curlCommand : String
    curlParameter : Array of CurlParameter
    curlPassThroughHeader : Array of String
    curlSpanIdHeader : String

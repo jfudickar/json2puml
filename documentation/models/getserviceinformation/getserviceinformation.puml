@@ -15,7 +15,9 @@ class ServiceInformation{
    additionalServiceInformation : String
    commandLine : String
    commandLineParameter : Array of String
+   javaInformation : Array of String
    plantUmlInformation : Array of String
+   curlInformation : Array of String
    globalConfiguration : Array of String
    definitionFiles : Array of string
    inputlistFiles : Array of string
