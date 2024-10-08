@@ -991,7 +991,7 @@ function TJson2PumlConverter.GetPropertyValueListProperties (iDefinitionList: tJ
 var
   Search: string;
   Value: string;
-  LastSep, Sep: string;
+  First, LastSep, Sep: string;
   Definition: tJson2PumlPropertyValueDefinition;
   PropertyName: string;
 begin
@@ -1002,11 +1002,19 @@ begin
     for Definition in iDefinitionList do
     begin
       Search := Definition.PropertyName;
+      First := Search.Substring (0, 1);
+      if First = '-' then
+        Continue // Ignore Values with leading '-', they are only to remove
+      else if First = '+' then
+        Search := Search.Substring (1);
       if Search.IndexOf ('.') >= 0 then
         if MatchesMask (Search, iParentProperty + '.*') then
           Search := Search.Substring (Search.IndexOf('.') + 1)
         else
           Continue;
+
+      if iDefinitionList.IndexOfProperty (Search, iParentProperty, '', oFoundCondition) < 0 then
+        Continue; // Check if the property is disabled via an exclude rule with a leading '-'
 
       Sep := Definition.NextValueSeparator;
       Search := string.join ('.', [Search, Definition.ChildPropertyName]);
