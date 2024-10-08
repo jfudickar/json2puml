@@ -17,12 +17,12 @@ File_14=TSourceModule,'c:\Users\jensf\Documents\Embarcadero\Studio\23.0\CatalogR
 
 [Modules]
 Module0=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
-Module1=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
-Module2=E:\Delphi\Projects\json2puml\unittests\utJson2PumlBasePropertyList.pas
-Module3=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
-Module4=E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj
-Module5=E:\Delphi\Projects\json2puml\source\json2puml.dproj
-Module6=E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj
+Module1=E:\Delphi\Projects\json2puml\source\json2puml.dproj
+Module2=E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj
+Module3=E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj
+Module4=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
+Module5=E:\Delphi\Projects\json2puml\unittests\utJson2PumlBasePropertyList.pas
+Module6=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
 Module7=E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pas
 Module8=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
 Module9=E:\Delphi\Projects\json2puml\source\json2pumlservicewebmodule.pas
@@ -40,6 +40,15 @@ EditWindowCount=1
 [E:\Delphi\Projects\json2puml\source\json2pumlconst.pas]
 ModuleType=TSourceModule
 
+[E:\Delphi\Projects\json2puml\source\json2puml.dproj]
+ModuleType=TBaseProject
+
+[E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj]
+ModuleType=TBaseProject
+
+[E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj]
+ModuleType=TBaseProject
+
 [E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas]
 ModuleType=TSourceModule
 
@@ -48,15 +57,6 @@ ModuleType=TSourceModule
 
 [E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas]
 ModuleType=TSourceModule
-
-[E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj]
-ModuleType=TBaseProject
-
-[E:\Delphi\Projects\json2puml\source\json2puml.dproj]
-ModuleType=TBaseProject
-
-[E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj]
-ModuleType=TBaseProject
 
 [E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pas]
 ModuleType=TSourceModule
@@ -276,9 +276,9 @@ EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pa
 [View12]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
-CursorX=85
+CursorX=5
 CursorY=216
-TopLine=187
+TopLine=173
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -487,7 +487,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
 ClientHeight=3542
-TBDockHeight=6947
+TBDockHeight=3542
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
@@ -502,11 +502,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6746
+Height=2155
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6746
+ClientHeight=2155
 TBDockHeight=5955
 LRDockWidth=2512
 Dockable=1
@@ -518,8 +518,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-2296
-Top=362
+Left=0
+Top=0
 Width=273
 Height=359
 MaxLeft=-1
@@ -623,11 +623,11 @@ State=0
 Left=0
 Top=0
 Width=2340
-Height=1042
+Height=1279
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=2340
-ClientHeight=1042
+ClientHeight=1279
 TBDockHeight=2320
 LRDockWidth=2824
 Dockable=1
@@ -688,11 +688,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6746
+Height=0
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6746
+ClientHeight=0
 TBDockHeight=4885
 LRDockWidth=7148
 Dockable=1
@@ -704,8 +704,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=501
-Top=1099
+Left=0
+Top=0
 Width=2855
 Height=3211
 MaxLeft=-1
@@ -723,8 +723,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-250
-Top=-132
+Left=-284
+Top=-257
 Width=1848
 Height=3139
 MaxLeft=-1
@@ -828,11 +828,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6746
+Height=4382
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6746
+ClientHeight=4382
 TBDockHeight=5747
 LRDockWidth=1691
 Dockable=1
@@ -907,11 +907,11 @@ State=0
 Left=0
 Top=0
 Width=1996
-Height=6746
+Height=0
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
-ClientHeight=6746
+ClientHeight=0
 TBDockHeight=4885
 LRDockWidth=5309
 Dockable=1
@@ -971,8 +971,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=28
+Left=8
+Top=8
 Width=3824
 Height=1422
 MaxLeft=-1
@@ -1003,7 +1003,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
 ClientHeight=4583
-TBDockHeight=6947
+TBDockHeight=4583
 LRDockWidth=1996
 Dockable=1
 StayOnTop=0
@@ -1027,7 +1027,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1895
 ClientHeight=3542
-TBDockHeight=6947
+TBDockHeight=3542
 LRDockWidth=1895
 Dockable=1
 StayOnTop=0
@@ -1051,7 +1051,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1996
 ClientHeight=2500
-TBDockHeight=6947
+TBDockHeight=2500
 LRDockWidth=1996
 Dockable=1
 StayOnTop=0

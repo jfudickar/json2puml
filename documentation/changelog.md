@@ -1,3 +1,8 @@
+# **json2puml v2.2.19.115** - 08.10.2024
+## All Editions
+### Changed Feature
+- In the configuration the property lists (objectIdentifierProperties, objectTitleProperties, objectTypeProperties, relationshipTypeProperties) now also support the exclusion via leading "-".
+
 # **json2puml v2.2.18.114** - 06.10.2024
 ## All Editions
 ### New Feature
