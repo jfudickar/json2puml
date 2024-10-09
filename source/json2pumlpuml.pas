@@ -1575,6 +1575,8 @@ var
   Lines: tStringList;
 begin
   IncludeParent := IncludeParentColumn;
+  if Count <= 0 then
+    Exit;
   if iIncludeHeader then
   begin
     ipuml.add (Format('<b>%s</b>', [ParentCharacteristicValue.Attribute]));
