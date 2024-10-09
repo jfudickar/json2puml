@@ -1269,8 +1269,8 @@ begin
     end
     else
     begin
-      GlobalLogHandler.Error (jetCurlExecutionFailed, [Url, iOutputFile, MillisecondsBetween(Now, StartTime),
-        vErrorMessage]);
+      GlobalLogHandler.Error (jetCurlExecutionFailed, [Url, tPath.GetFileName(iOutputFile),
+        MillisecondsBetween(Now, StartTime), vErrorMessage]);
       iCurlResult.ErrorMessage := vErrorMessage;
       if FileExists (iOutputFile) then
       begin

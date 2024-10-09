@@ -1219,14 +1219,14 @@ begin
       if CurlFormatOutput then
         FormatJsonFile (OutputFileName);
       if Mandatory and (CurlResult.NoOfRecords <= 0) then
-        GlobalLoghandler.Error (jetInputLIstCurlFileMandatoryEmpty, [tpath.GetFileName(OutputFileName)])
+        GlobalLoghandler.Error (jetInputLIstCurlFileMandatoryEmpty, [TPath.GetFileName(OutputFileName)])
       else
       begin
         GetCurlParameterFromFile (CurlOutputParameter, ioResultCurlParameterList);
       end;
     end
     else if Mandatory then
-      GlobalLoghandler.Error (jetInputListCurlFileMissing, [tpath.GetFileName(OutputFileName)]);
+      GlobalLoghandler.Error (jetInputListCurlFileMissing, [TPath.GetFileName(OutputFileName)]);
   end;
 end;
 
@@ -2850,14 +2850,22 @@ begin
   ioFileList.Clear;
   for s in iFolderList do
   begin
-    if iFilter.IsEmpty then
-      Filter := ExtractFileName (s)
+    if DirectoryExists (s) then
+    begin
+      Filter := TPath.Combine (s, cDefaultJsonFileFilter) ;
+      FilePath := s;
+    end
     else
-      Filter := ExtractFileName (iFilter);
-    if Filter.IsEmpty then
-      Filter := cDefaultJsonFileFilter;
-    FilePath := ExtractFilePath (s);
-    Filter := TPath.Combine (FilePath, Filter);
+    begin
+      if iFilter.IsEmpty then
+        Filter := ExtractFileName (s)
+      else
+        Filter := ExtractFileName (iFilter);
+      if Filter.IsEmpty then
+        Filter := cDefaultJsonFileFilter;
+      FilePath := ExtractFilePath (s);
+      Filter := TPath.Combine (FilePath, Filter);
+    end;
     if findfirst (Filter, faAnyFile, searchResult) = 0 then
     begin
       repeat
