@@ -144,7 +144,6 @@ end;
 procedure TJson2PumlController.GetErrorMessages;
 var
   jsonOutput: TStringList;
-  ErrorType: tJson2PumlErrorType;
   Stopwatch: tStopwatch;
 begin
   LogRequestStart (Context, Stopwatch);
