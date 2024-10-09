@@ -768,7 +768,7 @@ begin
   begin
     vAdd := true;
     Puml.Add (tPumlHelper.TableLine(['<b>json2puml', '<b>' + FileVersion]));
-    Puml.Add (tPumlHelper.TableLine(['Generated at', Format('%s %s', [DateTostr(Now), TimetoStr(Now)])]));
+    Puml.Add (tPumlHelper.TableLine(['Generated at', Format('%s', [DateTimeToStr(Now)])]));
     AddFileLine ('Definition File', InputHandler.CurrentDefinitionFileName);
     if not InputHandler.CmdLineParameter.InputFileName.IsEmpty then
     begin

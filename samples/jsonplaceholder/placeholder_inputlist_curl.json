@@ -57,7 +57,7 @@
 			"inputFile": "users.json",
 			"leadingObject": "user",
 			"generateOutput": true,
-			"mandatory": false,
+			"mandatory": true,
 			"curlBaseUrl": null,
 			"curlCache": 0,
 			"curlExecuteEvaluation": null,

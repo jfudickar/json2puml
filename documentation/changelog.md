@@ -1,3 +1,10 @@
+# **json2puml v2.2.20.116** - 09.10.2024
+## All Editions
+### Changed Feature
+- Fixed validation of ":" in filenames (Windows) #48
+- Empty Chararacteristic records are no longer generated #44
+- Improved/simplified error messages when the files could not be loaded via curl #46
+
 # **json2puml v2.2.19.115** - 08.10.2024
 ## All Editions
 ### Changed Feature
