@@ -148,10 +148,10 @@ const
     HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Payload is empty';
     ErrorDescription: 'The service request payload is empty. The request can not be handled.'),
     { jetInputListCurlFileMissing } (EventType: etError; Errorcode: 'J2P-400-027';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input list file "%s" could not be fetched';
+    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input file "%s" could not be fetched.';
     ErrorDescription: 'The file defined in the inputlist could not be fetched via curl.'),
     { jetInputLIstCurlFileMandatoryEmpty } (EventType: etError; Errorcode: 'J2P-400-028';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input list file "%s" has no json records';
+    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input file "%s" has no json records, generation is stopped.';
     ErrorDescription: 'The file defined in the inputlist has been fetched but now records are found.'));
 
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',

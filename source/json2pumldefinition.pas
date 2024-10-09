@@ -1219,14 +1219,14 @@ begin
       if CurlFormatOutput then
         FormatJsonFile (OutputFileName);
       if Mandatory and (CurlResult.NoOfRecords <= 0) then
-        GlobalLoghandler.Error (jetInputLIstCurlFileMandatoryEmpty, [OutputFileName])
+        GlobalLoghandler.Error (jetInputLIstCurlFileMandatoryEmpty, [tpath.GetFileName(OutputFileName)])
       else
       begin
         GetCurlParameterFromFile (CurlOutputParameter, ioResultCurlParameterList);
       end;
     end
     else if Mandatory then
-      GlobalLoghandler.Error (jetInputListCurlFileMissing, [OutputFileName]);
+      GlobalLoghandler.Error (jetInputListCurlFileMissing, [tpath.GetFileName(OutputFileName)]);
   end;
 end;
 
