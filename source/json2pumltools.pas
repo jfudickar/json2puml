@@ -772,7 +772,7 @@ var
   LastVolumeSeparatorChar: integer;
 begin
   Result := iPathName.Trim;
-  LastVolumeSeparatorChar := low(Result) - 1;
+  LastVolumeSeparatorChar := low(Result);
   if tPath.IsDriveRooted (iPathName) then
     LastVolumeSeparatorChar := LastVolumeSeparatorChar + 2;
   for i := low(Result) to high(Result) do
