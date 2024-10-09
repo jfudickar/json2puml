@@ -769,10 +769,16 @@ function ReplaceInvalidPathChars (const iPathName: string; iFinal: boolean = fal
   const iReplaceWith: Char = '_'): string;
 var
   i: integer;
+  LastVolumeSeparatorChar: integer;
 begin
   Result := iPathName.Trim;
+  DriveRooted := tPath.IsDriveRooted (iPathName);
+  LastVolumeSeparatorChar := low(Result) - 1;
+  if tPath.IsDriveRooted (iPathName) then
+    LastVolumeSeparatorChar := LastVolumeSeparatorChar + 2;
   for i := low(Result) to high(Result) do
-    if not tPath.IsValidPathChar (Result[i]) or (iFinal and (CharInSet(Result[i], ['$']))) then
+    if not tPath.IsValidPathChar (Result[i]) or (iFinal and (CharInSet(Result[i], ['$']))) or
+      ((i >= LastVolumeSeparatorChar) and (Result[i] = tPath.VolumeSeparatorChar)) then
       Result[i] := iReplaceWith;
   while Result.IndexOf (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar) >= 0 do
     Result := Result.replace (tPath.ExtensionSeparatorChar + tPath.ExtensionSeparatorChar,
