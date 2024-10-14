@@ -8,3 +8,5 @@ for /f %%i in ('powershell "(Get-Item -path %EXE%).VersionInfo.FileVersion"') do
 echo %ver%
 
 output\Json2Puml.setup.%ver%.exe /silent
+
+json2puml /?

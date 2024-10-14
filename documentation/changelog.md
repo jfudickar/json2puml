@@ -1,3 +1,8 @@
+# **json2puml v2.2.21.117** - 14.10.2024
+## All Editions
+### Changed Feature
+- tJson2PumlGlobalDefinition.FindFilesInFolderList fixed, not foldernames without a filter a again fully supported for the inputlist and definitionfile folders.
+
 # **json2puml v2.2.20.116** - 09.10.2024
 ## All Editions
 ### Changed Feature
