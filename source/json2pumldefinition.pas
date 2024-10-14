@@ -2851,21 +2851,16 @@ begin
   for s in iFolderList do
   begin
     if DirectoryExists (s) then
-    begin
-      Filter := TPath.Combine (s, cDefaultJsonFileFilter) ;
-      FilePath := s;
-    end
+      FilePath := s
     else
-    begin
-      if iFilter.IsEmpty then
-        Filter := ExtractFileName (s)
-      else
-        Filter := ExtractFileName (iFilter);
-      if Filter.IsEmpty then
-        Filter := cDefaultJsonFileFilter;
       FilePath := ExtractFilePath (s);
-      Filter := TPath.Combine (FilePath, Filter);
-    end;
+    if not iFilter.IsEmpty then
+      Filter := ExtractFileName (iFilter)
+    else if not DirectoryExists (s) then
+      Filter := ExtractFileName (s);
+    if Filter.IsEmpty then
+      Filter := cDefaultJsonFileFilter;
+    Filter := TPath.Combine (FilePath, Filter);
     if findfirst (Filter, faAnyFile, searchResult) = 0 then
     begin
       repeat
