@@ -299,6 +299,7 @@ type
   private
     FDefinition: tJson2PumlCharacteristicDefinition;
     FUsedProperties: tStringList;
+    function GetFilled: boolean; override;
   protected
     procedure AddUsedProperties (iPropertyList: tStringList);
     procedure AddUsedProperty (iName: string);
@@ -596,14 +597,10 @@ begin
   AddLine := false;
   Color := GeneratePumlColorDefinition;
   ipuml.add (Format('%s %s {', [GeneratePumlClassName, Color]));
-  // if not ObjectType.IsEmpty then
-  // ipuml.add (Format('<b>%s - %s</b>', [ObjectType, ObjectIdent]))
-  // else
-  // ipuml.add (Format('<b>%s</b>', [ObjectIdent]));
-  if not ObjectType.IsEmpty then
-    ipuml.add (Format('<b>%s</b>', [ObjectType]));
-  if (Attributes.Count > 0) and FormatDefinition.ShowAttributes then
+  if (Attributes.Filled) and FormatDefinition.ShowAttributes then
   begin
+    if not ObjectType.IsEmpty then
+      ipuml.add (Format('<b>%s</b>', [ObjectType]));
     ipuml.add (tPumlHelper.TableLine(['attribute', 'value'], true));
     idLine := Attributes.IndexOf (ObjectIdentProperty);
     NameLine := Attributes.IndexOf (ObjectTitleProperty);
@@ -980,6 +977,7 @@ begin
   begin
     if iAddLine then
       ipuml.add ('---');
+    iAddLine := true;
     if iDirection = urdTo then
     begin
       ipuml.add ('<b>relations to</b>');
@@ -995,7 +993,6 @@ begin
       for r in Self do
         if (r.Direction = iDirection) then
           r.GeneratePumlObjectDetail (TempList);
-      iAddLine := true;
       TempList.Sort;
       ipuml.AddStrings (TempList);
     finally
@@ -1149,6 +1146,8 @@ procedure tPumlCharacteristicList.GeneratePuml (ipuml: tStrings; var iAddLine: b
 var
   Characteristic: tPumlCharacteristicObject;
 begin
+  if not Filled then
+    Exit;
   if iSortLines then
     Self.Sort;
   for Characteristic in Self do
@@ -1469,7 +1468,7 @@ procedure tPumlDetailObjectList.GeneratePumlClassList (ipuml: tStrings);
 var
   i: integer;
 begin
-  if Count <= 0 then
+  if not Filled then
     Exit;
   for i := 0 to Count - 1 do
   begin
@@ -1485,7 +1484,7 @@ end;
 
 procedure tPumlDetailObjectList.GeneratePumlTogether (ipuml: tStrings; iParentObjectName, iParentObjectTitle: string);
 begin
-  if (Count <= 0) then
+  if not Filled then
     Exit;
   ipuml.add ('together {');
   ipuml.add (Format('  %s', [ParentUmlObject.GeneratePumlClassName]));
@@ -1575,7 +1574,7 @@ var
   Lines: tStringList;
 begin
   IncludeParent := IncludeParentColumn;
-  if Count <= 0 then
+  if not Filled then
     Exit;
   if iIncludeHeader then
   begin
@@ -1662,7 +1661,7 @@ begin
       Result := ''
     else
     begin
-      if (ParentCharacteristicValue.DetailRecords.Count > 0) and (Row >= 0) then
+      if ParentCharacteristicValue.DetailRecords.Filled and (Row >= 0) then
         Idx := Format ('[%d]', [Row])
       else
         Idx := '';
@@ -1733,13 +1732,6 @@ end;
 
 procedure tPumlCharacteristicObject.GeneratePuml (ipuml: tStrings; var iAddLine: boolean; iSplitLength: integer;
   iSortLines: boolean);
-// var
-// CharRec: tPumlCharacteristicRecord;
-// Columns: tStringList;
-// Lines: tStringList;
-// PropName: string;
-// i, j: Integer;
-// S: string;
 begin
   if not Filled then
     Exit;
@@ -1750,66 +1742,11 @@ begin
     DetailRecords.GeneratePumlAsRecord (ipuml, true, iSplitLength, iSortLines)
   else
     DetailRecords.GeneratePumlAsList (ipuml, Definition, iSplitLength);
+end;
 
-  // if DetailRecords.Count > 0 then
-  // begin
-  // Columns := TStringList.Create;
-  // Lines := TStringList.Create;
-  // try
-  // if iAddLine then
-  // ipuml.add ('---');
-  // ipuml.add (Format('<b>%s</b>', [ParentProperty]));
-  // if Definition.CharacteristicType = jctRecord then
-  // begin
-  // i := UsedProperties.IndexOf ('parent');
-  // if i > 0 then
-  // UsedProperties.Move (i, 0);
-  // end
-  // else
-  // begin
-  // i := 0;
-  // for s in Definition.Propertylist do
-  // begin
-  // if s.IsEmpty then
-  // Continue;
-  // if s.Substring (0, 1) = '-' then
-  // Continue;
-  // j := UsedProperties.IndexOf (s);
-  // if j >= 0 then
-  // begin
-  // UsedProperties.Move (j, i);
-  // inc (i);
-  // end;
-  // end;
-  // end;
-  // if Definition.IncludeIndex then
-  // Columns.add ('idx');
-  // for PropName in UsedProperties do
-  // if not PropName.IsEmpty then
-  // Columns.add (tPumlHelper.CleanValue(PropName, ParentUmlObject.FormatDefinition.ValueSplitLength));
-  // ipuml.add (tPumlHelper.TableLine(Columns, true));
-  // for CharRec in Self do
-  // begin
-  // Columns.Clear;
-  // for PropName in UsedProperties do
-  // if not PropName.IsEmpty then
-  // Columns.add (tPumlHelper.CleanValue(CharRec.Values[PropName],
-  // ParentUmlObject.FormatDefinition.ValueSplitLength));
-  // Lines.add (tPumlHelper.TableLine(Columns));
-  // end;
-  // if ParentUmlObject.FormatDefinition.SortAttributes then
-  // Lines.Sort;
-  // if not Definition.IncludeIndex then
-  // ipuml.AddStrings (Lines)
-  // else
-  // for i := 0 to Lines.Count - 1 do
-  // ipuml.add (Format('| %d %s', [i + 1, Lines[i]]));
-  // iAddLine := true;
-  // finally
-  // Columns.Free;
-  // Lines.Free;
-  // end;
-  // end;
+function tPumlCharacteristicObject.GetFilled: boolean;
+begin
+  Result := DetailRecords.Filled
 end;
 
 class function tPumlHelper.CleanCRLF (iValue: string): string;
@@ -1963,7 +1900,7 @@ var
   Name: string;
   CharRec: tPumlCharacteristicRecord;
 begin
-  if DetailRecords.Count > 0 then
+  if DetailRecords.Filled then
   begin
     for CharRec in DetailRecords do
       CharRec.CalculateTableRow (iUsedColumns, iValueList);
@@ -1980,7 +1917,7 @@ end;
 procedure tPumlCharacteristicValue.GeneratePumlAsRecord (ipuml: tStrings; iIncludeParent: boolean;
   iSplitLength: integer);
 begin
-  if DetailRecords.Count > 0 then
+  if DetailRecords.Filled then
     DetailRecords.GeneratePumlAsRecord (ipuml, false, iSplitLength, false)
   else
     ipuml.add (CalculateRecordLine(iIncludeParent, iSplitLength));
@@ -2089,6 +2026,8 @@ var
   i: integer;
   r: integer;
 begin
+  if not Filled then
+    Exit;
   ipuml.add (Format('<b>%s</b>', [ParentCharacteristicValue.Attribute]));
 
   UsedColumns := tStringList.Create;
