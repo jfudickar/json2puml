@@ -81,6 +81,8 @@ Source: "..\samples\service\*.md"; DestDir: "{app}\samples\service"; Components:
 Source: "..\samples\tvmaze\*.json"; DestDir: "{app}\samples\tvmaze"; Components: Samples
 Source: "..\samples\tvmaze\*.cmd"; DestDir: "{app}\samples\tvmaze"; Components: Samples
 Source: "..\samples\tvmaze\*.md"; DestDir: "{app}\samples\tvmaze"; Components: Samples
+Source: "..\samples\json2puml\*.json"; DestDir: "{app}\samples\json2puml"; Components: Samples
+Source: "..\samples\json2puml\*.md"; DestDir: "{app}\samples\json2puml"; Components: Samples
 Source: "..\samples\spacex\*.json"; DestDir: "{app}\samples\spacex"; Components: Samples
 Source: "..\samples\spacex\*.cmd"; DestDir: "{app}\samples\spacex"; Components: Samples
 Source: "..\samples\spacex\*.md"; DestDir: "{app}\samples\spacex"; Components: Samples
