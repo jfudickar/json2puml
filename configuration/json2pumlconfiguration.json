@@ -19,15 +19,20 @@
 	"defaultDefinitionFileName": null,
 	"definitionFileSearchFolder": [
 		"e:\\Delphi\\Projects\\json2puml\\definition\\",
+		"e:\\Delphi\\Projects\\json2puml\\samples-local\\c1\\definition\\*definition*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\tmf\\*definition*.json",
+		"e:\\Delphi\\Projects\\json2puml\\samples\\json2puml\\*definition*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\jsonplaceholder\\*definition*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\spacex\\*definition*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\swapi\\*definition*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\tvmaze\\*definition*.json"
 	],
 	"inputListFileSearchFolder": [
+		"xe:\\Delphi\\Projects\\json2puml\\samples-local\\inputlisttest\\",
+		"e:\\Delphi\\Projects\\json2puml\\samples-local\\c1\\definition\\*inputlist*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples-local\\tmf\\inputlist\\*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\curl\\*inputlist*.json",
+		"e:\\Delphi\\Projects\\json2puml\\samples\\json2puml\\*inputlist*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\jsonplaceholder\\*inputlist*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\spacex\\*inputlist*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\swapi\\*inputlist*.json",

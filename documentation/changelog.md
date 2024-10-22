@@ -1,3 +1,12 @@
+# **json2puml v2.2.22.118** - 22.10.2024
+## All Editions
+### Changed Feature
+- Improved formatting of generated table columns (fixed \n detection)
+- Simple Array values will now be shown as a list
+- Fixed generation of classnames with special characters #54
+- Characteristic Values with a "|" are now correctly escaped to not brake the table output #55
+- Fixed generation of duplicate lines between empty attributes and / or empty characteristics #49 #51
+
 # **json2puml v2.2.21.117** - 14.10.2024
 ## All Editions
 ### Changed Feature

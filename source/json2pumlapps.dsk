@@ -1,38 +1,54 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\Indy10\Protocols\IdCustomHTTPServer.pas',0,1,963,1,987,0,0,,
-File_1=TSourceModule,'e:\Delphi\Components\QuickLogger\Quick.Logger.Provider.StringList.pas',0,1,178,152,193,0,0,,
-File_2=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\System.Classes.pas',0,1,10026,1,10049,0,0,,
-File_3=TSourceModule,'E:\Delphi\Projects\json2puml\source\json2pumlservicewebmodule.pas',0,1,71,96,85,0,0,,
-File_4=TSourceModule,'e:\Delphi\Components\delphimvcframework\sources\MVCFramework.Commons.pas',0,1,1,1,1,0,0,,
-File_5=TSourceModule,'E:\Delphi\Projects\json2puml\unittests\uttJson2PumlFormatDefinition.pas',0,1,1,1,1,0,0,,
-File_6=TSourceModule,'E:\Delphi\Projects\json2puml\unittests\utJson2PumlCurlUtils.pas',0,1,17,52,36,0,0,,
-File_7=TSourceModule,'E:\Delphi\Projects\json2puml\unittests\utJson2PumlFileDescriptionParameterList.pas',0,1,4,1,1,0,0,,
-File_8=TSourceModule,'E:\Delphi\Components\delphimvcframework\lib\loggerpro\LoggerPro.FileAppender.pas',0,1,37,51,67,0,0,,
-File_9=TSourceModule,'e:\Delphi\Components\loggerpro\LoggerPro.pas',0,1,170,106,208,0,0,,
-File_10=TSourceModule,'e:\Delphi\Components\delphimvcframework\sources\MVCFramework.pas',0,1,1055,36,1086,0,0,,
-File_11=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\System.Diagnostics.pas',0,1,59,1,82,0,0,,
-File_12=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,12768,1,12791,0,0,,
+File_0=TSourceModule,'C:\Users\jensf\Documents\Embarcadero\Studio\23.0\CatalogRepository\SynEdit-12\Source\SynEditUndo.pas',0,1,409,101,429,0,0,,
+File_1=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\Indy10\Protocols\IdCustomHTTPServer.pas',0,1,963,1,987,0,0,,
+File_2=TSourceModule,'e:\Delphi\Components\QuickLogger\Quick.Logger.Provider.StringList.pas',0,1,178,152,193,0,0,,
+File_3=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\System.Classes.pas',0,1,10026,1,10049,0,0,,
+File_4=TSourceModule,'E:\Delphi\Projects\json2puml\source\json2pumlservicewebmodule.pas',0,1,71,96,85,0,0,,
+File_5=TSourceModule,'e:\Delphi\Components\delphimvcframework\sources\MVCFramework.Commons.pas',0,1,1,1,1,0,0,,
+File_6=TSourceModule,'E:\Delphi\Projects\json2puml\unittests\uttJson2PumlFormatDefinition.pas',0,1,1,1,1,0,0,,
+File_7=TSourceModule,'E:\Delphi\Projects\json2puml\unittests\utJson2PumlCurlUtils.pas',0,1,17,52,36,0,0,,
+File_8=TSourceModule,'E:\Delphi\Projects\json2puml\unittests\utJson2PumlFileDescriptionParameterList.pas',0,1,4,1,1,0,0,,
+File_9=TSourceModule,'E:\Delphi\Components\delphimvcframework\lib\loggerpro\LoggerPro.FileAppender.pas',0,1,37,51,67,0,0,,
+File_10=TSourceModule,'e:\Delphi\Components\loggerpro\LoggerPro.pas',0,1,170,106,208,0,0,,
+File_11=TSourceModule,'e:\Delphi\Components\delphimvcframework\sources\MVCFramework.pas',0,1,1055,36,1086,0,0,,
+File_12=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\source\rtl\common\System.Diagnostics.pas',0,1,59,1,82,0,0,,
+File_13=TSourceModule,'c:\program files (x86)\embarcadero\studio\22.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,12768,1,12791,0,0,,
 
 [Modules]
-Module0=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
-Module1=E:\Delphi\Projects\json2puml\source\json2pumldefinition.pas
-Module2=E:\Delphi\Projects\json2puml\source\json2pumltools.pas
-Module3=E:\Delphi\Projects\json2puml\source\json2pumlinputhandler.pas
-Module4=E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pas
-Module5=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
-Module6=E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj
-Module7=E:\Delphi\Projects\json2puml\source\commandlinetools.pas
-Module8=E:\Delphi\Projects\json2puml\source\json2pumlloghandler.pas
-Module9=E:\Delphi\Projects\json2puml\source\json2puml.dproj
-Module10=E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj
-Module11=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
-Module12=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
-Module13=E:\Delphi\Projects\json2puml\unittests\utJson2PumlBasePropertyList.pas
-Module14=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
+Module0=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
+Module1=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
+Module2=E:\Delphi\Projects\json2puml\source\json2puml.dproj
+Module3=E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj
+Module4=E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj
+Module5=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
+Module6=E:\Delphi\Projects\json2puml\source\json2pumldefinition.pas
+Module7=E:\Delphi\Projects\json2puml\source\json2pumltools.pas
+Module8=E:\Delphi\Projects\json2puml\source\json2pumlinputhandler.pas
+Module9=E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pas
+Module10=E:\Delphi\Projects\json2puml\source\commandlinetools.pas
+Module11=E:\Delphi\Projects\json2puml\source\json2pumlloghandler.pas
+Module12=E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas
+Module13=E:\Delphi\Projects\json2puml\source\json2pumlbasedefinition.pas
+Module14=E:\Delphi\Projects\json2puml\unittests\utJson2PumlBasePropertyList.pas
 Module15=E:\Delphi\Projects\json2puml\source\jsontools.pas
 Module16=E:\Delphi\Projects\json2puml\source\json2pumlvcltools.pas
 Count=17
 EditWindowCount=1
+
+[E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas]
+ModuleType=TSourceModule
+
+[E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas]
+ModuleType=TSourceModule
+
+[E:\Delphi\Projects\json2puml\source\json2puml.dproj]
+ModuleType=TBaseProject
+
+[E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj]
+ModuleType=TBaseProject
+
+[E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj]
+ModuleType=TBaseProject
 
 [E:\Delphi\Projects\json2puml\source\json2pumlconst.pas]
 ModuleType=TSourceModule
@@ -49,23 +65,11 @@ ModuleType=TSourceModule
 [E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pas]
 ModuleType=TSourceModule
 
-[E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas]
-ModuleType=TSourceModule
-
-[E:\Delphi\Projects\json2puml\source\json2pumlservice.dproj]
-ModuleType=TBaseProject
-
 [E:\Delphi\Projects\json2puml\source\commandlinetools.pas]
 ModuleType=TSourceModule
 
 [E:\Delphi\Projects\json2puml\source\json2pumlloghandler.pas]
 ModuleType=TSourceModule
-
-[E:\Delphi\Projects\json2puml\source\json2puml.dproj]
-ModuleType=TBaseProject
-
-[E:\Delphi\Projects\json2puml\unittests\json2pumlunittests.dproj]
-ModuleType=TBaseProject
 
 [E:\Delphi\Projects\json2puml\source\json2pumlconverter.pas]
 ModuleType=TSourceModule
@@ -76,9 +80,6 @@ ModuleType=TSourceModule
 [E:\Delphi\Projects\json2puml\unittests\utJson2PumlBasePropertyList.pas]
 ModuleType=TSourceModule
 
-[E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas]
-ModuleType=TSourceModule
-
 [E:\Delphi\Projects\json2puml\source\jsontools.pas]
 ModuleType=TSourceModule
 
@@ -87,7 +88,7 @@ ModuleType=TSourceModule
 
 [EditWindow0]
 ViewCount=17
-CurrentEditView=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
+CurrentEditView=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
 View0=0
 View1=1
 View2=2
@@ -128,7 +129,7 @@ RightPanelSize=1996
 RightPanelClients=DockSite2,DockSite4
 RightPanelData=00000800010100000000061000000000000001CC0700000000000001000000004912000009000000446F636B536974653201000000007C1C000009000000446F636B5369746534FFFFFFFF
 BottomPanelSize=1542
-BottomPanelClients=MessageView,DockSite1
+BottomPanelClients=DockSite1,MessageView
 BottomPanelData=0000080001020100000009000000446F636B536974653103450000000000000206060000000000000100000000034500000F0000004D65737361676556696577466F726DFFFFFFFF
 BottomMiddlePanelSize=0
 BottomMiddlePanelClients=DockSite0,GraphDrawingModel
@@ -159,9 +160,9 @@ EditViewName=E:\Delphi\Projects\json2puml\source\commandlinetools.pas
 [View2]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlservicecontroller.pas
-CursorX=1
-CursorY=514
-TopLine=498
+CursorX=97
+CursorY=323
+TopLine=302
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -181,9 +182,9 @@ EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlloghandler.pas
 [View4]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlpuml.pas
-CursorX=90
-CursorY=1578
-TopLine=1553
+CursorX=30
+CursorY=83
+TopLine=83
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -236,9 +237,9 @@ EditViewName=E:\Delphi\Projects\json2puml\source\json2pumlconverterdefinition.pa
 [View9]
 CustomEditViewType=TEditView
 Module=E:\Delphi\Projects\json2puml\source\json2pumlconst.pas
-CursorX=130
-CursorY=185
-TopLine=144
+CursorX=126
+CursorY=189
+TopLine=157
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -322,13 +323,14 @@ Bookmarks=
 EditViewName=E:\Delphi\Projects\json2puml\unittests\utJson2PumlBasePropertyList.pas
 
 [Watches]
-Count=6
+Count=7
 Watch0='InputParameter.Value',256,0,18,1,0,'Watches',1
 Watch1='LocalCurlMappingParameterList.text',256,0,18,1,0,'Watches',1
 Watch2='CurlParameter.CalculatedValue',256,0,18,1,0,'Watches',1
 Watch3='CurlParameter.name',256,0,18,1,0,'Watches',1
 Watch4='CurlParameter.CalculatedValue',256,0,18,1,0,'Watches',1
 Watch5='Curlparameter.value',256,0,18,1,0,'Watches',1
+Watch6='Attribute',256,0,18,1,0,'Watches',1
 
 [WatchWindow]
 WatchColumnWidth=120
@@ -954,7 +956,7 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=1272
+Left=0
 Top=28
 Width=3824
 Height=1422
@@ -1043,5 +1045,5 @@ ActiveTabID=ToolForm
 TabDockClients=ToolForm,TemplateView
 
 [ActiveProject]
-ActiveProject=2
+ActiveProject=3
 
