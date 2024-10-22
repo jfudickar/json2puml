@@ -93,12 +93,12 @@ type
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     destructor Destroy; override;
-    function AddObject (const S: string; AObject: tObject): integer;
+    function AddObject (const s: string; AObject: tObject): integer;
     procedure Assign (Source: tPersistent); override;
     procedure clear; override;
     procedure Delete (Index: integer);
-    function IndexOf (S: string): integer;
-    function IndexOfName (S: string): integer;
+    function IndexOf (s: string): integer;
+    function IndexOfName (s: string): integer;
     procedure Sort;
     procedure UpdateRedundant; override;
     property Count: integer read GetCount;
@@ -203,13 +203,14 @@ type
   private
     FAttribute: string;
     FDetailRecords: tPumlCharacteristicRecordList;
-    FValue: string;
+    FValueList: tStringList;
     function GetIdent: string; override;
     function GetFilled: boolean; override;
     function GetParentCharacteristicName: string;
     function GetParentCharacteristicNameAttribute: string;
     function GetParentCharacteristicNameIndex: string;
     function GetParentCharactisticRecord: tPumlCharacteristicRecord;
+    function GetValue: string;
   public
     constructor Create (iParentObject: tBasePumlObject); override;
     destructor Destroy; override;
@@ -223,7 +224,8 @@ type
     property ParentCharacteristicNameAttribute: string read GetParentCharacteristicNameAttribute;
     property ParentCharacteristicNameIndex: string read GetParentCharacteristicNameIndex;
     property ParentCharactisticRecord: tPumlCharacteristicRecord read GetParentCharactisticRecord;
-    property Value: string read FValue write FValue;
+    property Value: string read GetValue;
+    property ValueList: tStringList read FValueList;
   end;
 
   tPumlCharacteristicValueEnumerator = class
@@ -744,50 +746,50 @@ var
 
   procedure addpart (iValue: string; iFormatChar: string);
   var
-    S: string;
+    s: string;
   begin
     if iValue.IsEmpty then
       Exit;
     if iFormat then
-      S := Format ('<%s>%s</%s>', [iFormatChar, iValue, iFormatChar])
+      s := Format ('<%s>%s</%s>', [iFormatChar, iValue, iFormatChar])
     else
-      S := iValue;
+      s := iValue;
     if NewCaption.IsEmpty then
-      NewCaption := S
+      NewCaption := s
     else if (NewCaptionLengh > SplitLength) and (SplitLength > 0) then
-      NewCaption := Format ('%s%s%s', [NewCaption, iSeparator, S])
+      NewCaption := Format ('%s%s%s', [NewCaption, iSeparator, s])
     else
-      NewCaption := Format ('%s %s', [NewCaption, S]);
+      NewCaption := Format ('%s %s', [NewCaption, s]);
     NewCaptionLengh := NewCaptionLengh + Length (iValue);
   end;
 
-  function SplitPosition (S: string): integer;
+  function SplitPosition (s: string): integer;
   begin
-    Result := S.Substring (SplitLength).IndexOf (FormatDefinition.CaptionSplitCharacter);
-    if (Result < 0) and (S.Length > round(SplitLength * 1.5)) then
+    Result := s.Substring (SplitLength).IndexOf (FormatDefinition.CaptionSplitCharacter);
+    if (Result < 0) and (s.Length > round(SplitLength * 1.5)) then
       Result := SplitLength;
   end;
 
   procedure SplitIdent;
   var
-    S: string;
+    s: string;
     i: integer;
   begin
     if (ObjectIdent.Length > SplitLength) and (SplitLength > 0) then
     begin
       NewIdent := '';
-      S := ObjectIdent;
-      i := SplitPosition (S);
-      while (i >= 0) and (S.Length - i - SplitLength > 5) do
+      s := ObjectIdent;
+      i := SplitPosition (s);
+      while (i >= 0) and (s.Length - i - SplitLength > 5) do
       begin
         if iFormat then
-          NewIdent := NewIdent + S.Substring (0, SplitLength + i) + '</i>' + iSeparator + '    <i>'
+          NewIdent := NewIdent + s.Substring (0, SplitLength + i) + '</i>' + iSeparator + '    <i>'
         else
-          NewIdent := NewIdent + S.Substring (0, SplitLength + i) + iSeparator + '    ';
-        S := S.Substring (SplitLength + i);
-        i := SplitPosition (S);
+          NewIdent := NewIdent + s.Substring (0, SplitLength + i) + iSeparator + '    ';
+        s := s.Substring (SplitLength + i);
+        i := SplitPosition (s);
       end;
-      NewIdent := NewIdent + S;
+      NewIdent := NewIdent + s;
     end
     else
     begin
@@ -1303,9 +1305,9 @@ begin
   inherited Destroy;
 end;
 
-function tBasePumlStringList.AddObject (const S: string; AObject: tObject): integer;
+function tBasePumlStringList.AddObject (const s: string; AObject: tObject): integer;
 begin
-  Result := ItemList.AddObject (S, AObject);
+  Result := ItemList.AddObject (s, AObject);
 end;
 
 procedure tBasePumlStringList.Assign (Source: tPersistent);
@@ -1401,14 +1403,14 @@ begin
   Result := ItemList.Text;
 end;
 
-function tBasePumlStringList.IndexOf (S: string): integer;
+function tBasePumlStringList.IndexOf (s: string): integer;
 begin
-  Result := ItemList.IndexOf (S);
+  Result := ItemList.IndexOf (s);
 end;
 
-function tBasePumlStringList.IndexOfName (S: string): integer;
+function tBasePumlStringList.IndexOfName (s: string): integer;
 begin
-  Result := ItemList.IndexOfName (S);
+  Result := ItemList.IndexOfName (s);
 end;
 
 procedure tBasePumlStringList.SetDuplicates (const Value: tDuplicates);
@@ -1507,7 +1509,6 @@ var
 begin
   NewValue := tPumlCharacteristicValue.Create (Self);
   NewValue.Attribute := iAttribute;
-  NewValue.Value := iValue;
   i := IndexOf (NewValue.Ident);
   if i >= 0 then
     if iReplace then
@@ -1526,6 +1527,8 @@ begin
     AddObject (NewValue.Ident, NewValue);
     Result := NewValue;
   end;
+  if Result.ValueList.IndexOf (iValue) < 0 then
+    Result.ValueList.add (iValue);
 end;
 
 procedure tPumlCharacteristicRecord.AddValues (iValueList: tStringList);
@@ -1752,7 +1755,8 @@ end;
 
 class function tPumlHelper.CleanCRLF (iValue: string): string;
 begin
-  Result := iValue.TrimRight ([' ', #10, #13, #9]).Replace (#13#10, #10).Replace (#13, #10).Replace (#10, cNewLinePuml);
+  Result := iValue.TrimRight ([' ', #10, #13, #9]).Replace (#13#10, #10).Replace (#13, #10)
+    .Replace (#10, ' ' + cNewLinePuml);
 end;
 
 class function tPumlHelper.CleanValue (iValue: string; iSplitLength: integer): string;
@@ -1776,7 +1780,7 @@ begin
       i := Value.Length - 1;
     if i < iSplitLength then
     begin
-      Result := Result + Value.Substring (0, i) + cNewLinePuml;
+      Result := Result + Value.Substring (0, i) + ' ' + cNewLinePuml;
       Value := Value.Substring (i + 2);
     end
     else
@@ -1788,12 +1792,12 @@ begin
         i := iSplitLength;
       if i > 0 then
       begin
-        Result := Result + Value.Substring (0, i) + cNewLinePuml;
+        Result := Result + Value.Substring (0, i) + ' ' + cNewLinePuml;
         Value := Value.Substring (i);
       end
       else
       begin
-        Result := Result + Value + cNewLinePuml;
+        Result := Result + Value + ' ' + cNewLinePuml;
         Value := '';
       end;
     end;
@@ -1844,7 +1848,7 @@ end;
 
 class function tPumlHelper.TableColumnValue (iValue: string): string;
 begin
-  Result := iValue.Replace ('\n', '\n ').Replace ('|', '\|').Replace (#13#10, '\n ').Replace (#10, '\n ');
+  Result := ReplaceTab (iValue.Replace('\n', '\n ').Replace('|', '\|').Replace(#13#10, '\n ').Replace(#10, '\n '));
 end;
 
 class function tPumlHelper.TableLine (const iColumns: array of const; iHeader: boolean = false): string;
@@ -1862,14 +1866,14 @@ end;
 class function tPumlHelper.TableLine (iColumns: tStringList; iHeader: boolean = false;
   iClearColumns: boolean = true): string;
 var
-  S: string;
+  s: string;
 begin
   Result := '';
   if iColumns.Count <= 0 then
     Exit;
   Result := TableColumnSeparator;
-  for S in iColumns do
-    Result := Result + TableColumn (S, iHeader);
+  for s in iColumns do
+    Result := Result + TableColumn (s, iHeader);
   if iClearColumns then
     iColumns.clear;
 end;
@@ -1878,10 +1882,12 @@ constructor tPumlCharacteristicValue.Create (iParentObject: tBasePumlObject);
 begin
   inherited Create (iParentObject);
   FDetailRecords := tPumlCharacteristicRecordList.Create (Self);
+  FValueList := tStringList.Create ();
 end;
 
 destructor tPumlCharacteristicValue.Destroy;
 begin
+  FValueList.Free;
   FDetailRecords.Free;
   inherited Destroy;
 end;
@@ -1967,6 +1973,23 @@ begin
     Result := tPumlCharacteristicRecord (ParentObject)
   else
     Result := nil;
+end;
+
+function tPumlCharacteristicValue.GetValue: string;
+var
+  s: string;
+begin
+  if ValueList.Count <= 1 then
+    Result := ValueList.Text
+  else
+  begin
+    Result := '';
+    for s in ValueList do
+      if Result.IsEmpty then
+        Result := '* ' + s
+      else
+        Result := Result + ' ' + cNewLinePuml + '* ' + s;
+  end;
 end;
 
 constructor tPumlCharacteristicValueEnumerator.Create (ARecord: tPumlCharacteristicRecord);
