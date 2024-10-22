@@ -42,6 +42,7 @@ type
     class function ReplaceNewLine (iValue: string): string;
     class function ReplaceTab (iValue: string): string;
     class function ReplaceTabNewLine (iValue: string): string;
+    class function TableColumnValue(iValue : string): string;
     class function TableColumnSeparator: string;
     class function TableColumn (iValue: string; iHeader: boolean = false): string;
     class function TableLine (const iColumns: array of const; iHeader: boolean = false): string; overload;
@@ -1831,14 +1832,19 @@ end;
 class function tPumlHelper.TableColumn (iValue: string; iHeader: boolean = false): string;
 begin
   if iHeader then
-    Result := Format ('= %s %s', [iValue.Replace('\n', '\n '), TableColumnSeparator])
+    Result := Format ('= %s %s', [TableColumnValue(iValue), TableColumnSeparator])
   else
-    Result := Format (' %s %s', [iValue.Replace('\n', '\n '), TableColumnSeparator]);
+    Result := Format (' %s %s', [TableColumnValue(iValue), TableColumnSeparator]);
 end;
 
 class function tPumlHelper.TableColumnSeparator: string;
 begin
   Result := '|';
+end;
+
+class function tPumlHelper.TableColumnValue(iValue : string): string;
+begin
+  Result := iValue.Replace('\n', '\n ').Replace('|', '\|');
 end;
 
 class function tPumlHelper.TableLine (const iColumns: array of const; iHeader: boolean = false): string;
