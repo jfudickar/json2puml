@@ -104,6 +104,8 @@ function ValidateOutputSuffix (iOutputSuffix: string): string;
 
 function CurrentThreadId: tThreadId;
 
+function VarRecToString(const iVarRec: TVarRec): string;
+
 function LogIndent (iIndent: integer): string;
 
 function ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration (iValue: string): string;
@@ -163,7 +165,7 @@ uses
 {$IFDEF MSWINDOWS} Winapi.Windows, Winapi.ShellAPI, VCL.Forms, {$ENDIF}
   System.Generics.Collections, System.IOUtils, System.Math, System.DateUtils, System.NetEncoding,
   json2pumlbasedefinition, json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression,
-  jsontools, commandlinetools;
+  jsontools, commandlinetools, System.Variants, System.Rtti;
 
 function ApplicationCompileVersion: string;
 begin
@@ -952,6 +954,33 @@ begin
   for ErrorType := low(tJson2PumlErrorType) to high(tJson2PumlErrorType) do
     ErrorType.RenderErrorResponse (oJsonOutPut, 1);
   WriteArrayEndToJson (oJsonOutPut, 0);
+end;
+
+function VarRecToString(const iVarRec: TVarRec): string;
+begin
+//  case iVarRec.VType of
+//    vtInteger:
+//      Result := IntToStr (iVarRec.VInteger);
+//    vtBoolean:
+//      Result := BoolToStr (iVarRec.VBoolean, true);
+//    vtChar:
+//      Result := iVarRec.VChar;
+//    vtExtended:
+//      Result := FloatToStr (iVarRec.VExtended^);
+//    vtString:
+//      Result := string(iVarRec.VString);
+//    vtPChar:
+//      Result := string(iVarRec.VPChar);
+//    vtAnsiString:
+//      Result := string(iVarRec.VAnsiString);
+//    vtWideString:
+//      Result := string(iVarRec.VWideString);
+//    vtVariant:
+//      Result := VarToStr (iVarRec.VVariant^);
+//    else
+//      Result := '';
+//  end;
+  Result := TValue.FromVarRec(iVarRec).ToString;
 end;
 
 class function TCurlUtils.CalculateCommand (const iCurlCommand, iBaseUrl: string;

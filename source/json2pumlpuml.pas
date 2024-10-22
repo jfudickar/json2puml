@@ -42,7 +42,7 @@ type
     class function ReplaceNewLine (iValue: string): string;
     class function ReplaceTab (iValue: string): string;
     class function ReplaceTabNewLine (iValue: string): string;
-    class function TableColumnValue(iValue : string): string;
+    class function TableColumnValue (iValue: string): string;
     class function TableColumnSeparator: string;
     class function TableColumn (iValue: string; iHeader: boolean = false): string;
     class function TableLine (const iColumns: array of const; iHeader: boolean = false): string; overload;
@@ -1776,7 +1776,7 @@ begin
       i := Value.Length - 1;
     if i < iSplitLength then
     begin
-      Result := Result + Value.Substring (0, i + 1) + cNewLinePuml;
+      Result := Result + Value.Substring (0, i) + cNewLinePuml;
       Value := Value.Substring (i + 2);
     end
     else
@@ -1842,9 +1842,9 @@ begin
   Result := '|';
 end;
 
-class function tPumlHelper.TableColumnValue(iValue : string): string;
+class function tPumlHelper.TableColumnValue (iValue: string): string;
 begin
-  Result := iValue.Replace('\n', '\n ').Replace('|', '\|');
+  Result := iValue.Replace ('\n', '\n ').Replace ('|', '\|').Replace (#13#10, '\n ').Replace (#10, '\n ');
 end;
 
 class function tPumlHelper.TableLine (const iColumns: array of const; iHeader: boolean = false): string;
@@ -1856,8 +1856,7 @@ begin
     Exit;
   Result := TableColumnSeparator;
   for i := 0 to high(iColumns) do
-    Result := Result + TableColumn ('%s', iHeader);
-  Result := Format (Result, iColumns).Replace ('\n', '\n ').Replace (#13#10, '\n ').Replace (#10, '\n ');
+    Result := Result + TableColumn (VarRecToString(iColumns[i]), iHeader);
 end;
 
 class function tPumlHelper.TableLine (iColumns: tStringList; iHeader: boolean = false;

@@ -752,9 +752,8 @@ var
 
   procedure AddFileLine (iFileTitle, iFileName: string);
   begin
-    Puml.Add (tPumlHelper.TableLine([iFileTitle,
-      tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(iFileName))]));
-    FileLength := Max (FileLength, tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath(iFileName)).length);
+    Puml.Add (tPumlHelper.TableLine([iFileTitle, InputHandler.CleanSummaryPath(iFileName)]));
+    FileLength := Max (FileLength, InputHandler.CleanSummaryPath(iFileName).length);
   end;
 
 begin
@@ -820,10 +819,9 @@ begin
     for i := 0 to InputHandlerRecord.InputFile.Output.SourceFiles.Count - 1 do
     begin
       FileDetailRecord := tJson2PumlFileDetailRecord (InputHandlerRecord.InputFile.Output.SourceFiles.Objects[i]);
-      Puml.Add (tPumlHelper.TableLine([tPumlHelper.ReplaceTabNewLine(InputHandler.CleanSummaryPath
-        (FileDetailRecord.Filename)), DateTimeToStr(FileDetailRecord.FileDate),
-        Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12), FileDetailRecord.NoOfLines.ToString.PadLeft(8),
-        FileDetailRecord.NoOfRecords.ToString.PadLeft(12)]));
+      Puml.Add (tPumlHelper.TableLine([InputHandler.CleanSummaryPath(FileDetailRecord.Filename),
+        DateTimeToStr(FileDetailRecord.FileDate), Format('%4.3f', [FileDetailRecord.FileSize / 1024]).PadLeft(12),
+        FileDetailRecord.NoOfLines.ToString.PadLeft(8), FileDetailRecord.NoOfRecords.ToString.PadLeft(12)]));
     end;
   end;
 end;
