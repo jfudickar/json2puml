@@ -1,0 +1,100 @@
+{
+	"description": {
+		"displayName": "json2puml service definition",
+		"description": "Definition file to visualize the static json2puml service results"
+	},
+	"defaultOption": "default",
+	"options": [
+	],
+	"baseOption": {
+		"continueAfterUnhandledObjects": true,
+		"groupDetailObjectsTogether": null,
+		"hideDuplicateRelations": false,
+		"identifyObjectsByTypeAndIdent": false,
+		"legendShowInfo": true,
+		"legendShowObjectCount": null,
+		"legendShowObjectFormats": true,
+		"legendShowFileInfos": true,
+		"attributeProperties": [
+			"*"
+		],
+		"objectProperties": [
+			"*"
+		],
+		"objectTypeProperties": [
+		],
+		"objectTypeRenames": [
+		],
+		"objectIdentifierProperties": [
+			"name",
+			"service"
+		],
+		"objectTitleProperties": [
+		],
+		"objectDetailProperties": [
+		],
+		"relationshipProperties": [
+		],
+		"relationshipTypeProperties": [
+		],
+		"relationshipTypeArrowFormats": [
+		],
+		"groupProperties": [
+		],
+		"characteristicProperties": [
+			{"parentProperty": "curlParameter", "type": "list", "propertyList": "*"},
+			{"parentProperty": "options", "type": "list", "propertyList": "*"}
+		],
+		"hiddenProperties": [
+		],
+		"pumlHeaderLines": [
+			"hide stereotype"
+		],
+		"objectFormats": {
+			"baseFormat": {
+				"objectFilter": [],
+				"iconColor": null,
+				"skinParams": ["BackgroundColor=STRATEGY"],
+				"captionShowIdent": true,
+				"captionShowTitle": true,
+				"captionShowType": true,
+				"captionSplitCharacter": "_",
+				"captionSplitLength": 0,
+				"showAttributes": true,
+				"showCharacteristics": true,
+				"showFromRelations": false,
+				"showIfEmpty": true,
+				"showNullValues": null,
+				"showToRelations": false,
+				"sortAttributes": null,
+				"valueSplitLength": 250
+			},
+			"formats": [
+				{
+					"formatName": "service",
+					"definition": {
+						"objectFilter": ["service"],
+						"iconColor": "green",
+						"skinParams": ["BackgroundColor=lightGreen"]
+					}
+				},
+				{
+					"formatName": "inputlist",
+					"definition": {
+						"objectFilter": ["inputlist"],
+						"iconColor": "Cornflowerblue",
+						"skinParams": ["BackgroundColor=deepskyBlue"]
+					}
+				},
+				{
+					"formatName": "definitionFile",
+					"definition": {
+						"objectFilter": ["definitionFile"],
+						"iconColor": "GoldenRod",
+						"skinParams": ["BackgroundColor=Gold"]
+					}
+				}
+			]
+		}
+	}
+}

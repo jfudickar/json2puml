@@ -1,0 +1,64 @@
+{
+	"description": {
+		"displayName": "json2puml service details",
+		"description": "Static information about the current json2puuml service",
+		"curlParameter": [
+		]
+	},
+	"definitionFile": "json2puml_definition.json",
+	"generateDetails": true,
+	"generateSummary": true,
+	"group": null,
+	"detail": null,
+	"option": null,
+	"job": null,
+	"jobDescription": null,
+	"outputFormats": "svg",
+	"outputPath": null,
+	"outputSuffix": null,
+	"curlBaseUrl": "http://localhost:8080/api/",
+	"curlUrlAddon": null,
+	"curlOptions": null,
+	"curlUserAgentInformation": null,
+	"curlSpanIdHeader": null,
+	"curlTraceIdHeader": null,
+	"curlMappingParameter": [
+	],
+	"summaryFile": "json2puml_service_information",
+	"input": [
+		{
+			"inputFile": "service_information.json",
+			"leadingObject": "service",
+			"generateOutput": true,
+			"mandatory": false,
+			"curlBaseUrl": null,
+			"curlCache": 0,
+			"curlExecuteEvaluation": null,
+			"curlFileSuffix": null,
+			"curlFormatOutput": true,
+			"curlOptions": null,
+			"curlUrl": "serviceinformation",
+			"curlOutputParameter": [
+			],
+			"splitIdentifier": null,
+			"splitInputFile": false
+		},
+		{
+			"inputFile": "inputlistfile.json",
+			"leadingObject": "inputlist",
+			"generateOutput": true,
+			"mandatory": false,
+			"curlBaseUrl": null,
+			"curlCache": 0,
+			"curlExecuteEvaluation": null,
+			"curlFileSuffix": null,
+			"curlFormatOutput": true,
+			"curlOptions": null,
+			"curlUrl": "inputlistfile",
+			"curlOutputParameter": [
+			],
+			"splitIdentifier": null,
+			"splitInputFile": false
+		}
+	]
+}
