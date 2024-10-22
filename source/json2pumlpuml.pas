@@ -1804,7 +1804,7 @@ end;
 class function tPumlHelper.PUmlIdentifier (iIdentifier: string): string;
 begin
   Result := iIdentifier.Replace (' ', '_').Replace ('-', '_').Replace (':', '_').Replace ('/', '_').Replace ('\', '_')
-    .Replace ('.', '_').ToLower;
+    .Replace ('.', '_').Replace ('{', '_').Replace ('}', '_').ToLower;
 end;
 
 class function tPumlHelper.RelationLine (iFromIdent, iArrowFormat, iToIdent, iComment: string): string;
