@@ -670,6 +670,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function CommandLineParameterStr (iIncludeProgram: boolean): string;
+    procedure GenerateEnvironmentParameters(iLogList: tStringList);
     procedure GenerateLogParameters (iLogList: tStringList);
     procedure LogLineWrapped (iParameter, iDescription: string; iParameterLength: integer = 50;
       iLineLength: integer = 110);
@@ -2192,111 +2193,6 @@ begin
     Inc (FIndex);
 end;
 
-constructor tJson2PumlCommandLineParameter.Create;
-begin
-  inherited Create;
-  Failed := false;
-  FInputFilterList := tJson2PumlFilterList.Create ();
-  FCurlParameter := tJson2PumlCurlParameterList.Create ();
-  FCurlParameter.MulitpleValues := true;
-  FCurlAuthenticationParameter := tJson2PumlCurlParameterList.Create ();
-  FCurlAuthenticationParameter.MulitpleValues := true;
-end;
-
-destructor tJson2PumlCommandLineParameter.Destroy;
-begin
-  FCurlAuthenticationParameter.Free;
-  FCurlParameter.Free;
-  FInputFilterList.Free;
-  inherited Destroy;
-end;
-
-function tJson2PumlCommandLineParameter.CommandLineParameterStr (iIncludeProgram: boolean): string;
-var
-  i: integer;
-begin
-  if iIncludeProgram then
-    Result := ParamStr (0) + ' '
-  else
-    Result := '';
-  for i := 1 to ParamCount do
-    Result := Result + ParamStr (i) + ' ';
-  Result := Result.Trim;
-end;
-
-function tJson2PumlCommandLineParameter.ExistsSingleInputParameter (iParameterName: string): boolean;
-begin
-  Result := FindCmdLineSwitch (iParameterName);
-  if Result then
-    LogParameterValue (iParameterName, Result);
-end;
-
-procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStringList);
-
-  procedure AddLine (iName, iValue: string);
-  var
-    envValue: string;
-  begin
-    if not iValue.IsEmpty then
-    begin
-      envValue := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
-      if iValue <> envValue then
-        iLogList.Add (Format('  %s%-30s: %s (%s)', [cCmdLinePrefix, iName.ToLower, iValue, envValue]))
-      else
-        iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, iValue]));
-    end;
-  end;
-  procedure AddLineBool (iName: string; iValue: boolean);
-  begin
-    if iValue then
-      iLogList.Add (Format('  %s%-30s: %s', [cCmdLinePrefix, iName.ToLower, cTrue]));
-  end;
-
-begin
-  iLogList.Clear;
-  iLogList.Add ('Command Line Parameter ');
-  AddLine ('BaseOutputPath', BaseOutputPath);
-  AddLine ('ConfigurationFileName', ConfigurationFileName);
-  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileName);
-  AddLineBool ('CurlIgnoreCache', CurlIgnoreCache);
-  AddLine ('CurlParameterFileName', CurlParameterFileName);
-  AddLineBool ('Debug', Debug);
-  AddLine ('DefinitionFileName', DefinitionFileName);
-  AddLine ('JobDescription', JobDescription);
-  AddLine ('Detail', Detail);
-  AddLineBool ('FormatDefinitionFiles', FormatDefinitionFiles);
-  AddLineBool ('GenerateDetails', GenerateDetails);
-  AddLineBool ('GenerateOutputDefinition', GenerateOutputDefinition);
-  AddLineBool ('GenerateSummary', GenerateSummary);
-  AddLine ('Group', Group);
-  AddLine ('IdentFilter', IdentFilter);
-  AddLine ('InputFileName', InputFileName);
-  AddLine ('InputListFileName', InputListFileName);
-  AddLine ('JavaRuntimeParameter', JavaRuntimeParameter);
-  AddLine ('Jobname', Jobname);
-  AddLine ('LeadingObject', LeadingObject);
-  AddLineBool ('NoLogFiles', NoLogFiles);
-  AddLine ('OpenOutputs', OpenOutputsStr);
-  AddLine ('Option', Option);
-  AddLine ('OptionFileName', OptionFileName);
-  AddLine ('OutputFormat', OutputFormatStr);
-  AddLine ('OutputPath', OutputPath);
-  AddLine ('OutputSuffix', OutputSuffix);
-  AddLine ('ParameterFileName', ParameterFileName);
-  AddLine ('PlantUmlJarFileName', PlantUmlJarFileName);
-  AddLine ('PlantUmlRuntimeParameter', PlantUmlRuntimeParameter);
-  AddLine ('ServicePort', ServicePortStr);
-  AddLine ('SplitIdentifier', SplitIdentifier);
-  AddLine ('SplitInputFile', SplitInputFileStr);
-  AddLine ('SummaryFileName', SummaryFileName);
-  AddLine ('TitleFilter', TitleFilter);
-  iLogList.Add ('Environment Parameter ');
-  AddLine ('ConfigurationFileName', ConfigurationFileNameEnvironment);
-  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileNameEnvironment);
-  AddLine ('DefinitionFileName', DefinitionFileNameEnvironment);
-  AddLine ('PlantUmlJarFileName', PlantUmlJarFileNameEnvironment);
-end;
-
 function tJson2PumlCommandLineParameter.GetGenerateDetails: boolean;
 begin
   Result := StringToBoolean (GenerateDetailsStr, false);
@@ -2310,6 +2206,64 @@ end;
 function tJson2PumlCommandLineParameter.GetSplitInputFile: boolean;
 begin
   Result := StringToBoolean (SplitInputFileStr, false);
+end;
+
+procedure tJson2PumlCommandLineParameter.SetIdentFilter (const Value: string);
+begin
+  FIdentFilter := Value;
+  InputFilterList.IdentFilter.Text := Value;
+end;
+
+procedure tJson2PumlCommandLineParameter.SetOpenOutputsStr (const Value: string);
+var
+  TempList: tStringList;
+  s: string;
+  f: tJson2PumlOutputFormat;
+begin
+  FOpenOutputsStr := Value;
+  FOpenOutputs := [];
+  TempList := tStringList.Create;
+  try
+    TempList.LineBreak := ',';
+    TempList.Text := Value.ToLower;
+    for s in TempList do
+      for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
+        if (s.Trim = f.ToString) or (s.Trim = cOpenOutputAll) then
+          FOpenOutputs := FOpenOutputs + [f];
+  finally
+    TempList.Free;
+  end;
+
+end;
+
+procedure tJson2PumlCommandLineParameter.SetOutputFormatStr (const Value: string);
+begin
+  FOutputFormatStr := Value;
+  FOutputFormats.FromString (Value, false, true);
+end;
+
+procedure tJson2PumlCommandLineParameter.SetOutputSuffix (const Value: string);
+begin
+  FOutputSuffix := ValidateOutputSuffix (Value);
+end;
+
+procedure tJson2PumlCommandLineParameter.SetServicePortStr (const Value: string);
+begin
+  FServicePortStr := Value;
+  FServicePort := StringToInteger (TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), - 1);
+end;
+
+procedure tJson2PumlCommandLineParameter.SetTitleFilter (const Value: string);
+begin
+  FTitleFilter := Value;
+  InputFilterList.TitleFilter.Text := Value;
+end;
+
+function tJson2PumlCommandLineParameter.ExistsSingleInputParameter (iParameterName: string): boolean;
+begin
+  Result := FindCmdLineSwitch (iParameterName);
+  if Result then
+    LogParameterValue (iParameterName, Result);
 end;
 
 procedure tJson2PumlCommandLineParameter.HandleGenerateDefaultConfiguration;
@@ -2379,55 +2333,6 @@ begin
   else
     GlobalLoghandler.Debug ('Default curl authentication file %s exists, generation skipped',
       [DefaultConfigurationFile]);
-end;
-
-procedure tJson2PumlCommandLineParameter.LogLineWrapped (iParameter, iDescription: string;
-  iParameterLength: integer = 50; iLineLength: integer = 110);
-var
-  LogLines: tStringList;
-  s: string;
-  l: string;
-  Next: string;
-  i, p: integer;
-begin
-  LogLines := tStringList.Create;
-  try
-    LogLines.Text := iDescription;
-    s := iParameter;
-    for i := 0 to LogLines.Count - 1 do
-    begin
-      s := s.PadRight (iParameterLength);
-      l := LogLines[i];
-      while not l.IsEmpty do
-      begin
-        p := l.IndexOf (' ');
-        if p >= 0 then
-        begin
-          Next := l.Substring (0, p);
-          l := l.Substring (p + 1);
-        end
-        else
-        begin
-          Next := l;
-          l := '';
-        end;
-        if s.length + Next.length >= iLineLength then
-        begin
-          GlobalLoghandler.Info (s);
-          s := ' ';
-          s := s.PadRight (iParameterLength);
-        end;
-        s := s + ' ' + Next;
-      end;
-      GlobalLoghandler.Info (s);
-      s := '';
-    end;
-    if not s.IsEmpty then
-      GlobalLoghandler.Info (s);
-  finally
-    LogLines.Free;
-  end;
-
 end;
 
 procedure tJson2PumlCommandLineParameter.LogParameterValue (iParameterName: string; iParameterValue: boolean;
@@ -2509,6 +2414,230 @@ begin
   end;
 end;
 
+function tJson2PumlCommandLineParameter.ReadSingleInputParameter (iParameterName: string): string;
+var
+  s: string;
+begin
+  FindCmdLineSwitch (iParameterName, s, true, [clstValueAppended]);
+  s := s.TrimLeft (['=', ':']);
+  Result := s;
+  LogParameterValue (iParameterName, s);
+end;
+
+function tJson2PumlCommandLineParameter.ReadSingleInputParameterEnvironment (iParameterName: string): string;
+var
+  s: string;
+begin
+  s := GetEnvironmentVariable (iParameterName);
+  ValidateFileInputParameter ('Env ' + iParameterName, s);
+  Result := s;
+end;
+
+function tJson2PumlCommandLineParameter.ReadSingleInputParameterFile (iParameterName: string): string;
+var
+  s: string;
+begin
+  FindCmdLineSwitch (iParameterName, s);
+  s := s.TrimLeft (['=', ':']);
+  ValidateFileInputParameter (iParameterName, s);
+  Result := s;
+end;
+
+procedure tJson2PumlCommandLineParameter.ValidateFileInputParameter (iParameterName: string;
+  var ioParameterValue: string);
+var
+  Fc: integer;
+begin
+  if ioParameterValue.IsEmpty then
+    exit;
+  iParameterName := iParameterName.ToLower.Trim;
+  Fc := FileCount (ExpandFileName(ioParameterValue));
+  if Fc > 1 then
+    LogParameterValue (iParameterName, ioParameterValue, Format('(%d files found)', [Fc]))
+  else
+    LogParameterValue (iParameterName, ioParameterValue);
+  if (Fc <= 0) then
+  begin
+    GlobalLoghandler.Error (jetCmdLineParameterFileDoesNotExits,
+      [cCmdLinePrefix, iParameterName.ToLower.Trim.PadRight(29), ioParameterValue.Trim]);
+    ioParameterValue := '';
+    Failed := true;
+  end;
+end;
+
+constructor tJson2PumlCommandLineParameter.Create;
+begin
+  inherited Create;
+  Failed := false;
+  FInputFilterList := tJson2PumlFilterList.Create ();
+  FCurlParameter := tJson2PumlCurlParameterList.Create ();
+  FCurlParameter.MulitpleValues := true;
+  FCurlAuthenticationParameter := tJson2PumlCurlParameterList.Create ();
+  FCurlAuthenticationParameter.MulitpleValues := true;
+end;
+
+destructor tJson2PumlCommandLineParameter.Destroy;
+begin
+  FCurlAuthenticationParameter.Free;
+  FCurlParameter.Free;
+  FInputFilterList.Free;
+  inherited Destroy;
+end;
+
+function tJson2PumlCommandLineParameter.CommandLineParameterStr (iIncludeProgram: boolean): string;
+var
+  i: integer;
+begin
+  if iIncludeProgram then
+    Result := ParamStr (0) + ' '
+  else
+    Result := '';
+  for i := 1 to ParamCount do
+    Result := Result + ParamStr (i) + ' ';
+  Result := Result.Trim;
+end;
+
+procedure tJson2PumlCommandLineParameter.GenerateEnvironmentParameters(iLogList: tStringList);
+
+  procedure AddLine (iName, iValue: string);
+  var
+    envValue: string;
+  begin
+    if not iValue.IsEmpty then
+    begin
+      envValue := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
+      if iValue <> envValue then
+        iLogList.Add (Format('  $%-35s: %s (%s)', [iName.ToUpper, iValue, envValue]))
+      else
+        iLogList.Add (Format('  $%-35s: %s', [iName.ToUpper, iValue]));
+    end;
+  end;
+  procedure AddLineBool (iName: string; iValue: boolean);
+  begin
+    if iValue then
+      iLogList.Add (Format('  $%-35s: %s', [iName.ToUpper, cTrue]));
+  end;
+
+begin
+  iLogList.Clear;
+//  iLogList.Add ('Environment Parameter ');
+  AddLine (cConfigurationFileRegistry, ConfigurationFileNameEnvironment);
+  AddLine (cCurlAuthenticationFileRegistry, CurlAuthenticationFileNameEnvironment);
+  AddLine (cDefinitionFileRegistry, DefinitionFileNameEnvironment);
+  AddLine (cPlantUmlJarFileRegistry, PlantUmlJarFileNameEnvironment);
+end;
+
+procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStringList);
+
+  procedure AddLine (iName, iValue: string);
+  var
+    envValue: string;
+  begin
+    if not iValue.IsEmpty then
+    begin
+      envValue := TCurlUtils.ReplaceCurlVariablesFromEnvironment (iValue);
+      if iValue <> envValue then
+        iLogList.Add (Format('  %s%-35s: %s (%s)', [cCmdLinePrefix, iName.ToLower, iValue, envValue]))
+      else
+        iLogList.Add (Format('  %s%-35s: %s', [cCmdLinePrefix, iName.ToLower, iValue]));
+    end;
+  end;
+  procedure AddLineBool (iName: string; iValue: boolean);
+  begin
+    if iValue then
+      iLogList.Add (Format('  %s%-35s: %s', [cCmdLinePrefix, iName.ToLower, cTrue]));
+  end;
+
+begin
+  iLogList.Clear;
+//  iLogList.Add ('Command Line Parameter ');
+  AddLine ('BaseOutputPath', BaseOutputPath);
+  AddLine ('ConfigurationFileName', ConfigurationFileName);
+  AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileName);
+  AddLineBool ('CurlIgnoreCache', CurlIgnoreCache);
+  AddLine ('CurlParameterFileName', CurlParameterFileName);
+  AddLineBool ('Debug', Debug);
+  AddLine ('DefinitionFileName', DefinitionFileName);
+  AddLine ('JobDescription', JobDescription);
+  AddLine ('Detail', Detail);
+  AddLineBool ('FormatDefinitionFiles', FormatDefinitionFiles);
+  AddLineBool ('GenerateDetails', GenerateDetails);
+  AddLineBool ('GenerateOutputDefinition', GenerateOutputDefinition);
+  AddLineBool ('GenerateSummary', GenerateSummary);
+  AddLine ('Group', Group);
+  AddLine ('IdentFilter', IdentFilter);
+  AddLine ('InputFileName', InputFileName);
+  AddLine ('InputListFileName', InputListFileName);
+  AddLine ('JavaRuntimeParameter', JavaRuntimeParameter);
+  AddLine ('Jobname', Jobname);
+  AddLine ('LeadingObject', LeadingObject);
+  AddLineBool ('NoLogFiles', NoLogFiles);
+  AddLine ('OpenOutputs', OpenOutputsStr);
+  AddLine ('Option', Option);
+  AddLine ('OptionFileName', OptionFileName);
+  AddLine ('OutputFormat', OutputFormatStr);
+  AddLine ('OutputPath', OutputPath);
+  AddLine ('OutputSuffix', OutputSuffix);
+  AddLine ('ParameterFileName', ParameterFileName);
+  AddLine ('PlantUmlJarFileName', PlantUmlJarFileName);
+  AddLine ('PlantUmlRuntimeParameter', PlantUmlRuntimeParameter);
+  AddLine ('ServicePort', ServicePortStr);
+  AddLine ('SplitIdentifier', SplitIdentifier);
+  AddLine ('SplitInputFile', SplitInputFileStr);
+  AddLine ('SummaryFileName', SummaryFileName);
+  AddLine ('TitleFilter', TitleFilter);
+
+end;
+
+procedure tJson2PumlCommandLineParameter.LogLineWrapped (iParameter, iDescription: string;
+  iParameterLength: integer = 50; iLineLength: integer = 110);
+var
+  LogLines: tStringList;
+  s: string;
+  l: string;
+  Next: string;
+  i, p: integer;
+begin
+  LogLines := tStringList.Create;
+  try
+    LogLines.Text := iDescription;
+    s := iParameter;
+    for i := 0 to LogLines.Count - 1 do
+    begin
+      s := s.PadRight (iParameterLength);
+      l := LogLines[i];
+      while not l.IsEmpty do
+      begin
+        p := l.IndexOf (' ');
+        if p >= 0 then
+        begin
+          Next := l.Substring (0, p);
+          l := l.Substring (p + 1);
+        end
+        else
+        begin
+          Next := l;
+          l := '';
+        end;
+        if s.length + Next.length >= iLineLength then
+        begin
+          GlobalLoghandler.Info (s);
+          s := ' ';
+          s := s.PadRight (iParameterLength);
+        end;
+        s := s + ' ' + Next;
+      end;
+      GlobalLoghandler.Info (s);
+      s := '';
+    end;
+    if not s.IsEmpty then
+      GlobalLoghandler.Info (s);
+  finally
+    LogLines.Free;
+  end;
+
+end;
+
 procedure tJson2PumlCommandLineParameter.ReadInputParameter;
 begin
   GlobalLoghandler.Info ('Current command line parameters: (%s)', [CommandLineParameterStr(false)]);
@@ -2559,108 +2688,6 @@ begin
   ReadCurlParameter;
   if GenerateDefaultConfiguration then
     HandleGenerateDefaultConfiguration;
-end;
-
-function tJson2PumlCommandLineParameter.ReadSingleInputParameter (iParameterName: string): string;
-var
-  s: string;
-begin
-  FindCmdLineSwitch (iParameterName, s, true, [clstValueAppended]);
-  s := s.TrimLeft (['=', ':']);
-  Result := s;
-  LogParameterValue (iParameterName, s);
-end;
-
-function tJson2PumlCommandLineParameter.ReadSingleInputParameterEnvironment (iParameterName: string): string;
-var
-  s: string;
-begin
-  s := GetEnvironmentVariable (iParameterName);
-  ValidateFileInputParameter ('Env ' + iParameterName, s);
-  Result := s;
-end;
-
-function tJson2PumlCommandLineParameter.ReadSingleInputParameterFile (iParameterName: string): string;
-var
-  s: string;
-begin
-  FindCmdLineSwitch (iParameterName, s);
-  s := s.TrimLeft (['=', ':']);
-  ValidateFileInputParameter (iParameterName, s);
-  Result := s;
-end;
-
-procedure tJson2PumlCommandLineParameter.SetIdentFilter (const Value: string);
-begin
-  FIdentFilter := Value;
-  InputFilterList.IdentFilter.Text := Value;
-end;
-
-procedure tJson2PumlCommandLineParameter.SetOpenOutputsStr (const Value: string);
-var
-  TempList: tStringList;
-  s: string;
-  f: tJson2PumlOutputFormat;
-begin
-  FOpenOutputsStr := Value;
-  FOpenOutputs := [];
-  TempList := tStringList.Create;
-  try
-    TempList.LineBreak := ',';
-    TempList.Text := Value.ToLower;
-    for s in TempList do
-      for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
-        if (s.Trim = f.ToString) or (s.Trim = cOpenOutputAll) then
-          FOpenOutputs := FOpenOutputs + [f];
-  finally
-    TempList.Free;
-  end;
-
-end;
-
-procedure tJson2PumlCommandLineParameter.SetOutputFormatStr (const Value: string);
-begin
-  FOutputFormatStr := Value;
-  FOutputFormats.FromString (Value, false, true);
-end;
-
-procedure tJson2PumlCommandLineParameter.SetOutputSuffix (const Value: string);
-begin
-  FOutputSuffix := ValidateOutputSuffix (Value);
-end;
-
-procedure tJson2PumlCommandLineParameter.SetServicePortStr (const Value: string);
-begin
-  FServicePortStr := Value;
-  FServicePort := StringToInteger (TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), - 1);
-end;
-
-procedure tJson2PumlCommandLineParameter.SetTitleFilter (const Value: string);
-begin
-  FTitleFilter := Value;
-  InputFilterList.TitleFilter.Text := Value;
-end;
-
-procedure tJson2PumlCommandLineParameter.ValidateFileInputParameter (iParameterName: string;
-  var ioParameterValue: string);
-var
-  Fc: integer;
-begin
-  if ioParameterValue.IsEmpty then
-    exit;
-  iParameterName := iParameterName.ToLower.Trim;
-  Fc := FileCount (ExpandFileName(ioParameterValue));
-  if Fc > 1 then
-    LogParameterValue (iParameterName, ioParameterValue, Format('(%d files found)', [Fc]))
-  else
-    LogParameterValue (iParameterName, ioParameterValue);
-  if (Fc <= 0) then
-  begin
-    GlobalLoghandler.Error (jetCmdLineParameterFileDoesNotExits,
-      [cCmdLinePrefix, iParameterName.ToLower.Trim.PadRight(29), ioParameterValue.Trim]);
-    ioParameterValue := '';
-    Failed := true;
-  end;
 end;
 
 procedure tJson2PumlCommandLineParameter.WriteHelpLine (iParameter: string = ''; iDescription: string = '';

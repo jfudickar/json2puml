@@ -923,6 +923,8 @@ begin
       1, false);
     iInputHandler.CmdLineParameter.GenerateLogParameters (InfoList);
     WriteToJsonValue (oJsonOutPut, 'commandLineParameter', InfoList, 1, false, false);
+    iInputHandler.CmdLineParameter.GenerateEnvironmentParameters (InfoList);
+    WriteToJsonValue (oJsonOutPut, 'environmentParameter', InfoList, 1, false, false);
     InfoList.Text := GetJavaVersion;
     WriteToJsonValue (oJsonOutPut, 'javaInformation', InfoList, 1, false, false);
     InfoList.Text := GetPlantUmlVersion (iInputHandler.CalculateRuntimeJarFile,
