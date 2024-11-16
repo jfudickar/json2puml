@@ -480,6 +480,8 @@ type
     FDescription: tJson2PumlInputListDescriptionDefinition;
     FDetail: string;
     FExecuteLogFileName: string;
+    FExpandInputListCount: integer;
+    FExpandInputListPosition: integer;
     FFileListFileName: string;
     FGenerateDetailsStr: string;
     FGenerateSummaryStr: string;
@@ -507,6 +509,8 @@ type
     procedure SetCurlParameterList (const Value: tJson2PumlCurlParameterList);
     procedure SetCurlSpanIdHeader (const Value: string);
     procedure SetCurlTraceIdHeader (const Value: string);
+    procedure SetExpandInputListCount (const Value: integer);
+    procedure SetExpandInputListPosition (const Value: integer);
     procedure SetOutputFormatStr (const Value: string);
     procedure SetOutputPath (const Value: string);
     procedure SetOutputSuffix (const Value: string);
@@ -527,6 +531,8 @@ type
     function ExpandInputListSplitFile (iInputFile: tJson2PumlInputFileDefinition): boolean;
     function GetIsValid: boolean; override;
     procedure ValidateCurlParameter;
+    property ExpandInputListCount: integer read FExpandInputListCount write SetExpandInputListCount;
+    property ExpandInputListPosition: integer read FExpandInputListPosition write SetExpandInputListPosition;
     property OnCalculateOutputFileName: tJson2PumlCalculateOutputFilenameEvent read FOnCalculateOutputFileName;
   public
     constructor Create; override;
@@ -670,7 +676,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function CommandLineParameterStr (iIncludeProgram: boolean): string;
-    procedure GenerateEnvironmentParameters(iLogList: tStringList);
+    procedure GenerateEnvironmentParameters (iLogList: tStringList);
     procedure GenerateLogParameters (iLogList: tStringList);
     procedure LogLineWrapped (iParameter, iDescription: string; iParameterLength: integer = 50;
       iLineLength: integer = 110);
@@ -1367,6 +1373,8 @@ begin
   inherited Create;
   FDescription := tJson2PumlInputListDescriptionDefinition.Create ();
   FCurlMappingParameterList := tJson2PumlCurlMappingParameterList.Create ();
+  FExpandInputListCount := 0;
+  FExpandInputListPosition := 0;
 end;
 
 constructor tJson2PumlInputList.CreateOnCalculate (iOnCalculateOutputFileName: tJson2PumlCalculateOutputFilenameEvent);
@@ -1587,18 +1595,17 @@ var
   NewPath: string;
   i: integer;
   NotFound: string;
-  Curr: integer;
+  First: boolean;
 
 begin
-  Curr := 0;
   ValidateCurlParameter;
+  ExpandInputListCount := Count;
+
   for InputFile in self do
   begin
     if GlobalLoghandler.Failed then
       exit;
-    Inc (Curr);
-    if Assigned (OnNotifyChange) then
-      OnNotifyChange (self, nctExpand, Curr, Count);
+    ExpandInputListPosition := ExpandInputListPosition + 1;
     if not InputFile.IsOriginal then
       Continue;
     if ExpandInputListCurlFile (InputFile, iIgnoreCurlCache) then
@@ -1622,7 +1629,14 @@ begin
       NewPath := ExtractFilePath (FileName);
       if findfirst (FileName, faAnyFile, searchResult) = 0 then
       begin
+        First := true;
         repeat
+          if not First then
+          begin
+            ExpandInputListPosition := ExpandInputListPosition + 1;
+            ExpandInputListCount := ExpandInputListCount + 1;
+          end;
+          First := false;
           if NewPath.IsEmpty then
             FileName := searchResult.name
           else
@@ -1646,7 +1660,7 @@ begin
         GlobalLoghandler.Error (jetInputFileNotFound, [FileName, NotFound]);
   end;
   if Assigned (OnNotifyChange) then
-    OnNotifyChange (self, nctExpand, Count, Count);
+    OnNotifyChange (self, nctExpand, ExpandInputListCount, ExpandInputListCount);
   if GlobalLoghandler.Failed then
     exit;
   for InputFile in self do
@@ -1678,8 +1692,11 @@ begin
     if CurlParameterMatrix.RowList.Count > 0 then
     begin
       iCurrentInputFile.IsInternalOnly := true;
+      ExpandInputListCount := ExpandInputListCount + CurlParameterMatrix.RowList.Count-1;
       for i := 0 to CurlParameterMatrix.RowList.Count - 1 do
       begin
+        if i > 0 then
+          ExpandInputListPosition := ExpandInputListPosition + 1;
         SaveFileName := iCurrentInputFile.OutputFileName;
         iCurrentInputFile.HandleCurl (CurlBaseUrlDecoded, CurlUrlAddon, [CurlOptions, curlAdditionalRuntimeOptions],
           CurlParameterMatrix.RowParameterList[i], CurlParameterList, CurlMappingParameterList, CurlAuthenticationList,
@@ -1961,6 +1978,20 @@ end;
 procedure tJson2PumlInputList.SetCurlTraceIdHeader (const Value: string);
 begin
   FCurlTraceIdHeader := Value.ToLower.Trim;
+end;
+
+procedure tJson2PumlInputList.SetExpandInputListCount (const Value: integer);
+begin
+  FExpandInputListCount := Value;
+  if Assigned (OnNotifyChange) then
+    OnNotifyChange (self, nctExpand, FExpandInputListPosition, FExpandInputListCount);
+end;
+
+procedure tJson2PumlInputList.SetExpandInputListPosition (const Value: integer);
+begin
+  FExpandInputListPosition := Value;
+  if Assigned (OnNotifyChange) then
+    OnNotifyChange (self, nctExpand, FExpandInputListPosition, FExpandInputListCount);
 end;
 
 procedure tJson2PumlInputList.SetOutputFormatStr (const Value: string);
@@ -2497,7 +2528,7 @@ begin
   Result := Result.Trim;
 end;
 
-procedure tJson2PumlCommandLineParameter.GenerateEnvironmentParameters(iLogList: tStringList);
+procedure tJson2PumlCommandLineParameter.GenerateEnvironmentParameters (iLogList: tStringList);
 
   procedure AddLine (iName, iValue: string);
   var
@@ -2520,7 +2551,7 @@ procedure tJson2PumlCommandLineParameter.GenerateEnvironmentParameters(iLogList:
 
 begin
   iLogList.Clear;
-//  iLogList.Add ('Environment Parameter ');
+  // iLogList.Add ('Environment Parameter ');
   AddLine (cConfigurationFileRegistry, ConfigurationFileNameEnvironment);
   AddLine (cCurlAuthenticationFileRegistry, CurlAuthenticationFileNameEnvironment);
   AddLine (cDefinitionFileRegistry, DefinitionFileNameEnvironment);
@@ -2550,7 +2581,7 @@ procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStrin
 
 begin
   iLogList.Clear;
-//  iLogList.Add ('Command Line Parameter ');
+  // iLogList.Add ('Command Line Parameter ');
   AddLine ('BaseOutputPath', BaseOutputPath);
   AddLine ('ConfigurationFileName', ConfigurationFileName);
   AddLine ('CurlAuthenticationFileName', CurlAuthenticationFileName);

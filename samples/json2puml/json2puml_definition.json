@@ -3,11 +3,97 @@
 		"displayName": "json2puml service definition",
 		"description": "Definition file to visualize the static json2puml service results"
 	},
-	"defaultOption": "default",
+	"defaultOption": "all",
 	"options": [
+		{
+			"option": "inputlist",
+			"definition": {
+				"continueAfterUnhandledObjects": null,
+				"groupDetailObjectsTogether": null,
+				"hideDuplicateRelations": null,
+				"identifyObjectsByTypeAndIdent": null,
+				"legendShowInfo": null,
+				"legendShowObjectCount": null,
+				"legendShowObjectFormats": null,
+				"legendShowFileInfos": null,
+				"attributeProperties": [
+				],
+				"objectProperties": [
+					"-service"
+				],
+				"objectTypeProperties": [
+				],
+				"objectTypeRenames": [
+				],
+				"objectIdentifierProperties": [
+				],
+				"objectTitleProperties": [
+				],
+				"objectDetailProperties": [
+				],
+				"relationshipProperties": [
+				],
+				"relationshipTypeProperties": [
+				],
+				"relationshipTypeArrowFormats": [
+				],
+				"groupProperties": [
+				],
+				"characteristicProperties": [
+				],
+				"hiddenProperties": [
+				],
+				"pumlHeaderLines": [
+				]
+			}
+		},
+		{
+			"option": "serviceinformation",
+			"definition": {
+				"continueAfterUnhandledObjects": null,
+				"groupDetailObjectsTogether": null,
+				"hideDuplicateRelations": null,
+				"identifyObjectsByTypeAndIdent": null,
+				"legendShowInfo": null,
+				"legendShowObjectCount": null,
+				"legendShowObjectFormats": null,
+				"legendShowFileInfos": null,
+				"attributeProperties": [
+				],
+				"objectProperties": [
+					"-inputlist",
+					"-definitionfile",
+					"-curlParameter"
+				],
+				"objectTypeProperties": [
+				],
+				"objectTypeRenames": [
+				],
+				"objectIdentifierProperties": [
+				],
+				"objectTitleProperties": [
+				],
+				"objectDetailProperties": [
+				],
+				"relationshipProperties": [
+				],
+				"relationshipTypeProperties": [
+				],
+				"relationshipTypeArrowFormats": [
+				],
+				"groupProperties": [
+				],
+				"characteristicProperties": [
+				],
+				"hiddenProperties": [
+				],
+				"pumlHeaderLines": [
+				]
+			}
+		}
 	],
 	"baseOption": {
-		"continueAfterUnhandledObjects": true,
+		"continueAfterUnhandledObjects": false,
 		"groupDetailObjectsTogether": null,
 		"hideDuplicateRelations": false,
 		"identifyObjectsByTypeAndIdent": false,

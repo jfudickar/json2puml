@@ -33,7 +33,7 @@ type
   tJson2PumlPropertySearchMatchType = (psmExactExactPlus, psmExactPlus, psmExactExact, psmExact, psmMatchMatchPlus,
     psmMatchPlus, psmMatchMatch, psmMatch, psmExcludeExclude, psmExclude, psmNoMatch);
 
-  tJson2PumlNotifyChangeType = (nctExpand, nctConvert);
+  tJson2PumlNotifyChangeType = (nctUndefined, nctExpand, nctConvert, nctGenerate);
 
   tJson2PumlCalculateOutputFilenameEvent = function(iFileName, iSourceFileName: string; iNewFileExtension: string = '')
     : string of object;

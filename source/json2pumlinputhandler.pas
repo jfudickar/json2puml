@@ -776,6 +776,8 @@ begin
       if Assigned (AfterUpdateRecord) then
         AfterUpdateRecord (SingleRecord);
     end;
+    if Assigned (OnNotifyChange) then
+      OnNotifyChange (self, nctConvert, HandlerRecordList.Count, HandlerRecordList.Count);
     GenerateAllOutputsFromPuml;
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
     ConverterInputList.WriteToJsonOutputFiles (jofFileList.Filename(CalculateSummaryFileName(jofPUML)));
@@ -794,8 +796,6 @@ begin
   finally
     Converter.Free;
   end;
-  if Assigned (OnNotifyChange) then
-    OnNotifyChange (self, nctConvert, HandlerRecordList.Count, HandlerRecordList.Count);
 end;
 
 procedure tJson2PumlInputHandler.CreateAllRecords;
@@ -901,7 +901,7 @@ begin
       FileList.Add (SingleRecord.InputFile.Output.PUmlFileName);
     end;
     if GenerateOutputsFromPumlFiles (FileList, CalculateRuntimeJarFile, CurrentJavaRuntimeParameter,
-      GetCurrentPlantUmlRuntimeParameter, OutputFormats, CmdLineParameter.OpenOutputs) then
+      GetCurrentPlantUmlRuntimeParameter, OutputFormats, CmdLineParameter.OpenOutputs,OnNotifyChange) then
       for i := 0 to HandlerRecordList.Count - 1 do
       begin
         SingleRecord := self[i];

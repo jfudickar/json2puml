@@ -28,7 +28,7 @@ interface
 
 uses
   System.Classes, System.SysUtils, json2pumldefinition, json2pumlloghandler, json2pumlconst, System.Zip,
-  json2pumlinputhandler;
+  json2pumlinputhandler, json2pumlbasedefinition;
 
 procedure AddFileToZipFile (iZipFile: tZipFile; iFileName, iRemoveDirectory: string);
 
@@ -60,7 +60,8 @@ procedure GenerateFileDirectory (iFileName: string);
 function GenerateOutputFromPumlFiles (iPlantUmlFiles: tStringList; const iPlantUmlJarFile, iJavaRuntimeParameter,
   iPlantUmlRuntimeParameter: string; iFormat: tJson2PumlOutputFormat; iOpenAfter: boolean): boolean;
 function GenerateOutputsFromPumlFiles (iPlantUmlFiles: tStringList; const iPlantUmlJarFile, iJavaRuntimeParameter,
-  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): boolean;
+  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats;
+  iOnNotifyChange: tJson2PumlNotifyChangeEvent): boolean;
 function GenerateOutputFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, iPlantUmlRuntimeParameter
   : string; iFormat: tJson2PumlOutputFormat; iOpenAfter: boolean): boolean;
 function GenerateOutputsFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter,
@@ -104,7 +105,7 @@ function ValidateOutputSuffix (iOutputSuffix: string): string;
 
 function CurrentThreadId: tThreadId;
 
-function VarRecToString(const iVarRec: TVarRec): string;
+function VarRecToString (const iVarRec: TVarRec): string;
 
 function LogIndent (iIndent: integer): string;
 
@@ -164,8 +165,8 @@ implementation
 uses
 {$IFDEF MSWINDOWS} Winapi.Windows, Winapi.ShellAPI, VCL.Forms, {$ENDIF}
   System.Generics.Collections, System.IOUtils, System.Math, System.DateUtils, System.NetEncoding,
-  json2pumlbasedefinition, json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression,
-  jsontools, commandlinetools, System.Variants, System.Rtti;
+  json2pumlconverterdefinition, System.Bindings.ExpressionDefaults, System.Bindings.Expression, jsontools,
+  commandlinetools, System.Variants, System.Rtti;
 
 function ApplicationCompileVersion: string;
 begin
@@ -480,15 +481,28 @@ begin
 end;
 
 function GenerateOutputsFromPumlFiles (iPlantUmlFiles: tStringList; const iPlantUmlJarFile, iJavaRuntimeParameter,
-  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats): boolean;
+  iPlantUmlRuntimeParameter: string; iOutputFormats, iOpenOutputs: tJson2PumlOutputFormats;
+  iOnNotifyChange: tJson2PumlNotifyChangeEvent): boolean;
 var
   f: tJson2PumlOutputFormat;
+  p, c: integer;
+
 begin
   Result := true;
+  c := 0;
+  p := 0;
   for f in iOutputFormats do
     if f.IsPumlOutput then
+      Inc (c);
+  for f in iOutputFormats do
+    if f.IsPumlOutput then
+    begin
+      Inc (p);
+      if Assigned (iOnNotifyChange) then
+        iOnNotifyChange (nil, nctGenerate, p, c);
       Result := Result and GenerateOutputFromPumlFiles (iPlantUmlFiles, iPlantUmlJarFile, iJavaRuntimeParameter,
         iPlantUmlRuntimeParameter, f, f in iOpenOutputs);
+    end;
 end;
 
 function GenerateOutputFromPuml (const iPlantUmlFile, iPlantUmlJarFile, iJavaRuntimeParameter, iPlantUmlRuntimeParameter
@@ -958,31 +972,31 @@ begin
   WriteArrayEndToJson (oJsonOutPut, 0);
 end;
 
-function VarRecToString(const iVarRec: TVarRec): string;
+function VarRecToString (const iVarRec: TVarRec): string;
 begin
-//  case iVarRec.VType of
-//    vtInteger:
-//      Result := IntToStr (iVarRec.VInteger);
-//    vtBoolean:
-//      Result := BoolToStr (iVarRec.VBoolean, true);
-//    vtChar:
-//      Result := iVarRec.VChar;
-//    vtExtended:
-//      Result := FloatToStr (iVarRec.VExtended^);
-//    vtString:
-//      Result := string(iVarRec.VString);
-//    vtPChar:
-//      Result := string(iVarRec.VPChar);
-//    vtAnsiString:
-//      Result := string(iVarRec.VAnsiString);
-//    vtWideString:
-//      Result := string(iVarRec.VWideString);
-//    vtVariant:
-//      Result := VarToStr (iVarRec.VVariant^);
-//    else
-//      Result := '';
-//  end;
-  Result := TValue.FromVarRec(iVarRec).ToString;
+  // case iVarRec.VType of
+  // vtInteger:
+  // Result := IntToStr (iVarRec.VInteger);
+  // vtBoolean:
+  // Result := BoolToStr (iVarRec.VBoolean, true);
+  // vtChar:
+  // Result := iVarRec.VChar;
+  // vtExtended:
+  // Result := FloatToStr (iVarRec.VExtended^);
+  // vtString:
+  // Result := string(iVarRec.VString);
+  // vtPChar:
+  // Result := string(iVarRec.VPChar);
+  // vtAnsiString:
+  // Result := string(iVarRec.VAnsiString);
+  // vtWideString:
+  // Result := string(iVarRec.VWideString);
+  // vtVariant:
+  // Result := VarToStr (iVarRec.VVariant^);
+  // else
+  // Result := '';
+  // end;
+  Result := TValue.FromVarRec (iVarRec).ToString;
 end;
 
 class function TCurlUtils.CalculateCommand (const iCurlCommand, iBaseUrl: string;

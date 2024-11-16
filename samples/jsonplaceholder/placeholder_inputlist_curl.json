@@ -128,7 +128,7 @@
 				{
 					"name": "${postid}",
 					"value": "id",
-					"maxValues": 2
+					"maxValues": 10
 				}
 			],
 			"splitIdentifier": null,

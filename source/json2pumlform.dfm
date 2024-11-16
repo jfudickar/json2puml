@@ -727,6 +727,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 4
+            ExplicitLeft = 188
           end
         end
       end
@@ -735,9 +736,11 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Top = 353
         Width = 1339
         Height = 412
-        ActivePage = TabSheet1
+        ActivePage = ExecutionLogTabSheet
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 1335
+        ExplicitHeight = 411
         object ExecutionLogTabSheet: TTabSheet
           Caption = 'Execution Log'
           object ExecutionLogPanel: TPanel
@@ -752,60 +755,82 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Left = 0
               Top = 0
               Width = 1331
-              Height = 73
+              Height = 89
               Align = alTop
               TabOrder = 0
               DesignSize = (
                 1331
-                73)
-              object Label26: TLabel
+                89)
+              object ExpandProgressLabel: TLabel
                 Left = 6
                 Top = 10
-                Width = 36
+                Width = 84
                 Height = 13
                 Caption = 'Expand'
               end
-              object Label27: TLabel
+              object ConvertProgressLabel: TLabel
                 Left = 6
                 Top = 26
-                Width = 39
+                Width = 84
                 Height = 13
                 Caption = 'Convert'
               end
               object InputLabel: TLabel
                 Left = 6
-                Top = 51
-                Width = 51
+                Top = 66
+                Width = 68
                 Height = 13
-                Caption = 'Execution:'
+                Caption = 'Execution log:'
                 FocusControl = ExecutionLogFileNameEdit
               end
+              object GenerateProgressLabel: TLabel
+                Left = 6
+                Top = 43
+                Width = 45
+                Height = 13
+                Caption = 'Generate'
+              end
               object ExpandProgressBar: TProgressBar
-                Left = 51
+                Left = 96
                 Top = 7
-                Width = 1275
+                Width = 1230
                 Height = 17
                 Anchors = [akLeft, akTop, akRight]
                 Smooth = True
+                SmoothReverse = True
+                Step = 1
                 TabOrder = 0
               end
               object ConvertProgressBar: TProgressBar
-                Left = 51
+                Left = 96
                 Top = 24
-                Width = 1275
+                Width = 1230
                 Height = 17
                 Anchors = [akLeft, akTop, akRight]
                 Smooth = True
+                SmoothReverse = True
+                Step = 1
                 TabOrder = 1
               end
               object ExecutionLogFileNameEdit: TButtonedEdit
-                Left = 63
-                Top = 47
-                Width = 1262
+                Left = 96
+                Top = 62
+                Width = 1229
                 Height = 21
                 Anchors = [akLeft, akTop, akRight]
                 ReadOnly = True
                 TabOrder = 2
+              end
+              object GenerateProgressBar: TProgressBar
+                Left = 96
+                Top = 41
+                Width = 1230
+                Height = 17
+                Anchors = [akLeft, akTop, akRight]
+                Smooth = True
+                SmoothReverse = True
+                Step = 1
+                TabOrder = 3
               end
             end
           end
@@ -944,6 +969,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 1327
+            ExplicitHeight = 383
           end
         end
       end
@@ -1017,8 +1044,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object MainActionList: TActionList
     Images = MainImageList
-    Left = 904
-    Top = 600
+    Left = 920
+    Top = 664
     object EditCut1: TEditCut
       Category = 'Edit'
       Caption = 'Cu&t'
@@ -1171,8 +1198,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
   end
   object MainImageList: TImageList
-    Left = 640
-    Top = 624
+    Left = 680
+    Top = 712
     Bitmap = {
       494C010110001500040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000005000000001002000000000000050
@@ -1845,8 +1872,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Enabled = False
     Interval = 100
     OnTimer = InitialTimerTimer
-    Left = 640
-    Top = 568
+    Left = 680
+    Top = 656
   end
   object MainActionManager: TActionManager
     ActionBars = <
@@ -1993,6 +2020,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               end
               item
                 Action = GenerateServiceListResultsAction
+                Caption = '&Generate Service Results'
               end>
             Caption = 'E&xecute'
           end>
@@ -2140,8 +2168,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
         ActionList = MainActionList
         Caption = 'MainActionList'
       end>
-    Left = 904
-    Top = 544
+    Left = 920
+    Top = 608
     StyleName = 'Platform Default'
     object Action1: TAction
       Category = 'File'
@@ -2151,13 +2179,13 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object CurlParameterDataSource: TDataSource
     DataSet = CurlParameterDataSet
-    Left = 96
-    Top = 528
+    Left = 88
+    Top = 648
   end
   object CurlAuthenticationParameterDataSource: TDataSource
     DataSet = CurlAuthenticationParameterDataset
-    Left = 232
-    Top = 536
+    Left = 224
+    Top = 656
   end
   object CurlParameterDataSet: TFDMemTable
     FieldDefs = <>
@@ -2170,8 +2198,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     StoreDefs = True
-    Left = 88
-    Top = 609
+    Left = 80
+    Top = 729
     object CurlParameterDataSetName: TStringField
       DisplayWidth = 20
       FieldName = 'Name'
@@ -2194,8 +2222,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     StoreDefs = True
-    Left = 248
-    Top = 617
+    Left = 240
+    Top = 737
     object StringField3: TStringField
       DisplayWidth = 20
       FieldName = 'Name'
@@ -2208,8 +2236,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     end
   end
   object JsonActionList: TActionList
-    Left = 904
-    Top = 664
+    Left = 920
+    Top = 728
   end
   object Taskbar: TTaskbar
     TaskBarButtons = <>
@@ -2228,8 +2256,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
     StoreDefs = True
-    Left = 376
-    Top = 649
+    Left = 368
+    Top = 769
     object CurlFileListMemTableLine: TIntegerField
       FieldName = 'Line'
     end
@@ -2270,13 +2298,13 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object CurlFileListDataSource: TDataSource
     DataSet = CurlFileListMemTable
-    Left = 384
-    Top = 560
+    Left = 376
+    Top = 680
   end
   object FileEditActionList: TActionList
     Images = MainImageList
-    Left = 904
-    Top = 728
+    Left = 920
+    Top = 792
     object FileEditCopyFilenameAction: TAction
       Caption = 'Copy Filename'
       Hint = 'Copy the filename to the clipboard'

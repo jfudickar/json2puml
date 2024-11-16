@@ -1,0 +1,1 @@
+curl -X POST http://192.168.178.240:8080/api/json2pumlRequestZip -d @jsonplaceholder_parameter_curl.json -v -o result\jsonplaceholder_reducedparameter_result.zip

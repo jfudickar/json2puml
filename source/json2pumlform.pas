@@ -192,8 +192,8 @@ type
     ProgressbarPanel: TPanel;
     ExpandProgressBar: TProgressBar;
     ConvertProgressBar: TProgressBar;
-    Label26: TLabel;
-    Label27: TLabel;
+    ExpandProgressLabel: TLabel;
+    ConvertProgressLabel: TLabel;
     CurlFileTabSheet: TTabSheet;
     CurlFileListDBGrid: TDBGrid;
     CurlFileListMemTable: TFDMemTable;
@@ -225,6 +225,8 @@ type
     ServiceErrorMessageResultPanel: TPanel;
     LogFileDetailPageControl: TPageControl;
     curlIgnoreCacheCheckBox: TCheckBox;
+    GenerateProgressBar: TProgressBar;
+    GenerateProgressLabel: TLabel;
     procedure CommandLineEditPanelResize (Sender: tObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
     procedure ConvertCurrentFileActionExecute (Sender: tObject);
@@ -436,8 +438,10 @@ begin
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
   ExecutionLogFileNameEdit.Text := jofExecuteLog.Filename (InputHandler.CalculateSummaryFileName(jofPUML));
   FillCurlFileListDataset (nil);
-  ConvertProgressBar.Position := 0;
-  ExpandProgressBar.Position := 0;
+  HandleNotifyChange (self, nctConvert, 0, 0);
+  HandleNotifyChange (self, nctExpand, 0, 0);
+  HandleNotifyChange (self, nctGenerate, 0, 0);
+
   ConvertProgressBar.State := pbsNormal;
   ExpandProgressBar.State := pbsNormal;
   Taskbar.ProgressState := TTaskBarProgressState.Normal;
@@ -1311,6 +1315,18 @@ end;
 
 procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: tObject; ChangeType: tJson2PumlNotifyChangeType;
   ProgressValue, ProgressMaxValue: integer; ProgressInfo: string = '');
+
+  procedure SetProgress (iLabel: TLabel; iLabelBaseText: string; iProgressBar: TProgressBar);
+  begin
+    iProgressBar.Position := ProgressValue;
+    iProgressBar.Max := ProgressMaxValue;
+    iProgressBar.Update;
+    if ProgressMaxValue > 0 then
+      iLabel.Caption := Format ('%s: %d / %d', [iLabelBaseText, ProgressValue, ProgressMaxValue])
+    else
+      iLabel.Caption := iLabelBaseText;
+  end;
+
 begin
 {$IFDEF SYNEDIT}
   if Assigned (fLogMemo) then
@@ -1319,17 +1335,11 @@ begin
   fLogMemo.Update;
   case ChangeType of
     nctExpand:
-      begin
-        ExpandProgressBar.Position := ProgressValue;
-        ExpandProgressBar.Max := ProgressMaxValue;
-        ExpandProgressBar.Update;
-      end;
+      SetProgress(ExpandProgressLabel, 'Expand', ExpandProgressBar);
     nctConvert:
-      begin
-        ConvertProgressBar.Position := ProgressValue;
-        ConvertProgressBar.Max := ProgressMaxValue;
-        ConvertProgressBar.Update;
-      end;
+      SetProgress(ConvertProgressLabel, 'Convert', ConvertProgressBar);
+    nctGenerate:
+      SetProgress(GenerateProgressLabel, 'Generate', GenerateProgressBar);
   end;
   if ProgressValue = ProgressMaxValue then
   begin
@@ -1341,7 +1351,7 @@ begin
     Taskbar.ProgressValue := ProgressValue;
     Taskbar.ProgressMaxValue := ProgressMaxValue;
   end;
-  Sleep (1);
+//  Sleep (1);
   Application.ProcessMessages;
 end;
 
