@@ -49,8 +49,7 @@ procedure handle_json2puml_commandline;
 implementation
 
 uses
-  System.SysUtils, json2pumltools, System.IOUtils, json2pumlloghandler,
-  json2pumlconst;
+  System.SysUtils, json2pumltools, System.IOUtils, json2pumlloghandler, json2pumlconst;
 
 procedure handle_json2puml_commandline;
 var
@@ -89,14 +88,37 @@ begin
 end;
 
 procedure tJson2PumlCommandlineHandler.Execute;
+var
+  StringList: TStringList;
+  s: string;
+  ShowScreens: Boolean;
 begin
   WriteAppTitle;
   try
-    if FindCmdLineSwitch ('?') or (ParamCount <= 0) then
-      InputHandler.CmdLineParameter.WriteHelpScreen;
     InputHandler.CmdLineParameter.ReadInputParameter;
+    ShowScreens := FindCmdLineSwitch ('?') or (ParamCount <= 0) or FindCmdLineSwitch ('currentconfiguration');
+    if ShowScreens then
+      InputHandler.BeginLoadFile;
     InputHandler.LoadDefinitionFiles;
+    if ShowScreens then
+    begin
+      InputHandler.EndLoadFile (False);
+      if FindCmdLineSwitch ('?') or (ParamCount <= 0) then
+        InputHandler.CmdLineParameter.WriteHelpScreen;
+      if FindCmdLineSwitch ('currentconfiguration') then
+      begin
+        StringList := TStringList.Create;
+        try
+          GetServiceInformationResponse (StringList, InputHandler);
+          GlobalLogHandler.Info ('Current System Configuration');
+          for s in StringList do
+            GlobalLogHandler.Info (s);
+        finally
+          StringList.Free;
+        end;
+      end;
 
+    end;
   finally
     if FindCmdLineSwitch ('wait', true) then
     begin
@@ -115,7 +137,6 @@ begin
   GlobalLogHandler.Info (s.PadRight(120, '*'));
   GlobalLogHandler.Info ('json2puml %s - Command line converter JSON to PUML', [FileVersion]);
   GlobalLogHandler.Info (s.PadRight(120, '*'));
-  GlobalConfigurationDefinition.LogConfiguration;
 end;
 
 end.

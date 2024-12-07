@@ -2737,6 +2737,7 @@ var
 begin
   WriteHelpLine;
   WriteHelpLine ('?', 'Showing this Help screen');
+  WriteHelpLine ('currentconfiguration', 'Showing the current json2puml configuration ');
   WriteHelpLine ('plantumljarfile:<file>      ',
     'Plantuml Jar file which should be used to generate the sample images. ' +
     'If defined this parameter overwrites the corresponding parameter in the definition file');
