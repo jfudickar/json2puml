@@ -27,7 +27,7 @@ unit json2pumlconst;
 interface
 
 uses
-  Quick.Logger, MVCFramework.Commons;
+  Quick.Logger;
 
 type
   tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip, jofFileList,
@@ -57,6 +57,13 @@ type
     HttpStatusCode: integer;
     ErrorMessage: string;
     ErrorDescription: string;
+  end;
+
+type
+  HTTP_STATUS = record // Local Extract of MVCFramework.Commons to get rid of the unit for non service versions
+  const
+    BadRequest = 400;
+    InternalServerError = 500;
   end;
 
 const
@@ -151,7 +158,8 @@ const
     HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input file "%s" could not be fetched.';
     ErrorDescription: 'The file defined in the inputlist could not be fetched via curl.'),
     { jetInputLIstCurlFileMandatoryEmpty } (EventType: etError; Errorcode: 'J2P-400-028';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input file "%s" has no json records, generation is stopped.';
+    HttpStatusCode: HTTP_STATUS.BadRequest;
+    ErrorMessage: 'Mandatory input file "%s" has no json records, generation is stopped.';
     ErrorDescription: 'The file defined in the inputlist has been fetched but now records are found.'));
 
   cJson2PumlOutputFormat: array [tJson2PumlOutputFormat] of string = ('', 'png', 'svg', 'pdf', 'puml', 'json', 'log',

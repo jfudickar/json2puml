@@ -103,7 +103,7 @@ implementation
 uses
   Quick.Logger.Provider.Files, Quick.Logger.Provider.Console, System.IOUtils, Quick.Logger.Provider.StringList,
 {$IFDEF DEBUG} Quick.Logger.ExceptionHook, {$ENDIF}Quick.Logger.UnhandledExceptionHook, Quick.Logger.RuntimeErrorHook,
-  json2pumldefinition, json2pumlbasedefinition, jsontools, MVCFramework.Commons, json2pumltools;
+  json2pumldefinition, json2pumlbasedefinition, jsontools, json2pumltools;
 
 var
   IntGlobalLogHandler: tJson2PumlLogHandler;
