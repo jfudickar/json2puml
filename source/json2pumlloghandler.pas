@@ -149,7 +149,7 @@ begin
     iProvider.LogLevel := LOG_DEBUG
   else
     iProvider.LogLevel := LOG_TRACE;
-  iProvider.TimePrecission := true;
+ iProvider.TimePrecission := true;
   iProvider.IncludedInfo := [iiAppName, iiHost, iiUserName, iiEnvironment, iiPlatform, iiOSVersion, iiExceptionInfo,
     iiExceptionStackTrace];
   SetLogProviderEventTypeNames (iProvider);
@@ -451,7 +451,7 @@ begin
       end;
       if MaxHttpCode = 0 then
       begin
-        MaxHttpCode := HTTP_STATUS.InternalServerError;
+        MaxHttpCode := INT_HTTP_STATUS.InternalServerError;
         jetUnknownServerError.RenderErrorResponse (JsonResult, 1);
       end;
       WriteArrayEndToJson (JsonResult, 0);

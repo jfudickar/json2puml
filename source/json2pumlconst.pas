@@ -60,7 +60,7 @@ type
   end;
 
 type
-  HTTP_STATUS = record // Local Extract of MVCFramework.Commons to get rid of the unit for non service versions
+  INT_HTTP_STATUS = record // Local Extract of MVCFramework.Commons to get rid of the unit for non service versions
   const
     BadRequest = 400;
     InternalServerError = 500;
@@ -71,94 +71,94 @@ const
     ( { jetUndefined } (EventType: etError; Errorcode: ''; HttpStatusCode: 0; ErrorMessage: ''; ErrorDescription: ''),
     { jetUnkownWarning } (EventType: etWarning; Errorcode: ''; HttpStatusCode: 0; ErrorMessage: '';
     ErrorDescription: ''),
-    { jetUnknownError } (EventType: etError; Errorcode: 'J2P-400-001'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetUnknownError } (EventType: etError; Errorcode: 'J2P-400-001'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Unknown error'; ErrorDescription: ''),
-    { jetException } (EventType: etCritical; Errorcode: 'J2P-500-001'; HttpStatusCode: HTTP_STATUS.InternalServerError;
+    { jetException } (EventType: etCritical; Errorcode: 'J2P-500-001'; HttpStatusCode: INT_HTTP_STATUS.InternalServerError;
     ErrorMessage: 'Unhandled exception %s: %s'#13#10'%s';
     ErrorDescription: 'Unhandled exception, please contact the system administrator.'),
     { jetUnknownServerError } (EventType: etCritical; Errorcode: 'J2P-500-002';
-    HttpStatusCode: HTTP_STATUS.InternalServerError; ErrorMessage: 'Unknown server error';
+    HttpStatusCode: INT_HTTP_STATUS.InternalServerError; ErrorMessage: 'Unknown server error';
     ErrorDescription: 'Please contact the system administrator.'),
-    { jetDefinitionFileNotFound } (EventType: etError; Errorcode: 'J2P-400-002'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetDefinitionFileNotFound } (EventType: etError; Errorcode: 'J2P-400-002'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Definition file "%s" not found'; ErrorDescription: ''),
     { jetNoDefinitionFileDefined } (EventType: etError; Errorcode: 'J2P-400-003';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'No definition file defined';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'No definition file defined';
     ErrorDescription: 'A definition file must be defined to convert json data.'),
-    { jetNoInputFile } (EventType: etError; Errorcode: 'J2P-400-004'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetNoInputFile } (EventType: etError; Errorcode: 'J2P-400-004'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'No input files found, conversion aborted';
     ErrorDescription
     : 'No input files have been defined which can be converted. A input file can be based on single file definitions or inputlist files.'),
-    { jetInputListFileNotFound } (EventType: etError; Errorcode: 'J2P-400-005'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetInputListFileNotFound } (EventType: etError; Errorcode: 'J2P-400-005'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'InputListFile : "%s" not found'; ErrorDescription: 'The defined inputlist file couldn''t be found'),
     { jetUnableToParseInputFileStructure } (EventType: etError; Errorcode: 'J2P-400-006';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Unable to parse JSON structure of input file "%s"';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'Unable to parse JSON structure of input file "%s"';
     ErrorDescription
     : 'The structure of the input file is not a valid json structure and can not be parsed. The file will be ignored'),
     { jetNoConfiguredPlantUmlFileFound } (EventType: etError; Errorcode: 'J2P-400-007';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'No configured PlantUML jar files found.';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'No configured PlantUML jar files found.';
     ErrorDescription
     : 'Error in the system configuration. Get in contact with a system administrator. No configured PlantUML could be found.'),
-    { jetPlantUmlFileNotFound } (EventType: etError; Errorcode: 'J2P-400-008'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetPlantUmlFileNotFound } (EventType: etError; Errorcode: 'J2P-400-008'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'PlantUML Jar file ("%s") not found.';
     ErrorDescription
     : 'Error in the system configuration. Get in contact with a system administrator. The configured PlantUML could not be found.'),
-    { jetNoMatchingOptionFound } (EventType: etError; Errorcode: 'J2P-400-009'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetNoMatchingOptionFound } (EventType: etError; Errorcode: 'J2P-400-009'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'No matching option found/defined, conversion aborted';
     ErrorDescription: 'The defined converter option is not defined in the definition file.'),
     { jetGenerateDetailsSummaryNotDefined } (EventType: etError; Errorcode: 'J2P-400-010';
-    HttpStatusCode: HTTP_STATUS.BadRequest;
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'GenerateDetails or GenerateSummary must be activated, conversion aborted';
     ErrorDescription: 'In the minimum one of both options must enabled.'),
-    { jetMandatoryFileNotFound } (EventType: etError; Errorcode: 'J2P-400-011'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetMandatoryFileNotFound } (EventType: etError; Errorcode: 'J2P-400-011'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Failed loading %s from %s, file does not exist.';
     ErrorDescription: 'The defined file could not be found.'),
-    { jetOptionalFileNotFound } (EventType: etWarning; Errorcode: 'J2P-400-012'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetOptionalFileNotFound } (EventType: etWarning; Errorcode: 'J2P-400-012'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Skipped loading %s from %s, file does not exist.';
     ErrorDescription: 'The defined file could not be found.'),
-    { jetFailedParsingFile } (EventType: etWarning; Errorcode: 'J2P-400-013'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetFailedParsingFile } (EventType: etWarning; Errorcode: 'J2P-400-013'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Error parsing %s file "%s".';
     ErrorDescription: 'The json structure of the defined file is invalid or does not match the required structure.'),
     { jetPlantUmlResultGenerationFailed } (EventType: etWarning; Errorcode: 'J2P-400-014';
-    HttpStatusCode: HTTP_STATUS.BadRequest;
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Failed generation of target format %s for PlantUml file "%s".';
     ErrorDescription
     : 'The generation of the target file failed. Activate the PlantUml debug informations to get further details.'),
     { jetCurlFileSkippedValidationException } (EventType: etWarning; Errorcode: 'J2P-400-015';
-    HttpStatusCode: HTTP_STATUS.BadRequest;
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'curl file %s skipped - Exception "%s" raised when validating [%s]';
     ErrorDescription
     : 'The validateion condition in the inputlist file to check if the curl command should be executed has errors.'),
     { jetCurlFileSkippedUrlMissing } (EventType: etWarning; Errorcode: 'J2P-400-016';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'curl file %s skipped - url not defined.';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'curl file %s skipped - url not defined.';
     ErrorDescription: 'The curl command can not be exeucted, the url definition is missing.'),
     { jetCurlFileSkippedInvalidCurlCommand } (EventType: etWarning; Errorcode: 'J2P-400-017';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'curl file %s skipped - unable to generate curl command .';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'curl file %s skipped - unable to generate curl command .';
     ErrorDescription: 'The curl command can not be generated.'),
-    { jetCurlExecutionFailed } (EventType: etWarning; Errorcode: 'J2P-400-018'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetCurlExecutionFailed } (EventType: etWarning; Errorcode: 'J2P-400-018'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Fetching from "%s" for "%s" FAILED (%d ms) : [%s], file skipped'),
     { jetDirectoryCouldNotBeCreated } (EventType: etError; Errorcode: 'J2P-400-019';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Directory could not be created : %s'),
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'Directory could not be created : %s'),
     { jetDirectoryCreationFailed } (EventType: etError; Errorcode: 'J2P-400-020';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Error creating directory : %s - %s'),
-    { jetFileDeletionFailed } (EventType: etWarning; Errorcode: 'J2P-400-021'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'Error creating directory : %s - %s'),
+    { jetFileDeletionFailed } (EventType: etWarning; Errorcode: 'J2P-400-021'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Deleting of file "%s" failed. (%s)'),
     { jetDirectoryDeletionFailed } (EventType: etWarning; Errorcode: 'J2P-400-022';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Deleting of directory "%s" failed. (%s)'),
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'Deleting of directory "%s" failed. (%s)'),
     { jetCmdLineParameterFileDoesNotExits } (EventType: etWarning; Errorcode: 'J2P-400-023';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: '%s%s File "%s" does not exist';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: '%s%s File "%s" does not exist';
     ErrorDescription: 'The file handed over as command line parameter does not exists'),
-    { jetInputFileNotFound } (EventType: etWarning; Errorcode: 'J2P-400-024'; HttpStatusCode: HTTP_STATUS.BadRequest;
+    { jetInputFileNotFound } (EventType: etWarning; Errorcode: 'J2P-400-024'; HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Input file "%s" not found (%s).'),
     { jetMandatoryInputFileNotFound } (EventType: etError; Errorcode: 'J2P-400-025';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandarory input file "%s" not found (%s).'),
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'Mandarory input file "%s" not found (%s).'),
     { jetCmdLineParameterFileDoesNotExits } (EventType: etError; Errorcode: 'J2P-400-026';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Payload is empty';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'Payload is empty';
     ErrorDescription: 'The service request payload is empty. The request can not be handled.'),
     { jetInputListCurlFileMissing } (EventType: etError; Errorcode: 'J2P-400-027';
-    HttpStatusCode: HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input file "%s" could not be fetched.';
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest; ErrorMessage: 'Mandatory input file "%s" could not be fetched.';
     ErrorDescription: 'The file defined in the inputlist could not be fetched via curl.'),
     { jetInputLIstCurlFileMandatoryEmpty } (EventType: etError; Errorcode: 'J2P-400-028';
-    HttpStatusCode: HTTP_STATUS.BadRequest;
+    HttpStatusCode: INT_HTTP_STATUS.BadRequest;
     ErrorMessage: 'Mandatory input file "%s" has no json records, generation is stopped.';
     ErrorDescription: 'The file defined in the inputlist has been fetched but now records are found.'));
 
