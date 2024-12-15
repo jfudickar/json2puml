@@ -436,7 +436,10 @@ end;
 procedure Tjson2pumlMainForm.BeforeCreateAllInputHandlerRecords (Sender: tObject);
 begin
   LogFileDetailPageControl.ActivePage := ExecutionLogTabSheet;
-  ExecutionLogFileNameEdit.Text := jofExecuteLog.Filename (InputHandler.CalculateSummaryFileName(jofPUML));
+  if jofLog in InputHandler.CurrentOutputFormats then
+    ExecutionLogFileNameEdit.Text := jofExecuteLog.Filename (InputHandler.CalculateSummaryFileName(jofPUML))
+  else
+    ExecutionLogFileNameEdit.Text := '';
   FillCurlFileListDataset (nil);
   HandleNotifyChange (self, nctConvert, 0, 0);
   HandleNotifyChange (self, nctExpand, 0, 0);
@@ -1335,11 +1338,11 @@ begin
   fLogMemo.Update;
   case ChangeType of
     nctExpand:
-      SetProgress(ExpandProgressLabel, 'Expand', ExpandProgressBar);
+      SetProgress (ExpandProgressLabel, 'Expand', ExpandProgressBar);
     nctConvert:
-      SetProgress(ConvertProgressLabel, 'Convert', ConvertProgressBar);
+      SetProgress (ConvertProgressLabel, 'Convert', ConvertProgressBar);
     nctGenerate:
-      SetProgress(GenerateProgressLabel, 'Generate', GenerateProgressBar);
+      SetProgress (GenerateProgressLabel, 'Generate', GenerateProgressBar);
   end;
   if ProgressValue = ProgressMaxValue then
   begin
@@ -1351,7 +1354,7 @@ begin
     Taskbar.ProgressValue := ProgressValue;
     Taskbar.ProgressMaxValue := ProgressMaxValue;
   end;
-//  Sleep (1);
+  // Sleep (1);
   Application.ProcessMessages;
 end;
 
