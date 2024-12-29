@@ -235,6 +235,58 @@
 				"pumlHeaderLines": [
 				]
 			}
+		},
+		{
+			"option": "launch-crew",
+			"definition": {
+				"continueAfterUnhandledObjects": null,
+				"groupDetailObjectsTogether": null,
+				"hideDuplicateRelations": null,
+				"identifyObjectsByTypeAndIdent": null,
+				"legendShowInfo": null,
+				"legendShowObjectCount": null,
+				"legendShowObjectFormats": null,
+				"legendShowFileInfos": null,
+				"attributeProperties": [
+					"*"
+				],
+				"objectProperties":  {
+					"operation": "replace",
+					"list": [
+						"launch",
+						"crew",
+						{"objectName": "launchcrew","generateWithoutIdentifier": "true"}
+					]
+				},
+				"objectTypeProperties": [
+				],
+				"objectTypeRenames": [
+				],
+				"objectIdentifierProperties": [
+				],
+				"objectTitleProperties": [
+				],
+				"objectDetailProperties": [
+				],
+				"relationshipProperties": [
+				],
+				"relationshipTypeProperties": [
+				],
+				"relationshipTypeArrowFormats": [
+				],
+				"groupProperties": [
+				],
+				"characteristicProperties": [
+				],
+				"hiddenProperties": [
+					"links",
+					"*image*",
+					"details",
+					"wikipedia"
+				],
+				"pumlHeaderLines": [
+				]
+			}
 		}
 	],
 	"baseOption": {
