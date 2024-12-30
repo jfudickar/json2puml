@@ -751,6 +751,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 1327
+            ExplicitHeight = 383
             object ProgressbarPanel: TPanel
               Left = 0
               Top = 0
@@ -758,20 +760,21 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 89
               Align = alTop
               TabOrder = 0
+              ExplicitWidth = 1327
               DesignSize = (
                 1331
                 89)
               object ExpandProgressLabel: TLabel
                 Left = 6
                 Top = 10
-                Width = 84
+                Width = 36
                 Height = 13
                 Caption = 'Expand'
               end
               object ConvertProgressLabel: TLabel
                 Left = 6
                 Top = 26
-                Width = 84
+                Width = 39
                 Height = 13
                 Caption = 'Convert'
               end
@@ -800,6 +803,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 0
+                ExplicitWidth = 1226
               end
               object ConvertProgressBar: TProgressBar
                 Left = 96
@@ -811,6 +815,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 1
+                ExplicitWidth = 1226
               end
               object ExecutionLogFileNameEdit: TButtonedEdit
                 Left = 96
@@ -820,6 +825,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 Anchors = [akLeft, akTop, akRight]
                 ReadOnly = True
                 TabOrder = 2
+                ExplicitWidth = 1225
               end
               object GenerateProgressBar: TProgressBar
                 Left = 96
@@ -831,6 +837,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 3
+                ExplicitWidth = 1226
               end
             end
           end
@@ -969,8 +976,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 1327
-            ExplicitHeight = 383
           end
         end
       end

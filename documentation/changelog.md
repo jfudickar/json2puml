@@ -1,3 +1,13 @@
+# **json2puml v2.2.23.119** - XX.X.2024
+## All Editions
+### New Feature
+- New dedicated object for the relationshipProperties. This allows more flexibility and simplicity in defining complex relationships
+
+## UI  Edition
+### Changed Feature
+- Showing the name of the execution log file only when the outputformat contains the log option #43
+- Improved handling of progress bar updates when handling the files #38
+
 # **json2puml v2.2.22.118** - 22.10.2024
 ## All Editions
 ### Changed Feature

@@ -18,7 +18,7 @@
 	"curlTraceIdHeader": "x-b3-traceid",
 	"defaultDefinitionFileName": null,
 	"definitionFileSearchFolder": [
-		"e:\\Delphi\\Projects\\json2puml\\definition\\",
+		"e:\\Delphi\\Projects\\json2puml\\definition",
 		"e:\\Delphi\\Projects\\json2puml\\samples-local\\c1\\definition\\*definition*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\tmf\\*definition*.json",
 		"e:\\Delphi\\Projects\\json2puml\\samples\\json2puml\\*definition*.json",
