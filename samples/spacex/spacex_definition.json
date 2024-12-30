@@ -25,6 +25,8 @@
 				],
 				"objectTypeRenames": [
 				],
+				"propertyNameRenames": [
+				],
 				"objectIdentifierProperties": [
 				],
 				"objectTitleProperties": [
@@ -95,6 +97,8 @@
 				],
 				"objectTypeRenames": [
 				],
+				"propertyNameRenames": [
+				],
 				"objectIdentifierProperties": [
 				],
 				"objectTitleProperties": [
@@ -141,6 +145,8 @@
 				],
 				"objectTypeRenames": [
 				],
+				"propertyNameRenames": [
+				],
 				"objectIdentifierProperties": [
 				],
 				"objectTitleProperties": [
@@ -184,7 +190,7 @@
 			}
 		},
 		{
-			"option": "launch-crew-rocket",
+			"option": "launch-crew",
 			"definition": {
 				"continueAfterUnhandledObjects": null,
 				"groupDetailObjectsTogether": null,
@@ -201,7 +207,6 @@
 					"operation": "replace",
 					"list": [
 						"launch",
-						"rocket",
 						"crew",
 						{"objectName": "launchcrew","generateWithoutIdentifier": "true"}
 					]
@@ -209,6 +214,8 @@
 				"objectTypeProperties": [
 				],
 				"objectTypeRenames": [
+				],
+				"propertyNameRenames": [
 				],
 				"objectIdentifierProperties": [
 				],
@@ -237,7 +244,7 @@
 			}
 		},
 		{
-			"option": "launch-crew",
+			"option": "launch-crew-rocket",
 			"definition": {
 				"continueAfterUnhandledObjects": null,
 				"groupDetailObjectsTogether": null,
@@ -254,6 +261,7 @@
 					"operation": "replace",
 					"list": [
 						"launch",
+						"rocket",
 						"crew",
 						{"objectName": "launchcrew","generateWithoutIdentifier": "true"}
 					]
@@ -261,6 +269,8 @@
 				"objectTypeProperties": [
 				],
 				"objectTypeRenames": [
+				],
+				"propertyNameRenames": [
 				],
 				"objectIdentifierProperties": [
 				],
@@ -317,12 +327,15 @@
 		],
 		"objectTypeRenames": [
 			"launches=launch",
-			"launch.crew=launchcrew",
+			"xlaunch.crew=launchcrew",
 			"launch.cores=launchcore",
 			"rockets=rocket",
 			"capsules=capsule",
 			"payloads=payload",
 			"ships=ship"
+		],
+		"propertyNameRenames": [
+			"crew.crew=id"
 		],
 		"objectIdentifierProperties": [
 			"id"
@@ -337,11 +350,19 @@
 			"composite_fairing"
 		],
 		"relationshipProperties": [
+			{
+				"relationshipProperty": "launch.crew",
+				"relationshipTypeProperty": "role",
+				"objectTypeProperty": null,
+				"objectType": "crew",
+				"objectIdentifierProperty": "crew",
+				"showInParentObject": true
+			},
 			"launches",
 			"launch",
 			"rockets",
 			"rocket",
-			"crew.crew",
+			"xcrew.crew",
 			"dragon.capsule",
 			"capsules",
 			"payloads",
@@ -355,10 +376,13 @@
 			"role"
 		],
 		"relationshipTypeArrowFormats": [
+			"crew=[dotted]",
+			"crew.pilot=[#blue]",
+			"crew.commander=[#red]"
 		],
 		"groupProperties": [
-			"launchcrew",
-			"launchcore"
+			"launchcore",
+			"launch.crew"
 		],
 		"characteristicProperties": [
 			"*pad.images",
