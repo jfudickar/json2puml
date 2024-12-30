@@ -84,6 +84,15 @@ class NamedFormat {
     definition: SingleFormat
 }
 
+class RelationshipProperty {
+    objectIdentifierProperty : String
+    objectType : String
+    objectTypeProperty : String
+    relationshipProperty : String
+    relationshipTypeProperty : String
+    showInParentObject : Boolean        
+}
+
 class PropertyValue {
     propertyName : String
     childPropertyName : String
@@ -117,7 +126,8 @@ class SingleOption {
     objectIdentifierProperties : Array of PropertyValue
 	objectTitleProperties : Array of PropertyValue
     objectDetailProperties : Array of String
-    relationshipProperties : Array of String
+    propertyNameRenames : Array of String
+    relationshipProperties : Array of RelationshipProperty
     relationshipTypeProperties : Array of PropertyValue
     relationshipTypeArrowFormats : Array of String
     groupProperties : Array of string
@@ -136,6 +146,7 @@ SingleOption::objectIdentifierProperties -right-> "0..*" PropertyValue
 SingleOption::objectTitleProperties --> "0..*" PropertyValue
 SingleOption::objectTypeProperties --> "0..*" PropertyValue : "     "
 SingleOption::relationshipTypeProperties --> "0..*" PropertyValue
+SingleOption::relationshipProperties --> "0..*" RelationshipProperty
 FormatDefintion::baseFormat -right-> "[0..1]" SingleFormat
 FormatDefintion::formats -down-> "[0..*]" NamedFormat
 NamedFormat::definition -right-> "[0..1]" SingleFormat
