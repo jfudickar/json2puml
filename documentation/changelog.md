@@ -1,4 +1,9 @@
-# **json2puml v2.2.23.119** - XX.X.2024
+# **json2puml v2.2.24.120** - 16.01.2025
+## All Editions
+### Changed Feature
+- Fixed a bug to read the single input files from parameterfile #59
+
+# **json2puml v2.2.23.119** - 30.12.2024
 ## All Editions
 ### New Feature
 - New dedicated object for the relationshipProperties. This allows more flexibility and simplicity in defining complex relationships

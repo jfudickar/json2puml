@@ -3948,6 +3948,7 @@ begin
     Content := Value.ToString
   else
     Content := '';
+  Result := true;
 end;
 
 procedure tJson2PumlParameterInputFileDefinition.SetContent (const Value: string);
