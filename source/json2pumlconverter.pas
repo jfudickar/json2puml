@@ -272,7 +272,6 @@ var
   ObjectType: string;
   ObjectTitleProperty: string;
   ObjectTypeRenamed: string;
-  PropertyNameRenamed: string;
   CharacteristicDefinition: tJson2PumlCharacteristicDefinition;
   ObjectDefinition: tJson2PumlObjectDefinition;
   RelationshipDefinition: tJson2PumlRelationshipDefinition;
@@ -304,7 +303,6 @@ begin
 
   PumlObject := nil;
   CharacteristicDefinition := nil;
-  RelationshipDefinition := nil;
   ObjectDefinition := nil;
   IsObjectProperty := false;
   IsObjectDetail := false;
