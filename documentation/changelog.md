@@ -1,3 +1,8 @@
+# **json2puml v2.2.25.121** - 03.04.2025
+## All Editions
+### Changed Feature
+- Fixed a bug when generating plantuml and the object identifiers containing not allowed characters for plantuml object identifiers
+
 # **json2puml v2.2.24.120** - 16.01.2025
 ## All Editions
 ### Changed Feature

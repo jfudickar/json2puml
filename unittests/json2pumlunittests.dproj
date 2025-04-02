@@ -165,6 +165,7 @@
         <DCCReference Include="uttJson2PumlFormatDefinition.pas"/>
         <DCCReference Include="utJson2PumlCurlUtils.pas"/>
         <DCCReference Include="utJson2PumlFileDescriptionParameterList.pas"/>
+        <DCCReference Include="utJson2PumlPuml.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

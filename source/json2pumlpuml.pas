@@ -27,8 +27,11 @@ unit json2pumlpuml;
 interface
 
 uses
-  System.JSON, System.Classes, json2pumldefinition, json2pumlconst, json2pumlconverterdefinition,
-  json2pumlbasedefinition;
+  System.JSON, System.Classes, System.Generics.Collections, json2pumldefinition, json2pumlconst,
+  json2pumlconverterdefinition, json2pumlbasedefinition, System.SysUtils;
+
+const
+  PlantUmlIdentifierAllowed: TSysCharSet = ['a' .. 'z', '0' .. '9'];
 
 type
   tPumlObject = class;
@@ -50,6 +53,19 @@ type
       : string; overload;
   end;
 
+  tPumlIdentifierCalculator = class
+  private
+    FCache: TDictionary<string, string>;
+    function GenerateUniqueIdentifier (const AIdentifier, ACleanIdentifier: string): string;
+  protected
+    function CacheIdentifier (const AIdentifier: string; const ADefault: string = ''): string;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Clear;
+    function CalculateIdentifier (const AIdentifier: string): string;
+  end;
+
   tBasePumlObject = class(tPersistent)
   private
     FParentObject: tBasePumlObject;
@@ -59,7 +75,7 @@ type
     function GetParentUmlObject: tPumlObject;
   public
     constructor Create (iParentObject: tBasePumlObject); virtual;
-    procedure clear; virtual;
+    procedure Clear; virtual;
     procedure UpdateRedundant; virtual;
     property Filled: boolean read GetFilled;
     property Ident: string read GetIdent;
@@ -95,7 +111,7 @@ type
     destructor Destroy; override;
     function AddObject (const s: string; AObject: tObject): integer;
     procedure Assign (Source: tPersistent); override;
-    procedure clear; override;
+    procedure Clear; override;
     procedure Delete (Index: integer);
     function IndexOf (s: string): integer;
     function IndexOfName (s: string): integer;
@@ -363,20 +379,25 @@ type
     FIsObjectDetail: boolean;
     FIsRelationship: boolean;
     FObjectIdent: string;
+    FObjectIdentifier: string;
     FObjectIdentProperty: string;
     FObjectTitle: string;
     FObjectTitleProperty: string;
     FObjectType: string;
     FParentObjectType: string;
+    FPlantUmlIdent: string;
     FRelations: tPumlObjectRelationshipList;
     function GetFilled: boolean; override;
     function GetIdent: string; override;
     function GetObjectIdentifier: string;
     function GetObjectTypeIdent: string;
-    function GetPlantUmlIdent: string;
     function GetShowObject: boolean;
+    procedure SetIdentifyObjectsByTypeAndIdent(const Value: boolean);
+    procedure SetObjectIdent (const Value: string);
+    procedure SetObjectType (const Value: string);
   protected
     function GeneratePumlClassName: string;
+    procedure CalculatePlantUmlIdent;
     property ChildObjectCount: integer read FChildObjectCount;
   public
     constructor Create; reintroduce;
@@ -398,22 +419,22 @@ type
     property InputFilter: tJson2PumlFilterList read FInputFilter write FInputFilter;
     property IsObjectDetail: boolean read FIsObjectDetail write FIsObjectDetail;
     property IsRelationship: boolean read FIsRelationship write FIsRelationship;
-    property ObjectIdentifier: string read GetObjectIdentifier;
+    property ObjectIdentifier: string read GetObjectIdentifier write FObjectIdentifier;
     property ObjectTypeIdent: string read GetObjectTypeIdent;
-    property PlantUmlIdent: string read GetPlantUmlIdent;
+    property PlantUmlIdent: string read FPlantUmlIdent;
     property ShowObject: boolean read GetShowObject;
   published
     property Attributes: tPumlCharacteristicRecord read FAttributes;
     property Characteristics: tPumlCharacteristicList read FCharacteristics;
     property DetailObjects: tPumlDetailObjectList read FDetailObjects;
     property FormatPriority: integer read FFormatPriority write FFormatPriority;
-    property IdentifyObjectsByTypeAndIdent: boolean read FIdentifyObjectsByTypeAndIdent
-      write FIdentifyObjectsByTypeAndIdent;
-    property ObjectIdent: string read FObjectIdent write FObjectIdent;
+    property IdentifyObjectsByTypeAndIdent: boolean read FIdentifyObjectsByTypeAndIdent write
+        SetIdentifyObjectsByTypeAndIdent;
+    property ObjectIdent: string read FObjectIdent write SetObjectIdent;
     property ObjectIdentProperty: string read FObjectIdentProperty write FObjectIdentProperty;
     property ObjectTitle: string read FObjectTitle write FObjectTitle;
     property ObjectTitleProperty: string read FObjectTitleProperty write FObjectTitleProperty;
-    property ObjectType: string read FObjectType write FObjectType;
+    property ObjectType: string read FObjectType write SetObjectType;
     property ParentObjectType: string read FParentObjectType write FParentObjectType;
     property Relations: tPumlObjectRelationshipList read FRelations;
   end;
@@ -448,11 +469,13 @@ type
     property PumlObject[index: integer]: tPumlObject read GetPumlObject; default;
   end;
 
+
 implementation
 
 uses
-  System.SysUtils, System.Generics.Collections, System.Types, System.IOUtils, json2pumltools, System.Variants,
-  json2pumlloghandler;
+  System.Types, System.IOUtils, json2pumltools, System.Variants, json2pumlloghandler;
+var
+  PumlIdentifierCalculator: tPumlIdentifierCalculator;
 
 constructor tPumlObjectList.Create;
 begin
@@ -549,6 +572,9 @@ begin
   FFiltered := true;
   FChildObjectCount := 0;
   FFormatPriority := MaxInt;
+  FObjectIdent := '';
+  FObjectType := '';
+  CalculatePlantUmlIdent;
 end;
 
 destructor tPumlObject.Destroy;
@@ -583,6 +609,11 @@ function tPumlObject.CalculateChildObjectDefaultIdent (iChildObjectType: string)
 begin
   inc (FChildObjectCount);
   Result := Format ('%s_%s_%d', [iChildObjectType, ObjectIdentifier, ChildObjectCount]);
+end;
+
+procedure tPumlObject.CalculatePlantUmlIdent;
+begin
+  FPlantUmlIdent := PumlIdentifierCalculator.CalculateIdentifier(ObjectIdentifier);
 end;
 
 function tPumlObject.GeneratePuml (ipuml: tStrings): boolean;
@@ -688,11 +719,6 @@ end;
 function tPumlObject.GetObjectTypeIdent: string;
 begin
   Result := Format ('%s %s', [ObjectType.ToLower, ObjectIdent]);
-end;
-
-function tPumlObject.GetPlantUmlIdent: string;
-begin
-  Result := tPumlHelper.PUmlIdentifier (ObjectIdentifier);
 end;
 
 function tPumlObject.GetShowObject: boolean;
@@ -811,6 +837,34 @@ begin
   if NewCaption.IsEmpty then
     addpart (ObjectIdent, 'i');
   Result := NewCaption;
+end;
+
+procedure tPumlObject.SetIdentifyObjectsByTypeAndIdent(const Value: boolean);
+begin
+  FIdentifyObjectsByTypeAndIdent := Value;
+  if Value <> FIdentifyObjectsByTypeAndIdent then
+  begin
+    FIdentifyObjectsByTypeAndIdent := Value;
+    CalculatePlantUmlIdent;
+  end;
+end;
+
+procedure tPumlObject.SetObjectIdent (const Value: string);
+begin
+  if Value <> FObjectIdent then
+  begin
+    FObjectIdent := Value.trim;
+    CalculatePlantUmlIdent;
+  end;
+end;
+
+procedure tPumlObject.SetObjectType (const Value: string);
+begin
+  if FObjectType <> Value then
+  begin
+    FObjectType := Value.trim;
+    CalculatePlantUmlIdent;
+  end;
 end;
 
 procedure tPumlObject.UpdateRedundant;
@@ -1178,7 +1232,7 @@ begin
   FParentObject := iParentObject;
 end;
 
-procedure tBasePumlObject.clear;
+procedure tBasePumlObject.Clear;
 begin
 
 end;
@@ -1317,10 +1371,11 @@ begin
     ItemList.Assign (tBasePumlStringList(Source).ItemList);
 end;
 
-procedure tBasePumlStringList.clear;
+procedure tBasePumlStringList.Clear;
 begin
-  ItemList.clear;
-  inherited clear;
+  PumlIdentifierCalculator.Clear;
+  ItemList.Clear;
+  inherited Clear;
 end;
 
 procedure tBasePumlStringList.Delete (Index: integer);
@@ -1806,9 +1861,20 @@ begin
 end;
 
 class function tPumlHelper.PUmlIdentifier (iIdentifier: string): string;
+var
+  i: integer;
+  c: Char;
+  LowerIdentifier: string;
 begin
-  Result := iIdentifier.Replace (' ', '_').Replace ('-', '_').Replace (':', '_').Replace ('/', '_').Replace ('\', '_')
-    .Replace ('.', '_').Replace ('{', '_').Replace ('}', '_').ToLower;
+  LowerIdentifier := iIdentifier.ToLower;
+  SetLength (Result, Length(LowerIdentifier));
+  for i := 1 to Length(LowerIdentifier) do
+  begin
+    c := LowerIdentifier[i];
+    if not CharInSet (c, PlantUmlIdentifierAllowed) then
+      LowerIdentifier[i] := '_';
+  end;
+  Result := LowerIdentifier;
 end;
 
 class function tPumlHelper.RelationLine (iFromIdent, iArrowFormat, iToIdent, iComment: string): string;
@@ -1875,7 +1941,75 @@ begin
   for s in iColumns do
     Result := Result + TableColumn (s, iHeader);
   if iClearColumns then
-    iColumns.clear;
+    iColumns.Clear;
+end;
+
+constructor tPumlIdentifierCalculator.Create;
+begin
+  FCache := TDictionary<string, string>.Create;
+end;
+
+destructor tPumlIdentifierCalculator.Destroy;
+begin
+  FCache.Free;
+  inherited;
+end;
+
+function tPumlIdentifierCalculator.CacheIdentifier (const AIdentifier: string; const ADefault: string = ''): string;
+begin
+  if FCache.ContainsKey (AIdentifier) then
+    Result := FCache.Items[AIdentifier]
+  else
+    Result := ADefault;
+end;
+
+procedure tPumlIdentifierCalculator.Clear;
+begin
+  FCache.Clear;
+end;
+
+function tPumlIdentifierCalculator.CalculateIdentifier (const AIdentifier: string): string;
+var
+  CleanIdentifier: string;
+begin
+  CleanIdentifier := tPumlHelper.PUmlIdentifier (AIdentifier);
+  if CleanIdentifier = AIdentifier then
+  begin
+    Result := CleanIdentifier;
+    if not FCache.ContainsKey (CleanIdentifier) then
+      FCache.add (CleanIdentifier, AIdentifier);
+    Exit;
+  end;
+
+  if CacheIdentifier (CleanIdentifier, '') = AIdentifier then
+  begin
+    Result := CleanIdentifier;
+    Exit;
+  end;
+
+  Result := GenerateUniqueIdentifier (AIdentifier, CleanIdentifier);
+end;
+
+function tPumlIdentifierCalculator.GenerateUniqueIdentifier (const AIdentifier, ACleanIdentifier: string): string;
+var
+  Counter: integer;
+  NewIdentifier: string;
+  FoundIdentifier: string;
+begin
+  Counter := 1;
+  NewIdentifier := ACleanIdentifier;
+
+  FoundIdentifier := CacheIdentifier (NewIdentifier, AIdentifier);
+  while FoundIdentifier <> AIdentifier do
+  begin
+    NewIdentifier := ACleanIdentifier + IntToStr (Counter);
+    inc (Counter);
+    FoundIdentifier := CacheIdentifier (NewIdentifier, AIdentifier);
+  end;
+
+  if not FCache.ContainsKey (NewIdentifier) then
+    FCache.add (NewIdentifier, AIdentifier);
+  Result := NewIdentifier;
 end;
 
 constructor tPumlCharacteristicValue.Create (iParentObject: tBasePumlObject);
@@ -1908,7 +2042,7 @@ end;
 
 procedure tPumlCharacteristicValue.CalculateTableRow (iUsedColumns, iValueList: tStringList);
 var
-  Name: string;
+  name: string;
   CharRec: tPumlCharacteristicRecord;
 begin
   if DetailRecords.Filled then
@@ -2071,7 +2205,8 @@ begin
       UsedColumns.Insert (0, 'idx');
     ipuml.add (tPumlHelper.TableLine(UsedColumns, true, false));
     if iDefinition.IncludeIndex then
-      UsedColumns.Delete (0); // to prevent empty columns because for idx there is no value
+      UsedColumns.Delete (0);
+    // to prevent empty columns because for idx there is no value
     for Row in TableRows do
     begin
       if iDefinition.IncludeIndex then
@@ -2138,5 +2273,13 @@ function tPumlCharacteristicRecordList.GetRecords (Index: integer): tPumlCharact
 begin
   Result := tPumlCharacteristicRecord (Objects[index]);
 end;
+
+initialization
+
+PumlIdentifierCalculator := tPumlIdentifierCalculator.Create;
+
+finalization
+
+PumlIdentifierCalculator.Free;
 
 end.
