@@ -450,6 +450,7 @@ var
   LastProperty: string;
   SingleJson: tStringList;
   InputFile: tJson2PumlInputFileDefinition;
+  rowCount : Integer;
   First: Boolean;
 begin
   iSingleRecord.JsonInput.Clear;
@@ -478,7 +479,8 @@ begin
         Continue;
       end;
       SingleJson.LoadFromFile (InputFile.OutputFileName);
-      if SingleJson.Count = 0 then
+      rowcount := GetJsonStringRecordCount(SingleJson.Text);
+      if rowcount < 1 then
       begin
         iSingleRecord.ConverterLog.Add (Format(#9'"%s" skipped, file is empty ', [InputFile.OutputFileName]));
         Continue;
@@ -494,11 +496,11 @@ begin
         iSingleRecord.JsonInput.AddStrings (SingleJson);
         iSingleRecord.JsonInput.Add ('}');
       end;
-      iSingleRecord.ConverterLog.Add (Format(#9'"%s" added, %d lines handled', [InputFile.OutputFileName,
+      iSingleRecord.ConverterLog.Add (Format(#9'"%s" added, %d rows/%d lines handled', [InputFile.OutputFileName, rowcount,
         SingleJson.Count]));
     end;
     iSingleRecord.JsonInput.Add (']');
-    if iSingleRecord.JsonInput.Count > 0 then
+    if Not First then
     begin
       GenerateFileDirectory (iSingleRecord.InputFile.OutputFileName);
       iSingleRecord.JsonInput.SaveToFile (iSingleRecord.InputFile.OutputFileName);

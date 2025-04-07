@@ -1,12 +1,10 @@
 unit utJson2PumlPuml;
 
 interface
-
 uses
   DUnitX.TestFramework,
   json2pumlpuml,
   System.SysUtils;
-
 type
   [TestFixture]
   TPumlIdentifierCalculatorTests = class(TObject)
@@ -44,24 +42,19 @@ type
     [TestCase('abc|.a', 'a_abc_1, abc|,a')]
     procedure TestPumlObject_PumlIdentifier(const AExpectedIdentifier: string; AObjectIdent : String; AObjectType : String);
   end;
-
 implementation
-
 uses
   DUnitX.Assert;
-
 constructor TPumlIdentifierCalculatorTests.Create;
 begin
   inherited Create;
   FCalculator := tPumlIdentifierCalculator.Create;
 end;
-
 destructor TPumlIdentifierCalculatorTests.Destroy;
 begin
   FCalculator.Free;
   inherited Destroy;
 end;
-
 procedure TPumlIdentifierCalculatorTests.TestCalculateIdentifier_Parameterized(const AExpectedIdentifier,
     AInputIdentifier: string);
 var
@@ -71,7 +64,6 @@ begin
   Assert.AreEqual(AExpectedIdentifier.trim, ResultIdentifier.trim,
     Format('Input: "%s", Expected: "%s", Actual: "%s"', [AInputIdentifier.trim, AExpectedIdentifier.trim, ResultIdentifier]));
 end;
-
 procedure TPumlIdentifierCalculatorTests.TestPumlObject_PumlIdentifier(const AExpectedIdentifier: string; AObjectIdent
     : String; AObjectType : String);
 var pumlobject : TPumlObject;
@@ -91,5 +83,4 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TPumlIdentifierCalculatorTests);
-
 end.

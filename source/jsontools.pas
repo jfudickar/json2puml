@@ -72,6 +72,8 @@ function IsJsonArraySimple (iJsonArray: tJSONArray): boolean;
 
 function IsJsonSimple (iJsonValue: tJSONValue): boolean;
 
+function IsJsonFilled (iJsonValue: tJSONValue): boolean;
+
 function JsonLinePrefix (iLevel: integer): string;
 
 function JsonPropertyName (iPropertyName: string): string;
@@ -118,6 +120,8 @@ procedure WriteToJsonValue (oJsonOutPut: tStrings; iPropertyName: string; iPrope
 
 procedure WriteToJsonValueBoolean (oJsonOutPut: tStrings; iPropertyName, iPropertyvalue: string; iLevel: integer;
   iWriteEmpty: boolean = false);
+
+function GetJsonStringRecordCount (const iJson: string): integer;
 
 implementation
 
@@ -727,6 +731,16 @@ begin
     (iJsonValue is tJSONNull);
 end;
 
+function IsJsonFilled (iJsonValue: tJSONValue): boolean;
+begin
+  if iJsonValue is tJSONArray then
+    Result := tJSONArray (iJsonValue).Count > 0
+  else if iJsonValue is tJSONObject then
+    Result := tJSONArray (iJsonValue).Count > 0
+  else
+    Result := not iJsonValue.toString.IsEmpty;
+end;
+
 function IsJsonArraySimple (iJsonArray: tJSONArray): boolean;
 var
   i: integer;
@@ -772,25 +786,31 @@ end;
 function GetJsonFileRecordCount (iFileName: string): integer;
 var
   InputFile: tStringList;
-  JsonValue: tJSONValue;
 begin
-  Result := 0;
   InputFile := tStringList.Create;
   try
     InputFile.LoadFromFile (iFileName);
-    JsonValue := tJSONObject.ParseJSONValue (InputFile.Text);
-    if Assigned (JsonValue) then
-      try
-        if JsonValue is tJSONArray then
-          Result := tJSONArray (JsonValue).Count
-        else
-          Result := 1;
-      finally
-        JsonValue.Free;
-      end;
+    Result := GetJsonStringRecordCount (InputFile.Text);
   finally
     InputFile.Free;
   end;
+end;
+
+function GetJsonStringRecordCount (const iJson: string): integer;
+var
+  JsonValue: tJSONValue;
+begin
+  Result := 0;
+  JsonValue := tJSONObject.ParseJSONValue (iJson);
+  if Assigned (JsonValue) then
+    try
+      if JsonValue is tJSONArray then
+        Result := tJSONArray (JsonValue).Count
+      else
+        Result := 1;
+    finally
+      JsonValue.Free;
+    end;
 end;
 
 end.

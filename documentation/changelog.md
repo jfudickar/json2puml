@@ -1,3 +1,9 @@
+# **json2puml v2.2.26.122** - 07.04.2025
+## All Editions
+### Changed Feature
+- Empty input files are no longer added to the summary file and are not converted in the details view #60
+- Compiler / Resource error of the commandline version fixed
+
 # **json2puml v2.2.25.121** - 03.04.2025
 ## All Editions
 ### Changed Feature

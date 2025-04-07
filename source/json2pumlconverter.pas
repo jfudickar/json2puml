@@ -223,6 +223,8 @@ begin
   JsonValue := tJSONObject.ParseJSONValue (JsonInput.Text);
   if not Assigned (JsonValue) then
     GlobalLoghandler.Error (jetUnableToParseInputFileStructure, [InputHandlerRecord.InputFile.OutputFileName])
+  else if not IsJsonFilled (JsonValue) then
+    GlobalLoghandler.Warn ('Inputfile %s skipped, file is empty', [InputHandlerRecord.InputFile.OutputFileName])
   else
     try
       InfoRec.Init (LeadingObject);
@@ -445,8 +447,7 @@ begin
           Format('- "%s"/"%s"', ['relationshipProperties', 'objectProperties']));
         AddFileLog (LogMessage);
         if RelationshipDefinition.ShowInParentObject then
-          PumlObject.AddValue (RenamePropertyName(ObjectIdentProperty, iInfo.PropertyName,
-            ''), ObjectIdent, false);
+          PumlObject.AddValue (RenamePropertyName(ObjectIdentProperty, iInfo.PropertyName, ''), ObjectIdent, false);
         PumlObject.IsRelationShip := true;
       end;
     end
