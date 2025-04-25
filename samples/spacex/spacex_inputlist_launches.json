@@ -33,7 +33,7 @@
 	"curlTraceIdHeader": null,
 	"curlMappingParameter": [
 	],
-	"summaryFile": "spacex_launch_${launch}",
+	"summaryFile": "spacex_launch_${launch}_${date.local}",
 	"input": [
 		{
 			"inputFile": "launches.json",
@@ -56,6 +56,9 @@
 				},
 				{
 					"${crew.id}": "crew.crew"
+				},
+				{
+					"${date.local}": "date_local"
 				},
 				{
 					"${landpad.id}": "cores.landpad"

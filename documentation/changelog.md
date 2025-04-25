@@ -1,3 +1,8 @@
+# **json2puml v2.2.27.123** - 25.04.2025
+## All Editions
+### Changed Feature
+- Wrong mapping of curl parameter values to filenames fixed #63
+
 # **json2puml v2.2.26.122** - 07.04.2025
 ## All Editions
 ### Changed Feature

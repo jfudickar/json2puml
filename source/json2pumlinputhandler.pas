@@ -575,6 +575,7 @@ function tJson2PumlInputHandler.CalculateOutputFileName (iFileName, iSourceFileN
   iRemoveExtension: Boolean): string;
 var
   Filename: string;
+  Path: string;
   SourceFileName: string;
   Option: string;
   Suffix: string;
@@ -597,9 +598,15 @@ begin
   if (not Suffix.IsEmpty) and (Suffix <> tpath.ExtensionSeparatorChar) then
     Filename := Filename + Suffix;
   Filename := Filename + tpath.ExtensionSeparatorChar + FileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
+  // ReplaceInvalidPathFileNameChars can not be used here, because of invalid values like ":" in the curl variables.
+  // It's splitted up here so that extractFilePath and ExtractFileName are not getting confused
+  Path := ExtractFilePath (FileName).Trim;
+  Path := ReplaceCurlParameterValues (Path, false);
+  Path := ReplaceInvalidPathChars (Path, false);
+  FileName := ExtractFileName (FileName).Trim;
   Filename := ReplaceCurlParameterValues (Filename, false);
-  Filename := ReplaceInvalidPathFileNameChars (Filename);
-  Result := Filename;
+  FileName := ReplaceInvalidFileNameChars (FileName, false);
+  Result := tPath.Combine (Path, FileName);
 end;
 
 function tJson2PumlInputHandler.CalculateOutputFileNamePath (iFileName, iSourceFileName: string;

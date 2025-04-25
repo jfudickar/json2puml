@@ -12,9 +12,6 @@
         <Projects Include="json2pumlservice.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="json2pumlwindowsservice.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\unittests\json2pumlunittests.dproj">
             <Dependencies/>
         </Projects>
@@ -53,15 +50,6 @@
     <Target Name="json2pumlservice:Make">
         <MSBuild Projects="json2pumlservice.dproj" Targets="Make"/>
     </Target>
-    <Target Name="json2pumlwindowsservice">
-        <MSBuild Projects="json2pumlwindowsservice.dproj"/>
-    </Target>
-    <Target Name="json2pumlwindowsservice:Clean">
-        <MSBuild Projects="json2pumlwindowsservice.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="json2pumlwindowsservice:Make">
-        <MSBuild Projects="json2pumlwindowsservice.dproj" Targets="Make"/>
-    </Target>
     <Target Name="json2pumlunittests">
         <MSBuild Projects="..\unittests\json2pumlunittests.dproj"/>
     </Target>
@@ -72,13 +60,13 @@
         <MSBuild Projects="..\unittests\json2pumlunittests.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="json2pumlui;json2puml;json2pumlservice;json2pumlwindowsservice;json2pumlunittests"/>
+        <CallTarget Targets="json2pumlui;json2puml;json2pumlservice;json2pumlunittests"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="json2pumlui:Clean;json2puml:Clean;json2pumlservice:Clean;json2pumlwindowsservice:Clean;json2pumlunittests:Clean"/>
+        <CallTarget Targets="json2pumlui:Clean;json2puml:Clean;json2pumlservice:Clean;json2pumlunittests:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="json2pumlui:Make;json2puml:Make;json2pumlservice:Make;json2pumlwindowsservice:Make;json2pumlunittests:Make"/>
+        <CallTarget Targets="json2pumlui:Make;json2puml:Make;json2pumlservice:Make;json2pumlunittests:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
