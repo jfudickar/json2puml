@@ -410,7 +410,8 @@
 		],
 		"pumlHeaderLines": [
 			"hide stereotype",
-			"hide empty member"
+			"hide empty member",
+			"!pragma svginteractive true"
 		],
 		"objectFormats": {
 			"baseFormat": {

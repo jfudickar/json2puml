@@ -724,7 +724,8 @@
 			"'skinparam linetype polyline",
 			"'skinparam linetype ortho",
 			"skinparam HeaderFontSize 18",
-			"skinparam FooterFontSize 18"
+			"skinparam FooterFontSize 18",
+			"!pragma svginteractive true"
 		],
 		"objectFormats": {
 			"baseFormat": {

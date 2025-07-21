@@ -134,7 +134,8 @@
 		"hiddenProperties": [
 		],
 		"pumlHeaderLines": [
-			"hide stereotype"
+			"hide stereotype",
+			"!pragma svginteractive true"
 		],
 		"objectFormats": {
 			"baseFormat": {
