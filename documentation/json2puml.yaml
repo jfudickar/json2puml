@@ -1,149 +1,155 @@
-openapi: '3.0.2'
+openapi: "3.0.2"
 info:
   title: json2puml API
   description: |-
     This is the api interface to an json2puml curl execcution server. 
 
-    It could be used to execute a json2puml list definition file. 
+    It could be used to execute a json2puml list definition file.
 
   contact:
     email: jens.fudickar@oratool.de
-  version: '1.2.2'
+  version: "1.2.2"
 servers:
   - url: https://api.server.test/v1/api
 paths:
   /heartbeat:
     get:
-      description: 'Heartbeat function returning service version information'
+      description: "Heartbeat function returning service version information"
       parameters: []
       responses:
-        '200':
+        "200":
           description: Successfull heartbeat operation, System is alive :-)
           content:
             text/plain:
               schema:
                 type: string
-              example: 
-                'json2puml server v2.2.13.109 (Windows 64Bit)'
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+              example: "json2puml server v2.2.13.109 (Windows 64Bit)"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-                
+                $ref: "#/components/schemas/ErrorResponse"
+
   /serviceinformation:
     get:
-      description: 'Returns a set of informations about the service application and the current configuration'
+      description: "Returns a set of informations about the service application and the current configuration"
       parameters: []
       responses:
-        '200':
+        "200":
           description: Successful operation, returns informations about the service application
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ServiceInformationResponse'
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                $ref: "#/components/schemas/ServiceInformationResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
+                $ref: "#/components/schemas/ErrorResponse"
   /errormessages:
     get:
-      description: 'Returns the list of all error messages defined in the system'
+      description: "Returns the list of all error messages defined in the system"
       parameters: []
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
+                $ref: "#/components/schemas/ErrorResponse"
   /definitionfile:
     get:
-      description: 'Returns a list of all available definition files'
+      description: "Returns a list of all available definition files"
       parameters: []
       responses:
-        '200':
+        "200":
           description: Successful operation, returns the list of available definition files
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DefinitionFileResponse'
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                  $ref: "#/components/schemas/DefinitionFileResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
+                $ref: "#/components/schemas/ErrorResponse"
   /inputlistfile:
     get:
-      description: 'Returns a list of all available input list files'
+      description: "Returns a list of all available input list files"
       parameters: []
       responses:
-        '200':
+        "200":
           description: Successful operation, returns the list of available input files
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/InputListFileResponse'          
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                  $ref: "#/components/schemas/InputListFileResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-    
+                $ref: "#/components/schemas/ErrorResponse"
+
   /json2pumlRequest:
     post:
-      description: 'Execute a json2puml curl and generation call'
+      description: "Execute a json2puml curl and generation call"
       requestBody:
         description: Success
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Json2PumlRequest'
+              $ref: "#/components/schemas/Json2PumlRequest"
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Json2PumlResponseFiles'        
-        '400':
-          description: '*Bad Request* - The server cannot process the request due to malformed\
+                $ref: "#/components/schemas/Json2PumlResponseFiles"
+        "400":
+          description:
+            '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
             \ invalid value in the query parameters, validation exceptions, and so on.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
+                $ref: "#/components/schemas/ErrorResponse"
   /json2pumlRequestPng:
     post:
-      description: 'Execute a json2puml curl and generation call and returns the summary PNG file'
+      description: "Execute a json2puml curl and generation call and returns the summary PNG file"
       parameters:
         - in: query
           name: includeFileName
@@ -156,35 +162,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Json2PumlRequestBase'
+              $ref: "#/components/schemas/Json2PumlRequestBase"
       responses:
-        '200':
+        "200":
           description: Successful operation, returns the generated PNG file
           content:
             image/png:
-              schema: 
-                $ref: '#/components/schemas/BinaryFile'
+              schema:
+                $ref: "#/components/schemas/BinaryFile"
             application/json:
               schema:
-                $ref: '#/components/schemas/OutputFileBinary'
-        '400':
-          description: '*Bad Request* - The server cannot process the request due to malformed\
+                $ref: "#/components/schemas/OutputFileBinary"
+        "400":
+          description:
+            '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
             \ invalid value in the query parameters, validation exceptions, and so on.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
+                $ref: "#/components/schemas/ErrorResponse"
   /json2pumlRequestSvg:
     post:
-      description: 'Execute a json2puml curl and generation call and returns the summary SVG file'
+      description: "Execute a json2puml curl and generation call and returns the summary SVG file"
       parameters:
         - in: query
           name: includeFileName
@@ -197,35 +205,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Json2PumlRequestBase'
+              $ref: "#/components/schemas/Json2PumlRequestBase"
       responses:
-        '200':
+        "200":
           description: Successful operation, returns the generated SVG file
           content:
             image/svg+xml:
-              schema: 
-                $ref: '#/components/schemas/BinaryFile'
+              schema:
+                $ref: "#/components/schemas/BinaryFile"
             application/json:
               schema:
-                $ref: '#/components/schemas/OutputFileBinary'
-        '400':
-          description: '*Bad Request* - The server cannot process the request due to malformed\
+                $ref: "#/components/schemas/OutputFileBinary"
+        "400":
+          description:
+            '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
             \ invalid value in the query parameters, validation exceptions, and so on.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
+                $ref: "#/components/schemas/ErrorResponse"
   /json2pumlRequestZip:
     post:
-      description: 'Execute a json2puml curl and generation call and returns a zip file containing all generated files'
+      description: "Execute a json2puml curl and generation call and returns a zip file containing all generated files"
       parameters:
         - in: query
           name: includeFileName
@@ -238,33 +248,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Json2PumlRequest'
+              $ref: "#/components/schemas/Json2PumlRequest"
       responses:
-        '200':
+        "200":
           description: Successful operation, returns the generated ZIP file
           content:
             application/zip:
-              schema: 
-                $ref: '#/components/schemas/BinaryFile'
+              schema:
+                $ref: "#/components/schemas/BinaryFile"
             application/json:
               schema:
-                $ref: '#/components/schemas/OutputFileBinary'
-        '400':
-          description: '*Bad Request* - The server cannot process the request due to malformed\
+                $ref: "#/components/schemas/OutputFileBinary"
+        "400":
+          description:
+            '*Bad Request* - The server cannot process the request due to malformed\
             \ syntax. The response can be caused by missing mandatory query parameters,\
             \ invalid value in the query parameters, validation exceptions, and so on.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-        '500':
-          description:  '*Internal Server Error* - The server encountered an unexpected condition\
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description:
+            '*Internal Server Error* - The server encountered an unexpected condition\
             \ that prevented it from fulfilling the request.'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'        
-###### 
+                $ref: "#/components/schemas/ErrorResponse"
+######
 components:
   schemas:
     ServiceInformationResponse:
@@ -278,7 +290,7 @@ components:
         additionalServiceInformation:
           type: array
           items:
-            type : string
+            type: string
             example:
               - ...
           description: Optional additional informations which can be configured in the global configuraion file
@@ -289,24 +301,24 @@ components:
         commandLineParameter:
           type: array
           items:
-            type : string
+            type: string
             example:
-              -   debug                         = true
-              -   nologfiles                    = true
+              - debug                         = true
+              - nologfiles                    = true
               - ...
-          description: Detailed list of all identified command line parameters 
+          description: Detailed list of all identified command line parameters
         environmentParameter:
           type: array
           items:
-            type : string
+            type: string
             example:
-              -   $JSON2PUMLCONFIGURATIONFILE   = /json2puml/configuration/json2pumlconfiguration.json
+              - $JSON2PUMLCONFIGURATIONFILE   = /json2puml/configuration/json2pumlconfiguration.json
               - ...
           description: Detailed list of all identified environment parameters
         javaInformation:
           type: array
           items:
-            type : string
+            type: string
             example:
               - java version 1.8.0_431
               - Java(TM) SE Runtime Environment (build 1.8.0_431-b10)
@@ -315,7 +327,7 @@ components:
         plantUmlInformation:
           type: array
           items:
-            type : string
+            type: string
             example:
               - PlantUML version 1.2024.0 (Thu Feb 01 18:18:54 UTC 2024)
               - (GPL source distribution)
@@ -324,16 +336,16 @@ components:
         curlInformation:
           type: array
           items:
-            type : string
+            type: string
             example:
               - curl 8.9.1 (Windows) libcurl/8.9.1 Schannel zlib/1.3 WinIDN
               - Release-Date 2024-07-31
               - ...
-          description: Output of the curl --version call  
+          description: Output of the curl --version call
         globalConfiguration:
           type: array
           items:
-            type : string
+            type: string
             example:
               - Global Configuration (/json2puml/configuration/json2pumlconfiguration.json)
               - baseOutputPath                = /json2puml/output
@@ -343,7 +355,7 @@ components:
         definitionFiles:
           type: array
           items:
-            type : string
+            type: string
             example:
               - /json2puml/definition/tmf-definition.json
               - /json2puml/definition/jsonplaceholderdefinition.json
@@ -352,7 +364,7 @@ components:
         inputlistFiles:
           type: array
           items:
-            type : string
+            type: string
             example:
               - /json2puml/inputlist/placeholderinputlistfull.json
               - /json2puml/inputlist/placeholderinputlistreduced.json
@@ -360,7 +372,7 @@ components:
           description: List of all inputlist files configured for the system
     InputListFileResponse:
       type: object
-      description: Definition of a input list file which will be returned by get /inputlistfile 
+      description: Definition of a input list file which will be returned by get /inputlistfile
       properties:
         name:
           type: string
@@ -375,12 +387,12 @@ components:
           example: This file contains a set of filedefinitions which are using curl to fetch the data from https://jsonplaceholder.typicode.com/
           description: Optional description of the input list file
         definitionFile:
-          $ref: '#/components/schemas/DefinitionFileResponse'  
+          $ref: "#/components/schemas/DefinitionFileResponse"
           description: Details of the definition file which is defined in the input list file. When the definition file is not defined in the input list file it must be implicitly defined in the POST /json2pumlRequest parameters
         curlParameter:
           type: array
           items:
-            $ref: '#/components/schemas/InputListFileParameter' 
+            $ref: "#/components/schemas/InputListFileParameter"
           description: List of parameters which can be defined when calling a curl based list file generation
     InputListFileParameter:
       type: object
@@ -390,7 +402,7 @@ components:
           type: string
           description: Name of the curl parameter
           example: customer_number
-        displayName: 
+        displayName:
           type: string
           description: Optional display value which can be shown in a UI to make it better readable
           example: Customer Number
@@ -417,7 +429,7 @@ components:
         - name
     DefinitionFileResponse:
       type: object
-      description: Definition of a converter definition file 
+      description: Definition of a converter definition file
       properties:
         name:
           type: string
@@ -432,11 +444,11 @@ components:
           type: array
           description: List of options defined by the definition file
           items:
-            type : string
-            example: 
-            - full
-            - default
-            - core
+            type: string
+            example:
+              - full
+              - default
+              - core
     Json2PumlRequestBase:
       type: object
       properties:
@@ -445,7 +457,7 @@ components:
           example: placeholderdefinition.json
         inputFiles:
           type: array
-          items:       
+          items:
             type: object
             properties:
               fileName:
@@ -467,7 +479,7 @@ components:
           example: placeholderinputlistreduced.json
         curlParameter:
           type: array
-          description: List of curl parameters which could be used to filter dynamic curl calls defined within the inputfilelist.       
+          description: List of curl parameters which could be used to filter dynamic curl calls defined within the inputfilelist.
           items:
             type: object
             properties:
@@ -477,125 +489,119 @@ components:
               value:
                 type: string
                 example: 1
-        option: 
+        option:
           type: string
           description: The option which should be used to generate the image. The possible options are defined in the definition file.
-          example: 
-            - full 
-            - default 
+          example:
+            - full
+            - default
             - core
-        description: 
+        description:
           type: string
           description: The description will be added to the legend of the generated images
           example: Datamodel status after migration of the customer
     Json2PumlRequest:
-        allOf:
-          - $ref: '#/components/schemas/Json2PumlRequestBase'     
-          - type: object
-            properties:
-              generateSuffix: 
+      allOf:
+        - $ref: "#/components/schemas/Json2PumlRequestBase"
+        - type: object
+          properties:
+            generateSuffix:
+              type: string
+              description: Suffix to be added at the end of the generated files'
+              example: .<option>
+            generateDetails:
+              type: boolean
+              description: Flag to define if for every single result file a image will be generated
+            generateSummary:
+              type: boolean
+              description: Flag to define if a summary file should be generated
+            outputFormats:
+              type: array
+              description: List of file formats to be generated and added to the result set
+              items:
                 type: string
-                description: Suffix to be added at the end of the generated files'
-                example : .<option>
-              generateDetails: 
-                type: boolean
-                description: Flag to define if for every single result file a image will be generated
-              generateSummary: 
-                type: boolean
-                description: Flag to define if a summary file should be generated
-              outputFormats:
-                type: array
-                description: List of file formats to be generated and added to the result set
-                items:
-                  type: string
-                  enum: [svg, png,  json, puml, filelist, log]
-                  example:
+                enum: [svg, png, json, puml, filelist, log]
+                example:
                   - svg
                   - png
     Json2PumlResponseFiles:
       type: object
       properties:
         summaryfile:
-          $ref: '#/components/schemas/GeneratedOutputFile'
+          $ref: "#/components/schemas/GeneratedOutputFile"
         detailfiles:
           type: array
           items:
-            $ref: '#/components/schemas/GeneratedOutputFile'
-         
+            $ref: "#/components/schemas/GeneratedOutputFile"
+
     OutputFile:
       type: object
       properties:
-        outputFilename:
+        outputFileName:
           type: string
-          description : Name of the generated file
+          description: Name of the generated file
     OutputFileFull:
-        allOf:
-          - $ref: '#/components/schemas/OutputFile'     
-          - type: object
-            properties:
-              fullFilename:
-                type: string
-                description : Name of the generated file and path where the file has been generated
-    OutputBinaryContent:            
+      allOf:
+        - $ref: "#/components/schemas/OutputFile"
+        - type: object
+          properties:
+            fullFileName:
+              type: string
+              description: Name of the generated file and path where the file has been generated
+    OutputBinaryContent:
       type: object
       properties:
         content:
           type: string
           format: byte
-          description : Binary content of the file. The content is base64 encoded and needs to be decoded before storing
-    OutputStringContent:            
+          description: Binary content of the file. The content is base64 encoded and needs to be decoded before storing
+    OutputStringContent:
       type: object
       properties:
         content:
           type: string
-          description : Content of the file 
+          description: Content of the file
     OutputFileBinary:
       allOf:
-        - $ref: '#/components/schemas/OutputFile'     
-        - $ref: '#/components/schemas/OutputBinaryContent'     
+        - $ref: "#/components/schemas/OutputFile"
+        - $ref: "#/components/schemas/OutputBinaryContent"
     OutputFileFullString:
       allOf:
-        - $ref: '#/components/schemas/OutputFileFull'     
-        - $ref: '#/components/schemas/OutputStringContent'     
+        - $ref: "#/components/schemas/OutputFileFull"
+        - $ref: "#/components/schemas/OutputStringContent"
     OutputFileFullBinary:
       allOf:
-        - $ref: '#/components/schemas/OutputFileFull'     
-        - $ref: '#/components/schemas/OutputBinaryContent'     
+        - $ref: "#/components/schemas/OutputFileFull"
+        - $ref: "#/components/schemas/OutputBinaryContent"
     BinaryFile:
       type: string
       format: binary
-      description : Binary content of the file. The content is base64 encoded and needs to be decoded before storing
+      description: Binary content of the file. The content is base64 encoded and needs to be decoded before storing
     GeneratedOutputFile:
       type: object
       properties:
         isSplitFile:
           type: boolean
         pumlFile:
-          $ref: '#/components/schemas/OutputFileFullString'
+          $ref: "#/components/schemas/OutputFileFullString"
         pdfFile:
-          $ref: '#/components/schemas/OutputFileFullBinary'
+          $ref: "#/components/schemas/OutputFileFullBinary"
         pngFile:
-          $ref: '#/components/schemas/OutputFileFullBinary'
+          $ref: "#/components/schemas/OutputFileFullBinary"
         svgFile:
-          $ref: '#/components/schemas/OutputFileFullBinary'
+          $ref: "#/components/schemas/OutputFileFullBinary"
         converterLogFile:
-          $ref: '#/components/schemas/OutputFileFullString'
+          $ref: "#/components/schemas/OutputFileFullString"
     ErrorResponse:
       type: array
-      items:       
+      items:
         type: object
         properties:
-          errorCode: 
-            type : string
-          errorClass: 
-            type : string
-          message: 
-            type : string
-          description: 
-            type : string
-
-    
-
-        
-
-  
+          errorCode:
+            type: string
+          errorClass:
+            type: string
+          message:
+            type: string
+          description:
+            type: string
