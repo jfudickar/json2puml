@@ -118,16 +118,18 @@ type
       const iUrlParts, iOptions: array of string; const iOutputFile: string;
       iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
       iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
-      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
+      iIncludeWriteOut, iObfuscateAuthentification: boolean): string;
     class function CalculateOutputParameter (const iOutput: string): string;
     class function CalculateParameter (const iParameterName, iParameterValue: string; iQuoteValue: boolean): string;
     class function CalculateUrlParameter (const iUrl: string): string;
     class function CalculateWriteOutParameter (const iWriteout: string): string;
     class function CurlCommand (const iCurlCommand: string): string;
   public
-    class function CalculateCommand (const iCurlCommand, iBaseUrl: string; const iUrlParts, iOptions: array of string;
-      const iOutputFile: string; iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
-      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
+    class function CalculateCommand(const iCurlCommand, iBaseUrl: string; const iUrlParts, iOptions: array of string; const
+        iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;iCurlParameterList,
+        iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlMappingParameterList:
+        tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
     class function CalculateHeaderParameter (const iHeaderName: string; iHeaderValue: string): string;
     class function CalculateUrl (const iBaseUrl: string; const iUrlParts: array of string;
       iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
@@ -999,20 +1001,21 @@ begin
   Result := TValue.FromVarRec (iVarRec).ToString;
 end;
 
-class function TCurlUtils.CalculateCommand (const iCurlCommand, iBaseUrl: string;
-  const iUrlParts, iOptions: array of string; const iOutputFile: string;
-  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
-  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
+class function TCurlUtils.CalculateCommand(const iCurlCommand, iBaseUrl: string; const iUrlParts, iOptions: array of
+    string; const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;iCurlParameterList,
+    iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlMappingParameterList:
+    tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
 begin
-  Result := CalculateCommandExecute (iCurlCommand, iBaseUrl, iUrlParts, iOptions, iOutputFile, nil, iCurlParameterList,
-    iCurlDetailParameterList, iCurlMappingParameterList, iIncludeWriteOut);
+  Result := CalculateCommandExecute (iCurlCommand, iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlAuthenticationList,
+    iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList, iIncludeWriteOut, true);
 end;
 
 class function TCurlUtils.CalculateCommandExecute (const iCurlCommand, iBaseUrl: string;
   const iUrlParts, iOptions: array of string; const iOutputFile: string;
   iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
   iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
-  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList;
+  iIncludeWriteOut, iObfuscateAuthentification: boolean): string;
 var
   Command: string;
   Url: string;
@@ -1032,7 +1035,10 @@ begin
       ('\nHTTP Response:%{response_code}\nExit Code:%{exitcode}\nError Message:%{errormsg}')]);
 
   if Assigned (iCurlAuthenticationList) then
-    Command := iCurlAuthenticationList.ReplaceParameterValues (iBaseUrl, Command);
+    if iObfuscateAuthentification then
+      Command := iCurlAuthenticationList.ReplaceParameterValuesObfuscated (iBaseUrl, Command)
+    else
+      Command := iCurlAuthenticationList.ReplaceParameterValues (iBaseUrl, Command);
   Command := ReplaceCurlParameterValues (Command, iCurlParameterList, iCurlDetailParameterList,
     iCurlMappingParameterList, true);
 
@@ -1263,7 +1269,7 @@ begin
     iCurlResult.OutPutFile := iOutputFile;
 
     iCurlResult.Command := CalculateCommand (iCurlCommand, iBaseUrl, iUrlParts, iOptions, iOutputFile,
-      iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList, true);
+      iCurlAuthenticationList, iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList, true);
     if iCurlResult.Command.IsEmpty then
     begin
       iCurlResult.ErrorMessage := Format (jetCurlFileSkippedInvalidCurlCommand.ErrorMessage, [iOutputFile]);
@@ -1272,7 +1278,7 @@ begin
     end;
 
     Command := CalculateCommandExecute (iCurlCommand, iBaseUrl, iUrlParts, iOptions, iOutputFile,
-      iCurlAuthenticationList, iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList, true);
+      iCurlAuthenticationList, iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList, true, false);
 
     FilePath := tPath.GetDirectoryName (iOutputFile);
     if tPath.IsRelativePath (FilePath) or IsLinuxHomeBasedPath (FilePath) then

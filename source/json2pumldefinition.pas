@@ -860,6 +860,13 @@ type
     property MulitpleValues: boolean read FMulitpleValues write FMulitpleValues default false;
   end;
 
+  tJson2PumlCurlAuthenticationParameterList = class(tJson2PumlCurlParameterList)
+  protected
+    function ObfuscateValue(iValueString : string): string;
+  public
+    function ReplaceParameterValuesObfuscated(iValueString: string): string;
+  end;
+
   tJson2PumlCurlFileParameterListMatrix = class(tPersistent)
   private
     FNameList: tStringList;
@@ -880,7 +887,7 @@ type
   tJson2PumlCurlAuthenticationDefinition = class(tJson2PumlBaseObject)
   private
     FBaseUrl: string;
-    FParameter: tJson2PumlCurlParameterList;
+    FParameter: tJson2PumlCurlAuthenticationParameterList;
     function GetBaseUrlDecoded: string;
     procedure SetBaseUrl (const Value: string);
   protected
@@ -894,7 +901,7 @@ type
     property BaseUrlDecoded: string read GetBaseUrlDecoded;
   published
     property BaseUrl: string read FBaseUrl write SetBaseUrl;
-    property Parameter: tJson2PumlCurlParameterList read FParameter;
+    property Parameter: tJson2PumlCurlAuthenticationParameterList read FParameter;
   end;
 
   tJson2PumlCurlAuthenticationEnumerator = class
@@ -921,6 +928,7 @@ type
     function FindAuthentication (const iBaseUrl: string): tJson2PumlCurlAuthenticationDefinition;
     function GetEnumerator: tJson2PumlCurlAuthenticationEnumerator;
     function ReplaceParameterValues (const iBaseUrl, iCommand: string): string;
+    function ReplaceParameterValuesObfuscated(const iBaseUrl, iCommand: string): string;
     property Authentication[index: integer]: tJson2PumlCurlAuthenticationDefinition read GetAuthentication; default;
     property AdditionalCurlParameter: tJson2PumlCurlParameterList read FAdditionalCurlParameter;
   end;
@@ -3171,7 +3179,7 @@ end;
 constructor tJson2PumlCurlAuthenticationDefinition.Create;
 begin
   inherited Create;
-  FParameter := tJson2PumlCurlParameterList.Create ();
+  FParameter := tJson2PumlCurlAuthenticationParameterList.Create ();
 end;
 
 destructor tJson2PumlCurlAuthenticationDefinition.Destroy;
@@ -3286,6 +3294,17 @@ begin
   Authentication := FindAuthentication (iBaseUrl);
   if Assigned (Authentication) then
     Result := Authentication.Parameter.ReplaceParameterValues (Result);
+  Result := AdditionalCurlParameter.ReplaceParameterValues (Result);
+end;
+
+function tJson2PumlCurlAuthenticationList.ReplaceParameterValuesObfuscated(const iBaseUrl, iCommand: string): string;
+var
+  Authentication: tJson2PumlCurlAuthenticationDefinition;
+begin
+  Result := iCommand;
+  Authentication := FindAuthentication (iBaseUrl);
+  if Assigned (Authentication) then
+    Result := Authentication.Parameter.ReplaceParameterValuesObfuscated(Result);
   Result := AdditionalCurlParameter.ReplaceParameterValues (Result);
 end;
 
@@ -4518,6 +4537,46 @@ begin
   Duration := 0;
   NoOfRecords := 0;
   FileSize := 0;
+end;
+
+function tJson2PumlCurlAuthenticationParameterList.ObfuscateValue(iValueString : string): string;
+const
+  MASK_CHAR = '*';
+  MIN_LENGTH_FOR_PARTIAL_DISPLAY = 16;
+  MAX_VISIBLE_CHARS = 4;
+var
+  StrLength: Integer;
+  FirstCharsLength: Integer;
+  LastCharsLength: Integer;
+begin
+  Result := StringOfChar(MASK_CHAR, 6);
+  StrLength := Length(iValueString);
+
+  if StrLength > MIN_LENGTH_FOR_PARTIAL_DISPLAY then
+  begin
+    // Calculate the length of the first and last visible characters
+    FirstCharsLength := (StrLength - MIN_LENGTH_FOR_PARTIAL_DISPLAY) div 2;
+
+    // Ensure FirstCharsLength does not exceed MAX_VISIBLE_CHARS
+    if FirstCharsLength > MAX_VISIBLE_CHARS then
+      FirstCharsLength := MAX_VISIBLE_CHARS;
+
+    LastCharsLength := FirstCharsLength; // In this case, last will be same as first
+
+    // Construct the obfuscated string
+    Result := Copy(iValueString, 1, FirstCharsLength) +
+              Result +
+              Copy(iValueString, StrLength - LastCharsLength + 1, LastCharsLength);
+  end;
+end;
+
+function tJson2PumlCurlAuthenticationParameterList.ReplaceParameterValuesObfuscated(iValueString: string): string;
+var
+  CurlParameter: tJson2PumlCurlParameterDefinition;
+begin
+  Result := iValueString;
+  for CurlParameter in self do
+    Result := StringReplace (Result, CurlParameter.name, ObfuscateValue(CurlParameter.ValueDecoded), [rfReplaceAll, rfIgnoreCase]);
 end;
 
 initialization
