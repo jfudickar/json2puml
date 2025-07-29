@@ -1454,7 +1454,5 @@ begin
   Result := Value;
 end;
 
-type
-  tAccessJson2PumlGlobalDefinition = class(tJson2PumlGlobalDefinition);
 
 end.
