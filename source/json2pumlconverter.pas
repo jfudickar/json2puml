@@ -906,6 +906,7 @@ var
   Line: string;
   i: integer;
   i1: integer;
+  colCnt : Integer;
 begin
   if Definition.LegendShowObjectFormats then
   begin
@@ -935,22 +936,24 @@ begin
         if vAdd then
           Puml.Add ('');
         Line := '|';
-        for i := 1 to min(5, Colors.Count) do
+        colCnt := min(5, Colors.Count);
+        for i := 1 to colCnt do
           if i = 1 then
             Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('Objectformat', true)
           else
             Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('', true);
+
         Puml.Add (Line);
         Line := '|';
         i := 0;
         while Colors.Count > 0 do
         begin
           inc (i);
-          if i > 5 then
+          if i > colCnt then
           begin
             Puml.Add (Line);
             Line := '|';
-            i := 0;
+            i := 1;
           end;
           Line := Line + tPumlHelper.TableColumn (Format('<back:%s>   </back>', [Colors.ValueFromIndex[0]]));
           Line := Line + tPumlHelper.TableColumn (Colors.Names[0]);
@@ -958,7 +961,7 @@ begin
         end;
         if i > 0 then
         begin
-          for i1 := 1 to 5 - Colors.Count do
+          for i1 := i+1 to colCnt do
             Line := Line + tPumlHelper.TableColumn ('  ', true) + tPumlHelper.TableColumn ('  ', true);
           Puml.Add (Line);
         end;
