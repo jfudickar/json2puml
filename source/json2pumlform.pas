@@ -83,11 +83,6 @@ type
     InitialTimer: TTimer;
     InputListTabSheet: TTabSheet;
     JsonActionList: TActionList;
-    Label10: TLabel;
-    Label11: TLabel;
-    Label16: TLabel;
-    Label19: TLabel;
-    Label22: TLabel;
     LoadFileAction: TAction;
     LogTabSheet: TTabSheet;
     MainActionList: TActionList;
@@ -124,7 +119,6 @@ type
     OpenCurrentJSONAction: TAction;
     OpenConfigurationFileExternal: TAction;
     Taskbar: TTaskbar;
-    Label21: TLabel;
     LeftInputPanel: TPanel;
     CurlParameterPageControl: TPageControl;
     CurlParameterTabSheet: TTabSheet;
