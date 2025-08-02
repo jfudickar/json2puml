@@ -40,7 +40,7 @@
 	],
 	"javaRuntimeParameter": "-DPLANTUML_LIMIT_SIZE=8192",
 	"logFileOutputPath": "${Json2PumlBaseDir}\\runtime\\logs\\",
-	"plantUmlJarFileName": "${PlantUmlJarFile",
+	"plantUmlJarFileName": "${PlantUmlJarFile}",
 	"plantUmlRuntimeParameter": null,
 	"servicePort": "8080"
 }
