@@ -71,7 +71,8 @@ function GetPlantUmlVersion (iPlantUmlJarFile, iJavaRuntimeParameter: string): s
 
 function GetJavaVersion: string;
 
-function GetServiceFileListResponse (oJsonOutPut: tStrings; iFolderList: tStringList; iInputList: boolean): integer;
+function GetServiceFileListResponse (oJsonOutPut: tStrings; iFolderList: tStringList; iInputList: boolean;
+  iApiVersion: tJson2PumlApiVersion): integer;
 procedure GetServiceInformationResponse (oJsonOutPut: tStrings; iInputHandler: TJson2PumlInputHandler;
   iServerInformation: string = '');
 procedure GetServiceErrorMessageResponse (oJsonOutPut: tStrings);
@@ -126,10 +127,10 @@ type
     class function CalculateWriteOutParameter (const iWriteout: string): string;
     class function CurlCommand (const iCurlCommand: string): string;
   public
-    class function CalculateCommand(const iCurlCommand, iBaseUrl: string; const iUrlParts, iOptions: array of string; const
-        iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;iCurlParameterList,
-        iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlMappingParameterList:
-        tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
+    class function CalculateCommand (const iCurlCommand, iBaseUrl: string; const iUrlParts, iOptions: array of string;
+      const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+      iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+      iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
     class function CalculateHeaderParameter (const iHeaderName: string; iHeaderValue: string): string;
     class function CalculateUrl (const iBaseUrl: string; const iUrlParts: array of string;
       iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
@@ -158,6 +159,7 @@ type
   end;
 
 function GenerateFileNameContentBinary (iFileName: string): string;
+function GenerateFileListContentBinary (iInputList: tJson2PumlInputList; iOutputFormat: tJson2PumlOutputFormat): string;
 
 procedure WriteToJsonFileNameContent (oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer;
   iFileName: string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
@@ -589,7 +591,8 @@ begin
 
 end;
 
-function GetServiceFileListResponse (oJsonOutPut: tStrings; iFolderList: tStringList; iInputList: boolean): integer;
+function GetServiceFileListResponse (oJsonOutPut: tStrings; iFolderList: tStringList; iInputList: boolean;
+  iApiVersion: tJson2PumlApiVersion): integer;
 var
   s: string;
   FileList: tStringList;
@@ -612,9 +615,10 @@ begin
         if ConfigFile.IsValid then
         begin
           if iInputList then
-            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, false)
+            tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, iApiVersion, false)
           else
-            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, false);
+            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1,
+              iApiVersion, false);
           Inc (Result);
         end;
       finally
@@ -881,6 +885,33 @@ begin
   end;
 end;
 
+function GenerateFileListContentBinary (iInputList: tJson2PumlInputList; iOutputFormat: tJson2PumlOutputFormat): string;
+var
+  sl: tStringList;
+  InputFile: tJson2PumlInputFileDefinition;
+  FileName: string;
+  i: integer;
+begin
+  sl := tStringList.Create;
+  try
+    WriteArrayStartToJson (sl, 0, '');
+    for i := 1 to 2 do
+      for InputFile in iInputList do
+      begin
+        if ((i = 1) and not InputFile.OutPut.IsSummaryFile) or ((i > 1) and InputFile.OutPut.IsSummaryFile) then
+          Continue;
+        FileName := InputFile.OutPut.OutputFileName (iOutputFormat);
+        if not FileName.IsEmpty and FileExists (FileName) then
+          WriteToJsonFileNameContent (sl, '', 0, FileName, false, true);
+        sl.Add (',')
+      end;
+    WriteArrayEndToJson (sl, 0);
+    Result := sl.Text;
+  finally
+    sl.Free;
+  end;
+end;
+
 procedure WriteToJsonFileNameContent (oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer;
   iFileName: string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
 begin
@@ -1001,10 +1032,11 @@ begin
   Result := TValue.FromVarRec (iVarRec).ToString;
 end;
 
-class function TCurlUtils.CalculateCommand(const iCurlCommand, iBaseUrl: string; const iUrlParts, iOptions: array of
-    string; const iOutputFile: string; iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;iCurlParameterList,
-    iCurlDetailParameterList: tJson2PumlCurlParameterList; iCurlMappingParameterList:
-    tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
+class function TCurlUtils.CalculateCommand (const iCurlCommand, iBaseUrl: string;
+  const iUrlParts, iOptions: array of string; const iOutputFile: string;
+  iCurlAuthenticationList: tJson2PumlCurlAuthenticationList;
+  iCurlParameterList, iCurlDetailParameterList: tJson2PumlCurlParameterList;
+  iCurlMappingParameterList: tJson2PumlCurlMappingParameterList; iIncludeWriteOut: boolean): string;
 begin
   Result := CalculateCommandExecute (iCurlCommand, iBaseUrl, iUrlParts, iOptions, iOutputFile, iCurlAuthenticationList,
     iCurlParameterList, iCurlDetailParameterList, iCurlMappingParameterList, iIncludeWriteOut, true);
@@ -1453,6 +1485,5 @@ begin
   end;
   Result := Value;
 end;
-
 
 end.

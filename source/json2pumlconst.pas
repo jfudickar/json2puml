@@ -30,6 +30,7 @@ uses
   Quick.Logger;
 
 type
+  tJson2PumlApiVersion = (jav1, jav2);
   tJson2PumlOutputFormat = (jofUnknown, jofPNG, jofSVG, jofPDF, jofPUML, jofJSON, jofLog, jofZip, jofFileList,
     jofExecuteLog);
   tJson2PumlApplicationType = (jatConsole, jatService, jatUI, jatWinService);

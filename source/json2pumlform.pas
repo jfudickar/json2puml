@@ -859,9 +859,9 @@ end;
 procedure Tjson2pumlMainForm.GenerateServiceResults (iInputHandler: tJson2PumlInputHandler);
 begin
   GetServiceFileListResponse (ServiceinputlistfileResultLines,
-    InputHandler.GlobalConfiguration.InputListFileSearchFolder, true);
+    InputHandler.GlobalConfiguration.InputListFileSearchFolder, true, jav2);
   GetServiceFileListResponse (ServicedefinitionfileResultLines,
-    InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false);
+    InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false, jav2);
   GetServiceInformationResponse (ServiceInformationResultLines, iInputHandler);
   GetServiceErrorMessageResponse (ServiceErrorMessagesResultLines);
 end;

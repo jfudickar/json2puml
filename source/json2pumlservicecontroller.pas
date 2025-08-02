@@ -28,67 +28,93 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons, System.Classes, System.SyncObjs,
-  json2pumlinputhandler, System.Diagnostics;
+  json2pumlinputhandler, System.Diagnostics, json2pumlconst;
 
 type
 
-  [MVCPath('/api')]
+  [MVCPath('')]
   TJson2PumlController = class(TMVCController)
   private
   protected
     function GetCurlTracePassThroughHeader (iContext: TWebContext): string;
     procedure OnBeforeAction (Context: TWebContext; const AActionName: string; var Handled: Boolean); override;
     procedure OnAfterAction (Context: TWebContext; const AActionName: string); override;
-    procedure GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
+    procedure GetFileListResponse (iFileList: TStringList; iInputList: Boolean; iApiVersion: tJson2PumlApiVersion);
     function IsRequestBodyInvalid: Boolean;
     procedure LogRequestStart (iContext: TWebContext; var ioStopWatch: tStopwatch);
     procedure LogRequestEnd (iContext: TWebContext; iStopWatch: tStopwatch);
     procedure RenderErrorReponseFromErrorList;
     function ServerInformation: string;
+    procedure HandleJson2PumlRequestFormatInt (iOutputFormat: tJson2PumlOutputFormat;
+      iApiVersion: tJson2PumlApiVersion);
   public
     [MVCPath]
     [MVCHTTPMethod([httpGET])]
     procedure Index;
 
-    [MVCPath('/inputlistfile')]
+    [MVCPath('/api/inputlistfile')]
+    [MVCPath('/api/v1/inputlistfile')]
     [MVCHTTPMethod([httpGET])]
     procedure GetInputListFile;
-    [MVCPath('/definitionfile')]
+    [MVCPath('/api/v2/inputlistfile')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetInputListFilev2;
+    [MVCPath('/api/definitionfile')]
+    [MVCPath('/api/v1/definitionfile')]
     [MVCHTTPMethod([httpGET])]
     procedure GetDefinitionFiles;
-    [MVCPath('/serviceinformation')]
+    [MVCPath('/api/v2/definitionfile')]
+    [MVCHTTPMethod([httpGET])]
+    procedure GetDefinitionFilesv2;
+    [MVCPath('/api/serviceinformation')]
+    [MVCPath('/api/v1/serviceinformation')]
+    [MVCPath('/api/v2/serviceinformation')]
     [MVCHTTPMethod([httpGET])]
     procedure GetServiceInformation;
-    [MVCPath('/heartbeat')]
+    [MVCPath('/api/heartbeat')]
+    [MVCPath('/api/v1/heartbeat')]
+    [MVCPath('/api/v2/heartbeat')]
     [MVCHTTPMethod([httpGET])]
     procedure GetHeartbeat;
-    [MVCPath('/errormessages')]
+    [MVCPath('/api/errormessages')]
+    [MVCPath('/api/v1/errormessages')]
+    [MVCPath('/api/v2/errormessages')]
     [MVCHTTPMethod([httpGET])]
     procedure GetErrorMessages;
 
-    [MVCPath('/json2pumlRequestSvg')]
+    [MVCPath('/api/json2pumlRequestSvg')]
+    [MVCPath('/api/v1/json2pumlRequestSvg')]
     [MVCHTTPMethod([httpPOST])]
     procedure HandleJson2PumlRequestSvg;
+    [MVCPath('/api/v2/json2pumlRequestSvg')]
+    [MVCHTTPMethod([httpPOST])]
+    procedure HandleJson2PumlRequestSvgv2;
 
-    [MVCPath('/json2pumlRequestPng')]
+    [MVCPath('/api/json2pumlRequestPng')]
+    [MVCPath('/api/v1/json2pumlRequestPng')]
     [MVCHTTPMethod([httpPOST])]
     procedure HandleJson2PumlRequestPng;
+    [MVCPath('/api/v2/json2pumlRequestPng')]
+    [MVCHTTPMethod([httpPOST])]
+    procedure HandleJson2PumlRequestPngv2;
 
-    [MVCPath('/json2pumlRequestZip')]
+    [MVCPath('/api/json2pumlRequestZip')]
+    [MVCPath('/api/v1/json2pumlRequestZip')]
+    [MVCPath('/api/v2/json2pumlRequestZip')]
     [MVCHTTPMethod([httpPOST])]
     procedure HandleJson2PumlRequestZip;
-
-    [MVCPath('/json2pumlRequest')]
+    [MVCPath('/api/json2pumlRequest')]
+    [MVCPath('/api/v1/json2pumlRequest')]
+    [MVCPath('/api/v2/json2pumlRequest')]
     [MVCHTTPMethod([httpPOST])]
     procedure HandleJson2PumlRequest;
-
   end;
 
 implementation
 
 uses
-  System.SysUtils, MVCFramework.Logger, System.StrUtils, json2pumlconverter, json2pumldefinition, json2pumlconst,
-  jsontools, json2pumlbasedefinition, json2pumlconverterdefinition, json2pumltools, json2pumlloghandler, System.IOUtils,
+  System.SysUtils, MVCFramework.Logger, System.StrUtils, json2pumlconverter, json2pumldefinition, jsontools,
+  json2pumlbasedefinition, json2pumlconverterdefinition, json2pumltools, json2pumlloghandler, System.IOUtils,
   IdHTTPWebBrokerBridge, IdHTTPHeaderInfo;
 
 type
@@ -138,7 +164,12 @@ end;
 
 procedure TJson2PumlController.GetDefinitionFiles;
 begin
-  GetFileListResponse (GlobalConfigurationDefinition.DefinitionFileSearchFolder, false);
+  GetFileListResponse (GlobalConfigurationDefinition.DefinitionFileSearchFolder, false, jav1);
+end;
+
+procedure TJson2PumlController.GetDefinitionFilesv2;
+begin
+  GetFileListResponse (GlobalConfigurationDefinition.DefinitionFileSearchFolder, false, jav2);
 end;
 
 procedure TJson2PumlController.GetErrorMessages;
@@ -167,7 +198,8 @@ begin
   LogRequestEnd (Context, Stopwatch);
 end;
 
-procedure TJson2PumlController.GetFileListResponse (iFileList: TStringList; iInputList: Boolean);
+procedure TJson2PumlController.GetFileListResponse (iFileList: TStringList; iInputList: Boolean;
+  iApiVersion: tJson2PumlApiVersion);
 var
   jsonOutput: TStringList;
   Stopwatch: tStopwatch;
@@ -177,7 +209,7 @@ begin
   try
     try
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-      GetServiceFileListResponse (jsonOutput, iFileList, iInputList);
+      GetServiceFileListResponse (jsonOutput, iFileList, iInputList, iApiVersion);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
     except
@@ -200,7 +232,12 @@ end;
 
 procedure TJson2PumlController.GetInputListFile;
 begin
-  GetFileListResponse (GlobalConfigurationDefinition.InputListFileSearchFolder, true);
+  GetFileListResponse (GlobalConfigurationDefinition.InputListFileSearchFolder, true, jav1);
+end;
+
+procedure TJson2PumlController.GetInputListFilev2;
+begin
+  GetFileListResponse (GlobalConfigurationDefinition.InputListFileSearchFolder, true, jav2);
 end;
 
 procedure TJson2PumlController.GetServiceInformation;
@@ -223,7 +260,7 @@ begin
         InputHandler.EndLoadFile (false);
       end;
       Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-      GetServiceInformationResponse(jsonOutput, InputHandler, ServerInformation);
+      GetServiceInformationResponse (jsonOutput, InputHandler, ServerInformation);
       Render (jsonOutput.Text);
       Context.Response.StatusCode := HTTP_STATUS.OK;
     except
@@ -299,66 +336,27 @@ begin
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestPng;
-var
-  InputHandler: TJson2PumlInputHandler;
-  f: tJson2PumlInputFileDefinition;
-  Stopwatch: tStopwatch;
 begin
-  LogRequestStart (Context, Stopwatch);
-  InputHandler := TJson2PumlInputHandler.Create (jatService);
-  try
-    if IsRequestBodyInvalid then
-      Exit;
-    try
-      InputHandler.CmdLineParameter.ReadInputParameter;
-      InputHandler.CmdLineParameter.GenerateDetailsStr := 'false';
-      InputHandler.CmdLineParameter.GenerateSummaryStr := 'true';
-      InputHandler.CmdLineParameter.OutputFormatStr := jofPng.ToString;
-      InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
-      InputHandler.CmdLineParameter.CurlPassThroughHeader := GetCurlTracePassThroughHeader (Context);
-      InputHandler.LoadDefinitionFiles;
-      if not GlobalLoghandler.Failed then
-      begin
-        f := InputHandler.ConverterInputList.SummaryInputFile;
-        if Assigned (f) and f.Exists and FileExistsMinSize (f.Output.PNGFileName) then
-        begin
-          if Context.Request.Params['includeFileName'] = 'true' then
-          begin
-            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-            Render (GenerateFileNameContentBinary(f.Output.PNGFileName));
-          end
-          else
-          begin
-            Context.Response.ContentType := TMVCMediaType.IMAGE_PNG;
-            SendFile (f.Output.PNGFileName);
-          end;
-          Context.Response.StatusCode := HTTP_STATUS.OK;
-        end
-        else
-          RenderErrorReponseFromErrorList;
-      end
-      else
-        RenderErrorReponseFromErrorList;
-      InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
-    except
-      on e: exception do
-      begin
-        GlobalLoghandler.UnhandledException (e);
-        RenderErrorReponseFromErrorList;
-        InputHandler.AddGeneratedFilesToDeleteHandler (GlobalFileDeleteHandler);
-      end;
-    end;
-  finally
-    InputHandler.Free;
-    LogRequestEnd (Context, Stopwatch)
-  end;
+  HandleJson2PumlRequestFormatInt (jofPNG, jav1);
+end;
+
+procedure TJson2PumlController.HandleJson2PumlRequestPngv2;
+begin
+  HandleJson2PumlRequestFormatInt (jofPNG, jav2);
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestSvg;
+begin
+  HandleJson2PumlRequestFormatInt (jofSVG, jav1);
+end;
+
+procedure TJson2PumlController.HandleJson2PumlRequestFormatInt (iOutputFormat: tJson2PumlOutputFormat;
+  iApiVersion: tJson2PumlApiVersion);
 var
   InputHandler: TJson2PumlInputHandler;
-  f: tJson2PumlInputFileDefinition;
+  SummaryFile: tJson2PumlInputFileDefinition;
   Stopwatch: tStopwatch;
+  FileName: string;
 begin
   LogRequestStart (Context, Stopwatch);
   InputHandler := TJson2PumlInputHandler.Create (jatService);
@@ -367,31 +365,51 @@ begin
       Exit;
     try
       InputHandler.CmdLineParameter.ReadInputParameter;
-      InputHandler.CmdLineParameter.GenerateDetailsStr := 'false';
-      InputHandler.CmdLineParameter.GenerateSummaryStr := 'true';
-      InputHandler.CmdLineParameter.OutputFormatStr := jofSvg.ToString;
+      if iApiVersion = jav1 then
+      begin
+        InputHandler.CmdLineParameter.GenerateDetailsStr := 'false';
+        InputHandler.CmdLineParameter.GenerateSummaryStr := 'true';
+      end;
+      InputHandler.CmdLineParameter.OutputFormatStr := iOutputFormat.ToString;
       InputHandler.CmdLineParameter.ParameterFileContent := Context.Request.Body;
       InputHandler.CmdLineParameter.CurlPassThroughHeader := GetCurlTracePassThroughHeader (Context);
       InputHandler.LoadDefinitionFiles;
       if not GlobalLoghandler.Failed then
       begin
-        f := InputHandler.ConverterInputList.SummaryInputFile;
-        if Assigned (f) and f.Exists and FileExistsMinSize (f.Output.SVGFileName) then
+        SummaryFile := InputHandler.ConverterInputList.SummaryInputFile;
+        FileName := SummaryFile.Output.OutputFileName (iOutputFormat);
+        // Only when the parameter has the correct Writing it will be used
+        if not StringToBoolean (Context.Request.Params['includeFileName'], false) then
         begin
-          if Context.Request.Params['includeFileName'] = 'true' then
+          if Assigned (SummaryFile) and SummaryFile.Exists and FileExistsMinSize (FileName) then
           begin
-            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-            Render (GenerateFileNameContentBinary(f.Output.SVGFileName));
+            if iOutputFormat = jofSVG then
+              Context.Response.ContentType := TMVCMediaType.APPLICATION_SVG_XML
+            else
+              Context.Response.ContentType := TMVCMediaType.IMAGE_PNG;
+            SendFile (FileName);
+            Context.Response.StatusCode := HTTP_STATUS.OK;
           end
           else
+            RenderErrorReponseFromErrorList;
+        end
+        else if iApiVersion = jav1 then
+        begin
+          if Assigned (SummaryFile) and SummaryFile.Exists and FileExistsMinSize (FileName) then
           begin
-            Context.Response.ContentType := TMVCMediaType.APPLICATION_SVG_XML;
-            SendFile (f.Output.SVGFileName);
-          end;
-          Context.Response.StatusCode := HTTP_STATUS.OK;
+            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+            Render (GenerateFileNameContentBinary(FileName));
+            Context.Response.StatusCode := HTTP_STATUS.OK;
+          end
+          else
+            RenderErrorReponseFromErrorList;
         end
         else
-          RenderErrorReponseFromErrorList;
+        begin
+          Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+          Render (GenerateFileListContentBinary(InputHandler.ConverterInputList, iOutputFormat));
+          Context.Response.StatusCode := HTTP_STATUS.OK;
+        end
       end
       else
         RenderErrorReponseFromErrorList;
@@ -408,6 +426,12 @@ begin
     InputHandler.Free;
     LogRequestEnd (Context, Stopwatch)
   end;
+
+end;
+
+procedure TJson2PumlController.HandleJson2PumlRequestSvgv2;
+begin
+  HandleJson2PumlRequestFormatInt (jofSVG, jav2);
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestZip;
@@ -431,15 +455,15 @@ begin
           InputHandler.GenerateSummaryZipFile (InputHandler.CurrentOutputFormats);
         if FileExistsMinSize (InputHandler.ConverterInputList.SummaryZipFileName) then
         begin
-          if Context.Request.Params['includeFileName'] = 'true' then
-          begin
-            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-            Render (GenerateFileNameContentBinary(InputHandler.ConverterInputList.SummaryZipFileName));
-          end
-          else
+          if not StringToBoolean (Context.Request.Params['includeFileName'], false) then
           begin
             Context.Response.ContentType := 'application/zip';
             SendFile (InputHandler.ConverterInputList.SummaryZipFileName);
+          end
+          else
+          begin
+            Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
+            Render (GenerateFileNameContentBinary(InputHandler.ConverterInputList.SummaryZipFileName));
           end;
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end

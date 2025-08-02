@@ -1,0 +1,7 @@
+{
+	"inputListFile": "json2puml_inputlist.json",
+	"generateSummary": "false",
+	"generateDetails": "true",
+	"outputFormats": "svg,log,json,puml,zip,png",
+	"option": "default"
+}

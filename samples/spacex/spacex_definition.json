@@ -8,6 +8,10 @@
 		{
 			"option": "compact",
 			"definition": {
+			"description": {
+				"displayName": null,
+				"description": null
+			},
 				"continueAfterUnhandledObjects": false,
 				"groupDetailObjectsTogether": null,
 				"hideDuplicateRelations": null,
@@ -80,6 +84,10 @@
 		{
 			"option": "default",
 			"definition": {
+			"description": {
+				"displayName": null,
+				"description": null
+			},
 				"continueAfterUnhandledObjects": null,
 				"groupDetailObjectsTogether": null,
 				"hideDuplicateRelations": null,
@@ -124,6 +132,10 @@
 		{
 			"option": "full",
 			"definition": {
+			"description": {
+				"displayName": null,
+				"description": null
+			},
 				"continueAfterUnhandledObjects": true,
 				"groupDetailObjectsTogether": null,
 				"hideDuplicateRelations": null,
@@ -192,6 +204,10 @@
 		{
 			"option": "launch-crew",
 			"definition": {
+			"description": {
+				"displayName": null,
+				"description": null
+			},
 				"continueAfterUnhandledObjects": null,
 				"groupDetailObjectsTogether": null,
 				"hideDuplicateRelations": null,
@@ -246,6 +262,10 @@
 		{
 			"option": "launch-crew-rocket",
 			"definition": {
+			"description": {
+				"displayName": null,
+				"description": null
+			},
 				"continueAfterUnhandledObjects": null,
 				"groupDetailObjectsTogether": null,
 				"hideDuplicateRelations": null,
@@ -300,6 +320,10 @@
 		}
 	],
 	"baseOption": {
+		"description": {
+			"displayName": null,
+			"description": null
+		},
 		"continueAfterUnhandledObjects": true,
 		"groupDetailObjectsTogether": true,
 		"hideDuplicateRelations": null,

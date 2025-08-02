@@ -1,0 +1,2 @@
+curl -X POST http://localhost:8080/api/v2/json2pumlRequestSvg -d @json2puml_parameter_curl.json -v -o result\json2puml_result_v2.svg
+curl -X POST http://localhost:8080/api/v2/json2pumlRequestSvg?includeFileName=true -d @json2puml_parameter_curl.json -v -o result\json2puml_result_v2.json
