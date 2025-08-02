@@ -338,6 +338,7 @@ type
     procedure ShowLogTabsheet;
     function TabSheetByPage (iPage: tJson2PumlPage): TTabSheet;
     procedure UpdateAllInfos;
+    procedure UpdateFormCaption;
     property ConfigFileName[Page: tJson2PumlPage]: string read GetConfigFileName write SetConfigFileName;
     property ConfigFrame[Page: tJson2PumlPage]: tJson2PumlConfigurationFrame read GetConfigFrame;
     property CurrentPage: tJson2PumlPage read GetCurrentPage write SetCurrentPage;
@@ -544,6 +545,7 @@ begin
   debugCheckBox.Checked := InputHandler.CmdLineParameter.Debug;
   FillDataset (CurlParameterDataSet, InputHandler.CmdLineParameter.CurlParameter);
   FillDataset (CurlAuthenticationParameterDataset, InputHandler.CmdLineParameter.CurlAuthenticationParameter);
+  UpdateFormCaption;
 end;
 
 procedure Tjson2pumlMainForm.ConvertAllFrames;
@@ -789,7 +791,8 @@ begin
   InputHandler.CurlParameterFileLines := CurlParameterFileLines;
   InputHandler.InputListLines := InputListLines;
   InputHandler.ServerResultLines := ServiceResultLines;
-  Caption := Format ('json2puml %s', [FileVersion]);
+  UpdateFormCaption;
+
 end;
 
 procedure Tjson2pumlMainForm.FormToCommandline;
@@ -1378,6 +1381,24 @@ begin
   iButtonedEdit.OnRightButtonClick := FileEditOpenFileActionExecute;
   iButtonedEdit.OnDblClick := FileEditOpenFileActionExecute;
   iButtonedEdit.Images := MainImageList;
+end;
+
+procedure Tjson2pumlMainForm.UpdateFormCaption;
+var Info : String;
+begin
+  info := '';
+  if Assigned(InputHandler) and Assigned(InputHandler.CmdLineParameter) then
+  begin
+    if not InputHandler.CmdLineParameter.ParameterFileName.IsEmpty then
+      info := Format ('%s %s ', [info,tPath.GetFileName(InputHandler.CmdLineParameter.ParameterFileName)]);
+    if not InputHandler.CmdLineParameter.InputListFileName.IsEmpty then
+      info := Format ('%s %s ', [info, tPath.GetFileName(InputHandler.CmdLineParameter.InputListFileName)]);
+
+    if not info.IsEmpty then
+      info := ' - ' + trim(info);
+  end;
+
+  Caption := Format ('%s - %s%s', [cJson2PumlApplicationTypeName[jatUI], FileVersion, Info]);
 end;
 
 end.
