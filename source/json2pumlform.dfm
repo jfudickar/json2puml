@@ -81,7 +81,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Top = 81
     Width = 1351
     Height = 797
-    ActivePage = OutputTabsheet
+    ActivePage = LogTabSheet
     Align = alClient
     MultiLine = True
     TabOrder = 3
@@ -977,7 +977,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Top = 3
           Width = 62
           Height = 13
-          Caption = 'Output Files:'
+          Caption = '&Output Files:'
+          FocusControl = OutputFileSelectComboBox
         end
         object OutputFileSelectComboBox: TComboBox
           Left = 71
