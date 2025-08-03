@@ -221,6 +221,9 @@ type
     curlIgnoreCacheCheckBox: TCheckBox;
     GenerateProgressBar: TProgressBar;
     GenerateProgressLabel: TLabel;
+    Panel2: TPanel;
+    OutputFileSelectComboBox: TComboBox;
+    Label10: TLabel;
     procedure CommandLineEditPanelResize (Sender: tObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
     procedure ConvertCurrentFileActionExecute (Sender: tObject);
@@ -229,6 +232,7 @@ type
     procedure ExitActionExecute (Sender: tObject);
     procedure FileEditCopyFilenameActionExecute (Sender: tObject);
     procedure FileEditOpenFileActionExecute (Sender: tObject);
+    procedure FilePageControlChange(Sender: TObject);
     procedure FormClose (Sender: tObject; var Action: TCloseAction);
     procedure FormCloseQuery (Sender: tObject; var CanClose: boolean);
     procedure FormShow (Sender: tObject);
@@ -240,6 +244,7 @@ type
     procedure OpenJsonDetailTabSheetExecute (Sender: tObject);
     procedure OpenCurrentPNGActionExecute (Sender: tObject);
     procedure OpenCurrentSVGActionExecute (Sender: tObject);
+    procedure OutputFileSelectComboBoxSelect(Sender: TObject);
     procedure ReloadAndConvertActionExecute (Sender: tObject);
     procedure ReloadFileActionExecute (Sender: tObject);
     procedure SaveFileActionExecute (Sender: tObject);
@@ -452,6 +457,7 @@ begin
     LockWindowUpdate (Handle);
     while FilePageControl.PageCount > 0 do
       FilePageControl.Pages[0].Free;
+    OutputFileSelectComboBox.Items.Clear;
   finally
     LockWindowUpdate (0);
   end;
@@ -683,15 +689,14 @@ begin
   Action := TAction.Create (OutputFileFrame.TabSheet);
   Action.ActionList := JsonActionList;
   Action.Tag := iInputHandlerRecord.Index;
-  Action.Caption := ExtractFileName (iInputHandlerRecord.InputFile.InputFileName);
+  Action.Caption := CalcTabsheetCaption (iInputHandlerRecord);
   Action.ShortCut := TextToShortCut (CalcShortCutStr(iInputHandlerRecord.Index));
   Action.OnExecute := OpenJsonDetailTabSheetExecute;
-  // iItem := MainActionManager.ActionBars[0].Items[5].Items.add;
-  // iItem.Action := Action;
   iInputHandlerRecord.RelatedObject := OutputFileFrame;
   iInputHandlerRecord.ConverterLog := OutputFileFrame.Frame.LogList;
   iInputHandlerRecord.JsonInput := OutputFileFrame.Frame.JsonInput;
   iInputHandlerRecord.PUmlOutput := OutputFileFrame.Frame.PUmlOutput;
+  OutputFileSelectComboBox.Items.AddObject(CalcTabsheetCaption (iInputHandlerRecord), Action);
 end;
 
 function Tjson2pumlMainForm.CreateSingleMemoControl (iParentControl: TWinControl; iName: string; iLabel: TLabel;
@@ -1041,6 +1046,7 @@ begin
       CurrentRecord := InputHandler[TAction(Sender).Tag];
       if Assigned (CurrentRecord.RelatedObject) and (CurrentRecord.RelatedObject is tOutputFileFrame) then
         FilePageControl.ActivePage := tOutputFileFrame (CurrentRecord.RelatedObject).TabSheet;
+      FilePageControlChange(nil);
     end;
 end;
 
@@ -1263,6 +1269,14 @@ begin
       OpenFile (TCustomEdit(Sender).Text);
 end;
 
+procedure Tjson2pumlMainForm.FilePageControlChange(Sender: TObject);
+var
+  TabSheet: TTabSheet;
+begin
+  TabSheet := FilePageControl.ActivePage;
+  OutputFileSelectComboBox.ItemIndex := OutputFileSelectComboBox.Items.IndexOf(TabSheet.Caption);
+end;
+
 procedure Tjson2pumlMainForm.FillCurlFileListDataset (ConverterInputList: tJson2PumlInputList);
 var
   InputFile: tJson2PumlInputFileDefinition;
@@ -1381,6 +1395,19 @@ begin
   iButtonedEdit.OnRightButtonClick := FileEditOpenFileActionExecute;
   iButtonedEdit.OnDblClick := FileEditOpenFileActionExecute;
   iButtonedEdit.Images := MainImageList;
+end;
+
+procedure Tjson2pumlMainForm.OutputFileSelectComboBoxSelect(Sender: TObject);
+var
+  i: Integer;
+begin
+  i := OutputFileSelectComboBox.ItemIndex;
+  if (i >= 0) and (i < OutputFileSelectComboBox.Items.count) then
+  begin
+    if Assigned(OutputFileSelectComboBox.Items.Objects[OutputFileSelectComboBox.ItemIndex]) then
+      taction(OutputFileSelectComboBox.Items.Objects[OutputFileSelectComboBox.ItemIndex]).Execute;
+  end;
+
 end;
 
 procedure Tjson2pumlMainForm.UpdateFormCaption;

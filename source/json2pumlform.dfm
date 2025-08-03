@@ -951,16 +951,47 @@ object json2pumlMainForm: Tjson2pumlMainForm
       object FilePageControl: TPageControl
         AlignWithMargins = True
         Left = 3
-        Top = 3
+        Top = 28
         Width = 1327
-        Height = 753
+        Height = 728
         Align = alClient
         MultiLine = True
         TabOrder = 0
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 1333
-        ExplicitHeight = 759
+        OnChange = FilePageControlChange
+        ExplicitTop = 80
+        ExplicitHeight = 676
+      end
+      object Panel2: TPanel
+        Left = 0
+        Top = 0
+        Width = 1333
+        Height = 25
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 1
+        DesignSize = (
+          1333
+          25)
+        object Label10: TLabel
+          Left = 3
+          Top = 3
+          Width = 62
+          Height = 13
+          Caption = 'Output Files:'
+        end
+        object OutputFileSelectComboBox: TComboBox
+          Left = 71
+          Top = 0
+          Width = 1258
+          Height = 21
+          AutoDropDown = True
+          AutoCloseUp = True
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          Sorted = True
+          TabOrder = 0
+          OnSelect = OutputFileSelectComboBoxSelect
+        end
       end
     end
     object InputListTabSheet: TTabSheet
@@ -1018,7 +1049,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
   end
   object MainActionList: TActionList
     Images = MainImageList
-    Left = 920
+    Left = 912
     Top = 664
     object EditCut1: TEditCut
       Category = 'Edit'
