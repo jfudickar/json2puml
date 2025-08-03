@@ -159,7 +159,9 @@ type
   private
     FAdditionalServiceInformation: string;
     FBaseOutputPath: string;
+    FintBaseOutputPath: string;
     FCurlAuthenticationFileName: string;
+    FintCurlAuthenticationFileName: string;
     FCurlCommand: string;
     FCurlParameter: tJson2PumlCurlParameterList;
     FCurlPassThroughHeader: tStringList;
@@ -167,6 +169,7 @@ type
     FCurlTraceIdHeader: string;
     FCurlUserAgentInformation: string;
     FDefaultDefinitionFileName: string;
+    FintDefaultDefinitionFileName: string;
     FDefinitionFileSearchFolder: tStringList;
     FInputListFileSearchFolder: tStringList;
     FJavaRuntimeParameter: string;
@@ -175,11 +178,32 @@ type
     FPlantUmlJarFileName: string;
     FPlantUmlRuntimeParameter: string;
     FServicePort: integer;
-    FServicePortStr: string;
+    FintServicePort: string;
+    FintPlantUmlJarFileName: string;
+    FintPlantUmlRuntimeParameter: string;
+    FintLogFileOutputPath: string;
+    FintJavaRuntimeParameter: string;
     procedure SetCurlCommand (const Value: string);
     procedure SetCurlSpanIdHeader (const Value: string);
     procedure SetCurlTraceIdHeader (const Value: string);
-    procedure SetServicePortStr (const Value: string);
+    procedure SetintBaseOutputPath (const Value: string);
+    procedure SetintCurlAuthenticationFileName (const Value: string);
+    procedure SetintDefaultDefinitionFileName (const Value: string);
+    procedure SetintJavaRuntimeParameter (const Value: string);
+    procedure SetintLogFileOutputPath (const Value: string);
+    procedure SetintPlantUmlJarFileName (const Value: string);
+    procedure SetintPlantUmlRuntimeParameter (const Value: string);
+    procedure SetintServicePort (const Value: string);
+    property intBaseOutputPath: string read FintBaseOutputPath write SetintBaseOutputPath;
+    property intCurlAuthenticationFileName: string read FintCurlAuthenticationFileName
+      write SetintCurlAuthenticationFileName;
+    property intDefaultDefinitionFileName: string read FintDefaultDefinitionFileName
+      write SetintDefaultDefinitionFileName;
+    property intJavaRuntimeParameter: string read FintJavaRuntimeParameter write SetintJavaRuntimeParameter;
+    property intLogFileOutputPath: string read FintLogFileOutputPath write SetintLogFileOutputPath;
+    property intPlantUmlJarFileName: string read FintPlantUmlJarFileName write SetintPlantUmlJarFileName;
+    property intPlantUmlRuntimeParameter: string read FintPlantUmlRuntimeParameter write SetintPlantUmlRuntimeParameter;
+    property intServicePort: string read FintServicePort write SetintServicePort;
   protected
     function GetIdent: string; override;
   public
@@ -198,24 +222,23 @@ type
   published
     property AdditionalServiceInformation: string read FAdditionalServiceInformation
       write FAdditionalServiceInformation;
-    property BaseOutputPath: string read FBaseOutputPath write FBaseOutputPath;
-    property CurlAuthenticationFileName: string read FCurlAuthenticationFileName write FCurlAuthenticationFileName;
+    property BaseOutputPath: string read FBaseOutputPath;
+    property CurlAuthenticationFileName: string read FCurlAuthenticationFileName;
     property CurlCommand: string read FCurlCommand write SetCurlCommand;
     property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
     property CurlPassThroughHeader: tStringList read FCurlPassThroughHeader;
     property CurlSpanIdHeader: string read FCurlSpanIdHeader write SetCurlSpanIdHeader;
     property CurlTraceIdHeader: string read FCurlTraceIdHeader write SetCurlTraceIdHeader;
     property CurlUserAgentInformation: string read FCurlUserAgentInformation write FCurlUserAgentInformation;
-    property DefaultDefinitionFileName: string read FDefaultDefinitionFileName write FDefaultDefinitionFileName;
+    property DefaultDefinitionFileName: string read FDefaultDefinitionFileName;
     property DefinitionFileSearchFolder: tStringList read FDefinitionFileSearchFolder;
     property InputListFileSearchFolder: tStringList read FInputListFileSearchFolder;
-    property JavaRuntimeParameter: string read FJavaRuntimeParameter write FJavaRuntimeParameter;
-    property LogFileOutputPath: string read FLogFileOutputPath write FLogFileOutputPath;
+    property JavaRuntimeParameter: string read FJavaRuntimeParameter;
+    property LogFileOutputPath: string read FLogFileOutputPath;
     property OutputPath: string read FOutputPath write FOutputPath;
-    property PlantUmlJarFileName: string read FPlantUmlJarFileName write FPlantUmlJarFileName;
-    property PlantUmlRuntimeParameter: string read FPlantUmlRuntimeParameter write FPlantUmlRuntimeParameter;
+    property PlantUmlJarFileName: string read FPlantUmlJarFileName;
+    property PlantUmlRuntimeParameter: string read FPlantUmlRuntimeParameter;
     property ServicePort: integer read FServicePort;
-    property ServicePortStr: string read FServicePortStr write SetServicePortStr;
   end;
 
   tJson2PumlFileDetailRecord = class(tPersistent)
@@ -554,7 +577,7 @@ type
     procedure WriteToJsonOutputFiles (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); overload;
     procedure WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
-      iWriteEmpty: boolean = false); overload;
+      iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
     procedure WriteToJsonServiceResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iOutputFormats: tJson2PumlOutputFormats; iWriteEmpty: boolean = false); overload;
     procedure WriteToJsonServiceResult (oJsonOutPut: tStrings; iOutputFormats: tJson2PumlOutputFormats;
@@ -862,9 +885,9 @@ type
 
   tJson2PumlCurlAuthenticationParameterList = class(tJson2PumlCurlParameterList)
   protected
-    function ObfuscateValue(iValueString : string): string;
+    function ObfuscateValue (iValueString: string): string;
   public
-    function ReplaceParameterValuesObfuscated(iValueString: string): string;
+    function ReplaceParameterValuesObfuscated (iValueString: string): string;
   end;
 
   tJson2PumlCurlFileParameterListMatrix = class(tPersistent)
@@ -928,7 +951,7 @@ type
     function FindAuthentication (const iBaseUrl: string): tJson2PumlCurlAuthenticationDefinition;
     function GetEnumerator: tJson2PumlCurlAuthenticationEnumerator;
     function ReplaceParameterValues (const iBaseUrl, iCommand: string): string;
-    function ReplaceParameterValuesObfuscated(const iBaseUrl, iCommand: string): string;
+    function ReplaceParameterValuesObfuscated (const iBaseUrl, iCommand: string): string;
     property Authentication[index: integer]: tJson2PumlCurlAuthenticationDefinition read GetAuthentication; default;
     property AdditionalCurlParameter: tJson2PumlCurlParameterList read FAdditionalCurlParameter;
   end;
@@ -1700,7 +1723,7 @@ begin
     if CurlParameterMatrix.RowList.Count > 0 then
     begin
       iCurrentInputFile.IsInternalOnly := true;
-      ExpandInputListCount := ExpandInputListCount + CurlParameterMatrix.RowList.Count-1;
+      ExpandInputListCount := ExpandInputListCount + CurlParameterMatrix.RowList.Count - 1;
       for i := 0 to CurlParameterMatrix.RowList.Count - 1 do
       begin
         if i > 0 then
@@ -1736,7 +1759,8 @@ var
   JsonValue: tJSONValue;
   NewFileName: string;
   JsonArray: tJSONArray;
-  FileExtension: string;
+  // FileExtension: string;
+  OutputFileName: string;
   Ident: string;
   LastOption: string;
   idx, i: integer;
@@ -1789,7 +1813,6 @@ begin
       if JsonArray.Count <= 1 then
         exit;
       GlobalLoghandler.Info ('Split file %s', [iInputFile.InputFileName]);
-      iInputFile.GenerateOutput := false;
       idx := 0;
       if JsonArray.Count > 0 then
       begin
@@ -1798,7 +1821,7 @@ begin
       end;
       for i := 0 to JsonArray.Count - 1 do
       begin
-        FileExtension := TPath.GetExtension (iInputFile.InputFileName);
+        // FileExtension := TPath.GetExtension (iInputFile.InputFileName);
         Ident := '';
         if JsonArray.Items[i] is tJSONObject then
           Ident := GetJsonStringValue (tJSONObject(JsonArray.Items[i]), iInputFile.SplitIdentifier, '', '.');
@@ -1808,13 +1831,17 @@ begin
           Ident := Format ('split_%d', [idx]);
         end;
 
-        NewFileName := TPath.ChangeExtension (NewFileName, FindSuffix(Ident).Substring(0, 80) + '.' + jofJSON.ToString);
+        OutputFileName := TPath.ChangeExtension (NewFileName, FindSuffix(Ident).Substring(0, 80) + '.' +
+          jofJSON.ToString);
         OutPutFile.Text := JsonArray.Items[i].ToJSON;
-        OutPutFile.SaveToFile (NewFileName);
-        AddInputFileSplit (iInputFile.InputFileName, NewFileName, iInputFile.LeadingObject, iInputFile.CurlResult,
+        OutPutFile.SaveToFile (OutputFileName);
+        if iInputFile.CurlFormatOutput then
+          FormatJsonFile (OutputFileName);
+        AddInputFileSplit (iInputFile.InputFileName, OutputFileName, iInputFile.LeadingObject, iInputFile.CurlResult,
           iInputFile.GenerateOutput);
-        GlobalLoghandler.Info ('  Detail file %s created', [NewFileName]);
+        GlobalLoghandler.Info ('  Detail file %s created', [OutputFileName]);
       end;
+      iInputFile.GenerateOutput := false;
     finally
       JsonValue.Free;
     end;
@@ -2138,7 +2165,7 @@ begin
 end;
 
 procedure tJson2PumlInputList.WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string;
-  iLevel: integer; iWriteEmpty: boolean = false);
+  iLevel: integer; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
 var
   FileName: string;
   DefinitionFile: tJson2PumlConverterGroupDefinition;
@@ -2158,7 +2185,8 @@ begin
       DefinitionFile := tJson2PumlConverterGroupDefinition.Create;
       try
         DefinitionFile.ReadFromJsonFile (FileName);
-        DefinitionFile.WriteToJsonServiceListResult (oJsonOutPut, 'definitionFile', iLevel + 1, iWriteEmpty);
+        DefinitionFile.WriteToJsonServiceListResult (oJsonOutPut, 'definitionFile', iLevel + 1, iApiVersion,
+          iWriteEmpty);
       finally
         DefinitionFile.Free;
       end;
@@ -2306,10 +2334,12 @@ begin
 end;
 
 procedure tJson2PumlCommandLineParameter.HandleGenerateDefaultConfiguration;
+type
+  tAccessJson2PumlGlobalDefinition = tJson2PumlGlobalDefinition;
 var
   DefaultConfigurationFile: string;
   BasePath: string;
-  DefaultConfiguration: tJson2PumlGlobalDefinition;
+  DefaultConfiguration: tAccessJson2PumlGlobalDefinition;
   DefaultCurlAuthentication: tJson2PumlCurlAuthenticationDefinition;
 
   procedure CheckSamples (iBasePath, iDetailPath: string);
@@ -2327,18 +2357,18 @@ begin
   DefaultConfigurationFile := TPath.Combine (ExtractFilePath(ParamStr(0)), cDefaultConfigurationFile);
   if not FileExists (DefaultConfigurationFile) then
   begin
-    DefaultConfiguration := tJson2PumlGlobalDefinition.Create;
+    DefaultConfiguration := tAccessJson2PumlGlobalDefinition.Create;
     try
-      DefaultConfiguration.CurlAuthenticationFileName := TPath.Combine (ExtractFilePath(ParamStr(0)),
+      DefaultConfiguration.intCurlAuthenticationFileName := TPath.Combine (ExtractFilePath(ParamStr(0)),
         cDefaultCurlAuthenticationFile);
       BasePath := ExtractFilePath (ParamStr(0)).TrimRight ([TPath.DirectorySeparatorChar]);
       if ExtractFileName (BasePath) = 'bin' then
         BasePath := ExtractFilePath (BasePath);
-      DefaultConfiguration.BaseOutputPath := TPath.Combine (BasePath, 'output');
-      DefaultConfiguration.LogFileOutputPath := TPath.Combine (BasePath, 'log');
+      DefaultConfiguration.intBaseOutputPath := TPath.Combine (BasePath, 'output');
+      DefaultConfiguration.intLogFileOutputPath := TPath.Combine (BasePath, 'log');
       DefaultConfiguration.CurlSpanIdHeader := 'X-B3-SpanId';
       DefaultConfiguration.CurlTraceIdHeader := 'X-B3-TraceId';
-      DefaultConfiguration.JavaRuntimeParameter := '-DPLANTUML_LIMIT_SIZE=8192';
+      DefaultConfiguration.intJavaRuntimeParameter := '-DPLANTUML_LIMIT_SIZE=8192';
       DefaultConfiguration.OutputPath := '<job>\\<group>\\<file>';
       if DirectoryExists (TPath.Combine(BasePath, 'definition')) then
         DefaultConfiguration.DefinitionFileSearchFolder.Add (TPath.Combine(BasePath, 'definition'));
@@ -2852,7 +2882,7 @@ begin
   FInputListFileSearchFolder := tStringList.Create ();
   FInputListFileSearchFolder.Delimiter := ';';
   FInputListFileSearchFolder.StrictDelimiter := true;
-  ServicePortStr := cDefaultServicePort.ToString;
+  intServicePort := cDefaultServicePort.ToString;
 end;
 
 destructor tJson2PumlGlobalDefinition.Destroy;
@@ -2866,18 +2896,21 @@ end;
 
 procedure tJson2PumlGlobalDefinition.Clear;
 begin
-  CurlAuthenticationFileName := '';
+  intCurlAuthenticationFileName := '';
   CurlCommand := '';
   CurlPassThroughHeader.Clear;
   CurlSpanIdHeader := '';
   CurlTraceIdHeader := '';
   CurlUserAgentInformation := '';
-  DefaultDefinitionFileName := '';
+  intDefaultDefinitionFileName := '';
   DefinitionFileSearchFolder.Clear;
   InputListFileSearchFolder.Clear;
   CurlParameter.Clear;
-  PlantUmlJarFileName := '';
-  PlantUmlRuntimeParameter := '';
+  intJavaRuntimeParameter := '';
+  intPlantUmlJarFileName := '';
+  intPlantUmlRuntimeParameter := '';
+  intBaseOutputPath := '';
+  intLogFileOutputPath := '';
 end;
 
 function tJson2PumlGlobalDefinition.FindDefinitionFile (iFileName: string): string;
@@ -2913,18 +2946,20 @@ var
   Filter: string;
   searchResult: tSearchRec;
   FilePath: string;
+  FileName: string;
 begin
   ioFileList.Clear;
   for s in iFolderList do
   begin
-    if DirectoryExists (s) then
-      FilePath := s
+    FileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (s);
+    if DirectoryExists (FileName) then
+      FilePath := FileName
     else
-      FilePath := ExtractFilePath (s);
+      FilePath := ExtractFilePath (FileName);
     if not iFilter.IsEmpty then
       Filter := ExtractFileName (iFilter)
-    else if not DirectoryExists (s) then
-      Filter := ExtractFileName (s);
+    else if not DirectoryExists (FileName) then
+      Filter := ExtractFileName (FileName);
     if Filter.IsEmpty then
       Filter := cDefaultJsonFileFilter;
     Filter := TPath.Combine (FilePath, Filter);
@@ -3016,7 +3051,7 @@ begin
   AddLine ('outputPath', OutputPath);
   AddLine ('plantUmlJarFileName', PlantUmlJarFileName);
   AddLine ('plantUmlRuntimeParameter', PlantUmlRuntimeParameter);
-  iLogList.Add (Format('  %-30s: %s / %d', ['servicePortStr', ServicePortStr, ServicePort]));
+  iLogList.Add (Format('  %-30s: %s / %d', ['intServicePort', intServicePort, ServicePort]));
 end;
 
 function tJson2PumlGlobalDefinition.ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean;
@@ -3029,29 +3064,29 @@ begin
   if not Assigned (DefinitionRecord) then
     exit;
   Result := true;
-  CurlAuthenticationFileName := GetJsonStringValue (DefinitionRecord, 'curlAuthenticationFileName',
-    CurlAuthenticationFileName);
+  intCurlAuthenticationFileName := GetJsonStringValue (DefinitionRecord, 'curlAuthenticationFileName',
+    intCurlAuthenticationFileName);
   CurlCommand := GetJsonStringValue (DefinitionRecord, 'curlCommand', CurlCommand);
-  DefaultDefinitionFileName := GetJsonStringValue (DefinitionRecord, 'defaultDefinitionFileName',
-    DefaultDefinitionFileName);
+  intDefaultDefinitionFileName := GetJsonStringValue (DefinitionRecord, 'defaultDefinitionFileName',
+    intDefaultDefinitionFileName);
   CurlUserAgentInformation := GetJsonStringValue (DefinitionRecord, 'curlUserAgentInformation',
     CurlUserAgentInformation);
   CurlSpanIdHeader := GetJsonStringValue (DefinitionRecord, 'curlSpanIdHeader', CurlSpanIdHeader);
   CurlTraceIdHeader := GetJsonStringValue (DefinitionRecord, 'curlTraceIdHeader', CurlTraceIdHeader);
   GetJsonStringValueList (DefinitionFileSearchFolder, DefinitionRecord, 'definitionFileSearchFolder');
   GetJsonStringValueList (InputListFileSearchFolder, DefinitionRecord, 'inputListFileSearchFolder');
-  JavaRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'javaRuntimeParameter', JavaRuntimeParameter);
-  LogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', LogFileOutputPath);
-  PlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', PlantUmlJarFileName);
-  PlantUmlRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'plantUmlRuntimeParameter',
-    PlantUmlRuntimeParameter);
-  BaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', BaseOutputPath);
+  intJavaRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'javaRuntimeParameter', intJavaRuntimeParameter);
+  intLogFileOutputPath := GetJsonStringValue (DefinitionRecord, 'logFileOutputPath', intLogFileOutputPath);
+  intPlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', intPlantUmlJarFileName);
+  intPlantUmlRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'plantUmlRuntimeParameter',
+    intPlantUmlRuntimeParameter);
+  intBaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', intBaseOutputPath);
   AdditionalServiceInformation := GetJsonStringValue (DefinitionRecord, 'additionalServiceInformation',
     AdditionalServiceInformation);
-  OutputPath := GetJsonStringValue (DefinitionRecord, 'outputPath', BaseOutputPath);
+  OutputPath := GetJsonStringValue (DefinitionRecord, 'outputPath', OutputPath);
   GetJsonStringValueList (CurlPassThroughHeader, DefinitionRecord, 'curlPassThroughHeader');
   CurlPassThroughHeader.Text := CurlPassThroughHeader.Text.ToLower;
-  ServicePortStr := GetJsonStringValue (DefinitionRecord, 'servicePort', ServicePortStr);
+  intServicePort := GetJsonStringValue (DefinitionRecord, 'servicePort', intServicePort);
   CurlParameter.ReadFromJson (DefinitionRecord, 'curlParameter');
 end;
 
@@ -3070,9 +3105,51 @@ begin
   FCurlTraceIdHeader := Value.ToLower.Trim;
 end;
 
-procedure tJson2PumlGlobalDefinition.SetServicePortStr (const Value: string);
+procedure tJson2PumlGlobalDefinition.SetintBaseOutputPath (const Value: string);
 begin
-  FServicePortStr := Value;
+  FintBaseOutputPath := Value;
+  FBaseOutputPath := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintCurlAuthenticationFileName (const Value: string);
+begin
+  FintCurlAuthenticationFileName := Value;
+  FCurlAuthenticationFileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintDefaultDefinitionFileName (const Value: string);
+begin
+  FintDefaultDefinitionFileName := Value;
+  FDefaultDefinitionFileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintJavaRuntimeParameter (const Value: string);
+begin
+  FintJavaRuntimeParameter := Value;
+  FJavaRuntimeParameter := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintLogFileOutputPath (const Value: string);
+begin
+  FintLogFileOutputPath := Value;
+  FLogFileOutputPath := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintPlantUmlJarFileName (const Value: string);
+begin
+  FintPlantUmlJarFileName := Value;
+  FPlantUmlJarFileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintPlantUmlRuntimeParameter (const Value: string);
+begin
+  FintPlantUmlRuntimeParameter := Value;
+  FPlantUmlRuntimeParameter := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintServicePort (const Value: string);
+begin
+  FintServicePort := Value;
   FServicePort := StringToInteger (TCurlUtils.ReplaceCurlVariablesFromEnvironment(Value), cDefaultServicePort)
 end;
 
@@ -3081,25 +3158,25 @@ procedure tJson2PumlGlobalDefinition.WriteToJson (oJsonOutPut: tStrings; iProper
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
   WriteToJsonValue (oJsonOutPut, 'additionalServiceInformation', AdditionalServiceInformation, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'baseOutputPath', BaseOutputPath, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'baseOutputPath', intBaseOutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'outputPath', OutputPath, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'curlAuthenticationFileName', CurlAuthenticationFileName, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'curlAuthenticationFileName', intCurlAuthenticationFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlCommand', CurlCommand, iLevel + 1, iWriteEmpty);
   CurlParameter.WriteToJson (oJsonOutPut, 'curlParameter', iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlPassThroughHeader', CurlPassThroughHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlUserAgentInformation', CurlUserAgentInformation, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlSpanIdHeader', CurlSpanIdHeader, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'curlTraceIdHeader', CurlTraceIdHeader, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'defaultDefinitionFileName', DefaultDefinitionFileName, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'defaultDefinitionFileName', intDefaultDefinitionFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'definitionFileSearchFolder', DefinitionFileSearchFolder, iLevel + 1, false,
     iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'inputListFileSearchFolder', InputListFileSearchFolder, iLevel + 1, false,
     iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'javaRuntimeParameter', JavaRuntimeParameter, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'logFileOutputPath', LogFileOutputPath, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'plantUmlJarFileName', PlantUmlJarFileName, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'plantUmlRuntimeParameter', PlantUmlRuntimeParameter, iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'servicePort', ServicePortStr, iLevel + 1);
+  WriteToJsonValue (oJsonOutPut, 'javaRuntimeParameter', intJavaRuntimeParameter, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'logFileOutputPath', intLogFileOutputPath, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'plantUmlJarFileName', intPlantUmlJarFileName, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'plantUmlRuntimeParameter', intPlantUmlRuntimeParameter, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'servicePort', intServicePort, iLevel + 1);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 
@@ -3297,14 +3374,14 @@ begin
   Result := AdditionalCurlParameter.ReplaceParameterValues (Result);
 end;
 
-function tJson2PumlCurlAuthenticationList.ReplaceParameterValuesObfuscated(const iBaseUrl, iCommand: string): string;
+function tJson2PumlCurlAuthenticationList.ReplaceParameterValuesObfuscated (const iBaseUrl, iCommand: string): string;
 var
   Authentication: tJson2PumlCurlAuthenticationDefinition;
 begin
   Result := iCommand;
   Authentication := FindAuthentication (iBaseUrl);
   if Assigned (Authentication) then
-    Result := Authentication.Parameter.ReplaceParameterValuesObfuscated(Result);
+    Result := Authentication.Parameter.ReplaceParameterValuesObfuscated (Result);
   Result := AdditionalCurlParameter.ReplaceParameterValues (Result);
 end;
 
@@ -4539,18 +4616,18 @@ begin
   FileSize := 0;
 end;
 
-function tJson2PumlCurlAuthenticationParameterList.ObfuscateValue(iValueString : string): string;
+function tJson2PumlCurlAuthenticationParameterList.ObfuscateValue (iValueString: string): string;
 const
   MASK_CHAR = '*';
   MIN_LENGTH_FOR_PARTIAL_DISPLAY = 16;
   MAX_VISIBLE_CHARS = 4;
 var
-  StrLength: Integer;
-  FirstCharsLength: Integer;
-  LastCharsLength: Integer;
+  StrLength: integer;
+  FirstCharsLength: integer;
+  LastCharsLength: integer;
 begin
-  Result := StringOfChar(MASK_CHAR, 6);
-  StrLength := Length(iValueString);
+  Result := StringOfChar (MASK_CHAR, 6);
+  StrLength := length (iValueString);
 
   if StrLength > MIN_LENGTH_FOR_PARTIAL_DISPLAY then
   begin
@@ -4564,19 +4641,19 @@ begin
     LastCharsLength := FirstCharsLength; // In this case, last will be same as first
 
     // Construct the obfuscated string
-    Result := Copy(iValueString, 1, FirstCharsLength) +
-              Result +
-              Copy(iValueString, StrLength - LastCharsLength + 1, LastCharsLength);
+    Result := Copy (iValueString, 1, FirstCharsLength) + Result + Copy (iValueString, StrLength - LastCharsLength + 1,
+      LastCharsLength);
   end;
 end;
 
-function tJson2PumlCurlAuthenticationParameterList.ReplaceParameterValuesObfuscated(iValueString: string): string;
+function tJson2PumlCurlAuthenticationParameterList.ReplaceParameterValuesObfuscated (iValueString: string): string;
 var
   CurlParameter: tJson2PumlCurlParameterDefinition;
 begin
   Result := iValueString;
   for CurlParameter in self do
-    Result := StringReplace (Result, CurlParameter.name, ObfuscateValue(CurlParameter.ValueDecoded), [rfReplaceAll, rfIgnoreCase]);
+    Result := StringReplace (Result, CurlParameter.name, ObfuscateValue(CurlParameter.ValueDecoded),
+      [rfReplaceAll, rfIgnoreCase]);
 end;
 
 initialization
