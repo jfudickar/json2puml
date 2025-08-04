@@ -28,7 +28,6 @@
 		"${Json2PumlBaseDir}\\samples\\tvmaze\\*definition*.json"
 	],
 	"inputListFileSearchFolder": [
-		"${Json2PumlBaseDir}\\samples-local\\inputlisttest\\",
 		"${Json2PumlBaseDir}\\samples-local\\c1\\definition\\*inputlist*.json",
 		"${Json2PumlBaseDir}\\samples-local\\tmf\\inputlist\\*.json",
 		"${Json2PumlBaseDir}\\samples\\curl\\*inputlist*.json",

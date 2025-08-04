@@ -32,7 +32,7 @@
 			"generateOutput": true,
 			"mandatory": false,
 			"curlBaseUrl": null,
-			"curlCache": 0,
+			"curlCache": 600,
 			"curlExecuteEvaluation": null,
 			"curlFileSuffix": null,
 			"curlFormatOutput": true,
@@ -49,7 +49,7 @@
 			"generateOutput": true,
 			"mandatory": false,
 			"curlBaseUrl": null,
-			"curlCache": 0,
+			"curlCache": 600,
 			"curlExecuteEvaluation": null,
 			"curlFileSuffix": null,
 			"curlFormatOutput": true,
@@ -57,8 +57,8 @@
 			"curlUrl": "inputlistfile",
 			"curlOutputParameter": [
 			],
-			"splitIdentifier": null,
-			"splitInputFile": false
+			"splitIdentifier": "name",
+			"splitInputFile": true
 		}
 	]
 }

@@ -103,6 +103,11 @@ class ObjectProperty {
     objectName : String
     generateWithoutIdentifier : Boolean
 }
+
+class OptionDefinitionDescription {
+    displayName : string
+    description : string
+}
 class SingleOption {
     continueAfterUnhandledObjects : Boolean
     groupDetailObjectsTogether : Boolean
@@ -110,6 +115,8 @@ class SingleOption {
     identifyObjectsByTypeAndIdent : Boolean
     groupDetailObjectsTogether : Boolean
     hideDuplicateRelations : Boolean
+    ---
+    description : OptionDefinitionDescription
     ---
     pumlHeaderLines : Array of String
     objectFormats : FormatDefinition
@@ -139,6 +146,8 @@ ConverterDefinition::options -down-> "0..*" NamedOption: "        "
 ConverterDefinition::baseOption -right-> "0..1" SingleOption::option
 ConverterDefinition::description -right-> "0..1" ConverterDefinitionDescription
 NamedOption::definition --> "0..1" SingleOption
+SingleOption::description -left-> "0..1" OptionDefinitionDescription
+SingleOption::attributeProperties --> "0..*" PropertyValue::propertyName
 SingleOption::characteristicProperties --> "0..*" CharacteristicProperty::parentProperty
 SingleOption::objectFormats --> "0..1" FormatDefintion
 SingleOption::objectProperties --> "0..*" ObjectProperty

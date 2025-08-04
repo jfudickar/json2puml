@@ -1,0 +1,32 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+class DefinitionFile{
+   name : String
+   displayName : String
+   description : String
+   options : Array of DefinitionOption
+}
+
+class DefinitionOption {
+   option : String
+   displayName : String
+   description : String
+}
+
+class DefinitionFiles <<pivot>>{
+   Array of DefinitionFile
+}
+DefinitionFiles -right-> "0..*" DefinitionFile
+DefinitionFile::options -right-> "1..*" DefinitionOption
+
+@enduml
