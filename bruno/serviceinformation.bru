@@ -1,0 +1,21 @@
+meta {
+  name: serviceinformation
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseurl}}/v1/serviceinformation
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Basic {{token}}
+  Content-Length: 0
+  Content-Type: application/json;charset=utf-8
+}
+
+settings {
+  encodeUrl: false
+}

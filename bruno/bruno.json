@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "json2puml",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

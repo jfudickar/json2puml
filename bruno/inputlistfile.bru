@@ -1,0 +1,21 @@
+meta {
+  name: inputlistfile
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseurl}}/v1/inputlistfile
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Basic {{token}}
+  Content-Length: 0
+  Content-Type: application/json;charset=utf-8
+}
+
+settings {
+  encodeUrl: false
+}

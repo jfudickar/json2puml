@@ -1,0 +1,27 @@
+meta {
+  name: json2pumlRequestSvg - v1 - json2puml
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseurl}}/v1/json2pumlRequestSvg
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Basic {{token}}
+  Content-Type: application/json;charset=utf-8
+}
+
+body:json {
+  {
+    "inputListFile": "json2puml_inputlist.json",
+    "option": "default"
+  }
+}
+
+settings {
+  encodeUrl: false
+}

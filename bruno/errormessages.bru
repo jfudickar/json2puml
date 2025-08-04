@@ -1,0 +1,21 @@
+meta {
+  name: errormessages
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseurl}}/v1/errormessages
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Basic {{token}}
+  Content-Length: 0
+  Content-Type: application/json;charset=utf-8
+}
+
+settings {
+  encodeUrl: false
+}

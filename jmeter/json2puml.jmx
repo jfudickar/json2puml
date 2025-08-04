@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <stringProp name="TestPlan.comments">NOTE: Framework will only consider default values. (All boxes unchecked)</stringProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="startupDelaySec" elementType="Argument">
+            <stringProp name="Argument.name">startupDelaySec</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Initial Delay in Seconds when the action in a thread starts. Use the value for local testing, this will be updated at runtime by framework</stringProp>
+            <stringProp name="Argument.value">0</stringProp>
+          </elementProp>
+          <elementProp name="numberOfThreads" elementType="Argument">
+            <stringProp name="Argument.name">numberOfThreads</stringProp>
+            <stringProp name="Argument.value">8</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Number of parallel threads. Use the value for local testing, this will be updated at runtime by framework</stringProp>
+          </elementProp>
+          <elementProp name="rampUpPeriodSec" elementType="Argument">
+            <stringProp name="Argument.name">rampUpPeriodSec</stringProp>
+            <stringProp name="Argument.value">0</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">How long JMeter should take to get all the threads started. If there are 10 threads and a ramp-up time of 100 seconds, then each thread will begin 10 seconds after the previous thread started, for a total time of 100 seconds to get the test fully up to speed.</stringProp>
+          </elementProp>
+          <elementProp name="durationPerThreadSec" elementType="Argument">
+            <stringProp name="Argument.name">durationPerThreadSec</stringProp>
+            <stringProp name="Argument.value">300</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">Duration in seconds how long a thread is running. Use the value for local testing, this will be updated at runtime by framework</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="baseUrl" elementType="Argument">
+            <stringProp name="Argument.name">baseUrl</stringProp>
+            <stringProp name="Argument.value">/api</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">BasePath of Apigee (do not include http://, this will be defined with the protocol attributes). Use the value for local testing, this will be updated at runtime by framework</stringProp>
+          </elementProp>
+          <elementProp name="threadPacingTimeMs" elementType="Argument">
+            <stringProp name="Argument.name">threadPacingTimeMs</stringProp>
+            <stringProp name="Argument.value">200</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.desc">This value has to be provided by script developer. (Will not be updated by framework)</stringProp>
+          </elementProp>
+          <elementProp name="startupDelaySec" elementType="Argument">
+            <stringProp name="Argument.name">startupDelaySec</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.desc">Initial Delay in Seconds when the action in a thread starts. Use the value for local testing, this will be updated at runtime by framework</stringProp>
+          </elementProp>
+          <elementProp name="hostName" elementType="Argument">
+            <stringProp name="Argument.name">hostName</stringProp>
+            <stringProp name="Argument.value">192.168.178.241</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="hostPort" elementType="Argument">
+            <stringProp name="Argument.name">hostPort</stringProp>
+            <stringProp name="Argument.value">8080</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="hostProtocol" elementType="Argument">
+            <stringProp name="Argument.name">hostProtocol</stringProp>
+            <stringProp name="Argument.value">http</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Json2puml">
+        <stringProp name="ThreadGroup.num_threads">${numberOfThreads}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${rampUpPeriodSec}</stringProp>
+        <stringProp name="ThreadGroup.duration">${durationPerThreadSec}</stringProp>
+        <stringProp name="ThreadGroup.delay">${startupDelaySec}</stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">false</boolProp>
+        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T01_Heartbeat">
+          <stringProp name="TestPlan.comments">Framework naming convention is not required in those APIs whose KPI are not being measured. Just add the API functionality as name.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#samplers</stringProp>
+          <intProp name="HTTPSampler.concurrentPool">6</intProp>
+          <stringProp name="HTTPSampler.domain">${hostName}</stringProp>
+          <stringProp name="HTTPSampler.port">${hostPort}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${hostProtocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">${baseUrl}/v1/heartbeat</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="Authorization" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Basic ${apigeeBase64UsernamePassword}</stringProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="TestPlan.comments">-Add the Authorization header to pass the base64 encoded credentials for Apigee Gateway authorization.
+
+NOTE: This credential is specific to the teams and the environment and script developer has to pass their own credential for the environment under test. It will not be handled by framework.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#config_elements</stringProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T02_serviceinformation">
+          <intProp name="HTTPSampler.concurrentPool">6</intProp>
+          <stringProp name="HTTPSampler.domain">${hostName}</stringProp>
+          <stringProp name="HTTPSampler.port">${hostPort}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${hostProtocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">${baseUrl}/v1/serviceinformation</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="Authorization" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Basic ${apigeeBase64UsernamePassword}</stringProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="TestPlan.comments">-Add the Authorization header to pass the base64 encoded credentials for Apigee Gateway authorization.
+
+NOTE: This credential is specific to the teams and the environment and script developer has to pass their own credential for the environment under test. It will not be handled by framework.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#config_elements</stringProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T03_inputlistfile">
+          <intProp name="HTTPSampler.concurrentPool">6</intProp>
+          <stringProp name="HTTPSampler.domain">${hostName}</stringProp>
+          <stringProp name="HTTPSampler.port">${hostPort}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${hostProtocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">${baseUrl}/v1/inputlistfile</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="Authorization" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Basic ${apigeeBase64UsernamePassword}</stringProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="TestPlan.comments">-Add the Authorization header to pass the base64 encoded credentials for Apigee Gateway authorization.
+
+NOTE: This credential is specific to the teams and the environment and script developer has to pass their own credential for the environment under test. It will not be handled by framework.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#config_elements</stringProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T04_definitionfile">
+          <stringProp name="TestPlan.comments">For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#samplers</stringProp>
+          <intProp name="HTTPSampler.concurrentPool">6</intProp>
+          <stringProp name="HTTPSampler.domain">${hostName}</stringProp>
+          <stringProp name="HTTPSampler.port">${hostPort}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${hostProtocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">${baseUrl}/v1/definitionfile</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="Authorization" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Basic ${apigeeBase64UsernamePassword}</stringProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="TestPlan.comments">-Add the Authorization header to pass the base64 encoded credentials for Apigee Gateway authorization.
+
+NOTE: This credential is specific to the teams and the environment and script developer has to pass their own credential for the environment under test. It will not be handled by framework.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#config_elements</stringProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">1</stringProp>
+        </LoopController>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T04_json2pumlRequestSvg - json2puml">
+          <intProp name="HTTPSampler.concurrentPool">6</intProp>
+          <stringProp name="HTTPSampler.domain">${hostName}</stringProp>
+          <stringProp name="HTTPSampler.port">${hostPort}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${hostProtocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">${baseUrl}/v1/json2pumlRequestSvg</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">{&#xd;
+  &quot;inputListFile&quot;: &quot;json2puml_inputlist.json&quot;,&#xd;
+  &quot;option&quot;: &quot;default&quot;&#xd;
+}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="HTTPSampler.implementation">HttpClient4</stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+            <collectionProp name="HeaderManager.headers">
+              <elementProp name="Authorization" elementType="Header">
+                <stringProp name="Header.name">Authorization</stringProp>
+                <stringProp name="Header.value">Basic ${apigeeBase64UsernamePassword}</stringProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="TestPlan.comments">-Add the Authorization header to pass the base64 encoded credentials for Apigee Gateway authorization.
+
+NOTE: This credential is specific to the teams and the environment and script developer has to pass their own credential for the environment under test. It will not be handled by framework.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#config_elements</stringProp>
+          </HeaderManager>
+          <hashTree/>
+        </hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If pApiCall and pLoopScenarioKey are filled " enabled="false">
+          <boolProp name="IfController.evaluateAll">true</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+          <stringProp name="IfController.condition">${__groovy(org.apache.commons.lang.StringUtils.isEmpty(vars.get(&quot;pApiCallEmpty&quot;)),)}</stringProp>
+          <stringProp name="TestPlan.comments">Only when the varialbe is empty execute the api call, variable is calculated in the main preprocessor</stringProp>
+        </IfController>
+        <hashTree>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If oAuthToken is empty" enabled="true">
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+            <stringProp name="IfController.condition">${__groovy(org.apache.commons.lang.StringUtils.isEmpty(vars.get(&quot;oAuthApigeeToken&quot;)),)}</stringProp>
+          </IfController>
+          <hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="${__threadGroupName}:Generate_Token" enabled="true">
+              <stringProp name="TestPlan.comments">Transaction name starts with thread group name parameter followed by colon(:) then business function (performance scenario) id and finally the action being targeted in the transaction.
+For ex. ${__threadGroupName}:TST-123xxx_GETIndividual
+
+NOTE: Do not keep any spaces in between transaction name.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#controllers</stringProp>
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T01_Get_Apigee_AccessToken" enabled="true">
+                <stringProp name="TestPlan.comments">Framework naming convention is not required in those APIs whose KPI are not being measured. Just add the API functionality as name.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#samplers</stringProp>
+                <intProp name="HTTPSampler.concurrentPool">6</intProp>
+                <stringProp name="HTTPSampler.domain">${baseUrlApigee}</stringProp>
+                <stringProp name="HTTPSampler.port">443</stringProp>
+                <stringProp name="HTTPSampler.protocol">https</stringProp>
+                <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+                <stringProp name="HTTPSampler.path">/oauth2/v1/accesstoken?grant_type=client_credentials</stringProp>
+                <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                <stringProp name="HTTPSampler.method">POST</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                  <collectionProp name="Arguments.arguments"/>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree>
+                <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                  <collectionProp name="HeaderManager.headers">
+                    <elementProp name="Authorization" elementType="Header">
+                      <stringProp name="Header.name">Authorization</stringProp>
+                      <stringProp name="Header.value">Basic ${apigeeBase64UsernamePassword}</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                  <stringProp name="TestPlan.comments">-Add the Authorization header to pass the base64 encoded credentials for Apigee Gateway authorization.
+
+NOTE: This credential is specific to the teams and the environment and script developer has to pass their own credential for the environment under test. It will not be handled by framework.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#config_elements</stringProp>
+                </HeaderManager>
+                <hashTree/>
+                <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - accesstoken" enabled="true">
+                  <stringProp name="JSONPostProcessor.referenceNames">oAuthApigeeToken</stringProp>
+                  <stringProp name="JSONPostProcessor.jsonPathExprs">$.access_token</stringProp>
+                  <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+                </JSONPostProcessor>
+                <hashTree/>
+                <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="JSON Assertion - accesstoken" enabled="true">
+                  <stringProp name="JSON_PATH">$.access_token</stringProp>
+                  <stringProp name="EXPECTED_VALUE"></stringProp>
+                  <boolProp name="JSONVALIDATION">false</boolProp>
+                  <boolProp name="EXPECT_NULL">false</boolProp>
+                  <boolProp name="INVERT">false</boolProp>
+                  <boolProp name="ISREGEX">true</boolProp>
+                </JSONPathAssertion>
+                <hashTree/>
+                <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="false">
+                  <stringProp name="cacheKey">true</stringProp>
+                  <stringProp name="filename"></stringProp>
+                  <stringProp name="parameters"></stringProp>
+                  <stringProp name="script">log.info(&quot;post fetch - oAuthApigeeToken:&quot;+vars.get(&apos;oAuthApigeeToken&apos;))</stringProp>
+                  <stringProp name="scriptLanguage">groovy</stringProp>
+                </JSR223PostProcessor>
+                <hashTree/>
+              </hashTree>
+            </hashTree>
+          </hashTree>
+          <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="${__threadGroupName}:${pLoopScenarioKey}_GET_${pLoopGroup}" enabled="true">
+            <stringProp name="TestPlan.comments">Transaction name starts with thread group name parameter followed by colon(:) then business function (performance scenario) id and finally the action being targeted in the transaction.
+For ex. ${__threadGroupName}:TST-123xxx_GETIndividual
+
+NOTE: Do not keep any spaces in between transaction name.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#controllers</stringProp>
+            <boolProp name="TransactionController.includeTimers">false</boolProp>
+          </TransactionController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="T02_GET ${pApiCall}" enabled="true">
+              <stringProp name="TestPlan.comments">The APIs whose KPIs have to measured have to be named according to framework naming convention. The name starts with thread group name parameter followed by colon(:) then performance test scenario id and finally the API functionality name.
+For ex. ${__threadGroupName}:TST-456xxx_T02_GET_Individual
+
+NOTE: Do not keep any spaces in between transaction name.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#samplers</stringProp>
+              <intProp name="HTTPSampler.concurrentPool">6</intProp>
+              <stringProp name="HTTPSampler.domain">${baseUrlApigee}</stringProp>
+              <stringProp name="HTTPSampler.port">443</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+              <stringProp name="HTTPSampler.path">${pApiCall}</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments"/>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Authorization" elementType="Header">
+                    <stringProp name="Header.name">Authorization</stringProp>
+                    <stringProp name="Header.value">Bearer ${oAuthApigeeToken}</stringProp>
+                  </elementProp>
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="" elementType="Header">
+                    <stringProp name="Header.name">user-agent</stringProp>
+                    <stringProp name="Header.value">JMeter</stringProp>
+                  </elementProp>
+                </collectionProp>
+                <stringProp name="TestPlan.comments">-Add the Authorization header to pass the Bearer Token generated by Apigee Token API. The token has to be dynamically handled as each time a unique one gets generated. Use the correlation variable created in Apigee Token transaction and pass in field &apos;Value&apos; as &apos;Bearer &lt;Token Variable&gt;&apos;.
+-Remaining headers have to be added by script developer depending on the API.
+
+NOTE: Headers will not be added by framework. Script developer has to add these.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#config_elements</stringProp>
+              </HeaderManager>
+              <hashTree/>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion - ResponseCode 200" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="49586">200</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.custom_message"></stringProp>
+                <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">8</intProp>
+                <stringProp name="Assertion.scope">all</stringProp>
+                <stringProp name="TestPlan.comments">-Validate the api responsecode
+
+NOTE: These details have to be added by script developer. It will not be handled by framework.
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#assertions</stringProp>
+              </ResponseAssertion>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor - Extract Result Path" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">pApiResult</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">${pLoopTempResultPath}</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <JSR223Assertion guiclass="TestBeanGUI" testclass="JSR223Assertion" testname="JSR223 Assertion - Check the Extracted result" enabled="true">
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="script">if (vars.get(&apos;pExpectedResultValue&apos;) ) {                            // execute only if JMeter Variable ${pExpectedResultValue} is defined
+    if (!vars.get(&apos;pApiResult&apos;).equals(vars.get(&apos;pExpectedResultValue&apos;))) { // if there is found value is not equal the expected
+        AssertionResult.setFailure(true)                   //fail the sampler
+        AssertionResult.setFailureMessage(&apos;Expected result &quot;&apos;+vars.get(&apos;pExpectedResultValue&apos;)+&apos;&quot; does not match found result &quot;&apos;+vars.get(&apos;pApiResult&apos;)+&apos;&quot; (&apos;+vars.get(&apos;pLoopTempResultPath&apos;)+&apos;)&apos;)
+    }
+}</stringProp>
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="TestPlan.comments">This checks the result only when the validation is defined in the inputdata file</stringProp>
+              </JSR223Assertion>
+              <hashTree/>
+              <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+                <boolProp name="ResultCollector.error_logging">false</boolProp>
+                <objProp>
+                  <name>saveConfig</name>
+                  <value class="SampleSaveConfiguration">
+                    <time>true</time>
+                    <latency>true</latency>
+                    <timestamp>true</timestamp>
+                    <success>true</success>
+                    <label>true</label>
+                    <code>true</code>
+                    <message>true</message>
+                    <threadName>true</threadName>
+                    <dataType>true</dataType>
+                    <encoding>false</encoding>
+                    <assertions>true</assertions>
+                    <subresults>true</subresults>
+                    <responseData>false</responseData>
+                    <samplerData>false</samplerData>
+                    <xml>false</xml>
+                    <fieldNames>true</fieldNames>
+                    <responseHeaders>false</responseHeaders>
+                    <requestHeaders>false</requestHeaders>
+                    <responseDataOnError>false</responseDataOnError>
+                    <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                    <assertionsResultsToSave>0</assertionsResultsToSave>
+                    <bytes>true</bytes>
+                    <sentBytes>true</sentBytes>
+                    <url>true</url>
+                    <threadCounts>true</threadCounts>
+                    <idleTime>true</idleTime>
+                    <connectTime>true</connectTime>
+                  </value>
+                </objProp>
+                <stringProp name="filename"></stringProp>
+              </ResultCollector>
+              <hashTree/>
+              <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor" enabled="true">
+                <stringProp name="scriptLanguage">groovy</stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="script">def currDate = new Date()
+if (vars.get(&apos;lastGetOAuthApigeeToken&apos;)) {
+	def lastDate = new Date()
+	lastDate = Date.parse(&quot;dd.mm.yyyy HH:mm:ss:SSS&quot;,vars.get(&apos;lastGetOAuthApigeeToken&apos;))
+	def duration = groovy.time.TimeCategory.minus (currDate, lastDate)
+	if (duration.seconds &gt;= vars.get(&quot;oAuthTokenCacheSeconds&quot;).toInteger()) {
+		vars.put(&quot;oAuthApigeeToken&quot;, &quot;&quot;)
+		vars.put(&apos;lastGetOAuthApigeeToken&apos;, currDate.format(&quot;dd.mm.yyyy HH:mm:ss:SSS&quot;))
+		//log.info(&quot;after fetch - duration:					&quot;+duration.seconds.toString())
+		//log.info(&quot;change lastGetOAuthApigeeToken&quot;)
+	}
+}
+else {
+	vars.put(&apos;lastGetOAuthApigeeToken&apos;, currDate.format(&quot;dd.mm.yyyy HH:mm:ss:SSS&quot;))
+}
+
+</stringProp>
+              </JSR223PostProcessor>
+              <hashTree/>
+              <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
+                <boolProp name="ResultCollector.error_logging">false</boolProp>
+                <objProp>
+                  <name>saveConfig</name>
+                  <value class="SampleSaveConfiguration">
+                    <time>true</time>
+                    <latency>true</latency>
+                    <timestamp>true</timestamp>
+                    <success>true</success>
+                    <label>true</label>
+                    <code>true</code>
+                    <message>true</message>
+                    <threadName>true</threadName>
+                    <dataType>true</dataType>
+                    <encoding>false</encoding>
+                    <assertions>true</assertions>
+                    <subresults>true</subresults>
+                    <responseData>false</responseData>
+                    <samplerData>false</samplerData>
+                    <xml>false</xml>
+                    <fieldNames>true</fieldNames>
+                    <responseHeaders>false</responseHeaders>
+                    <requestHeaders>false</requestHeaders>
+                    <responseDataOnError>false</responseDataOnError>
+                    <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                    <assertionsResultsToSave>0</assertionsResultsToSave>
+                    <bytes>true</bytes>
+                    <sentBytes>true</sentBytes>
+                    <url>true</url>
+                    <fileName>true</fileName>
+                    <threadCounts>true</threadCounts>
+                    <idleTime>true</idleTime>
+                    <connectTime>true</connectTime>
+                  </value>
+                </objProp>
+                <stringProp name="filename"></stringProp>
+              </ResultCollector>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="Pacing Time" enabled="true">
+          <intProp name="ActionProcessor.action">1</intProp>
+          <intProp name="ActionProcessor.target">0</intProp>
+          <stringProp name="ActionProcessor.duration">0</stringProp>
+          <stringProp name="TestPlan.comments">Add pacing time parameter name in Pause Timer
+
+For more understanding of this JMeter element follow the link: https://jmeter.apache.org/usermanual/test_plan.html#timers</stringProp>
+        </TestAction>
+        <hashTree>
+          <UniformRandomTimer guiclass="UniformRandomTimerGui" testclass="UniformRandomTimer" testname="Pause" enabled="true">
+            <stringProp name="ConstantTimer.delay">${threadPacingTimeMs}</stringProp>
+            <stringProp name="RandomTimer.range">0</stringProp>
+            <stringProp name="TestPlan.comments">Add pacing time parameter ${threadPacingTime_TST-678350} name in &apos;Constant Delay Offset&apos; field as defined in User Defined Variables.</stringProp>
+          </UniformRandomTimer>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>true</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>true</responseData>
+              <samplerData>true</samplerData>
+              <xml>true</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>true</responseHeaders>
+              <requestHeaders>true</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <fileName>true</fileName>
+              <hostname>true</hostname>
+              <threadCounts>true</threadCounts>
+              <sampleCount>true</sampleCount>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
