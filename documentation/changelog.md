@@ -1,3 +1,29 @@
+# **json2puml v2.3.0.124 - BETA** - 04.08.2025
+## All Editions
+### New Feature
+- Global configuration parameters are now supporting the replaceent of environment parameters #66
+
+### Changed Feature
+- Update to latest version of delphimvcframework
+- Removed unused empty columns for the color coded in the legend #64
+- SplitFile functionality fixed #69
+
+## UI Editions
+### New Feature
+- Enhance the application title with the name of the current parameter file and or inputlist fileen #71
+- Added a combobox in the file result section which contains also all result files and allows to select a result file.
+
+### Changed Feature
+- Update to latest version of SVGIconImageList
+- Fixed a graphical glitch in the form UI #70
+
+## Service Editions
+### New Feature
+- Introduction of API version v2
+  - Enhance the json2pumlRequestSvg and json2pumlRequestPng to return a list of result files. This can be used in combination with the generateDetails option to also get the generated detail images returned. #68
+  - Enhance the definition file options list to also return displayname and description information. This could be used by UI's to show additional informations about the options #47
+- Fixed typos in the swagger #65 
+
 # **json2puml v2.2.27.123** - 25.04.2025
 ## All Editions
 ### Changed Feature

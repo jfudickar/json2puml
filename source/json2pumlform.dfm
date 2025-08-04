@@ -85,10 +85,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Align = alClient
     MultiLine = True
     TabOrder = 3
-    ExplicitLeft = 0
-    ExplicitTop = 73
-    ExplicitWidth = 1357
-    ExplicitHeight = 803
+    ExplicitWidth = 1341
+    ExplicitHeight = 779
     object LogTabSheet: TTabSheet
       BorderWidth = 5
       Caption = 'Execute'
@@ -101,7 +99,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
         BevelOuter = bvNone
         TabOrder = 0
         OnResize = CommandLineEditPanelResize
-        ExplicitWidth = 1339
+        ExplicitWidth = 1323
         object TLabel
           Left = 648
           Top = 144
@@ -485,7 +483,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitWidth = 508
+          ExplicitWidth = 492
           DesignSize = (
             502
             353)
@@ -498,7 +496,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 0
-            ExplicitLeft = 344
+            ExplicitLeft = 328
           end
           object GroupBox1: TGroupBox
             Left = 0
@@ -508,7 +506,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akLeft, akTop, akRight]
             Caption = 'PlantUML Jar'
             TabOrder = 1
-            ExplicitWidth = 506
+            ExplicitWidth = 490
             DesignSize = (
               500
               97)
@@ -543,7 +541,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
-              ExplicitWidth = 361
+              ExplicitWidth = 345
             end
             object javaruntimeparameterEdit: TButtonedEdit
               Left = 137
@@ -552,7 +550,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
-              ExplicitWidth = 361
+              ExplicitWidth = 345
             end
             object PlantUmlRuntimeParameterEdit: TButtonedEdit
               Left = 137
@@ -561,7 +559,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
-              ExplicitWidth = 361
+              ExplicitWidth = 345
             end
           end
           object GroupBox6: TGroupBox
@@ -572,7 +570,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Other'
             TabOrder = 2
-            ExplicitWidth = 506
+            ExplicitWidth = 490
             object generateoutputdefinitionCheckBox: TCheckBox
               Left = 137
               Top = 17
@@ -598,7 +596,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akLeft, akTop, akRight]
             Caption = 'Input'
             TabOrder = 3
-            ExplicitWidth = 506
+            ExplicitWidth = 490
             DesignSize = (
               500
               150)
@@ -641,7 +639,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
-              ExplicitWidth = 361
+              ExplicitWidth = 345
             end
             object inputlistfileEdit: TButtonedEdit
               Left = 137
@@ -650,7 +648,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
-              ExplicitWidth = 361
+              ExplicitWidth = 345
             end
             object leadingObjectEdit: TEdit
               Left = 137
@@ -659,7 +657,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 2
-              ExplicitWidth = 361
+              ExplicitWidth = 345
             end
             object splitInputFileCheckBox: TCheckBox
               Left = 137
@@ -677,7 +675,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 21
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 4
-              ExplicitWidth = 361
+              ExplicitWidth = 345
             end
           end
           object Button2: TButton
@@ -689,7 +687,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 4
-            ExplicitLeft = 192
+            ExplicitLeft = 176
           end
         end
       end
@@ -701,8 +699,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
         ActivePage = ExecutionLogTabSheet
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 1339
-        ExplicitHeight = 412
+        ExplicitWidth = 1323
+        ExplicitHeight = 388
         object ExecutionLogTabSheet: TTabSheet
           Caption = 'Execution Log'
           object ExecutionLogPanel: TPanel
@@ -713,8 +711,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 1331
-            ExplicitHeight = 384
+            ExplicitWidth = 1315
+            ExplicitHeight = 360
             object ProgressbarPanel: TPanel
               Left = 0
               Top = 0
@@ -722,7 +720,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 89
               Align = alTop
               TabOrder = 0
-              ExplicitWidth = 1331
+              ExplicitWidth = 1315
               DesignSize = (
                 1325
                 89)
@@ -765,7 +763,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 0
-                ExplicitWidth = 1230
+                ExplicitWidth = 1214
               end
               object ConvertProgressBar: TProgressBar
                 Left = 96
@@ -777,7 +775,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 1
-                ExplicitWidth = 1230
+                ExplicitWidth = 1214
               end
               object ExecutionLogFileNameEdit: TButtonedEdit
                 Left = 96
@@ -787,7 +785,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 Anchors = [akLeft, akTop, akRight]
                 ReadOnly = True
                 TabOrder = 2
-                ExplicitWidth = 1229
+                ExplicitWidth = 1213
               end
               object GenerateProgressBar: TProgressBar
                 Left = 96
@@ -799,7 +797,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 3
-                ExplicitWidth = 1230
+                ExplicitWidth = 1214
               end
             end
           end
