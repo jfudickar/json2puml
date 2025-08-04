@@ -1,0 +1,48 @@
+meta {
+  name: json2pumlRequestSvg - v2 - json Placeholder
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseurl}}/v2/json2pumlRequestSvg?includeFileName=true
+  body: json
+  auth: inherit
+}
+
+params:query {
+  includeFileName: true
+}
+
+headers {
+  Authorization: Basic {{token}}
+  Content-Type: application/json;charset=utf-8
+}
+
+body:json {
+  {
+    "definitionFile": null,
+    "detail": null,
+    "group": null,
+    "job": null,
+    "jobDescription": "This is a multiline description\nto show that this is also working :-)",
+    "inputListFile": "placeholder_inputlist_curl.json",
+    "inputFiles": [
+    ],
+    "generateSummary": true,
+    "generateDetails": false,
+    "outputFormats": "png,svg,puml,json,log,zip",
+    "option": "default",
+    "outputSuffix": null,
+    "curlParameter": [
+      {"userid"=3}
+    ],
+    "curlAuthenticationParameter": [
+    ]
+  }
+  
+}
+
+settings {
+  encodeUrl: false
+}

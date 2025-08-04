@@ -1,0 +1,53 @@
+meta {
+  name: json2pumlRequestSvg - v2 - Swapi Film Characters
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseurl}}/v2/json2pumlRequestSvg?includeFileName=true
+  body: json
+  auth: inherit
+}
+
+params:query {
+  includeFileName: true
+}
+
+headers {
+  Authorization: Basic {{token}}
+  Content-Type: application/json;charset=utf-8
+}
+
+body:json {
+  {
+    "definitionFile": null,
+    "detail": null,
+    "group": null,
+    "job": null,
+    "jobDescription": null,
+    "inputListFile": "swapi_inputlist_film_characters.json",
+    "inputFiles": [
+    ],
+    "generateSummary": true,
+    "generateDetails": false,
+    "outputFormats": "svg,puml,json,log,zip",
+    "option": "default",
+    "outputSuffix": null,
+    "curlParameter": [
+        {
+          "input.idx": "1"
+        },
+        {
+          "input.title": "The empire"
+        }
+    ],
+    "curlAuthenticationParameter": [
+    ]
+  }
+  
+}
+
+settings {
+  encodeUrl: false
+}
