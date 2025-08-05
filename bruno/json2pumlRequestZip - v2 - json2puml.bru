@@ -1,13 +1,17 @@
 meta {
-  name: json2pumlRequestSvg - v1 - json2puml
+  name: json2pumlRequestZip - v2 - json2puml
   type: http
-  seq: 9
+  seq: 15
 }
 
 post {
-  url: {{baseurl}}/v1/json2pumlRequestSvg
+  url: {{baseurl}}/v2/json2pumlRequestZip?includeFileName=true
   body: json
   auth: inherit
+}
+
+params:query {
+  includeFileName: true
 }
 
 headers {
