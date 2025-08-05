@@ -47,6 +47,7 @@ type
     function ServerInformation: string;
     procedure HandleJson2PumlRequestFormatInt (iOutputFormat: tJson2PumlOutputFormat;
       iApiVersion: tJson2PumlApiVersion);
+    procedure HandleJson2PumlRequestZipInt (iApiVersion: tJson2PumlApiVersion);
   public
     [MVCPath]
     [MVCHTTPMethod([httpGET])]
@@ -100,9 +101,11 @@ type
 
     [MVCPath('/api/json2pumlRequestZip')]
     [MVCPath('/api/v1/json2pumlRequestZip')]
-    [MVCPath('/api/v2/json2pumlRequestZip')]
     [MVCHTTPMethod([httpPOST])]
     procedure HandleJson2PumlRequestZip;
+    [MVCPath('/api/v2/json2pumlRequestZip')]
+    [MVCHTTPMethod([httpPOST])]
+    procedure HandleJson2PumlRequestZipv2;
     [MVCPath('/api/json2pumlRequest')]
     [MVCPath('/api/v1/json2pumlRequest')]
     [MVCPath('/api/v2/json2pumlRequest')]
@@ -435,6 +438,11 @@ begin
 end;
 
 procedure TJson2PumlController.HandleJson2PumlRequestZip;
+begin
+  HandleJson2PumlRequestZipInt (jav1);
+end;
+
+procedure TJson2PumlController.HandleJson2PumlRequestZipInt (iApiVersion: tJson2PumlApiVersion);
 var
   InputHandler: TJson2PumlInputHandler;
   Stopwatch: tStopwatch;
@@ -463,7 +471,10 @@ begin
           else
           begin
             Context.Response.ContentType := TMVCMediaType.APPLICATION_JSON;
-            Render (GenerateFileNameContentBinary(InputHandler.ConverterInputList.SummaryZipFileName));
+            if iApiVersion = jav1 then
+              Render (GenerateFileNameContentBinary(InputHandler.ConverterInputList.SummaryZipFileName))
+            else
+              Render ('[' + GenerateFileNameContentBinary(InputHandler.ConverterInputList.SummaryZipFileName) + ']')
           end;
           Context.Response.StatusCode := HTTP_STATUS.OK;
         end
@@ -487,6 +498,11 @@ begin
     InputHandler.Free;
     LogRequestEnd (Context, Stopwatch)
   end;
+end;
+
+procedure TJson2PumlController.HandleJson2PumlRequestZipv2;
+begin
+  HandleJson2PumlRequestZipInt (jav2);
 end;
 
 function TJson2PumlController.IsRequestBodyInvalid: Boolean;

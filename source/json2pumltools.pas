@@ -618,7 +618,7 @@ begin
             tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, iApiVersion, false)
           else
             tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1,
-              iApiVersion, false);
+              true, iApiVersion, false);
           Inc (Result);
         end;
       finally

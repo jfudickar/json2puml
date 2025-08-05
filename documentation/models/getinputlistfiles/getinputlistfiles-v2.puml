@@ -14,7 +14,6 @@ class DefinitionFile{
    name : String
    displayName : String
    description : String
-   options : Array of DefinitionOption
 }
 class DefinitionOption {
    option : String
@@ -37,6 +36,7 @@ class InputListFile {
    displayName : String
    description : String
    definitionFile : DefinitionFile
+   options : Array of DefinitionOption
    curlParameter : Array of CurlParameter
    curlAuthenticationParameter : Array of CurlParameter
 }
@@ -46,12 +46,12 @@ class InputListFiles <<pivot>>{
 }
 InputListFiles -right-> "0..*" InputListFile
 InputListFile::definitionFile --> "0..1" DefinitionFile
-DefinitionFile::options --> "1..*" DefinitionOption
-InputListFile::curlParameter --> "0..*" CurlParameter
-InputListFile::curlAuthenticationParameter -> "0..*" CurlParameter
+InputListFile::options --> "0..*" DefinitionOption
+InputListFile::curlParameter -right-> "0..*" CurlParameter
+InputListFile::curlAuthenticationParameter -right-> "0..*" CurlParameter
 
-CurlParameter -[hidden]up-> DefinitionFile
-CurlParameter <-[hidden]left- DefinitionFile
+'CurlParameter -[hidden]up-> DefinitionFile
+'CurlParameter <-[hidden]left- DefinitionFile
 
 
 @enduml

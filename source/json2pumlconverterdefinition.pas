@@ -614,7 +614,9 @@ type
     function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
-    procedure WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
+    procedure WriteToJsonServiceListResult(oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
+        iStandalone:Boolean; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
+    procedure WriteOptionsToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
     property BaseOption: tJson2PumlConverterDefinition read FBaseOption;
     property DefaultOption: string read FDefaultOption write SetDefaultOption;
@@ -1240,8 +1242,11 @@ begin
   begin
     WriteObjectStartToJson (oJsonOutPut, iLevel, '');
     WriteToJsonValue (oJsonOutPut, 'option', option, iLevel + 1, iWriteEmpty, true);
-    WriteToJsonValue (oJsonOutPut, 'displayName', Description.DisplayName, iLevel + 1, iWriteEmpty, true);
-    WriteToJsonValue (oJsonOutPut, 'description', Description.Description, iLevel + 1, iWriteEmpty, true);
+    if Description.DisplayName.IsEmpty then
+      WriteToJsonValue (oJsonOutPut, 'displayName', option, iLevel + 1, iWriteEmpty, true)
+    else
+      WriteToJsonValue (oJsonOutPut, 'displayName', Description.DisplayName, iLevel + 1, iWriteEmpty, true);
+    WriteToJsonValue (oJsonOutPut, 'description', Description.Description, iLevel + 1, true, true);
     WriteObjectEndToJson (oJsonOutPut, iLevel);
   end;
 
@@ -2435,19 +2440,8 @@ begin
   FDefaultOption := Value.ToLower;
 end;
 
-procedure tJson2PumlConverterGroupDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
-  iWriteEmpty: boolean = false);
-begin
-  WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
-  Description.WriteToJson (oJsonOutPut, 'description', iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'defaultOption', DefaultOption, iLevel + 1, iWriteEmpty);
-  OptionList.WriteToJson (oJsonOutPut, 'options', iLevel + 1, iWriteEmpty);
-  BaseOption.WriteToJson (oJsonOutPut, 'baseOption', iLevel + 1, true);
-  WriteObjectEndToJson (oJsonOutPut, iLevel);
-end;
-
-procedure tJson2PumlConverterGroupDefinition.WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string;
-  iLevel: integer; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
+procedure tJson2PumlConverterGroupDefinition.WriteOptionsToJsonServiceListResult (oJsonOutPut: tStrings;
+  iPropertyName: string; iLevel: integer; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
 var
   OptionsSl: tStringList;
   i: integer;
@@ -2473,12 +2467,6 @@ var
   end;
 
 begin
-  WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
-  WriteToJsonValue (oJsonOutPut, 'name', ExtractFileName(SourceFileName), iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'displayName', ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
-    (Description.DisplayName), iLevel + 1, iWriteEmpty);
-  WriteToJsonValue (oJsonOutPut, 'description', ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
-    (Description.Description), iLevel + 1, iWriteEmpty);
   OptionsSl := tStringList.Create;
   try
     for i := 0 to OptionList.Count - 1 do
@@ -2502,6 +2490,32 @@ begin
   finally
     OptionsSl.Free;
   end;
+
+end;
+
+procedure tJson2PumlConverterGroupDefinition.WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
+  iWriteEmpty: boolean = false);
+begin
+  WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
+  Description.WriteToJson (oJsonOutPut, 'description', iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'defaultOption', DefaultOption, iLevel + 1, iWriteEmpty);
+  OptionList.WriteToJson (oJsonOutPut, 'options', iLevel + 1, iWriteEmpty);
+  BaseOption.WriteToJson (oJsonOutPut, 'baseOption', iLevel + 1, true);
+  WriteObjectEndToJson (oJsonOutPut, iLevel);
+end;
+
+procedure tJson2PumlConverterGroupDefinition.WriteToJsonServiceListResult(oJsonOutPut: tStrings; iPropertyName: string;
+    iLevel: integer; iStandalone:Boolean; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
+
+begin
+  WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
+  WriteToJsonValue (oJsonOutPut, 'name', ExtractFileName(SourceFileName), iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'displayName', ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
+    (Description.DisplayName), iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'description', ReplaceCurlVariablesFromEnvironmentAndGlobalConfiguration
+    (Description.Description), iLevel + 1, iWriteEmpty);
+  if (iApiVersion = jav1) or iStandalone then
+    WriteOptionsToJsonServiceListResult (oJsonOutPut, iPropertyName, iLevel, iApiVersion, iWriteEmpty);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 

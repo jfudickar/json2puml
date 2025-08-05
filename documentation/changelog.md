@@ -1,3 +1,8 @@
+# **json2puml v2.3.1.125 - BETA** - 05.08.2025
+## Service Editions
+### Changed Feature
+- Further Improved v2 API responses
+
 # **json2puml v2.3.0.124 - BETA** - 04.08.2025
 ## All Editions
 ### New Feature

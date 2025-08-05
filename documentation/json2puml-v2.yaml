@@ -258,7 +258,7 @@ paths:
                 $ref: "#/components/schemas/BinaryFile"
             application/json:
               schema:
-                $ref: "#/components/schemas/OutputFileBinary"
+                $ref: "#/components/schemas/OutputFileBinaryList"
         "400":
           description:
             '*Bad Request* - The server cannot process the request due to malformed\
@@ -387,8 +387,13 @@ components:
           example: This file contains a set of filedefinitions which are using curl to fetch the data from https://jsonplaceholder.typicode.com/
           description: Optional description of the input list file
         definitionFile:
-          $ref: "#/components/schemas/DefinitionFileResponse"
+          $ref: "#/components/schemas/DefinitionFileBaseResponse"
           description: Details of the definition file which is defined in the input list file. When the definition file is not defined in the input list file it must be implicitly defined in the POST /json2pumlRequest parameters
+        options:
+          type: array
+          description: List of options defined by the definition file
+          items:
+            $ref: "#/components/schemas/OptionFileResponse"
         curlParameter:
           type: array
           items:
@@ -440,7 +445,7 @@ components:
         description:
           type: string
           example: Displays all identified data of the json files
-    DefinitionFileResponse:
+    DefinitionFileBaseResponse:
       type: object
       description: Definition of a converter definition file
       properties:
@@ -453,11 +458,17 @@ components:
         description:
           type: string
           example: Definition file to handle and convert JsonPlaceHolder based data files.
-        options:
-          type: array
-          description: List of options defined by the definition file
-          items:
-            $ref: "#/components/schemas/OptionFileResponse"
+    DefinitionFileResponse:
+      allOf:
+        - $ref: "#/components/schemas/DefinitionFileBaseResponse"
+        - type: object
+          description: Definition of a converter definition file
+          properties:
+            options:
+              type: array
+              description: List of options defined by the definition file
+              items:
+                $ref: "#/components/schemas/OptionFileResponse"
     Json2PumlRequestBase:
       type: object
       properties:
@@ -501,10 +512,7 @@ components:
         option:
           type: string
           description: The option which should be used to generate the image. The possible options are defined in the definition file.
-          example:
-            - full
-            - default
-            - core
+          example: full / default / reduced / core
         description:
           type: string
           description: The description will be added to the legend of the generated images
@@ -530,9 +538,7 @@ components:
               items:
                 type: string
                 enum: [svg, png, json, puml, filelist, log]
-                example:
-                  - svg
-                  - png
+                example: svg
     Json2PumlResponseFiles:
       type: object
       properties:

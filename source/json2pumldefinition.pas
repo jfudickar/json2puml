@@ -2185,13 +2185,17 @@ begin
       DefinitionFile := tJson2PumlConverterGroupDefinition.Create;
       try
         DefinitionFile.ReadFromJsonFile (FileName);
-        DefinitionFile.WriteToJsonServiceListResult (oJsonOutPut, 'definitionFile', iLevel + 1, iApiVersion,
+        DefinitionFile.WriteToJsonServiceListResult (oJsonOutPut, 'definitionFile', iLevel + 1, false, iApiVersion,
           iWriteEmpty);
+        if iApiVersion = jav2 then
+          DefinitionFile.WriteOptionsToJsonServiceListResult (oJsonOutPut, iPropertyName, iLevel, iApiVersion,
+            iWriteEmpty);
       finally
         DefinitionFile.Free;
       end;
     end;
   end;
+
   Description.CurlParameterList.WriteToJson (oJsonOutPut, 'curlParameter', iLevel + 1, iWriteEmpty);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
