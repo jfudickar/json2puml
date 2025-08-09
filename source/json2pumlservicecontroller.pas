@@ -539,8 +539,8 @@ begin
     // name := TIdHTTPAppRequest (Context.Request.RawWebRequest).GetRequestInfo.RawHeaders.Names[I];
     // GlobalLoghandler.Debug  ('Header %s : %s', [name, Context.Request.Headers[name]]);
     // end;
-    if not Context.Request.Body.IsEmpty then
-      GlobalLoghandler.Debug ('Request Body : %s ', [Context.Request.Body]);
+    //if not Context.Request.Body.IsEmpty then
+    //  GlobalLoghandler.Debug ('Request Body : %s ', [Context.Request.Body]);
   end;
 end;
 
