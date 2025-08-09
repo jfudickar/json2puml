@@ -183,6 +183,10 @@ type
     FintPlantUmlRuntimeParameter: string;
     FintLogFileOutputPath: string;
     FintJavaRuntimeParameter: string;
+    FintPlantUmlServerCurlParameter: string;
+    FintPlantUmlServerUrl: string;
+    FPlantUmlServerCurlParameter: string;
+    FPlantUmlServerUrl: string;
     procedure SetCurlCommand (const Value: string);
     procedure SetCurlSpanIdHeader (const Value: string);
     procedure SetCurlTraceIdHeader (const Value: string);
@@ -192,6 +196,8 @@ type
     procedure SetintJavaRuntimeParameter (const Value: string);
     procedure SetintLogFileOutputPath (const Value: string);
     procedure SetintPlantUmlJarFileName (const Value: string);
+    procedure SetintPlantUmlServerCurlParameter (const Value: string);
+    procedure SetintPlantUmlServerUrl (const Value: string);
     procedure SetintPlantUmlRuntimeParameter (const Value: string);
     procedure SetintServicePort (const Value: string);
     property intBaseOutputPath: string read FintBaseOutputPath write SetintBaseOutputPath;
@@ -202,6 +208,9 @@ type
     property intJavaRuntimeParameter: string read FintJavaRuntimeParameter write SetintJavaRuntimeParameter;
     property intLogFileOutputPath: string read FintLogFileOutputPath write SetintLogFileOutputPath;
     property intPlantUmlJarFileName: string read FintPlantUmlJarFileName write SetintPlantUmlJarFileName;
+    property intPlantUmlServerCurlParameter: string read FintPlantUmlServerCurlParameter
+      write SetintPlantUmlServerCurlParameter;
+    property intPlantUmlServerUrl: string read FintPlantUmlServerUrl write SetintPlantUmlServerUrl;
     property intPlantUmlRuntimeParameter: string read FintPlantUmlRuntimeParameter write SetintPlantUmlRuntimeParameter;
     property intServicePort: string read FintServicePort write SetintServicePort;
   protected
@@ -238,6 +247,8 @@ type
     property OutputPath: string read FOutputPath write FOutputPath;
     property PlantUmlJarFileName: string read FPlantUmlJarFileName;
     property PlantUmlRuntimeParameter: string read FPlantUmlRuntimeParameter;
+    property PlantUmlServerCurlParameter: string read FPlantUmlServerCurlParameter;
+    property PlantUmlServerUrl: string read FPlantUmlServerUrl;
     property ServicePort: integer read FServicePort;
   end;
 
@@ -261,6 +272,7 @@ type
     FConverterLogFileName: string;
     FIsSplitFile: boolean;
     FIsSummaryFile: boolean;
+    FOption: string;
     FPDFFilename: string;
     FPNGFileName: string;
     FPUmlFileName: string;
@@ -281,6 +293,7 @@ type
     property ConverterLogFileName: string read FConverterLogFileName write FConverterLogFileName;
     property IsSplitFile: boolean read FIsSplitFile write FIsSplitFile;
     property IsSummaryFile: boolean read FIsSummaryFile write FIsSummaryFile;
+    property Option: string read FOption write FOption;
     property PDFFilename: string read FPDFFilename write FPDFFilename;
     property PNGFileName: string read FPNGFileName write FPNGFileName;
     property PUmlFileName: string read FPUmlFileName write FPUmlFileName;
@@ -346,7 +359,7 @@ type
     procedure WriteToJsonOutputFile (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false);
     procedure WriteToJsonServiceResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
-      iOutputFormats: tJson2PumlOutputFormats; iWriteEmpty: boolean = false);
+      iOutputFormats: tJson2PumlOutputFormats; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
     property CurlBaseUrlDecoded: string read GetCurlBaseUrlDecoded;
     property CurlResult: tJson2PumlCurlResult read FCurlResult;
     property Exists: boolean read GetExists;
@@ -579,9 +592,10 @@ type
     procedure WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
     procedure WriteToJsonServiceResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
-      iOutputFormats: tJson2PumlOutputFormats; iWriteEmpty: boolean = false); overload;
-    procedure WriteToJsonServiceResult (oJsonOutPut: tStrings; iOutputFormats: tJson2PumlOutputFormats;
+      iOutputFormats: tJson2PumlOutputFormats; iApiVersion: tJson2PumlApiVersion;
       iWriteEmpty: boolean = false); overload;
+    procedure WriteToJsonServiceResult (oJsonOutPut: tStrings; iOutputFormats: tJson2PumlOutputFormats;
+      iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
     property curlAdditionalRuntimeOptions: string read FcurlAdditionalRuntimeOptions
       write FcurlAdditionalRuntimeOptions;
     property CurlAuthenticationList: tJson2PumlCurlAuthenticationList read FCurlAuthenticationList
@@ -1371,7 +1385,8 @@ begin
 end;
 
 procedure tJson2PumlInputFileDefinition.WriteToJsonServiceResult (oJsonOutPut: tStrings; iPropertyName: string;
-  iLevel: integer; iOutputFormats: tJson2PumlOutputFormats; iWriteEmpty: boolean = false);
+  iLevel: integer; iOutputFormats: tJson2PumlOutputFormats; iApiVersion: tJson2PumlApiVersion;
+  iWriteEmpty: boolean = false);
 
   procedure WriteFile (iOutputFormat: tJson2PumlOutputFormat; iFileName: string);
   begin
@@ -1385,18 +1400,54 @@ procedure tJson2PumlInputFileDefinition.WriteToJsonServiceResult (oJsonOutPut: t
       iOutputFormat.IsBinaryOutput, iWriteEmpty);
   end;
 
+  procedure WriteFilev2 (iOutputFormat: tJson2PumlOutputFormat; iFileName: string);
+  begin
+    if not (iOutputFormat in iOutputFormats) then
+      exit;
+    if iFileName.IsEmpty then
+      exit;
+    if not FileExists (iFileName) then
+      exit;
+    WriteObjectStartToJson (oJsonOutPut, iLevel, '');
+    WriteToJsonValue (oJsonOutPut, 'inputFileName', ExtractFileName(InputFileName), iLevel + 1, iWriteEmpty);
+    WriteToJsonValue (oJsonOutPut, 'outputFileName', ExtractFileName(iFileName), iLevel + 1, iWriteEmpty);
+    if IsSummaryFile then
+      WriteToJsonValue (oJsonOutPut, 'outputDirectory', '', iLevel + 1, iWriteEmpty)
+    else
+      WriteToJsonValue (oJsonOutPut, 'outputDirectory', tPath.GetFileNameWithoutExtension(inputFilename), iLevel + 1, iWriteEmpty);
+    if not CurlResult.Command.IsEmpty then
+      WriteToJsonValue (oJsonOutPut, 'curlCommand', CurlResult.Command, iLevel + 1, iWriteEmpty);
+    WriteToJsonValue (oJsonOutPut, 'outputFormat', iOutputFormat.ToString, iLevel + 1, iWriteEmpty);
+    WriteToJsonValue (oJsonOutPut, 'isSplitFile', IsSplitFile, iLevel + 1);
+    WriteToJsonValue (oJsonOutPut, 'isSummaryFile', IsSummaryFile, iLevel + 1);
+    WriteToJsonValue (oJsonOutPut, 'content', ConvertFileToBase64(iFileName), iLevel + 1, iWriteEmpty);
+    WriteObjectEndToJson (oJsonOutPut, iLevel);
+  end;
+
 begin
-  WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
-  WriteToJsonValue (oJsonOutPut, 'source', ExtractFileName(InputFileName), iLevel + 1, iWriteEmpty);
-  if not CurlResult.Command.IsEmpty then
-    WriteToJsonValue (oJsonOutPut, 'curlCommand', CurlResult.Command, iLevel + 1, iWriteEmpty);
-  WriteFile (jofJSON, InputFileName);
-  WriteFile (jofSVG, Output.SVGFileName);
-  WriteFile (jofPNG, Output.PNGFileName);
-  WriteFile (jofPDF, Output.PDFFilename);
-  WriteFile (jofPUML, Output.PUmlFileName);
-  WriteFile (jofLog, Output.ConverterLogFileName);
-  WriteObjectEndToJson (oJsonOutPut, iLevel);
+  if iApiVersion = jav1 then
+  begin
+    WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
+    WriteToJsonValue (oJsonOutPut, 'source', ExtractFileName(InputFileName), iLevel + 1, iWriteEmpty);
+    if not CurlResult.Command.IsEmpty then
+      WriteToJsonValue (oJsonOutPut, 'curlCommand', CurlResult.Command, iLevel + 1, iWriteEmpty);
+    WriteFile (jofJSON, InputFileName);
+    WriteFile (jofSVG, Output.SVGFileName);
+    WriteFile (jofPNG, Output.PNGFileName);
+    WriteFile (jofPDF, Output.PDFFilename);
+    WriteFile (jofPUML, Output.PUmlFileName);
+    WriteFile (jofLog, Output.ConverterLogFileName);
+    WriteObjectEndToJson (oJsonOutPut, iLevel);
+  end
+  else
+  begin
+    WriteFilev2 (jofJSON, InputFileName);
+    WriteFilev2 (jofSVG, Output.SVGFileName);
+    WriteFilev2 (jofPNG, Output.PNGFileName);
+    WriteFilev2 (jofPDF, Output.PDFFilename);
+    WriteFilev2 (jofPUML, Output.PUmlFileName);
+    WriteFilev2 (jofLog, Output.ConverterLogFileName);
+  end;
 end;
 
 constructor tJson2PumlInputList.Create;
@@ -2201,48 +2252,65 @@ begin
 end;
 
 procedure tJson2PumlInputList.WriteToJsonServiceResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
-  iOutputFormats: tJson2PumlOutputFormats; iWriteEmpty: boolean = false);
+  iOutputFormats: tJson2PumlOutputFormats; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
 var
   InputFile: tJson2PumlInputFileDefinition;
   found: boolean;
 begin
-  WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
-  for InputFile in self do
+  if iApiVersion = jav1 then
   begin
-    if not InputFile.IsConverted then
-      Continue;
-    if not InputFile.IsSummaryFile then
-      Continue;
-    if not InputFile.Exists then
-      Continue;
-    InputFile.WriteToJsonServiceResult (oJsonOutPut, 'summaryFile', iLevel + 1, iOutputFormats, iWriteEmpty);
-  end;
-  found := false;
-  for InputFile in self do
-  begin
-    if not InputFile.IsConverted then
-      Continue;
-    if not InputFile.Exists then
-      Continue;
-    if InputFile.IsSummaryFile then
-      Continue;
-    if not found then
+    WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
+    for InputFile in self do
     begin
-      WriteArrayStartToJson (oJsonOutPut, iLevel + 1, 'detailFiles');
-      found := true;
+      if not InputFile.IsConverted then
+        Continue;
+      if not InputFile.IsSummaryFile then
+        Continue;
+      if not InputFile.Exists then
+        Continue;
+      InputFile.WriteToJsonServiceResult (oJsonOutPut, 'summaryFile', iLevel + 1, iOutputFormats, iApiVersion,
+        iWriteEmpty);
     end;
-    InputFile.WriteToJsonServiceResult (oJsonOutPut, '', iLevel + 2, iOutputFormats, iWriteEmpty);
-  end;
-  if found then
+    found := false;
+    for InputFile in self do
+    begin
+      if not InputFile.IsConverted then
+        Continue;
+      if not InputFile.Exists then
+        Continue;
+      if InputFile.IsSummaryFile then
+        Continue;
+      if not found then
+      begin
+        WriteArrayStartToJson (oJsonOutPut, iLevel + 1, 'detailFiles');
+        found := true;
+      end;
+      InputFile.WriteToJsonServiceResult (oJsonOutPut, '', iLevel + 2, iOutputFormats, iApiVersion, iWriteEmpty);
+    end;
+    if found then
+      WriteArrayEndToJson (oJsonOutPut, iLevel);
+    WriteObjectEndToJson (oJsonOutPut, iLevel);
+  end
+  else
+  begin
+    WriteArrayStartToJson (oJsonOutPut, iLevel, iPropertyName);
+    for InputFile in self do
+    begin
+      if not InputFile.IsConverted then
+        Continue;
+      if not InputFile.Exists then
+        Continue;
+      InputFile.WriteToJsonServiceResult (oJsonOutPut, '', iLevel + 1, iOutputFormats, iApiVersion, iWriteEmpty);
+    end;
     WriteArrayEndToJson (oJsonOutPut, iLevel);
-  WriteObjectEndToJson (oJsonOutPut, iLevel);
+  end;
 end;
 
 procedure tJson2PumlInputList.WriteToJsonServiceResult (oJsonOutPut: tStrings; iOutputFormats: tJson2PumlOutputFormats;
-  iWriteEmpty: boolean = false);
+  iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
 begin
   oJsonOutPut.Clear;
-  WriteToJsonServiceResult (oJsonOutPut, '', 0, iOutputFormats, iWriteEmpty);
+  WriteToJsonServiceResult (oJsonOutPut, '', 0, iOutputFormats, iApiVersion, iWriteEmpty);
 end;
 
 constructor tJson2PumlInputListEnumerator.Create (AInputList: tJson2PumlInputList);
@@ -3084,6 +3152,9 @@ begin
   intPlantUmlJarFileName := GetJsonStringValue (DefinitionRecord, 'plantUmlJarFileName', intPlantUmlJarFileName);
   intPlantUmlRuntimeParameter := GetJsonStringValue (DefinitionRecord, 'plantUmlRuntimeParameter',
     intPlantUmlRuntimeParameter);
+  intPlantUmlServerUrl := GetJsonStringValue (DefinitionRecord, 'plantUmlServerUrl', intPlantUmlServerUrl);
+  intPlantUmlServerCurlParameter := GetJsonStringValue (DefinitionRecord, 'plantUmlServerCurlParameter',
+    intPlantUmlServerCurlParameter);
   intBaseOutputPath := GetJsonStringValue (DefinitionRecord, 'baseOutputPath', intBaseOutputPath);
   AdditionalServiceInformation := GetJsonStringValue (DefinitionRecord, 'additionalServiceInformation',
     AdditionalServiceInformation);
@@ -3145,6 +3216,18 @@ begin
   FPlantUmlJarFileName := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
 end;
 
+procedure tJson2PumlGlobalDefinition.SetintPlantUmlServerCurlParameter (const Value: string);
+begin
+  FintPlantUmlServerCurlParameter := Value;
+  FPlantUmlServerCurlParameter := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
+procedure tJson2PumlGlobalDefinition.SetintPlantUmlServerUrl (const Value: string);
+begin
+  FintPlantUmlServerUrl := Value;
+  FPlantUmlServerUrl := TCurlUtils.ReplaceCurlVariablesFromEnvironment (Value);
+end;
+
 procedure tJson2PumlGlobalDefinition.SetintPlantUmlRuntimeParameter (const Value: string);
 begin
   FintPlantUmlRuntimeParameter := Value;
@@ -3180,6 +3263,9 @@ begin
   WriteToJsonValue (oJsonOutPut, 'logFileOutputPath', intLogFileOutputPath, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'plantUmlJarFileName', intPlantUmlJarFileName, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'plantUmlRuntimeParameter', intPlantUmlRuntimeParameter, iLevel + 1, iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'plantUmlServerCurlParameter', intPlantUmlServerCurlParameter, iLevel + 1,
+    iWriteEmpty);
+  WriteToJsonValue (oJsonOutPut, 'plantUmlServerUrl', intPlantUmlServerUrl, iLevel + 1, iWriteEmpty);
   WriteToJsonValue (oJsonOutPut, 'servicePort', intServicePort, iLevel + 1);
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
@@ -3814,19 +3900,16 @@ begin
   try
     if IsSplitFile then
       WriteToJsonValue (Output, 'isSplitFile', IsSplitFile, iLevel + 1);
+    if not Option.IsEmpty then
+      WriteToJsonValue (Output, 'option', option, iLevel + 1, iWriteEmpty);
     if not PUmlFileName.IsEmpty then
       WriteToJsonValue (Output, 'pumlFile', PUmlFileName, iLevel + 1, iWriteEmpty);
     if not PDFFilename.IsEmpty then
       WriteToJsonValue (Output, 'pdfFile', PDFFilename, iLevel + 1, iWriteEmpty);
     if not PNGFileName.IsEmpty then
-    begin
       WriteToJsonValue (Output, 'pngFile', PNGFileName, iLevel + 1, iWriteEmpty);
-      // WriteToJsonValue (Output, 'pngFileContent', ConvertFileToBase64(PNGFileName), iLevel + 1, iWriteEmpty);
-    end;
     if not SVGFileName.IsEmpty then
-    begin
       WriteToJsonValue (Output, 'svgFile', SVGFileName, iLevel + 1, iWriteEmpty);
-    end;
     if not ConverterLogFileName.IsEmpty then
       WriteToJsonValue (Output, 'converterLogFile', ConverterLogFileName, iLevel + 1, iWriteEmpty);
     if Output.Count > 0 then

@@ -39,7 +39,7 @@ uses
   Vcl.DBGrids, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client, json2pumlconfigframe,
   json2pumlbasedefinition, json2pumlvcltools, System.Win.TaskbarCore, Vcl.Taskbar, Quick.Logger.Provider.StringList,
-  Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons;
+  Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons, json2pumlconst;
 
 type
   tOutputFileFrame = class(tObject)
@@ -101,8 +101,8 @@ type
     ServiceDefinitionFileResultPanel: TPanel;
     ServiceInputListFileResult: TTabSheet;
     ServiceInputListFileResultPanel: TPanel;
-    ServiceResultPage: TTabSheet;
-    ServiceResultPanel: TPanel;
+    ServiceResultV1Page: TTabSheet;
+    ServiceResultv1Panel: TPanel;
     ShowCurlAuthenticationAction: TAction;
     ShowCurlParameterAction: TAction;
     ShowDefinitionFileAction: TAction;
@@ -204,7 +204,7 @@ type
     Label28: TLabel;
     CurlCommandDBEdit: TDBMemo;
     Button2: TButton;
-    GenerateServiceListResultsAction: TAction;
+    GenerateServiceListv1ResultsAction: TAction;
     InputLabel: TLabel;
     ExecutionLogFileNameEdit: TButtonedEdit;
     CurlFileListMemTableNoOfRecords: TIntegerField;
@@ -224,6 +224,10 @@ type
     Panel2: TPanel;
     OutputFileSelectComboBox: TComboBox;
     Label10: TLabel;
+    Button3: TButton;
+    GenerateServiceListv2ResultsAction: TAction;
+    ServiceResultV2Page: TTabSheet;
+    ServiceResultv2Panel: TPanel;
     procedure CommandLineEditPanelResize (Sender: tObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
     procedure ConvertCurrentFileActionExecute (Sender: tObject);
@@ -236,7 +240,8 @@ type
     procedure FormClose (Sender: tObject; var Action: TCloseAction);
     procedure FormCloseQuery (Sender: tObject; var CanClose: boolean);
     procedure FormShow (Sender: tObject);
-    procedure GenerateServiceListResultsActionExecute (Sender: tObject);
+    procedure GenerateServiceListv1ResultsActionExecute (Sender: tObject);
+    procedure GenerateServiceListv2ResultsActionExecute(Sender: TObject);
     procedure InitialTimerTimer (Sender: tObject);
     procedure LoadFileActionExecute (Sender: tObject);
     procedure OpenConfigurationFileExternalExecute (Sender: tObject);
@@ -275,7 +280,8 @@ type
     FServiceinputlistfileResultLines: tStrings;
     FServiceInformationResultLines: tStrings;
     FServiceErrorMessagesResultLines: tStrings;
-    FServiceResultLines: tStrings;
+    FServiceResultV1Lines: tStrings;
+    FServiceResultV2Lines: tStrings;
 {$IFDEF SYNEDIT}
     fSynJSONSyn: TSynJSONSyn;
 {$ENDIF}
@@ -314,7 +320,8 @@ type
       write FServiceInformationResultLines;
     property ServiceErrorMessagesResultLines: tStrings read FServiceErrorMessagesResultLines
       write FServiceErrorMessagesResultLines;
-    property ServiceResultLines: tStrings read FServiceResultLines write FServiceResultLines;
+    property ServiceResultV1Lines: tStrings read FServiceResultV1Lines write FServiceResultV1Lines;
+    property ServiceResultV2Lines: tStrings read FServiceResultV2Lines write FServiceResultV2Lines;
   protected
     procedure BeginConvert;
     procedure CommandLineToForm;
@@ -353,7 +360,7 @@ type
     destructor Destroy; override;
     function CalcShortCutStr (iIndex: integer): string;
     procedure CopyCurrentPUMLToClipboard;
-    procedure GenerateServiceResults (iInputHandler: tJson2PumlInputHandler);
+    procedure GenerateServiceResults(iInputHandler: tJson2PumlInputHandler; iApiVersion: tJson2PumlApiVersion);
     procedure OpenCurrentPNGFile;
     procedure OpenCurrentSVGFile;
     procedure OpenCurrentJSONFile;
@@ -367,7 +374,7 @@ var
 implementation
 
 uses
-  json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, json2pumlconst, System.UITypes, json2pumlloghandler,
+  json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, System.UITypes, json2pumlloghandler,
   Quick.Logger, json2pumlconverterdefinition, System.Math;
 
 {$R *.dfm}
@@ -652,7 +659,8 @@ begin
 
   fLogMemo := CreateSingleMemoControl (ExecutionLogPanel, 'ExecutionLogMemo', nil, FLogLines, false, true);
   CreateSingleMemoControl (FileListPanel, 'FileListMemo', nil, FFileListLines, true, true);
-  CreateSingleMemoControl (ServiceResultPanel, 'ServiceResultMemo', nil, FServiceResultLines, true, true);
+  CreateSingleMemoControl (ServiceResultv1Panel, 'ServiceResultV1Memo', nil, FServiceResultV1Lines, true, true);
+  CreateSingleMemoControl (ServiceResultv2Panel, 'ServiceResultV2Memo', nil, FServiceResultV2Lines, true, true);
   CreateSingleMemoControl (ServiceInputListFileResultPanel, 'ServiceResultMemo', nil, FServiceinputlistfileResultLines,
     true, true);
   CreateSingleMemoControl (ServiceDefinitionFileResultPanel, 'ServiceResultMemo', nil,
@@ -795,7 +803,8 @@ begin
   InputHandler.CurlAuthenticationFileLines := CurlAuthenticationFileLines;
   InputHandler.CurlParameterFileLines := CurlParameterFileLines;
   InputHandler.InputListLines := InputListLines;
-  InputHandler.ServerResultLines := ServiceResultLines;
+  InputHandler.ServerResultV1Lines := ServiceResultV1Lines;
+  InputHandler.ServerResultV2Lines := ServiceResultV2Lines;
   UpdateFormCaption;
 
 end;
@@ -858,12 +867,13 @@ begin
   FillParameterList (InputHandler.CmdLineParameter.CurlAuthenticationParameter, CurlAuthenticationParameterDataset);
 end;
 
-procedure Tjson2pumlMainForm.GenerateServiceResults (iInputHandler: tJson2PumlInputHandler);
+procedure Tjson2pumlMainForm.GenerateServiceResults(iInputHandler: tJson2PumlInputHandler; iApiVersion:
+    tJson2PumlApiVersion);
 begin
   GetServiceFileListResponse (ServiceinputlistfileResultLines,
-    InputHandler.GlobalConfiguration.InputListFileSearchFolder, true, jav2);
+    InputHandler.GlobalConfiguration.InputListFileSearchFolder, true, iapiVersion);
   GetServiceFileListResponse (ServicedefinitionfileResultLines,
-    InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false, jav2);
+    InputHandler.GlobalConfiguration.DefinitionFileSearchFolder, false, iapiVersion);
   GetServiceInformationResponse (ServiceInformationResultLines, iInputHandler);
   GetServiceErrorMessageResponse (ServiceErrorMessagesResultLines);
 end;
@@ -1322,9 +1332,14 @@ begin
     end;
 end;
 
-procedure Tjson2pumlMainForm.GenerateServiceListResultsActionExecute (Sender: tObject);
+procedure Tjson2pumlMainForm.GenerateServiceListv1ResultsActionExecute (Sender: tObject);
 begin
-  GenerateServiceResults (InputHandler);
+  GenerateServiceResults (InputHandler, jav1);
+end;
+
+procedure Tjson2pumlMainForm.GenerateServiceListv2ResultsActionExecute(Sender: TObject);
+begin
+  GenerateServiceResults (InputHandler, jav2);
 end;
 
 procedure Tjson2pumlMainForm.HandleNotifyChange (Sender: tObject; ChangeType: tJson2PumlNotifyChangeType;

@@ -683,11 +683,21 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Top = 319
             Width = 146
             Height = 25
-            Action = GenerateServiceListResultsAction
+            Action = GenerateServiceListv2ResultsAction
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 4
             ExplicitLeft = 176
+          end
+          object Button3: TButton
+            Left = 34
+            Top = 319
+            Width = 146
+            Height = 25
+            Action = GenerateServiceListv1ResultsAction
+            Anchors = [akTop, akRight]
+            Default = True
+            TabOrder = 5
           end
         end
       end
@@ -696,11 +706,9 @@ object json2pumlMainForm: Tjson2pumlMainForm
         Top = 353
         Width = 1333
         Height = 406
-        ActivePage = ExecutionLogTabSheet
+        ActivePage = ServiceResultV2Page
         Align = alClient
         TabOrder = 1
-        ExplicitWidth = 1323
-        ExplicitHeight = 388
         object ExecutionLogTabSheet: TTabSheet
           Caption = 'Execution Log'
           object ExecutionLogPanel: TPanel
@@ -827,8 +835,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Height = 72
             Align = alBottom
             TabOrder = 1
-            ExplicitTop = 312
-            ExplicitWidth = 1331
             DesignSize = (
               1325
               72)
@@ -875,10 +881,23 @@ object json2pumlMainForm: Tjson2pumlMainForm
             TabOrder = 0
           end
         end
-        object ServiceResultPage: TTabSheet
-          Caption = 'post /json2pumlRequest'
+        object ServiceResultV1Page: TTabSheet
+          Caption = 'post /json2pumlRequest v1'
           ImageIndex = 2
-          object ServiceResultPanel: TPanel
+          object ServiceResultv1Panel: TPanel
+            Left = 0
+            Top = 0
+            Width = 1325
+            Height = 378
+            Align = alClient
+            BevelOuter = bvNone
+            TabOrder = 0
+          end
+        end
+        object ServiceResultV2Page: TTabSheet
+          Caption = 'post /json2pumlRequest v2'
+          ImageIndex = 8
+          object ServiceResultv2Panel: TPanel
             Left = 0
             Top = 0
             Width = 1325
@@ -956,8 +975,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
         MultiLine = True
         TabOrder = 0
         OnChange = FilePageControlChange
-        ExplicitTop = 80
-        ExplicitHeight = 676
       end
       object Panel2: TPanel
         Left = 0
@@ -1070,6 +1087,11 @@ object json2pumlMainForm: Tjson2pumlMainForm
       Hint = 'Paste|Inserts Clipboard contents'
       ImageIndex = 2
       ShortCut = 16470
+    end
+    object GenerateServiceListv2ResultsAction: TAction
+      Category = 'Execute'
+      Caption = 'Generate Service Results v2'
+      OnExecute = GenerateServiceListv2ResultsActionExecute
     end
     object ShowCurlParameterAction: TAction
       Category = 'Show'
@@ -1195,10 +1217,10 @@ object json2pumlMainForm: Tjson2pumlMainForm
       OnExecute = OpenConfigurationFileExternalExecute
       OnUpdate = SaveFileActionUpdate
     end
-    object GenerateServiceListResultsAction: TAction
+    object GenerateServiceListv1ResultsAction: TAction
       Category = 'Execute'
-      Caption = 'Generate Service Results'
-      OnExecute = GenerateServiceListResultsActionExecute
+      Caption = 'Generate Service Results v1'
+      OnExecute = GenerateServiceListv1ResultsActionExecute
     end
   end
   object MainImageList: TImageList
@@ -2023,8 +2045,11 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 ShortCut = 16466
               end
               item
-                Action = GenerateServiceListResultsAction
-                Caption = '&Generate Service Results'
+                Action = GenerateServiceListv1ResultsAction
+                Caption = '&Generate Service Results v1'
+              end
+              item
+                Action = GenerateServiceListv2ResultsAction
               end>
             Caption = 'E&xecute'
           end>
@@ -2246,8 +2271,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
   object Taskbar: TTaskbar
     TaskBarButtons = <>
     TabProperties = [AppPeekAlways]
-    Left = 864
-    Top = 448
+    Left = 680
+    Top = 576
   end
   object CurlFileListMemTable: TFDMemTable
     FieldDefs = <>

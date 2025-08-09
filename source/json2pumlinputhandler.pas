@@ -120,7 +120,8 @@ type
     FOptionFileLines: tStrings;
     FParameterDefinition: tJson2PumlParameterFileDefinition;
     FParameterFileLines: tStrings;
-    FServerResultLines: tStrings;
+    FServerResultV1Lines: tStrings;
+    FServerResultV2Lines: tStrings;
     procedure CalculateCurrentConverterDefinition;
     function CurrentGenerateDetails: Boolean;
     function CurrentGenerateSummary: Boolean;
@@ -159,7 +160,8 @@ type
     function GetInputListLines: tStrings;
     function GetOptionFileLines: tStrings;
     function GetParameterFileLines: tStrings;
-    function GetServerResultLines: tStrings;
+    function GetServerResultV1Lines: tStrings;
+    function GetServerResultV2Lines: tStrings;
     procedure SetOnNotifyChange (const Value: tJson2PumlNotifyChangeEvent);
     function OnFilterLogItem (aLogItem: tLogItem): Boolean;
   protected
@@ -277,7 +279,8 @@ type
     property OptionFileLines: tStrings read GetOptionFileLines write FOptionFileLines;
     property ParameterDefinition: tJson2PumlParameterFileDefinition read FParameterDefinition;
     property ParameterFileLines: tStrings read GetParameterFileLines write FParameterFileLines;
-    property ServerResultLines: tStrings read GetServerResultLines write FServerResultLines;
+    property ServerResultV1Lines: tStrings read GetServerResultV1Lines write FServerResultV1Lines;
+    property ServerResultV2Lines: tStrings read GetServerResultV2Lines write FServerResultV2Lines;
   end;
 
 implementation
@@ -780,6 +783,7 @@ begin
       begin
         SingleRecord.InputFile.IsConverted := true;
         SingleRecord.InputFile.Output.PUmlFileName := OutputFile;
+        SingleRecord.InputFile.Output.Option := GetCurrentOption;
         SingleRecord.PUmlOutput.SaveToFile (SingleRecord.InputFile.Output.PUmlFileName);
       end;
       if Assigned (AfterUpdateRecord) then
@@ -791,7 +795,8 @@ begin
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
     ConverterInputList.WriteToJsonOutputFiles (jofFileList.Filename(CalculateSummaryFileName(jofPUML)));
     // Use PUML to get the Filename with the option included
-    ConverterInputList.WriteToJsonServiceResult (ServerResultLines, CurrentOutputFormats, false);
+    ConverterInputList.WriteToJsonServiceResult (ServerResultV1Lines, CurrentOutputFormats, jaV1, false);
+    ConverterInputList.WriteToJsonServiceResult (ServerResultV2Lines, CurrentOutputFormats, jaV2, false);
     GlobalLoghandler.Info ('Generation done');
     if (jofLog in OutputFormats) then
     begin
@@ -1318,10 +1323,18 @@ begin
     Result := FIntParameterFileLines;
 end;
 
-function tJson2PumlInputHandler.GetServerResultLines: tStrings;
+function tJson2PumlInputHandler.GetServerResultV1Lines: tStrings;
 begin
-  if Assigned (FServerResultLines) then
-    Result := FServerResultLines
+  if Assigned (FServerResultV1Lines) then
+    Result := FServerResultV1Lines
+  else
+    Result := FIntServerResultLines;
+end;
+
+function tJson2PumlInputHandler.GetServerResultV2Lines: tStrings;
+begin
+  if Assigned (FServerResultV2Lines) then
+    Result := FServerResultV2Lines
   else
     Result := FIntServerResultLines;
 end;

@@ -540,29 +540,43 @@ components:
                 enum: [svg, png, json, puml, filelist, log]
                 example: svg
     Json2PumlResponseFiles:
-      type: object
-      properties:
-        summaryfile:
-          $ref: "#/components/schemas/GeneratedOutputFile"
-        detailfiles:
-          type: array
-          items:
-            $ref: "#/components/schemas/GeneratedOutputFile"
+      type: array
+      items:
+        $ref: "#/components/schemas/OutputFileBinary"
 
     OutputFile:
       type: object
       properties:
+        inputFileName:
+          type: string
+          description: Name of the file which was used as input file
         outputFileName:
           type: string
           description: Name of the generated file
-    OutputFileFull:
-      allOf:
-        - $ref: "#/components/schemas/OutputFile"
-        - type: object
-          properties:
-            fullFileName:
-              type: string
-              description: Name of the generated file and path where the file has been generated
+        outputDirectory:
+          type: string
+          description: Directory where the file has been generated
+          example: /swapi-detail
+        option:
+          type: string
+          description: Option used to generate the file
+          example: full / default / reduced / core
+        outputFormat:
+          type: string
+          description: Format of the generated file
+          enum: [svg, png, json, puml, filelist, log, zip]
+          example: svg
+        isSummaryFile:
+          type: boolean
+          description: Flag to define if the file is a summary file or a detail file
+        isSplitFile:
+          type: boolean
+          description: Flag to define if the file is a split file or not. A split file contains only the data of one single input file
+        curlCommand:
+          type: string
+          description: Optional curl command has been used to fetch the data.
+          example: curl -X GET "https://jsonplaceholder.typicode.com/users" -H
+
     OutputBinaryContent:
       type: object
       properties:
@@ -570,12 +584,6 @@ components:
           type: string
           format: byte
           description: Binary content of the file. The content is base64 encoded and needs to be decoded before storing
-    OutputStringContent:
-      type: object
-      properties:
-        content:
-          type: string
-          description: Content of the file
     OutputFileBinary:
       allOf:
         - $ref: "#/components/schemas/OutputFile"
@@ -584,33 +592,10 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/OutputFileBinary"
-    OutputFileFullString:
-      allOf:
-        - $ref: "#/components/schemas/OutputFileFull"
-        - $ref: "#/components/schemas/OutputStringContent"
-    OutputFileFullBinary:
-      allOf:
-        - $ref: "#/components/schemas/OutputFileFull"
-        - $ref: "#/components/schemas/OutputBinaryContent"
     BinaryFile:
       type: string
       format: binary
       description: Binary content of the file. The content is base64 encoded and needs to be decoded before storing
-    GeneratedOutputFile:
-      type: object
-      properties:
-        isSplitFile:
-          type: boolean
-        pumlFile:
-          $ref: "#/components/schemas/OutputFileFullString"
-        pdfFile:
-          $ref: "#/components/schemas/OutputFileFullBinary"
-        pngFile:
-          $ref: "#/components/schemas/OutputFileFullBinary"
-        svgFile:
-          $ref: "#/components/schemas/OutputFileFullBinary"
-        converterLogFile:
-          $ref: "#/components/schemas/OutputFileFullString"
     ErrorResponse:
       type: array
       items:

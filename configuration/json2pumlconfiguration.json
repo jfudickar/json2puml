@@ -41,5 +41,7 @@
 	"logFileOutputPath": "${Json2PumlBaseDir}\\runtime\\logs\\",
 	"plantUmlJarFileName": "${PlantUmlJarFile}",
 	"plantUmlRuntimeParameter": null,
+	"plantUmlServerCurlParameter": "-G",
+	"plantUmlServerUrl": "http://192.168.178.241:9090",
 	"servicePort": "8080"
 }

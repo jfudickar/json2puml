@@ -161,8 +161,8 @@ type
 function GenerateFileNameContentBinary (iFileName: string): string;
 function GenerateFileListContentBinary (iInputList: tJson2PumlInputList; iOutputFormat: tJson2PumlOutputFormat): string;
 
-procedure WriteToJsonFileNameContent (oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer;
-  iFileName: string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
+procedure WriteToJsonFileNameContent(oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer; iFileName:
+    string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
 
 implementation
 
@@ -912,8 +912,8 @@ begin
   end;
 end;
 
-procedure WriteToJsonFileNameContent (oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer;
-  iFileName: string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
+procedure WriteToJsonFileNameContent(oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer; iFileName:
+    string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
 begin
   if iFileName.IsEmpty then
     Exit;
