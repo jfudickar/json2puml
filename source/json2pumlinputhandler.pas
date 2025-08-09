@@ -1205,11 +1205,25 @@ begin
 end;
 
 function tJson2PumlInputHandler.GetCurrentSummaryFileName: string;
+var
+  InputFile: tJson2PumlInputFileDefinition;
 begin
+  Result := '';
   if not CmdLineParameter.SummaryFileName.IsEmpty then
     Result := CmdLineParameter.SummaryFileName
+  else if not ConverterInputList.SummaryFileName.IsEmpty then
+    Result := ConverterInputList.SummaryFileName
   else
-    Result := ConverterInputList.SummaryFileName;
+    for InputFile in ConverterInputList do
+    begin
+      if InputFile.IncludeIntoOutput and not InputFile.IsSummaryFile then
+        if not Result.IsEmpty then
+        begin
+          Result := '';
+          break;
+        end;
+        result := tpath.GetFileNameWithoutExtension(InputFile.InputFileName);
+    end;
   if Result.IsEmpty then
     Result := 'summary';
 end;
