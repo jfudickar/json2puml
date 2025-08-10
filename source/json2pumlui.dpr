@@ -40,7 +40,8 @@ uses
   json2pumlloghandler in 'json2pumlloghandler.pas',
   json2pumlconfigframe in 'json2pumlconfigframe.pas' {Json2PumlConfigurationFrame: TFrame},
   json2pumlvcltools in 'json2pumlvcltools.pas',
-  commandlinetools in 'commandlinetools.pas';
+  commandlinetools in 'commandlinetools.pas',
+  json2pumlAbout in 'json2pumlAbout.pas' {AboutBox};
 
 {$R *.res}
 

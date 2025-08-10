@@ -1,3 +1,24 @@
+# **json2puml v2.3.2.126 - BETA** - 11.08.2025
+
+## All Editions
+### New Feature
+- summary filename is now based on the inputfile name when there is only one active inputfile name #75 
+
+## Service Editions
+### Changed Feature
+- Further Improved v2 API responses
+- Reduced memory usage
+- Logging of the input request disabled #74
+
+## Commandline Editions
+### Changed Feature
+- Reduced memory usage
+
+## UI Editions
+### New Feature
+- Support for v2 service results in the UI
+- About dialog which can also be called using the /? commandline parameter #72
+
 # **json2puml v2.3.1.125 - BETA** - 05.08.2025
 ## Service Editions
 ### Changed Feature

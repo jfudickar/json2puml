@@ -73,7 +73,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Font.Name = 'Segoe UI'
     Font.Style = []
     Spacing = 0
-    ExplicitWidth = 1347
+    ExplicitLeft = -3
+    ExplicitTop = -6
   end
   object MainPageControl: TPageControl
     AlignWithMargins = True
@@ -698,6 +699,7 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Anchors = [akTop, akRight]
             Default = True
             TabOrder = 5
+            ExplicitLeft = 24
           end
         end
       end
@@ -709,6 +711,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
         ActivePage = ServiceResultV2Page
         Align = alClient
         TabOrder = 1
+        ExplicitWidth = 1323
+        ExplicitHeight = 388
         object ExecutionLogTabSheet: TTabSheet
           Caption = 'Execution Log'
           object ExecutionLogPanel: TPanel
@@ -719,8 +723,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
-            ExplicitWidth = 1315
-            ExplicitHeight = 360
             object ProgressbarPanel: TPanel
               Left = 0
               Top = 0
@@ -728,7 +730,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
               Height = 89
               Align = alTop
               TabOrder = 0
-              ExplicitWidth = 1315
               DesignSize = (
                 1325
                 89)
@@ -771,7 +772,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 0
-                ExplicitWidth = 1214
               end
               object ConvertProgressBar: TProgressBar
                 Left = 96
@@ -783,7 +783,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 1
-                ExplicitWidth = 1214
               end
               object ExecutionLogFileNameEdit: TButtonedEdit
                 Left = 96
@@ -793,7 +792,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 Anchors = [akLeft, akTop, akRight]
                 ReadOnly = True
                 TabOrder = 2
-                ExplicitWidth = 1213
               end
               object GenerateProgressBar: TProgressBar
                 Left = 96
@@ -805,7 +803,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
                 SmoothReverse = True
                 Step = 1
                 TabOrder = 3
-                ExplicitWidth = 1214
               end
             end
           end
@@ -905,6 +902,8 @@ object json2pumlMainForm: Tjson2pumlMainForm
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 0
+            ExplicitWidth = 1315
+            ExplicitHeight = 360
           end
         end
         object ServiceInputListFileResult: TTabSheet
@@ -1221,6 +1220,10 @@ object json2pumlMainForm: Tjson2pumlMainForm
       Category = 'Execute'
       Caption = 'Generate Service Results v1'
       OnExecute = GenerateServiceListv1ResultsActionExecute
+    end
+    object AboutAction: TAction
+      Caption = 'About'
+      OnExecute = AboutActionExecute
     end
   end
   object MainImageList: TImageList
@@ -2050,8 +2053,13 @@ object json2pumlMainForm: Tjson2pumlMainForm
               end
               item
                 Action = GenerateServiceListv2ResultsAction
+                Caption = 'G&enerate Service Results v2'
               end>
             Caption = 'E&xecute'
+          end
+          item
+            Action = AboutAction
+            Caption = '&About'
           end>
         ActionBar = ActionMainMenuBar
       end

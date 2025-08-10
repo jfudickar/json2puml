@@ -113,7 +113,6 @@ type
     FIntInputListLines: tStrings;
     FIntOptionFileLines: tStrings;
     FIntParameterFileLines: tStrings;
-    FIntServerResultLines: tStrings;
     FLastTraceId: string;
     FOnNotifyChange: tJson2PumlNotifyChangeEvent;
     FOptionFileDefinition: tJson2PumlConverterDefinition;
@@ -389,7 +388,6 @@ begin
   FIntCurlParameterFileLines := tStringList.Create;
   FCurrentConverterDefinition := tJson2PumlConverterDefinition.Create ();
   FParameterDefinition := tJson2PumlParameterFileDefinition.Create ();
-  FIntServerResultLines := tStringList.Create;
   FGlobalConfiguration := tJson2PumlGlobalDefinition.Create ();
   FIntConfigurationFileLines := tStringList.Create;
   FApplicationType := iApplicationType;
@@ -408,7 +406,6 @@ begin
   Logger.Providers.Delete (Logger.Providers.IndexOf(ExecuteLogHandler));
   FIntConfigurationFileLines.Free;
   FGlobalConfiguration.Free;
-  FIntServerResultLines.Free;
   FParameterDefinition.Free;
   FCurrentConverterDefinition.Free;
   FConverterInputList.CurlAuthenticationList := nil;
@@ -453,7 +450,7 @@ var
   LastProperty: string;
   SingleJson: tStringList;
   InputFile: tJson2PumlInputFileDefinition;
-  rowCount : Integer;
+  rowCount: integer;
   First: Boolean;
 begin
   iSingleRecord.JsonInput.Clear;
@@ -482,8 +479,8 @@ begin
         Continue;
       end;
       SingleJson.LoadFromFile (InputFile.OutputFileName);
-      rowcount := GetJsonStringRecordCount(SingleJson.Text);
-      if rowcount < 1 then
+      rowCount := GetJsonStringRecordCount (SingleJson.Text);
+      if rowCount < 1 then
       begin
         iSingleRecord.ConverterLog.Add (Format(#9'"%s" skipped, file is empty ', [InputFile.OutputFileName]));
         Continue;
@@ -499,11 +496,11 @@ begin
         iSingleRecord.JsonInput.AddStrings (SingleJson);
         iSingleRecord.JsonInput.Add ('}');
       end;
-      iSingleRecord.ConverterLog.Add (Format(#9'"%s" added, %d rows/%d lines handled', [InputFile.OutputFileName, rowcount,
-        SingleJson.Count]));
+      iSingleRecord.ConverterLog.Add (Format(#9'"%s" added, %d rows/%d lines handled',
+        [InputFile.OutputFileName, rowCount, SingleJson.Count]));
     end;
     iSingleRecord.JsonInput.Add (']');
-    if Not First then
+    if not First then
     begin
       GenerateFileDirectory (iSingleRecord.InputFile.OutputFileName);
       iSingleRecord.JsonInput.SaveToFile (iSingleRecord.InputFile.OutputFileName);
@@ -603,13 +600,13 @@ begin
   Filename := Filename + tpath.ExtensionSeparatorChar + FileExtension.TrimLeft ([tpath.ExtensionSeparatorChar]);
   // ReplaceInvalidPathFileNameChars can not be used here, because of invalid values like ":" in the curl variables.
   // It's splitted up here so that extractFilePath and ExtractFileName are not getting confused
-  Path := ExtractFilePath (FileName).Trim;
+  Path := ExtractFilePath (Filename).Trim;
   Path := ReplaceCurlParameterValues (Path, false);
   Path := ReplaceInvalidPathChars (Path, false);
-  FileName := ExtractFileName (FileName).Trim;
+  Filename := ExtractFileName (Filename).Trim;
   Filename := ReplaceCurlParameterValues (Filename, false);
-  FileName := ReplaceInvalidFileNameChars (FileName, false);
-  Result := tPath.Combine (Path, FileName);
+  Filename := ReplaceInvalidFileNameChars (Filename, false);
+  Result := tpath.Combine (Path, Filename);
 end;
 
 function tJson2PumlInputHandler.CalculateOutputFileNamePath (iFileName, iSourceFileName: string;
@@ -795,8 +792,10 @@ begin
     GenerateFileDirectory (CalculateSummaryFileName(jofPUML));
     ConverterInputList.WriteToJsonOutputFiles (jofFileList.Filename(CalculateSummaryFileName(jofPUML)));
     // Use PUML to get the Filename with the option included
-    ConverterInputList.WriteToJsonServiceResult (ServerResultV1Lines, CurrentOutputFormats, jaV1, false);
-    ConverterInputList.WriteToJsonServiceResult (ServerResultV2Lines, CurrentOutputFormats, jaV2, false);
+    if assigned(ServerResultV1Lines) then
+      ConverterInputList.WriteToJsonServiceResult (ServerResultV1Lines, CurrentOutputFormats, jaV1, false);
+    if assigned(ServerResultV2Lines) then
+      ConverterInputList.WriteToJsonServiceResult (ServerResultV2Lines, CurrentOutputFormats, jaV2, false);
     GlobalLoghandler.Info ('Generation done');
     if (jofLog in OutputFormats) then
     begin
@@ -915,7 +914,7 @@ begin
       FileList.Add (SingleRecord.InputFile.Output.PUmlFileName);
     end;
     if GenerateOutputsFromPumlFiles (FileList, CalculateRuntimeJarFile, CurrentJavaRuntimeParameter,
-      GetCurrentPlantUmlRuntimeParameter, OutputFormats, CmdLineParameter.OpenOutputs,OnNotifyChange) then
+      GetCurrentPlantUmlRuntimeParameter, OutputFormats, CmdLineParameter.OpenOutputs, OnNotifyChange) then
       for i := 0 to HandlerRecordList.Count - 1 do
       begin
         SingleRecord := self[i];
@@ -1227,7 +1226,7 @@ begin
           Result := '';
           break;
         end;
-        result := tpath.GetFileNameWithoutExtension(InputFile.InputFileName);
+      Result := tpath.GetFileNameWithoutExtension (InputFile.InputFileName);
     end;
   if Result.IsEmpty then
     Result := 'summary';
@@ -1328,7 +1327,7 @@ begin
   if Assigned (FServerResultV1Lines) then
     Result := FServerResultV1Lines
   else
-    Result := FIntServerResultLines;
+    Result := nil;
 end;
 
 function tJson2PumlInputHandler.GetServerResultV2Lines: tStrings;
@@ -1336,7 +1335,7 @@ begin
   if Assigned (FServerResultV2Lines) then
     Result := FServerResultV2Lines
   else
-    Result := FIntServerResultLines;
+    Result := nil;
 end;
 
 function tJson2PumlInputHandler.IsConverting: Boolean;

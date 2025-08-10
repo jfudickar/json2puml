@@ -1,0 +1,65 @@
+meta {
+  name: json2pumlRequest - v1 - json2puml - inputFiles
+  type: http
+  seq: 16
+}
+
+post {
+  url: {{baseurl}}/v1/json2pumlRequest
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Basic {{token}}
+  Content-Type: application/json;charset=utf-8
+}
+
+body:json {
+  {
+    "definitionFile": "json2puml_inputlist.json",
+    "detail": null,
+    "group": null,
+    "job": null,
+    "jobDescription": null,
+    "inputListFile": null,
+    "inputFiles": [
+      {
+        "fileName": "definitionFile.json",
+        "leadingObject": "definitionFile",
+        "content": [
+          {
+            "name": "json2puml_definition.json",
+            "displayName": "json2puml service definition",
+            "description": "Definition file to visualize the static json2puml service results",
+            "options": ["default", "inputlist", "serviceinformation"]
+          },
+          {
+            "name": "swapi_definition.json",
+            "displayName": "SWAPI Film Format definition",
+            "description": "This example is based on the SWAPI API (\"https://swapi.dev\").",
+            "options": ["default", "compact", "detailed", "full", "relations"]
+          },
+          {
+            "name": "tvmaze_definition.json",
+            "displayName": "TV MAZE Show Format definition",
+            "description": "This example is based on the TVMAZE API (\"https://www.tvmaze.com/api\").",
+            "options": ["default", "full"]
+          }
+        ]
+      }
+    ],
+    "generateSummary": true,
+    "generateDetails": true,
+    "outputFormats": "svg",
+    "option": "default",
+    "outputSuffix": null,
+    "curlParameter": [],
+    "curlAuthenticationParameter": []
+  }
+  
+}
+
+settings {
+  encodeUrl: false
+}

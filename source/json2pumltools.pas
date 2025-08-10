@@ -161,8 +161,10 @@ type
 function GenerateFileNameContentBinary (iFileName: string): string;
 function GenerateFileListContentBinary (iInputList: tJson2PumlInputList; iOutputFormat: tJson2PumlOutputFormat): string;
 
-procedure WriteToJsonFileNameContent(oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer; iFileName:
-    string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
+procedure WriteToJsonFileNameContent (oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer;
+  iFileName: string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
+
+function FileCopyright: string;
 
 implementation
 
@@ -399,6 +401,11 @@ begin
   Result := GetVersionInfo ('FileDescription');
 end;
 
+function FileCopyright: string;
+begin
+  Result := GetVersionInfo ('LegalCopyright');
+end;
+
 function FileVersion: string;
 begin
 {$IFDEF MSWINDOWS}
@@ -617,8 +624,8 @@ begin
           if iInputList then
             tJson2PumlInputList (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, iApiVersion, false)
           else
-            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1,
-              true, iApiVersion, false);
+            tJson2PumlConverterGroupDefinition (ConfigFile).WriteToJsonServiceListResult (oJsonOutPut, '', 1, true,
+              iApiVersion, false);
           Inc (Result);
         end;
       finally
@@ -912,8 +919,8 @@ begin
   end;
 end;
 
-procedure WriteToJsonFileNameContent(oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer; iFileName:
-    string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
+procedure WriteToJsonFileNameContent (oJsonOutPut: tStrings; const iPropertyName: string; iLevel: integer;
+  iFileName: string; iIncludeFullFilename, iBinaryContent: boolean; iWriteEmpty: boolean = false);
 begin
   if iFileName.IsEmpty then
     Exit;

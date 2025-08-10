@@ -110,29 +110,6 @@ begin
     end);
   FMVC.AddController (TJson2PumlController);
 
-
-
-  // Analytics middleware generates a csv log, useful to do trafic analysis
-  // FMVC.AddMiddleware(TMVCAnalyticsMiddleware.Create(GetAnalyticsDefaultLogger));
-
-  // The folder mapped as documentroot for TMVCStaticFilesMiddleware must exists!
-  // FMVC.AddMiddleware(TMVCStaticFilesMiddleware.Create('/static', TPath.Combine(ExtractFilePath(GetModuleName(HInstance)), 'www')));
-
-  // Trace middlewares produces a much detailed log for debug purposes
-  // FMVC.AddMiddleware(TMVCTraceMiddleware.Create);
-
-  // CORS middleware handles... well, CORS
-  // FMVC.AddMiddleware(TMVCCORSMiddleware.Create);
-
-  // Simplifies TMVCActiveRecord connection definition
-  // FMVC.AddMiddleware(TMVCActiveRecordMiddleware.Create('MyConnDef','FDConnectionDefs.ini'));
-
-  // Compression middleware must be the last in the chain, just before the ETag, if present.
-  // FMVC.AddMiddleware(TMVCCompressionMiddleware.Create);
-
-  // ETag middleware must be the latest in the chain
-  // FMVC.AddMiddleware(TMVCETagMiddleware.Create);
-
 end;
 
 procedure TJson2PumlWebModule.WebModuleDestroy (Sender: TObject);

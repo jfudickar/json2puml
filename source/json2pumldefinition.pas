@@ -701,6 +701,8 @@ type
   protected
     function ExistsSingleInputParameter (iParameterName: string): boolean;
     procedure HandleGenerateDefaultConfiguration;
+    procedure HelpLineWrapped(iScreenList: tStrings; iParameter, iDescription: string; iParameterLength: integer = 50;
+        iLineLength: integer = 110);
     procedure LogParameterValue (iParameterName: string; iParameterValue: boolean; iAllways: boolean = false); overload;
     procedure LogParameterValue (iParameterName: string; iParameterValue: string = ''; iParameterDetail: string = '';
       iAllways: boolean = false); overload;
@@ -709,17 +711,16 @@ type
     function ReadSingleInputParameterEnvironment (iParameterName: string): string;
     function ReadSingleInputParameterFile (iParameterName: string): string;
     procedure ValidateFileInputParameter (iParameterName: string; var ioParameterValue: string);
+    procedure WriteHelpLine (iScreenList: tStrings; iParameter: string = ''; iDescription: string = '';
+      iParameterLength: integer = 31; iLineLength: integer = 111);
   public
     constructor Create;
     destructor Destroy; override;
     function CommandLineParameterStr (iIncludeProgram: boolean): string;
     procedure GenerateEnvironmentParameters (iLogList: tStringList);
+    procedure GenerateHelpScreen(iScreenList: tStrings);
     procedure GenerateLogParameters (iLogList: tStringList);
-    procedure LogLineWrapped (iParameter, iDescription: string; iParameterLength: integer = 50;
-      iLineLength: integer = 110);
     procedure ReadInputParameter;
-    procedure WriteHelpLine (iParameter: string = ''; iDescription: string = ''; iParameterLength: integer = 31;
-      iLineLength: integer = 111);
     procedure WriteHelpScreen;
     property CurlAuthenticationParameter: tJson2PumlCurlParameterList read FCurlAuthenticationParameter;
     property CurlParameter: tJson2PumlCurlParameterList read FCurlParameter;
@@ -1414,7 +1415,8 @@ procedure tJson2PumlInputFileDefinition.WriteToJsonServiceResult (oJsonOutPut: t
     if IsSummaryFile then
       WriteToJsonValue (oJsonOutPut, 'outputDirectory', '', iLevel + 1, iWriteEmpty)
     else
-      WriteToJsonValue (oJsonOutPut, 'outputDirectory', tPath.GetFileNameWithoutExtension(inputFilename), iLevel + 1, iWriteEmpty);
+      WriteToJsonValue (oJsonOutPut, 'outputDirectory', TPath.GetFileNameWithoutExtension(InputFileName), iLevel + 1,
+        iWriteEmpty);
     if not CurlResult.Command.IsEmpty then
       WriteToJsonValue (oJsonOutPut, 'curlCommand', CurlResult.Command, iLevel + 1, iWriteEmpty);
     WriteToJsonValue (oJsonOutPut, 'outputFormat', iOutputFormat.ToString, iLevel + 1, iWriteEmpty);
@@ -2668,6 +2670,120 @@ begin
   AddLine (cPlantUmlJarFileRegistry, PlantUmlJarFileNameEnvironment);
 end;
 
+procedure tJson2PumlCommandLineParameter.GenerateHelpScreen (iScreenList: tStrings);
+var
+  s: string;
+  f: tJson2PumlOutputFormat;
+begin
+  if not Assigned (iScreenList) then
+    exit;
+  iScreenList.Clear;
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, '?', 'Showing this Help screen');
+  WriteHelpLine (iScreenList, 'currentconfiguration', 'Showing the current json2puml configuration ');
+  WriteHelpLine (iScreenList, 'plantumljarfile:<file>      ',
+    'Plantuml Jar file which should be used to generate the sample images. ' +
+    'If defined this parameter overwrites the corresponding parameter in the definition file');
+  WriteHelpLine (iScreenList, 'plantumlruntimeparater:<param>',
+    'Additional PlantUml runtime parameters which will be added to the PlantUml call when generating the image files.');
+  WriteHelpLine (iScreenList, 'javaruntimeparameter:<param>',
+    'Additional parameter which will be added to the java call when calling the PlantUML jar file ' +
+    'to generate the output formats.');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'configurationfile:<file>', 'Global base configuration of json2puml. Overwrites the "' +
+    cConfigurationFileRegistry + '" environment parameter.');
+  WriteHelpLine (iScreenList, 'serviceport:<portnumber>',
+    'Port the service application is listening. Overwrites the global configuration parameter.');
+  WriteHelpLine (iScreenList, 'parameterfile:<file>',
+    'ParameterFileName which contains a set of command line parameters in one file');
+  WriteHelpLine (iScreenList, 'definitionfile:<file>',
+    'DefinitionFileName which contains the configuration of the mapper');
+  WriteHelpLine (iScreenList, 'optionfile:<file> ',
+    'OptionFileName which contains only the configuration of one option which then will be used for generation');
+  WriteHelpLine (iScreenList, 'option:<name>',
+    'Name of the option group of the DefinitionFileName which should be used to generate the files');
+  WriteHelpLine (iScreenList, 'formatdefinitionfiles', 'Flag to reformat the used definition files.');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'inputfile:<file>', 'Filter to find the JSON files to be migrated (Wildcard supported)');
+  WriteHelpLine (iScreenList, 'inputlistfile:<file>', 'Listfile which contains the coniguration to handle list of ' +
+    'different files to be migrated as one big file');
+  WriteHelpLine (iScreenList, 'leadingobject:<name>',
+    'Name of the property which should be used as highest level of the json objects ' +
+    'This parameter is only needed for the single file conversion');
+  WriteHelpLine (iScreenList, 'splitinputfile',
+    'Flag to define if the InputFileName should be split up in single files. '#13#10 +
+    'This option is splitting the input file in separate files when the leading structure ' +
+    'of the input is an array. Then every record of the array will be generated as a single file. '#13#10 +
+    'This option is only valid when generatedetails is activated');
+  WriteHelpLine (iScreenList, 'splitidentifier:<identifier>',
+    'Name of the property which defines the name/filename of the splitted json element');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'curlauthenticationfile:<file>',
+    'CurlAuthenticationFileName which contains the central authentication configuration ' +
+    'when using the curl automations');
+  WriteHelpLine (iScreenList, 'curlignorecache',
+    'Flag to ignore the curl cache. Every file will allways be refetched, independent if there is a cache definition.');
+  WriteHelpLine (iScreenList, 'curlparameterfile:<file>',
+    'CurlParameterFileName which contains additional variables to enable a dynamic configuration ' +
+    'when using the curl automations');
+  WriteHelpLine (iScreenList, 'curlparameter:<name>=<value>',
+    'Single curl command line parameter, defined as name and value.'#13#10 +
+    'The parameter can be used multiple times to define more than one curl parameter.'#13#10 +
+    'The command line parameter will overwrite parameter from the parameter file having the same name.');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'summaryfile:<file>', 'Filename of the generated summary file');
+  WriteHelpLine (iScreenList, 'baseoutputpath:<path>',
+    'Base path which will be combinded with the outputpath, to define where the generated files will be stored. ' +
+    'This parameter overwrites the path configured in the definition file');
+  WriteHelpLine (iScreenList, 'outputpath:<path>', 'Output path for the generation of files. ' +
+    'This parameter overwrites the path configured in the definition file');
+  WriteHelpLine (iScreenList, 'outputsuffix:<suffix>', 'Additional suffix added to the name of the generated files. ' +
+    'This parameter overwrites the value configured in the definition file');
+  s := '';
+  for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
+    if f.IsPumlOutput then
+      s := string.Join (',', [s, f.ToString]);
+  s := s.TrimLeft ([',']);
+  WriteHelpLine (iScreenList, 'outputformat:<format>',
+    Format('Format of the generated Puml converters (Allowed values: %s) ', [s]));
+  s := string.Join (',', [s, jofPUML.ToString]);
+  s := string.Join (',', [s, jofZip.ToString]);
+  WriteHelpLine (iScreenList, 'openoutput:[<format>]',
+    Format('Flag to define if the generated files should be opened after the generation.' + #13#10 +
+    'The files will be opened using the default program to handle the file format. ' + #13#10 +
+    'Optional the files to be opened can be restricted by the format types (Allowed values: %s) ', [s]));
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'generatedetails:<boolean>',
+    'This allows to overwrite the generateDetails property of the InputListFile');
+  WriteHelpLine (iScreenList, 'generatesummary:<boolean>',
+    'This allows to overwrite the generateSummary property of the InputListFile');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'identfilter:<filter>',
+    'Value to filter/allow only objects where the ident matches to this filter value.');
+  WriteHelpLine (iScreenList, 'titlefilter:<filter>',
+    'Value to filter/allow only objects where the title matches to this filter value.');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'group:<group>',
+    'Group name which can be used in the output path and output suffix, it''s ' +
+    'overwriting the value from the InputListFile');
+  WriteHelpLine (iScreenList, 'detail:<detail>',
+    'Additional detail name which can be used in the output path and output suffix');
+  WriteHelpLine (iScreenList, 'job:<job>',
+    'Additional job name which can be used in the output path and output suffix');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'generateoutputdefinition',
+    'Flag to define if the merged generator definition should be stored in the output folder.');
+  WriteHelpLine (iScreenList, 'generatedefaultconfiguration',
+    'Flag to define that a default configuration file should be generated.');
+  WriteHelpLine (iScreenList, 'debug',
+    'Flag to define that a converter log file should be generated parallel to the puml file');
+  WriteHelpLine (iScreenList, cNoLogFiles, 'Flag to define that no log files should be generated');
+  WriteHelpLine (iScreenList);
+  WriteHelpLine (iScreenList, 'jobdescription',
+    'Job description of the generated result. This information will be put into the legend of the image.');
+  WriteHelpLine (iScreenList);
+end;
+
 procedure tJson2PumlCommandLineParameter.GenerateLogParameters (iLogList: tStringList);
 
   procedure AddLine (iName, iValue: string);
@@ -2730,23 +2846,23 @@ begin
 
 end;
 
-procedure tJson2PumlCommandLineParameter.LogLineWrapped (iParameter, iDescription: string;
+procedure tJson2PumlCommandLineParameter.HelpLineWrapped (iScreenList: tStrings; iParameter, iDescription: string;
   iParameterLength: integer = 50; iLineLength: integer = 110);
 var
-  LogLines: tStringList;
+  Lines: tStringList;
   s: string;
   l: string;
   Next: string;
   i, p: integer;
 begin
-  LogLines := tStringList.Create;
+  Lines := tStringList.Create;
   try
-    LogLines.Text := iDescription;
+    Lines.Text := iDescription;
     s := iParameter;
-    for i := 0 to LogLines.Count - 1 do
+    for i := 0 to Lines.Count - 1 do
     begin
       s := s.PadRight (iParameterLength);
-      l := LogLines[i];
+      l := Lines[i];
       while not l.IsEmpty do
       begin
         p := l.IndexOf (' ');
@@ -2762,19 +2878,19 @@ begin
         end;
         if s.length + Next.length >= iLineLength then
         begin
-          GlobalLoghandler.Info (s);
+          iScreenList.Add (s);
           s := ' ';
           s := s.PadRight (iParameterLength);
         end;
         s := s + ' ' + Next;
       end;
-      GlobalLoghandler.Info (s);
+      iScreenList.Add (s);
       s := '';
     end;
     if not s.IsEmpty then
-      GlobalLoghandler.Info (s);
+      iScreenList.Add (s);
   finally
-    LogLines.Free;
+    Lines.Free;
   end;
 
 end;
@@ -2831,116 +2947,29 @@ begin
     HandleGenerateDefaultConfiguration;
 end;
 
-procedure tJson2PumlCommandLineParameter.WriteHelpLine (iParameter: string = ''; iDescription: string = '';
-  iParameterLength: integer = 31; iLineLength: integer = 111);
+procedure tJson2PumlCommandLineParameter.WriteHelpLine (iScreenList: tStrings; iParameter: string = '';
+  iDescription: string = ''; iParameterLength: integer = 31; iLineLength: integer = 111);
 begin
   if iParameter.Trim.IsEmpty then
-    GlobalLoghandler.Info ('')
+    iScreenList.Add ('')
   else
-    LogLineWrapped (cCmdLinePrefix + iParameter.ToLower.Trim, iDescription.Trim, iParameterLength, iLineLength);
+    HelpLineWrapped (iScreenList, cCmdLinePrefix + iParameter.ToLower.Trim, iDescription.Trim, iParameterLength,
+      iLineLength);
 end;
 
 procedure tJson2PumlCommandLineParameter.WriteHelpScreen;
 var
+  ScreenList: tStringList;
   s: string;
-  f: tJson2PumlOutputFormat;
 begin
-  WriteHelpLine;
-  WriteHelpLine ('?', 'Showing this Help screen');
-  WriteHelpLine ('currentconfiguration', 'Showing the current json2puml configuration ');
-  WriteHelpLine ('plantumljarfile:<file>      ',
-    'Plantuml Jar file which should be used to generate the sample images. ' +
-    'If defined this parameter overwrites the corresponding parameter in the definition file');
-  WriteHelpLine ('plantumlruntimeparater:<param>',
-    'Additional PlantUml runtime parameters which will be added to the PlantUml call when generating the image files.');
-  WriteHelpLine ('javaruntimeparameter:<param>',
-    'Additional parameter which will be added to the java call when calling the PlantUML jar file ' +
-    'to generate the output formats.');
-  WriteHelpLine;
-  WriteHelpLine ('configurationfile:<file>', 'Global base configuration of json2puml. Overwrites the "' +
-    cConfigurationFileRegistry + '" environment parameter.');
-  WriteHelpLine ('serviceport:<portnumber>',
-    'Port the service application is listening. Overwrites the global configuration parameter.');
-  WriteHelpLine ('parameterfile:<file>',
-    'ParameterFileName which contains a set of command line parameters in one file');
-  WriteHelpLine ('definitionfile:<file>', 'DefinitionFileName which contains the configuration of the mapper');
-  WriteHelpLine ('optionfile:<file> ',
-    'OptionFileName which contains only the configuration of one option which then will be used for generation');
-  WriteHelpLine ('option:<name>',
-    'Name of the option group of the DefinitionFileName which should be used to generate the files');
-  WriteHelpLine ('formatdefinitionfiles', 'Flag to reformat the used definition files.');
-  WriteHelpLine;
-  WriteHelpLine ('inputfile:<file>', 'Filter to find the JSON files to be migrated (Wildcard supported)');
-  WriteHelpLine ('inputlistfile:<file>', 'Listfile which contains the coniguration to handle list of ' +
-    'different files to be migrated as one big file');
-  WriteHelpLine ('leadingobject:<name>',
-    'Name of the property which should be used as highest level of the json objects ' +
-    'This parameter is only needed for the single file conversion');
-  WriteHelpLine ('splitinputfile', 'Flag to define if the InputFileName should be split up in single files. '#13#10 +
-    'This option is splitting the input file in separate files when the leading structure ' +
-    'of the input is an array. Then every record of the array will be generated as a single file. '#13#10 +
-    'This option is only valid when generatedetails is activated');
-  WriteHelpLine ('splitidentifier:<identifier>',
-    'Name of the property which defines the name/filename of the splitted json element');
-  WriteHelpLine;
-  WriteHelpLine ('curlauthenticationfile:<file>',
-    'CurlAuthenticationFileName which contains the central authentication configuration ' +
-    'when using the curl automations');
-  WriteHelpLine ('curlignorecache',
-    'Flag to ignore the curl cache. Every file will allways be refetched, independent if there is a cache definition.');
-  WriteHelpLine ('curlparameterfile:<file>',
-    'CurlParameterFileName which contains additional variables to enable a dynamic configuration ' +
-    'when using the curl automations');
-  WriteHelpLine ('curlparameter:<name>=<value>', 'Single curl command line parameter, defined as name and value.'#13#10
-    + 'The parameter can be used multiple times to define more than one curl parameter.'#13#10 +
-    'The command line parameter will overwrite parameter from the parameter file having the same name.');
-  WriteHelpLine;
-  WriteHelpLine ('summaryfile:<file>', 'Filename of the generated summary file');
-  WriteHelpLine ('baseoutputpath:<path>',
-    'Base path which will be combinded with the outputpath, to define where the generated files will be stored. ' +
-    'This parameter overwrites the path configured in the definition file');
-  WriteHelpLine ('outputpath:<path>', 'Output path for the generation of files. ' +
-    'This parameter overwrites the path configured in the definition file');
-  WriteHelpLine ('outputsuffix:<suffix>', 'Additional suffix added to the name of the generated files. ' +
-    'This parameter overwrites the value configured in the definition file');
-  s := '';
-  for f := low(tJson2PumlOutputFormat) to high(tJson2PumlOutputFormat) do
-    if f.IsPumlOutput then
-      s := string.Join (',', [s, f.ToString]);
-  s := s.TrimLeft ([',']);
-  WriteHelpLine ('outputformat:<format>', Format('Format of the generated Puml converters (Allowed values: %s) ', [s]));
-  s := string.Join (',', [s, jofPUML.ToString]);
-  s := string.Join (',', [s, jofZip.ToString]);
-  WriteHelpLine ('openoutput:[<format>]',
-    Format('Flag to define if the generated files should be opened after the generation.' + #13#10 +
-    'The files will be opened using the default program to handle the file format. ' + #13#10 +
-    'Optional the files to be opened can be restricted by the format types (Allowed values: %s) ', [s]));
-  WriteHelpLine;
-  WriteHelpLine ('generatedetails:<boolean>',
-    'This allows to overwrite the generateDetails property of the InputListFile');
-  WriteHelpLine ('generatesummary:<boolean>',
-    'This allows to overwrite the generateSummary property of the InputListFile');
-  WriteHelpLine;
-  WriteHelpLine ('identfilter:<filter>',
-    'Value to filter/allow only objects where the ident matches to this filter value.');
-  WriteHelpLine ('titlefilter:<filter>',
-    'Value to filter/allow only objects where the title matches to this filter value.');
-  WriteHelpLine;
-  WriteHelpLine ('group:<group>', 'Group name which can be used in the output path and output suffix, it''s ' +
-    'overwriting the value from the InputListFile');
-  WriteHelpLine ('detail:<detail>', 'Additional detail name which can be used in the output path and output suffix');
-  WriteHelpLine ('job:<job>', 'Additional job name which can be used in the output path and output suffix');
-  WriteHelpLine;
-  WriteHelpLine ('generateoutputdefinition',
-    'Flag to define if the merged generator definition should be stored in the output folder.');
-  WriteHelpLine ('generatedefaultconfiguration',
-    'Flag to define that a default configuration file should be generated.');
-  WriteHelpLine ('debug', 'Flag to define that a converter log file should be generated parallel to the puml file');
-  WriteHelpLine (cNoLogFiles, 'Flag to define that no log files should be generated');
-  WriteHelpLine;
-  WriteHelpLine ('jobdescription',
-    'Job description of the generated result. This information will be put into the legend of the image.');
-  WriteHelpLine;
+  ScreenList := tStringList.Create ();
+  try
+    GenerateHelpScreen (ScreenList);
+    for s in ScreenList do
+      GlobalLoghandler.Info (s);
+  finally
+    ScreenList.Free;
+  end;
 end;
 
 constructor tJson2PumlGlobalDefinition.Create;
@@ -3901,7 +3930,7 @@ begin
     if IsSplitFile then
       WriteToJsonValue (Output, 'isSplitFile', IsSplitFile, iLevel + 1);
     if not Option.IsEmpty then
-      WriteToJsonValue (Output, 'option', option, iLevel + 1, iWriteEmpty);
+      WriteToJsonValue (Output, 'option', Option, iLevel + 1, iWriteEmpty);
     if not PUmlFileName.IsEmpty then
       WriteToJsonValue (Output, 'pumlFile', PUmlFileName, iLevel + 1, iWriteEmpty);
     if not PDFFilename.IsEmpty then

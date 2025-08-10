@@ -228,6 +228,8 @@ type
     GenerateServiceListv2ResultsAction: TAction;
     ServiceResultV2Page: TTabSheet;
     ServiceResultv2Panel: TPanel;
+    AboutAction: TAction;
+    procedure AboutActionExecute(Sender: TObject);
     procedure CommandLineEditPanelResize (Sender: tObject);
     procedure ConvertAllOpenFilesActionExecute (Sender: tObject);
     procedure ConvertCurrentFileActionExecute (Sender: tObject);
@@ -375,7 +377,7 @@ implementation
 
 uses
   json2pumltools, Vcl.Clipbrd, Winapi.ShellAPI, System.IOUtils, System.UITypes, json2pumlloghandler,
-  Quick.Logger, json2pumlconverterdefinition, System.Math;
+  Quick.Logger, json2pumlconverterdefinition, System.Math, json2pumlAbout;
 
 {$R *.dfm}
 
@@ -783,7 +785,7 @@ end;
 
 procedure Tjson2pumlMainForm.FormShow (Sender: tObject);
 begin
-  InitialTimer.Enabled := true;
+
   CreateMemoControls;
   InitializeAllTButtonedEdit (MainPageControl);
   InitFormDefaultLogger;
@@ -806,6 +808,9 @@ begin
   InputHandler.ServerResultV1Lines := ServiceResultV1Lines;
   InputHandler.ServerResultV2Lines := ServiceResultV2Lines;
   UpdateFormCaption;
+  if FindCmdLineSwitch ('?') or (ParamCount <= 0) then
+    ShowJson2PumlAbout(InputHandler.CmdLineParameter);
+  InitialTimer.Enabled := true;
 
 end;
 
@@ -1252,6 +1257,11 @@ begin
   // FFrame.Free;
   // FTabSheet.Free;
   inherited Destroy;
+end;
+
+procedure Tjson2pumlMainForm.AboutActionExecute(Sender: TObject);
+begin
+  ShowJson2PumlAbout(InputHandler.CmdLineParameter)
 end;
 
 procedure Tjson2pumlMainForm.CommandLineEditPanelResize (Sender: tObject);

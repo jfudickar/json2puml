@@ -1,0 +1,34 @@
+@startuml
+hide circle
+hide methods
+hide stereotype
+show <<Enumeration>> stereotype
+skinparam class {
+   BackgroundColor<<Enumeration>> #E6F5F7
+   BackgroundColor<<Ref>> #FFFFE0
+   BackgroundColor<<Pivot>> #FFFFFFF
+   BackgroundColor #FCF2E3
+}
+
+
+class OutputFile {
+   inputFileName : String
+   outputFileName : String
+   outputDirectory : String
+   outputFormat : String 
+   option : String
+   curlCommand : String
+   isSummaryFile : Boolean
+   isSplitFile : Boolean
+   content : String <<bas64>>
+}
+
+class json2pumlRequest <<pivot>> {
+   Array of OutputFile
+}
+
+
+json2pumlRequest -right-> "0..1" OutputFile
+
+
+@enduml

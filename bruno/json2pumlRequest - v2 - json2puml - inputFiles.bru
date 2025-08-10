@@ -1,17 +1,13 @@
 meta {
-  name: json2pumlRequest - v1 - json2puml
+  name: json2pumlRequest - v2 - json2puml - inputFiles
   type: http
-  seq: 16
+  seq: 17
 }
 
 post {
-  url: {{baseurl}}/v2/json2pumlRequest?includeFileName=true
+  url: {{baseurl}}/v2/json2pumlRequest
   body: json
   auth: inherit
-}
-
-params:query {
-  includeFileName: true
 }
 
 headers {

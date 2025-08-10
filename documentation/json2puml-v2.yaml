@@ -540,9 +540,7 @@ components:
                 enum: [svg, png, json, puml, filelist, log]
                 example: svg
     Json2PumlResponseFiles:
-      type: array
-      items:
-        $ref: "#/components/schemas/OutputFileBinary"
+      $ref: "#/components/schemas/OutputFileBinaryList"
 
     OutputFile:
       type: object
@@ -556,7 +554,7 @@ components:
         outputDirectory:
           type: string
           description: Directory where the file has been generated
-          example: /swapi-detail
+          example: swapi-detail
         option:
           type: string
           description: Option used to generate the file
@@ -576,7 +574,6 @@ components:
           type: string
           description: Optional curl command has been used to fetch the data.
           example: curl -X GET "https://jsonplaceholder.typicode.com/users" -H
-
     OutputBinaryContent:
       type: object
       properties:
@@ -588,10 +585,12 @@ components:
       allOf:
         - $ref: "#/components/schemas/OutputFile"
         - $ref: "#/components/schemas/OutputBinaryContent"
+      description: Definition of a generated output file which contains the filename and the binary content. The content is base64 encoded and needs to be decoded before storing. Additional details are provided like the input file name, output directory, option used, and so on.
     OutputFileBinaryList:
       type: array
       items:
         $ref: "#/components/schemas/OutputFileBinary"
+      description: List of generated files. The list contains the filename and the binary content will be returned.
     BinaryFile:
       type: string
       format: binary

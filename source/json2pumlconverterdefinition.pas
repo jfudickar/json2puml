@@ -614,8 +614,8 @@ type
     function ReadFromJson (iJsonValue: tJSONValue; iPropertyName: string): boolean; override;
     procedure WriteToJson (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iWriteEmpty: boolean = false); override;
-    procedure WriteToJsonServiceListResult(oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
-        iStandalone:Boolean; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
+    procedure WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
+      iStandalone: boolean; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
     procedure WriteOptionsToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string; iLevel: integer;
       iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false); overload;
     property BaseOption: tJson2PumlConverterDefinition read FBaseOption;
@@ -2504,8 +2504,8 @@ begin
   WriteObjectEndToJson (oJsonOutPut, iLevel);
 end;
 
-procedure tJson2PumlConverterGroupDefinition.WriteToJsonServiceListResult(oJsonOutPut: tStrings; iPropertyName: string;
-    iLevel: integer; iStandalone:Boolean; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
+procedure tJson2PumlConverterGroupDefinition.WriteToJsonServiceListResult (oJsonOutPut: tStrings; iPropertyName: string;
+  iLevel: integer; iStandalone: boolean; iApiVersion: tJson2PumlApiVersion; iWriteEmpty: boolean = false);
 
 begin
   WriteObjectStartToJson (oJsonOutPut, iLevel, iPropertyName);
