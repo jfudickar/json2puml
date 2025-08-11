@@ -1001,7 +1001,7 @@ end;
 
 function tJson2PumlInputHandler.GetCurrentApplicationVersion: string;
 begin
-  Result := Format ('%s v%s', [ApplicationType.ApplicationName, cCurrentVersion]);
+  Result := Format ('%s %s', [ApplicationType.ApplicationName, FileVersion]);
 end;
 
 function tJson2PumlInputHandler.GetCurrentConfigurationFileName: string;

@@ -43,6 +43,7 @@ uses
   commandlinetools in 'commandlinetools.pas';
 
 begin
+  ValidateFileVersion;
 {$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := true;
 {$ENDIF}

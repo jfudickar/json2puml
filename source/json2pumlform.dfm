@@ -52,7 +52,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
     ParentFont = False
     PersistentHotKeys = True
     Spacing = 5
-    ExplicitWidth = 1347
   end
   object ActionMainMenuBar: TActionMainMenuBar
     Left = 0
@@ -73,8 +72,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Font.Name = 'Segoe UI'
     Font.Style = []
     Spacing = 0
-    ExplicitLeft = -3
-    ExplicitTop = -6
   end
   object MainPageControl: TPageControl
     AlignWithMargins = True
@@ -1060,7 +1057,6 @@ object json2pumlMainForm: Tjson2pumlMainForm
     Font.Style = []
     ParentFont = False
     Spacing = 0
-    ExplicitWidth = 1347
   end
   object MainActionList: TActionList
     Images = MainImageList

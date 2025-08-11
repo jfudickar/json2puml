@@ -88,6 +88,7 @@ begin
 end;
 
 begin
+  ValidateFileVersion;
 {$IFDEF DEBUG}
   ReportMemoryLeaksOnShutdown := true;
 {$ENDIF}

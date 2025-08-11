@@ -166,6 +166,8 @@ procedure WriteToJsonFileNameContent (oJsonOutPut: tStrings; const iPropertyName
 
 function FileCopyright: string;
 
+procedure ValidateFileVersion;
+
 implementation
 
 uses
@@ -411,8 +413,19 @@ begin
 {$IFDEF MSWINDOWS}
   Result := 'v' + GetVersionInfo ('FileVersion');
 {$ELSE}
-  Result := 'v' + cCurrentVersion;
+  Result := cCurrentVersion;
 {$ENDIF}
+end;
+
+procedure ValidateFileVersion;
+var msg : String;
+begin
+  if FileVersion <> cCurrentVersion then
+  begin
+    msg := Format ('Fileversion Mismatch "%s" <> "%s"! Recompile the application!', [FileVersion, cCurrentVersion]);
+    writeln(msg);
+    raise Exception.Create(msg);
+  end;
 end;
 
 procedure GenerateDirectory (const iDirectory: string);
