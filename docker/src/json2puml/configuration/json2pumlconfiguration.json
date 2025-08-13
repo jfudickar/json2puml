@@ -13,6 +13,7 @@
 	"defaultDefinitionFileName": null,
 	"definitionFileSearchFolder": [
 		"/json2puml/definition/",
+		"/json2puml/samples/json2puml/*definition*.json",
 		"/json2puml/samples/jsonplaceholder/*definition*.json",
 		"/json2puml/samples/spacex/*definition*.json",
 		"/json2puml/samples/swapi/*definition*.json",
@@ -21,6 +22,7 @@
 	],
 	"inputListFileSearchFolder": [
 		"/json2puml/inputlist/",
+		"/json2puml/samples/json2puml/*inputlist*.json",
 		"/json2puml/samples/jsonplaceholder/*inputlist*.json",
 		"/json2puml/samples/spacex/inputlist/*inputlist*.json",
 		"/json2puml/samples/swapi/inputlist/*inputlist*.json",
